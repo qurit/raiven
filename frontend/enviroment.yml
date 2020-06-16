@@ -1,0 +1,17 @@
+name: picom
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - flask=1.1.2
+  - flask-restplus=0.13.0
+  - pydicom=1.4.2
+  - pynetdicom=1.5.1
+  - python=3.8.3
+  - werkzeug=0.16
+  - nodejs=14.4.0
+  - pip:
+    - flask-pymongo==2.3.0
+    - pymongo==3.10.1
+
+
