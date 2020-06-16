@@ -20,9 +20,36 @@ export default {
   ],
   modules: [
     '@nuxtjs/axios',
+    '@nuxtjs/auth',
     '@nuxtjs/dotenv',
   ],
+
+  // Axios config
   axios: {
+  },
+
+   // Auth Config
+  auth: {
+    redirect: {
+      login: '/login', // User will be redirected to this path if login is required.
+      logout: '/login', // User will be redirected to this path if after logout
+      home: '/' // User will be redirect to this path after login.
+    },
+    strategies: {
+      local: {
+        endpoints: {
+          login: { url: '/login', method: 'post', propertyName: 'token' },
+          logout: { url: '/logout', method: 'post' },
+          user: { url: '/user', method: 'get', propertyName: 'user' }
+        },
+
+        tokenRequired: true
+      }
+    }
+  },
+
+  router: {
+    middleware: ['auth']
   },
 
   vuetify: {
