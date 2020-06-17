@@ -1,2 +1,2 @@
 class BaseConfig(object):
-    MONGO_URI = "mongodb://localhost:27017/myDatabase"
+    MONGO_URI = "mongodb://admin:pass@localhost:27017/test"

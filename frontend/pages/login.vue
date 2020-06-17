@@ -23,7 +23,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn text color="secondary">Login</v-btn>
+        <v-btn @click="login" text color="secondary">Login</v-btn>
       </v-card-actions>
     </v-card>
   </v-row>
@@ -35,7 +35,12 @@ export default {
   data: () => ({
     username: '',
     password: ''
-  })
+  }),
+  methods: {
+    login() {
+      this.$axios.post('/')
+    }
+  }
 }
 </script>
 

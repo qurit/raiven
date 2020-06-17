@@ -16,6 +16,7 @@ mongo = PyMongo(app)
 class HelloWorld(Resource):
 
     def get(self):
+        mongo.db.users.insert({ 'test': 0})
         return {'hello': 'world'}
 
 

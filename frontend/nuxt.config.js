@@ -1,4 +1,4 @@
-import colors from 'vuetify/es5/util/colors'
+require('dotenv').config();
 
 export default {
   mode: 'spa',
@@ -17,6 +17,7 @@ export default {
   loading: { color: '#fff' },
   buildModules: [
     '@nuxtjs/vuetify',
+
   ],
   modules: [
     '@nuxtjs/axios',
@@ -26,6 +27,7 @@ export default {
 
   // Axios config
   axios: {
+    baseURL:  process.env.API_URL
   },
 
    // Auth Config
