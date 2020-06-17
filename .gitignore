@@ -3,9 +3,11 @@ node_modules/
 dist
 .idea
 .nuxt
+.pytest_cache
 
 # Files
 .env
 sw.*
 .DS_Store
+
 

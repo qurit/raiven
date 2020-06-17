@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restplus import Resource, Api
 from flask_pymongo import PyMongo
 
-from api.config import BaseConfig
+from config import BaseConfig
 config = BaseConfig()
 
 app = Flask(__name__)
@@ -16,7 +16,8 @@ mongo = PyMongo(app)
 class HelloWorld(Resource):
 
     def get(self):
-        mongo.db.users.insert({ 'test': 0})
+        # print(mongo.server_info())
+        mongo.db.users.insert_one({ 'test': 0})
         return {'hello': 'world'}
 
 
