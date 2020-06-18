@@ -10,13 +10,14 @@ app.config.from_object(config)
 
 api = Api(app)
 mongo = PyMongo(app)
+db = mongo.db
 
 
 @api.route('/hello')
 class HelloWorld(Resource):
 
     def get(self):
-        # print(mongo.server_info())
+        print(mongo.server_info())
         mongo.db.users.insert_one({ 'test': 0})
         return {'hello': 'world'}
 
