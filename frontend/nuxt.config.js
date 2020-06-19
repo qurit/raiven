@@ -51,23 +51,15 @@ export default {
   },
 
   router: {
-    middleware: ['auth']
+    // middleware: ['auth']
   },
 
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
-    theme: {
-      dark: true,
-      themes: {
-        dark: {
-          primary: '#1EB980',
-          secondary: '#045D56',
-          tertiary: '#FF6859',
-          quaternary: '#FFCF44',
-          quinary: '#B15DFF',
-          senary: '#72DEFF',
-        },
-      },
-    },
+    preset: "vue-cli-plugin-vuetify-preset-rally/preset"
+  },
+
+  build: {
+    transpile: ["vue-cli-plugin-vuetify-preset-rally"],
   }
 }

@@ -17,8 +17,7 @@ db = mongo.db
 class HelloWorld(Resource):
 
     def get(self):
-        print(mongo.server_info())
-        mongo.db.users.insert_one({ 'test': 0})
+        mongo.db.users.insert_one({ 'test': 0, 'AET': 'MIT'})
         return {'hello': 'world'}
 
 
