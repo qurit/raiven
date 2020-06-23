@@ -12,8 +12,7 @@
             <v-row no-gutters>
               {{ m.AET }}
               <v-spacer />
-              <v-icon-btn icon="mdi-wifi-strength-4" @click="echo" />
-              <VIconBtn />
+              <v-icon-btn icon="mdi-wifi-strength-4" @click="echo(m)" />
             </v-row>
           </v-list-item>
       </v-card>
@@ -24,8 +23,7 @@
 <script>
 import { mapState } from 'vuex'
 import ModalityForm from "../components/ModalityForm";
-// import VIconBtn from "../components/generic/v-icon-btn";
-// import VIconBtn from "../components/generic/v-icon-btn";
+import { echo } from "../api/dicom";
 
 export default {
   name: "settings",
@@ -37,8 +35,8 @@ export default {
     this.$store.dispatch('modalities/fetchModalities')
   },
   methods: {
-    echo() {
-      console.log('echo')
+    async echo(modality) {
+      await echo(this, modality)
     }
   }
 }
