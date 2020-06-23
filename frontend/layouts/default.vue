@@ -2,6 +2,7 @@
   <v-app>
 
     <NavDrawer app />
+    <Toast />
 
     <v-content>
       <v-container>
@@ -13,7 +14,8 @@
 </template>
 <script>
   import NavDrawer from "../components/NavDrawer";
+  import Toast from "../components/generic/Toast";
   export default {
-    components: {NavDrawer}
+    components: {Toast, NavDrawer}
   }
 </script>

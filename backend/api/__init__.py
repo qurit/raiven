@@ -35,5 +35,13 @@ class Modalities(Resource):
         return jsonify({'modalities': db.users.find()})
 
 
+@api.route('/dicom/echo/<string:modality_id>')
+class Echo(Resource):
+
+    def get(self, modality_id):
+        print(modality_id)
+        return 'Not implemented', 501
+
+
 if __name__ == '__main__':
     app.run(debug=True)

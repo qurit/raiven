@@ -25,7 +25,7 @@ export default {
     '@nuxtjs/dotenv',
   ],
 
-  plugins: ['~plugins/GlobalComponents'],
+  plugins: ['~/plugins/GlobalComponents', "~/plugins/toaster"],
 
   // Axios config
   axios: {
