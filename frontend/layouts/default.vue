@@ -1,5 +1,7 @@
 <template>
-  <v-app style="background-color: #33333c">
+  <v-app>
+
+    <NavDrawer app />
 
     <v-content>
       <v-container>
@@ -9,3 +11,9 @@
 
   </v-app>
 </template>
+<script>
+  import NavDrawer from "../components/NavDrawer";
+  export default {
+    components: {NavDrawer}
+  }
+</script>
