@@ -1,9 +1,9 @@
 <template>
-  <v-navigation-drawer :app="app" permanent width="150">
+  <v-navigation-drawer :app="app" permanent width="125">
     <v-img class="mx-auto mt-8"  src="logo.png" height="100" width="100" style="filter: grayscale(100%)"/>
 
-    <v-list class="mt-16">
-      <v-list-item v-for="link in links" :to="link.to" nuxt class="py-4">
+    <v-list class="mt-16" flat>
+      <v-list-item v-for="link in links" :to="link.to" nuxt class="py-2" :ripple="false">
         <v-row justify="center">
           <v-col cols="12" class="text-center">
             <v-icon v-text="link.icon" large class="mx-auto" :color="link.to === $route.path ? '#ffffff' : '#84848a'"/>
