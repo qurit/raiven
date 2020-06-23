@@ -1,10 +1,7 @@
 # from pydicom.dataset import Dataset
 # import pydicom
 # from pynetdicom import AE, evt, build_role, debug_logger
-
-# from .echo import echo
-# from .utils import Modality
-
+from . import utils, echo
 
 # if __name__ == "__main__":
 #     # c_echo()
