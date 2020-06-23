@@ -6,7 +6,8 @@ from flask_restplus import Resource, Api
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 
-from dicom import echo, utils
+import dicom.utils
+from dicom.echo import echo
 
 from api.encoders import jsonify
 
@@ -31,7 +32,7 @@ class HelloWorld(Resource):
 
 
 @api.route('/modalities')
-class Modalities(Resource):
+class ModalitiesRoute(Resource):
 
     def get(self):
         print()
@@ -43,7 +44,7 @@ class Modalities(Resource):
 
 
 @api.route('/modalities/<string:modality_id>')
-class Modality(Resource):
+class ModalityRoute(Resource):
 
     def get(self):
         return jsonify({'modalities': db.modalities.find()})
@@ -64,6 +65,11 @@ class Echo(Resource):
         oid = ObjectId(modality_id)
         modality = db.modalities.find_one({'_id': oid}, {"_id": False})
         print(modality)
-        md = utils.Modality(**modality)
 
-        return 'Not implemented', 501
+        try:
+            echo(dicom.utils.Modality(**modality))
+        except Exception as e:
+            print(e)
+            return 'Not implemented', 501
+        else:
+            return 'Ok', 200

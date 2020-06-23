@@ -4,15 +4,20 @@ from pynetdicom import AE
 
 
 class ApplicationEntity(AE):
-    def associate(self, address, port, **kwargs):
-        return super().associate(addr=address, port=port, **kwargs)
+    def associate(self, address=None, port=None, aet=None, **kwargs):
+        print(kwargs)
+        return super().associate(addr=address, port=port, ae_title=aet, **kwargs)
 
 
 @dataclass
 class Modality:
     address: str
     port: int
-    ae_title: str
+    aet: str
+
+    def __post_init__(self):
+        if not isinstance(self.port, int):
+            self.port = int(self.port)
 
 
 class Association:
