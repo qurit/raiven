@@ -1,5 +1,5 @@
 <template>
-  <v-btn :color="color" icon small @click="$emit('click')">
+  <v-btn :color="color" icon @click="$emit('click')">
     <v-icon v-text="icon" />
   </v-btn>
 </template>

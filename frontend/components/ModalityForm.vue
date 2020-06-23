@@ -1,36 +1,72 @@
 <template>
-  <v-dialog v-model="dialog" max-width="500">
-    <template v-slot:activator="{ on }">
-      <v-btn icon v-on="on">
-        <v-icon v-text="'mdi-plus'" />
-      </v-btn>
-    </template>
-
-    <v-card>
-      <v-card-title v-text="title" />
-      <v-card-text>
-        <v-text-field solo flat type="text" label="AE Title" hint="AE Title"/>
-        <v-row>
-          <v-col>
-            <v-text-field solo flat>sdd</v-text-field>
-          </v-col>
-          <v-col>
-            <v-text-field solo flat>sdd</v-text-field>
-          </v-col>
-        </v-row>
-
-      </v-card-text>
-    </v-card>
-
-  </v-dialog>
+  <v-row dense>
+    <v-col>Add a Modality</v-col>
+    <v-col cols="12">
+      <v-text-field
+        v-model="modality.aet"
+        :error-messages="errors('aet')"
+        label="AE Title"
+        solo
+        dense
+      />
+    </v-col>
+    <v-col cols="6">
+      <v-text-field
+        v-model="modality.address"
+        :error-messages="errors('address')"
+        label="Address"
+        solo
+        dense
+      />
+    </v-col>
+    <v-col cols="6">
+      <v-text-field
+        v-model="modality.port"
+        :error-messages="errors('port')"
+        label="Port"
+        solo
+        dense
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script>
+import { validationMixin } from 'vuelidate'
+import { required, integer, ipAddress } from 'vuelidate/lib/validators'
+
 export default {
   name: "ModalityForm",
+  mixins: [validationMixin],
+  validations: {
+    modality: {
+      aet: {required},
+      address: {required, ipAddress},
+      port: {required, integer}
+    }
+  },
   data: () => ({
-    dialog: true,
-    title: 'Add Modality'
-  })
+    title: 'Add Modality',
+    modality: {
+      aet: undefined,
+      address: '127.0.0.0',
+      port: '104'
+    }
+  }),
+  mounted() {
+    this.$root.$on('save-modality', this.save)
+  },
+  methods: {
+    save() {
+      this.$v.$touch()
+      if (!this.$v.$invalid) {
+        console.log('profit')
+        this.$store.dispatch('modalities/addModality', this.modality)
+      }
+    },
+    errors(field) {
+      return this.$validator.getErrors(field, this.$v.modality)
+    }
+  }
 }
 </script>
