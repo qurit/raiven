@@ -16,6 +16,7 @@
     "@nuxtjs/dotenv": "^1.4.0",
     "nuxt": "^2.13.0",
     "vue-cli-plugin-vuetify-preset-rally": "^1.0.4",
+    "vuelidate": "^0.7.5",
     "vuetify": "^2.3.1"
   },
   "devDependencies": {

@@ -5,16 +5,29 @@
         <v-card-title>
           AET's
           <v-spacer />
-          <ModalityForm />
+          <v-expand-x-transition>
+            <v-icon-btn v-if="showForm" @click="$root.$emit('save-modality')" icon="mdi-content-save" />
+          </v-expand-x-transition>
+          <v-fade-transition>
+            <v-icon-btn v-if="showForm" @click="showForm = false" icon="mdi-minus" />
+            <v-icon-btn v-if="!showForm" @click="showForm = true" />
+          </v-fade-transition>
         </v-card-title>
         <v-divider />
           <v-list-item v-for="m in modalities">
             <v-row no-gutters>
-              {{ m.AET }}
+              {{ m.aet }} {{ `${m.address} - ${m.port}`}}
               <v-spacer />
               <v-icon-btn icon="mdi-wifi-strength-4" @click="echo(m)" />
             </v-row>
           </v-list-item>
+           <v-divider v-if="showForm" class="pb-4" />
+          <v-expand-transition >
+            <v-list-item v-if="showForm">
+              <ModalityForm v-if="showForm"/>
+            </v-list-item>
+          </v-expand-transition>
+
       </v-card>
     </v-col>
   </v-row>
@@ -24,10 +37,14 @@
 import { mapState } from 'vuex'
 import ModalityForm from "../components/ModalityForm";
 import { echo } from "../api/dicom";
+import VIconBtn from "../components/global/v-icon-btn";
 
 export default {
   name: "settings",
-  components: {ModalityForm},
+  components: {VIconBtn, ModalityForm},
+  data: () => ({
+    showForm: false
+  }),
   computed: {
     ...mapState('modalities', ['modalities'])
   },
