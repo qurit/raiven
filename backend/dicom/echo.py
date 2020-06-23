@@ -3,10 +3,11 @@ from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind as
 from pydicom.dataset import Dataset
 from pynetdicom import debug_logger
 
-from utils import Modality, Association
+from .utils import Modality, Association
 
 
 def echo(modality: Modality):
+    print(modality)
 
     with Association(modality, VerificationSOPClass) as assoc:
         status = assoc.send_c_echo()

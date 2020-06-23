@@ -35,7 +35,7 @@
     <v-divider v-if="showForm" class="pb-4" />
     <v-expand-transition >
       <v-list-item v-if="showForm">
-        <ModalityForm v-if="showForm"/>
+        <ModalityForm v-if="showForm" @saved="showForm = false" />
       </v-list-item>
     </v-expand-transition>
 
@@ -63,7 +63,9 @@ export default {
   },
   methods: {
     async echo(modality) {
+      this.$nuxt.$loading.start()
       await echo(this, modality)
+      this.$nuxt.$loading.finish()
     },
     deleteModality(modality) {
       this.$store.dispatch('modalities/deleteModality', modality)

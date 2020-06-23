@@ -14,7 +14,7 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-  loading: { color: '#fff' },
+  loading: { color: '#B15DFF' },
   buildModules: [
     '@nuxtjs/vuetify',
 

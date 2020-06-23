@@ -49,10 +49,13 @@ export default {
     title: 'Add Modality',
     modality: {
       aet: undefined,
-      address: '127.0.0.0',
-      port: '104'
+      address: undefined,
+      port: undefined
     }
   }),
+  created() {
+    this.reset()
+  },
   mounted() {
     this.$root.$on('save-modality', this.save)
   },
@@ -60,12 +63,14 @@ export default {
     save() {
       this.$v.$touch()
       if (!this.$v.$invalid) {
-        console.log('profit')
+        this.$emit('saved')
         this.$store.dispatch('modalities/addModality', this.modality)
+        this.reset()
       }
     },
+    reset() { this.modality = {aet: undefined, address: '127.0.0.1', port: 104 }},
     errors(field) {
-      return this.$validator.getErrors(field, this.$v.modality)
+        return this.$validator.getErrors(field, this.$v.modality)
     }
   }
 }
