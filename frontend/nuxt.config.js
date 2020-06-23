@@ -25,6 +25,8 @@ export default {
     '@nuxtjs/dotenv',
   ],
 
+  plugins: ['~plugins/GlobalComponents'],
+
   // Axios config
   axios: {
     baseURL:  process.env.API_URL
@@ -55,11 +57,20 @@ export default {
   },
 
   vuetify: {
-    customVariables: ['~/assets/variables.scss'],
-    preset: "vue-cli-plugin-vuetify-preset-rally/preset"
-  },
-
-  build: {
-    transpile: ["vue-cli-plugin-vuetify-preset-rally"],
+    customVariables: ['~/assets/variables.scss', '~/assets/overides.sass'],
+    treeShake: true,
+    theme: {
+      dark: true,
+      themes: {
+        dark: {
+          primary: '#1EB980',
+          secondary: '#045D56',
+          tertiary: '#FF6859',
+          quaternary: '#FFCF44',
+          quinary: '#B15DFF',
+          senary: '#72DEFF',
+        },
+      },
+    }
   }
 }
