@@ -3,7 +3,7 @@
     <v-col cols="6">
       <v-card>
         <v-card-title>
-          AET's
+          {{ title }}
           <v-spacer />
           <v-expand-x-transition>
             <v-icon-btn v-if="showForm" @click="$root.$emit('save-modality')" icon="mdi-content-save" />
@@ -14,20 +14,30 @@
           </v-fade-transition>
         </v-card-title>
         <v-divider />
-          <v-list-item v-for="m in modalities">
-            <v-row no-gutters>
-              {{ m.aet }} {{ `${m.address} - ${m.port}`}}
-              <v-spacer />
-              <v-icon-btn icon="mdi-wifi-strength-4" @click="echo(m)" />
-            </v-row>
-          </v-list-item>
-           <v-divider v-if="showForm" class="pb-4" />
+
+<!-- Modalities -->
+        <v-list dense flat>
+          <v-list-item-group v-model="selected">
+             <v-list-item v-for="(m, i) in modalities" :key="i" :ripple="false">
+              <v-row no-gutters>
+                {{ m.aet }} {{ `${m.address} - ${m.port}`}}
+                <v-spacer />
+                <v-icon-btn icon="mdi-wifi-strength-4" @click.stop.native="echo(m)" />
+                <v-expand-x-transition v-if="selected === i">
+                  <v-icon-btn icon="mdi-delete" color="tertiary" />
+                </v-expand-x-transition>
+              </v-row>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+
+<!-- Add Modality form -->
+        <v-divider v-if="showForm" class="pb-4" />
           <v-expand-transition >
             <v-list-item v-if="showForm">
               <ModalityForm v-if="showForm"/>
             </v-list-item>
           </v-expand-transition>
-
       </v-card>
     </v-col>
   </v-row>
@@ -43,7 +53,9 @@ export default {
   name: "settings",
   components: {VIconBtn, ModalityForm},
   data: () => ({
-    showForm: false
+    title: "Available Modalities",
+    showForm: false,
+    selected: undefined
   }),
   computed: {
     ...mapState('modalities', ['modalities'])
@@ -54,6 +66,9 @@ export default {
   methods: {
     async echo(modality) {
       await echo(this, modality)
+    },
+    delete(modality) {
+      this.$store.dispatch('modalities/deleteModality', modality)
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer :app="app" permanent width="200">
+  <v-navigation-drawer :app="app" permanent width="150">
     <v-img class="mx-auto mt-8"  src="logo.png" height="100" width="100" style="filter: grayscale(100%)"/>
 
     <v-list class="mt-16">

@@ -1,7 +1,7 @@
 from bson.json_util import dumps
 from bson.objectid import ObjectId
 
-from flask import Flask
+from flask import Flask, request
 from flask_restplus import Resource, Api
 from flask_pymongo import PyMongo
 from flask_cors import CORS
@@ -36,6 +36,10 @@ class Modalities(Resource):
     def get(self):
         print()
         return jsonify({'modalities': db.modalities.find()})
+
+    def post(self):
+        oid = db.modalities.insert_one(request.json).inserted_id
+        return jsonify(db.modalities.find_one({'_id': oid}))
 
 
 @api.route('/dicom/echo/<string:modality_id>')
