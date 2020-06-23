@@ -17,5 +17,18 @@ services:
           MONGO_APPLICATION_USERNAME: picom_admin
           MONGO_APPLICATION_PASSWORD: password
 
+    orthanc:
+        image: jodogne/orthanc
+        container_name: orthanc
+        command:
+          --verbose
+        ports:
+          - '8042:8042'
+          - '4242:4242'
+        volumes:
+          - ./orthanc.json:/etc/orthanc/orthanc.json:ro
+          - orthanc_data:/var/lib/orthanc/db/
+
 volumes:
   mongo_data:
+  orthanc_data:

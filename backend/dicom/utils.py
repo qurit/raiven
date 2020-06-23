@@ -1,31 +1,47 @@
+from dataclasses import dataclass
+
 from pynetdicom import AE
 
 
+class ApplicationEntity(AE):
+    def associate(self, address, port, **kwargs):
+        return super().associate(addr=address, port=port, **kwargs)
+
+
+@dataclass
 class Modality:
+    address: str
+    port: int
+    ae_title: str
+
+
+class Association:
     __association = None
 
-    def __init__(self, address: str, port: int, aet: str):
-        self.address = address
-        self.port = port
-        self.aet = aet
+    def __init__(self, modality: Modality, context, **kwargs):
+        self.modality = modality
+        self.context = context
+        self.kwargs = kwargs
 
-    def __enter__(self, context, **kwargs):
+    def __enter__(self):
         print('get assoc')
-        self.__association = self.__get_assoc(context, **kwargs)
+        self.__association = self.__get_assoc()
         return self.__association
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        print(exc_type, exc_val, exc_tb)
+        print('RELEASE')
         self.__association.release()
         self.__association = None
 
-    def __get_assoc(self, context, **kwargs):
-        ae = AE()
-        [ae.add_requested_context(c) for c in context] if type(context) is list else ae.add_requested_context(context)
+    def __get_assoc(self):
+        ae = ApplicationEntity()
+        [ae.add_requested_context(c) for c in self.context] if type(self.context) is list else ae.add_requested_context(self.context)
 
-        assoc = ae.associate(addr=self.address, port=self.port, ae_title=self.aet, **kwargs)
+        assoc = ae.associate(**vars(self.modality), **self.kwargs)
         assert assoc.is_established
         return assoc
+
+
 
 
 
