@@ -24,7 +24,7 @@
                 <v-spacer />
                 <v-icon-btn icon="mdi-wifi-strength-4" @click.stop.native="echo(m)" />
                 <v-expand-x-transition v-if="selected === i">
-                  <v-icon-btn icon="mdi-delete" color="tertiary" />
+                  <v-icon-btn icon="mdi-delete" color="tertiary" @click="deleteModality(m)" />
                 </v-expand-x-transition>
               </v-row>
             </v-list-item>
@@ -67,7 +67,7 @@ export default {
     async echo(modality) {
       await echo(this, modality)
     },
-    delete(modality) {
+    deleteModality(modality) {
       this.$store.dispatch('modalities/deleteModality', modality)
     }
   }

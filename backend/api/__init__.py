@@ -42,6 +42,21 @@ class Modalities(Resource):
         return jsonify(db.modalities.find_one({'_id': oid}))
 
 
+@api.route('/modalities/<string:modality_id>')
+class Modality(Resource):
+
+    def get(self):
+        return jsonify({'modalities': db.modalities.find()})
+
+    def delete(self, modality_id):
+        ret = db.modalities.delete_one({'_id': ObjectId(modality_id)})
+
+        if ret.deleted_count:
+            return 'Deleted', 200
+        else:
+            return 'Can Not Delete', 501
+
+
 @api.route('/dicom/echo/<string:modality_id>')
 class Echo(Resource):
 
