@@ -6,7 +6,7 @@
           {{ title }}
           <v-spacer />
           <v-expand-x-transition>
-            <v-icon-btn v-if="showForm" @click="$root.$emit('save-modality')" icon="mdi-content-save" />
+            <v-icon-btn v-if="showForm" @click="saveModality" icon="mdi-content-save" />
           </v-expand-x-transition>
           <v-fade-transition>
             <v-icon-btn v-if="showForm" @click="showForm = false" icon="mdi-minus" />
@@ -69,6 +69,9 @@ export default {
     },
     deleteModality(modality) {
       this.$store.dispatch('modalities/deleteModality', modality)
+    },
+    saveModality() {
+      this.$root.$emit('save-modality')
     }
   }
 }
