@@ -11,19 +11,18 @@ export const mutations = {
 }
 
 export const actions = {
-  async fetchModalities({ commit }) {
+  async fetchModalities({commit}) {
     commit('setModalities', await getModalities(this))
   },
-  async addModality({ commit }, modality) {
+  async addModality({commit}, modality) {
     commit('addModality', await addModality(this, modality))
   },
-  async deleteModality({ commit }, modality) {
+  async deleteModality({commit}, modality) {
     try {
       await deleteModality(this, modality)
       commit('removeModality', modality)
-      this.$toaster.toastSuccess("Modality Delete")
     } catch (e) {
-      this.$toaster.toastError("Modality Can Not Be Delete")
+      this.$toaster.toastError("Modality Can Not Be Deleted")
     }
-  },
+  }
 }
