@@ -15,21 +15,24 @@
     </v-card-title>
 
     <!-- Modalities -->
+
     <v-divider v-if="modalities.length"/>
-    <v-list v-if="modalities.length" dense flat>
-      <v-list-item-group v-model="selected">
-         <v-list-item v-for="(m, i) in modalities" :key="i" :ripple="false">
-          <v-row no-gutters>
-            {{ m.aet }} {{ `${m.address} - ${m.port}`}}
-            <v-spacer />
-            <v-icon-btn icon="mdi-wifi-strength-4" @click.stop.native="echo(m)" />
-            <v-expand-x-transition v-if="selected === i">
-              <v-icon-btn icon="mdi-delete" color="tertiary" @click="deleteModality(m)" />
-            </v-expand-x-transition>
-          </v-row>
-        </v-list-item>
-      </v-list-item-group>
-    </v-list>
+    <v-expand-transition>
+      <v-list v-if="modalities.length" dense flat>
+        <v-list-item-group v-model="selected">
+           <v-list-item v-for="(m, i) in modalities" :key="i" :ripple="false">
+            <v-row no-gutters>
+              {{ m.aet }} {{ `${m.address} - ${m.port}`}}
+              <v-spacer />
+              <v-icon-btn icon="mdi-wifi-strength-4" @click.stop.native="echo(m)" />
+              <v-expand-x-transition v-if="selected === i">
+                <v-icon-btn icon="mdi-delete" color="tertiary" @click="deleteModality(m)" />
+              </v-expand-x-transition>
+            </v-row>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-expand-transition>
 
     <!-- Add Modality form -->
     <v-divider v-if="showForm" class="pb-4" />
