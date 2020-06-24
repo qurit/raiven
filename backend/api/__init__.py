@@ -2,25 +2,29 @@ from bson.json_util import dumps
 from bson.objectid import ObjectId
 
 from flask import Flask, request
-from flask_restplus import Resource, Api
+from flask_restx import Resource, Api, fields
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 
 import dicom.utils
 from dicom.echo import echo
-
-from api.encoders import jsonify
-
 from config import BaseConfig
+
 config = BaseConfig()
 
 app = Flask(__name__)
 app.config.from_object(config)
+app.url_map.strict_slashes = False
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-api = Api(app)
+
 mongo = PyMongo(app)
 db = mongo.db
+
+from api.encoders import jsonify
+from api.routes.modalities import api as ns_api
+api = Api(app)
+api.add_namespace(ns_api)
 
 
 @api.route('/hello')
@@ -31,45 +35,4 @@ class HelloWorld(Resource):
         return {'hello': 'world'}
 
 
-@api.route('/modalities')
-class ModalitiesRoute(Resource):
-
-    def get(self):
-        print()
-        return jsonify({'modalities': db.modalities.find()})
-
-    def post(self):
-        oid = db.modalities.insert_one(request.json).inserted_id
-        return jsonify(db.modalities.find_one({'_id': oid}))
-
-
-@api.route('/modalities/<string:modality_id>')
-class ModalityRoute(Resource):
-
-    def get(self):
-        return jsonify({'modalities': db.modalities.find()})
-
-    def delete(self, modality_id):
-        ret = db.modalities.delete_one({'_id': ObjectId(modality_id)})
-
-        if ret.deleted_count:
-            return 'Deleted', 200
-        else:
-            return 'Can Not Delete', 501
-
-
-@api.route('/dicom/echo/<string:modality_id>')
-class Echo(Resource):
-
-    def get(self, modality_id):
-        oid = ObjectId(modality_id)
-        modality = db.modalities.find_one({'_id': oid}, {"_id": False})
-        print(modality)
-
-        try:
-            echo(dicom.utils.Modality(**modality))
-        except Exception as e:
-            print(e)
-            return 'Not implemented', 501
-        else:
-            return 'Ok', 200
+model = api.model('Model', { 'name': fields.String })
