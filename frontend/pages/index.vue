@@ -1,21 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="1">
-      <StatusDoughnut />
-    </v-col>
-    <v-col cols="1">
-      <StatusDoughnut />
-    </v-col>
-    <v-col cols="1">
-      <StatusDoughnut />
-    </v-col>
-    <v-col cols="1">
-      <StatusDoughnut />
-    </v-col>
-    <v-col cols="1">
-      <StatusDoughnut />
-    </v-col>
-    <v-col cols="1">
+    <v-col cols="4">
       <StatusDoughnut />
     </v-col>
   </v-row>
