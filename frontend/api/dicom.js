@@ -1,9 +1,3 @@
-const URL = '/dicom'
+const URL = '/modalities'
 
-export const echo = async ({ $axios, $toaster }, modality) => {
-  try {
-   return (await $axios.get(`${URL}/echo/${modality._id}`)).data
-  } catch (e) {
-    $toaster.toastError('Not Implemented Yet')
-  }
-}
+export const echo = async ({ $axios }, modality) => (await $axios.get(`${URL}/${modality._id}/echo`)).data

@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card :loading="isLoading" >
 
     <!-- Header -->
     <v-card-title>
@@ -13,10 +13,10 @@
         <v-icon-btn v-if="!showForm" @click="showForm = true" />
       </v-fade-transition>
     </v-card-title>
-    <v-divider />
 
     <!-- Modalities -->
-    <v-list dense flat>
+    <v-divider v-if="modalities.length"/>
+    <v-list v-if="modalities.length" dense flat>
       <v-list-item-group v-model="selected">
          <v-list-item v-for="(m, i) in modalities" :key="i" :ripple="false">
           <v-row no-gutters>
@@ -53,7 +53,8 @@ export default {
   data: () => ({
     title: "Available Modalities",
     showForm: false,
-    selected: undefined
+    selected: undefined,
+    isLoading: false
   }),
   computed: {
     ...mapState('modalities', ['modalities'])
@@ -63,9 +64,15 @@ export default {
   },
   methods: {
     async echo(modality) {
-      this.$nuxt.$loading.start()
-      await echo(this, modality)
-      this.$nuxt.$loading.finish()
+      this.isLoading = true
+      try {
+        await echo(this, modality)
+        this.$toaster.toastSuccess('Echo Succeeded')
+      } catch (e) {
+        this.$toaster.toastError('Echo Failed')
+      } finally {
+        this.isLoading = false
+      }
     },
     deleteModality(modality) {
       this.$store.dispatch('modalities/deleteModality', modality)
