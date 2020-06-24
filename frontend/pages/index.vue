@@ -1,19 +1,30 @@
 <template>
   <v-row>
-    <v-col cols="6">
-      <v-card>
-        <v-card-title>AETS</v-card-title>
-        <v-divider />
-        sdj
-      </v-card>
+    <v-col cols="1">
+      <StatusDoughnut />
     </v-col>
-    <v-col>PIPELINE</v-col>
-    <v-btn @click="test">API</v-btn>
+    <v-col cols="1">
+      <StatusDoughnut />
+    </v-col>
+    <v-col cols="1">
+      <StatusDoughnut />
+    </v-col>
+    <v-col cols="1">
+      <StatusDoughnut />
+    </v-col>
+    <v-col cols="1">
+      <StatusDoughnut />
+    </v-col>
+    <v-col cols="1">
+      <StatusDoughnut />
+    </v-col>
   </v-row>
 </template>
 
 <script>
+import StatusDoughnut from "../components/dashboard/StatusDoughnut";
 export default {
+  components: {StatusDoughnut},
   methods: {
     test() {
       this.$axios.post('/')
