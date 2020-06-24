@@ -2,6 +2,9 @@ require('dotenv').config();
 
 export default {
   mode: 'spa',
+  server: {
+    host: '0.0.0.0'
+  },
   head: {
     titleTemplate: '%s - ' + process.env.npm_package_name,
     title: process.env.npm_package_name || '',

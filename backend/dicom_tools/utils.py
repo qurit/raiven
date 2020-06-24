@@ -43,6 +43,7 @@ class Association:
         [ae.add_requested_context(c) for c in self.context] if type(self.context) is list else ae.add_requested_context(self.context)
 
         assoc = ae.associate(**vars(self.modality), **self.kwargs)
+        print('ESTABLISHED: ', assoc.is_established)
         assert assoc.is_established
         return assoc
 
