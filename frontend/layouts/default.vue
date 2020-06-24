@@ -1,7 +1,8 @@
 <template>
   <v-app>
 
-    <NavDrawer app />
+    <TabBar v-if="$vuetify.breakpoint.mdAndDown" />
+    <NavDrawer v-else app />
     <Toast />
 
     <v-content>
@@ -15,7 +16,11 @@
 <script>
   import NavDrawer from "../components/NavDrawer";
   import Toast from "../components/generic/Toast";
+  import TabBar from "../components/TabBar";
   export default {
-    components: {Toast, NavDrawer}
+    components: {TabBar, Toast, NavDrawer},
+    created() {
+      console.log(this.$vuetify.breakpoint)
+    }
   }
 </script>
