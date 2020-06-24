@@ -3,6 +3,7 @@ version: '3.7'
 services:
     mongo:
         image: mongo
+        container_name: mongodb
         ports:
           - '27017:27017'
         volumes:
@@ -20,14 +21,49 @@ services:
     orthanc:
         image: jodogne/orthanc
         container_name: orthanc
-        command:
-          --verbose
+        command: /run/secrets/ --verbose
         ports:
           - '8042:8042'
           - '4242:4242'
+        secrets:
+          - orthanc.json
         volumes:
-          - ./orthanc.json:/etc/orthanc/orthanc.json:ro
           - orthanc_data:/var/lib/orthanc/db/
+
+    rabbit:
+      image: rabbitmq
+      container_name: rabbitmq
+      ports:
+        - 5672:5672
+
+    worker:
+      build: ./backend
+      command: dramatiq api
+      depends_on:
+        - rabbit
+      volumes:
+        - ./backend:/backend
+
+    api:
+      build: ./backend
+      command: python wsgi.py
+      depends_on:
+        - worker
+      ports:
+        - '5000:5000'
+      volumes:
+        - ./backend:/backend
+
+    frontend:
+      build: ./frontend
+      ports:
+        - '3000:3000'
+      volumes:
+        - ./frontend:/frontend
+
+secrets:
+  orthanc.json:
+    file: orthanc.json
 
 volumes:
   mongo_data:

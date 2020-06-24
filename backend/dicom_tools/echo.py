@@ -3,7 +3,7 @@ from pynetdicom.sop_class import PatientRootQueryRetrieveInformationModelFind as
 from pydicom.dataset import Dataset
 from pynetdicom import debug_logger
 
-from .utils import Modality, Association
+from dicom_tools.utils import Modality, Association
 
 
 def echo(modality: Modality):
@@ -37,11 +37,4 @@ if __name__ == '__main__':
     m = Modality('127.0.0.1', 4242, 'ORTHANC')
     echo(m)
 
-    ds = Dataset()
-    ds.PatientID = ''
-    # ds.StudyInstanceUID = ''
-    # ds.StudyDate = study_date
-    ds.QueryRetrieveLevel = 'PATIENT'
-    r = execute_query(m, ds)
-    print(r)
 

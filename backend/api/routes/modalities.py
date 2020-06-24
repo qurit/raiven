@@ -8,12 +8,12 @@ from bson.errors import InvalidId
 from api.encoders import jsonify
 from api import db
 
-from dicom.utils import Modality
-from dicom.echo import echo
+from dicom_tools.utils import Modality
+from dicom_tools.echo import echo
 
 api = Namespace('modalities', description='Modality Interaction')
 
-modality = api.model('Modality', {'_id': fields.String(readonly=True), 'aet': fields.String, 'port': fields.Integer, 'address': fields.String})
+modality = api.model('Modality', {'_id': fields.String, 'aet': fields.String, 'port': fields.Integer, 'address': fields.String})
 modality_list = api.model('Modality List', {'modalities': fields.List(fields.Nested(modality))})
 
 
@@ -66,10 +66,5 @@ class ModalityEchoRoute(Resource):
         modality = db.modalities.find_one({'_id': oid}, {"_id": False})
         print(modality)
 
-        try:
-            echo(Modality(**modality))
-        except Exception as e:
-            print(e)
-            return "Can't Reach Server", 501
-        else:
-            return 'Ok', 200
+        echo(Modality(**modality))
+

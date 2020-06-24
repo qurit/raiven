@@ -41,7 +41,7 @@ export default {
   validations: {
     modality: {
       aet: {required},
-      address: {required, ipAddress},
+      address: {required},
       port: {required, integer}
     }
   },
