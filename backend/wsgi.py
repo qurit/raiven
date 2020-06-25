@@ -1,4 +1,9 @@
-from api import socketio, app
+from api import socketio, config, app as application
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    opts = {'host': config.HOST, 'port': config.PORT, 'debug': True}
+
+    if config.WEB_SOCKETS_ENABLED:
+        socketio.run(application, **opts)
+    else:
+        application.run(**opts)
