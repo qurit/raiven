@@ -1,5 +1,7 @@
 class BaseConfig(object):
 
+    SECRET_KEY = 'replace_me!'
+
     # DB SETTINGS
     MONGO_USER = 'picom_admin'
     MONGO_PASSWORD = 'password'
