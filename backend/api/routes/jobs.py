@@ -6,7 +6,7 @@ from bson.objectid import ObjectId
 from bson.errors import InvalidId
 
 from api.encoders import jsonify
-from api import db
+from api import db, socketio
 
 from api.models import job
 from api.tasks.hello import count_words
@@ -21,6 +21,7 @@ class JobsRoute(Resource):
 
     @api.response(200, 'Ok', job_list_model)
     def get(self):
+        socketio.emit('my_response', {'data': 'First emit'})
         return jsonify({'jobs': db.jobs.find()})
 
     @api.expect(job_list_model)

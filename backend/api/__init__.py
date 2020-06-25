@@ -21,7 +21,7 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 mongo = PyMongo(app)
 db = mongo.db
 
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*",  message_queue=config.RABBITMQ_URI)
 
 from api.routes.modalities import api as ns_api
 from api.routes.jobs import api as ns_jobs
@@ -48,6 +48,7 @@ def test_disconnect():
 def handle_message(message):
     print(message)
     print('received message: ', message)
+    emit('my response', {'data': str(datetime.datetime.utcnow())})
 
 
 
