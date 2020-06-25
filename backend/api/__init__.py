@@ -42,6 +42,12 @@ def test_disconnect():
     print('Client disconnected')
 
 
+@socketio.on('message')
+def handle_message(message):
+    print(message)
+    print('received message: ', message)
+
+
 
 
 
