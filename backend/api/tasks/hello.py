@@ -1,7 +1,7 @@
 import time
 import dramatiq
 
-from api import db
+from api import db, socketio
 
 
 def audit(func):
@@ -21,4 +21,5 @@ def audit(func):
 @audit
 def count_words():
     for x in range(0, 3):
-        time.sleep(5)
+        time.sleep(1)
+        socketio.emit('my response', 'ok', broadcast=True)
