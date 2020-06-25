@@ -39,7 +39,6 @@ services:
     worker:
       build: ./backend
       command: dramatiq api --watch .
-      restart: on-failure
       depends_on:
         - rabbit
       environment:

@@ -16,14 +16,19 @@ class BaseConfig(object):
     MONGO_DB = 'picom'
 
     # SOCKET IO
-    WEB_SOCKETS_ENABLED = False
+    WEB_SOCKETS_ENABLED = True
 
     # PROCESSING QUEUE
     RABBITMQ_HOST = 'localhost'
+    RABBITMQ_PORT = 5672
 
     @property
     def MONGO_URI(self):
         return f'mongodb://{self.MONGO_USER}:{self.MONGO_PASSWORD}@{self.MONGO_HOST}:{self.MONGO_PORT}/{self.MONGO_DB}'
+
+    @property
+    def RABBITMQ_URI(self):
+        return f'amqp://{self.RABBITMQ_HOST}'
 
 
 class DockerConfig(BaseConfig):
