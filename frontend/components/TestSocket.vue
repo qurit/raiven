@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     getMessage() {
-        this.socket.emit('getMessage', { id: 'abc123' }, (resp) => {
+        this.socket.emit('message', { data: 'abc123' }, (resp) => {
         this.messageRxd = resp
       })
     }
