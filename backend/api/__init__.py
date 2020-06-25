@@ -1,3 +1,6 @@
+# import eventlet
+# eventlet.monkey_patch()
+
 from config import init_config
 config = init_config()
 
@@ -21,7 +24,8 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 mongo = PyMongo(app)
 db = mongo.db
 
-socketio = SocketIO(app, cors_allowed_origins="*",  message_queue=config.RABBITMQ_URI)
+# socketio = SocketIO(app, cors_allowed_origins="*",  message_queue=config.RABBITMQ_URI)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 from api.routes.modalities import api as ns_api
 from api.routes.jobs import api as ns_jobs
