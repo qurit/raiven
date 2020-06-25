@@ -26,7 +26,7 @@ class JobsRoute(Resource):
     @api.expect(job_list_model)
     def post(self):
         msg = count_words.send()
-        _id = db.jobs.insert_one({'pid': msg.message_id, 'status': 'Queued', 'info': str(count_words)}).inserted_id
+        _id = db.jobs.insert_one({'pid': msg.message_id, 'status': 'Queued', 'info': '15 Second Test Func'}).inserted_id
         return jsonify(db.jobs.find_one({'_id': _id}))
 
     @api.response(200, 'Ok')
