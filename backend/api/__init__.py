@@ -1,6 +1,7 @@
 import dramatiq
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
-dramatiq.set_broker(RabbitmqBroker(host="rabbitmq"))
+from dramatiq.middleware import CurrentMessage
+dramatiq.set_broker(RabbitmqBroker(host="rabbitmq", middleware=[CurrentMessage()]))
 
 from bson.json_util import dumps
 from bson.objectid import ObjectId
@@ -30,18 +31,14 @@ from api.routes.modalities import api as ns_api
 api = Api(app)
 api.add_namespace(ns_api)
 
-
-@dramatiq.actor
-def count_words(url):
-    print(f"There are ${url}.")
+from api.tasks.hello import count_words
 
 
 @api.route('/hello')
 class HelloWorld(Resource):
-
     def get(self):
-        mongo.db.modalities.insert_one({'aet': 'MIT', 'port': 4000, 'address': 'localhost'})
-        count_words.send('wtkns.dev')
+        msg = count_words.send()
+        db.jobs.insert_one({'pid': msg.message_id, 'status': 'Queued', 'info': str(count_words)})
         return {'hello': 'world'}
 
 

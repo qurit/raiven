@@ -1,0 +1,11 @@
+{
+  "Name" : "Orthanc in Docker",
+  "RemoteAccessAllowed" : true,
+  "DicomServerEnabled": true,
+  "DicomPort": 4242,
+  "AuthenticationEnabled": false,
+
+  "DicomModalities" : {
+    "pynet" : ["PYNETDICOM", "127.1.1.1", 4242]
+  }
+}

@@ -38,7 +38,7 @@ services:
 
     worker:
       build: ./backend
-      command: dramatiq api
+      command: dramatiq api --watch .
       depends_on:
         - rabbit
       volumes:
