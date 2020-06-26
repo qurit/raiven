@@ -31,6 +31,9 @@ api = Api(app)
 from api import routes
 from api.sockets import test
 
+from docker import DockerClient
+docker = DockerClient(config.DOCKER_URI)
+
 
 @app.route('/test')
 def test():

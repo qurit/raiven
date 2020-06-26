@@ -24,8 +24,10 @@ class BaseConfig(object):
     RABBITMQ_HOST = LOCALHOST
     RABBITMQ_PORT = 5672
     IS_WORKER = False
-
     ASYNC_MODE = 'eventlet'
+
+    # Docker
+    DOCKER_URI = 'tcp://localhost:2375'
 
     @property
     def MONGO_URI(self):
