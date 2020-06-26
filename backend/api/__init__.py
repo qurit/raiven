@@ -1,20 +1,19 @@
-# import eventlet
-# eventlet.monkey_patch()
-
 from config import init_config
 config = init_config()
+
+# if not config.IS_WORKER:
+import eventlet
+eventlet.monkey_patch()
 
 import dramatiq
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 from dramatiq.middleware import CurrentMessage
 dramatiq.set_broker(RabbitmqBroker(host=config.RABBITMQ_HOST, middleware=[CurrentMessage()]))
 
-from flask import Flask
-from flask_restx import Resource, Api, fields
+from flask import Flask, render_template
+from flask_restx import Api
 from flask_pymongo import PyMongo
 from flask_cors import CORS
-from flask_socketio import SocketIO, emit
-
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -24,37 +23,15 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 mongo = PyMongo(app)
 db = mongo.db
 
-# socketio = SocketIO(app, cors_allowed_origins="*",  message_queue=config.RABBITMQ_URI)
-socketio = SocketIO(app, cors_allowed_origins="*")
+from api.sockets import init_socketio
 
-from api.routes.modalities import api as ns_api
-from api.routes.jobs import api as ns_jobs
-
+socketio = init_socketio()
 api = Api(app)
-api.add_namespace(ns_api)
-api.add_namespace(ns_jobs)
 
-import datetime
-
-
-@socketio.on('connect')
-def test_connect():
-    print('Client Connected')
-    emit('my response', {'data': str(datetime.datetime.utcnow())})
+from api import routes
+from api.sockets import test
 
 
-@socketio.on('disconnect')
-def test_disconnect():
-    print('Client disconnected')
-
-
-@socketio.on('message')
-def handle_message(message):
-    print(message)
-    print('received message: ', message)
-    emit('my response', {'data': str(datetime.datetime.utcnow())})
-
-
-
-
-
+@app.route('/test')
+def test():
+    return render_template('index.html', async_mode=config.ASYNC_MODE)

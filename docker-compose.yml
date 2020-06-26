@@ -42,7 +42,7 @@ services:
       depends_on:
         - rabbit
       environment:
-        FLASK_ENV: docker
+        FLASK_ENV: worker
       volumes:
         - ./backend:/backend
 
@@ -58,14 +58,14 @@ services:
       volumes:
         - ./backend:/backend
 
-    frontend:
-      build: ./frontend
-      ports:
-        - '3000:3000'
-      environment:
-        NUXT_HOST: '0.0.0.0'
-      volumes:
-        - ./frontend:/frontend
+#    frontend:
+#      build: ./frontend
+#      ports:
+#        - '3000:3000'
+#      environment:
+#        NUXT_HOST: '0.0.0.0'
+#      volumes:
+#        - ./frontend:/frontend
 
 secrets:
   orthanc.json:
