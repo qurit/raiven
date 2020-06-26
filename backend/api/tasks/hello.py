@@ -20,7 +20,7 @@ def audit(func):
 @dramatiq.actor
 @audit
 def count_words():
-    for x in range(0, 3):
-        time.sleep(1)
-        socketio.emit('my_response', {'data': 'Background event', 'count': x}, namespace='/test')
+    for x in range(0, 100):
+        time.sleep(.1)
+        socketio.emit('my_response', {'data': 'Background event', 'count': x, 'progress': x / 100}, namespace='/test')
 

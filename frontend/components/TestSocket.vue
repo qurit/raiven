@@ -4,7 +4,7 @@
       <v-btn @click="getMessage" outlined color="primary">TEST SOCKET</v-btn>
     </v-row>
     <SocketStatus :status="socketStatus" />
-
+    <v-progress-linear v-if="messageRxd" :value="messageRxd.count + 1" />
     {{ messageRxd }}
   </v-sheet>
 </template>
