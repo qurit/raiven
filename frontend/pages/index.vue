@@ -1,15 +1,19 @@
 <template>
-  <v-row justify="start">
-    <v-col cols="4">
-      <StatusDoughnut />
-    </v-col>
-    <v-col cols="2">
-      <TestSocket />
-    </v-col>
-    <v-col cols="6">
-      <TaskCRUD />
-    </v-col>
-  </v-row>
+  <div>
+    <v-row justify="start">
+      <v-col cols="2">
+        <StatusDoughnut />
+      </v-col>
+      <v-col>
+        <TestSocket />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="6">
+        <TaskCRUD />
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>
