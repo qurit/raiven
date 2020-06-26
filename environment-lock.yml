@@ -85,5 +85,3 @@ dependencies:
     - websocket-client==0.57.0
     - zope-event==4.4
     - zope-interface==5.1.0
-prefix: F:\Programs\Conda\envs\picom
-
