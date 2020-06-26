@@ -30,7 +30,7 @@ export default {
   ],
   io: {
     sockets: [{
-      url: 'http://localhost:5000'
+      url: 'http://localhost:5000/test'
     }]
   },
 

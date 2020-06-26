@@ -5,6 +5,7 @@ from api import socketio
 
 @socketio.on('my_event', namespace='/test')
 def test_message(message):
+    print('RECEIVED: ', message['data'])
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my_response',
          {'data': message['data'], 'count': session['receive_count']})

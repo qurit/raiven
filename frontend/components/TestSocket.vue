@@ -3,7 +3,7 @@
     <v-row no-gutters justify="center" align="center" style="height: inherit">
       <v-btn @click="getMessage" outlined color="primary">TEST SOCKET</v-btn>
     </v-row>
-    <SocketStatus :status="socketStatus"></SocketStatus>
+    <SocketStatus :status="socketStatus" />
 
     {{ messageRxd }}
   </v-sheet>
@@ -14,22 +14,29 @@ import SocketStatus from 'nuxt-socket-io/components/SocketStatus.vue'
 
 export default {
   name: "TestSocket",
+  components: {
+    SocketStatus
+  },
   data() {
     return {
       socketStatus: {}, // simply define this, and it will be populated with the status
-      badStatus: {}, // Status will be populated here if "statusProp == 'badStatus'"
       messageRxd: 'no'
     }
   },
   mounted() {
-    this.socket = this.$nuxtSocket({name: 'goodSocket' })
-    this.socket.on('my response', (msg, cb) => {
-      this.messageRxd = msg.data
-    })
+    this.socket = this.$nuxtSocket({})
+    this.socket.on('my_response', (msg) => {
+      console.log(msg)
+      this.messageRxd = msg
+    });
+
+
   },
   methods: {
     getMessage() {
-      this.socket.emit('message', { id: 'abc123' })
+      this.socket.emit('my_event', {data: 'hello from nuxt'}, (resp) => {
+        this.messageRxd = resp
+      })
     }
   }
 }
