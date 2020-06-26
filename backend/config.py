@@ -8,7 +8,14 @@ class BaseConfig(object):
     HOST = LOCALHOST
     PORT = 5000
 
-    SECRET_KEY = 'replace_me!'
+    # LDAP CONFIG
+    LDAP_HOST = '10.9.2.37'
+    LDAP_PORT = 389
+    LDAP_USE_SSL = False
+    LDAP_USERNAME_BASE = 'CRC\\'
+    LDAP_BASE_DN = 'DC=BCCRC,DC=CA'
+    LDAP_TEST_USR = 'crcldapviewer'
+    LDAP_TEST_PW = 'LD@P2020pw!'
 
     # DB SETTINGS
     MONGO_USER = 'picom_admin'
@@ -16,6 +23,12 @@ class BaseConfig(object):
     MONGO_HOST = LOCALHOST
     MONGO_PORT = 27017
     MONGO_DB = 'picom'
+
+    # AUTH
+    SECRET_KEY = 'replace_me!'
+    AUTH_ENABLED = True
+    BASIC_AUTH_FORCE = True
+    TOKEN_TTL = 3600 * 24 * 7  # 12 hours before the token expires
 
     # SOCKET IO
     WEB_SOCKETS_ENABLED = True
