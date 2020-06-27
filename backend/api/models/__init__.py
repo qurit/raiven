@@ -4,22 +4,13 @@ from flask_restx import fields, Model
 from api import db
 
 
-def collection(cls):
-
-    def save(self):
-        return self.company
-
-    setattr(cls, '__table__', f'{cls.__name__}s')
-    setattr(cls, 'save', save)
-    return cls
-
-
 class BaseModel:
     def __init__(self, **kwargs):
         [self.__setattr__(k, v) for k, v in kwargs.items()]
 
-    def save(self):
-        return self.__collection__.insert_one(vars(self), {})
+    @property
+    def in_db(self):
+        return hasattr(self, '_id') and self._id
 
     @classmethod
     def model(cls, name='Base'):
@@ -29,6 +20,30 @@ class BaseModel:
     def list_model(cls):
         m = cls.model()
         return Model(f'{m.name} list', {f'{m.name}s': fields.List(fields.Nested(m))})
+
+
+def collection(cls: BaseModel) -> BaseModel:
+    """
+    Decorator which add mongo db utility functions to model
+    :param cls: class to make awesome
+    :return: super charged class
+    """
+
+    def insert(obj):
+        assert not obj.in_db, 'OBJECT IS ALREADY IN DB'
+        _id = obj.__collection__.insert_one(vars(obj)).inserted_id
+        setattr(obj, '_id', _id)
+        return obj
+
+    def update(obj):
+        assert obj.in_db, 'OBJECT IS NOT IN DB'
+        obj.__collection__.replace_one({'_id': obj._id}, vars(obj))
+
+    setattr(cls, '__collection__', db[f'{cls.__name__.lower()}s'])
+    setattr(cls, 'insert', insert)
+    setattr(cls, 'update', update)
+
+    return cls
 
 
 @collection
@@ -58,7 +73,7 @@ class User(BaseModel):
 
         return model
 
-
+@collection
 class Job(BaseModel):
 
     def __init__(self, pid=None, status=None, info=None, **kwargs):
@@ -78,32 +93,3 @@ class Job(BaseModel):
         })
 
         return model
-
-
-job = (
-    'Job',
-    {
-        '_id': fields.String,
-        'pid': fields.String,
-        'status': fields.String,
-        'info': fields.String,
-    }
-)
-
-user = (
-    'User',
-    {
-        '_id': fields.String,
-        'username': fields.String,
-        'name': fields.String,
-        'title': fields.String,
-        'department': fields.String,
-        'company': fields.String,
-        'last_seen': fields.String,
-    }
-)
-
-if __name__ == '__main__':
-    # job = Job('xyz', status='Queued', info='15 Second Test Func')
-    # User().save()
-    print(User().save())

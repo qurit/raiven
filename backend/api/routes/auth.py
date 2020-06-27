@@ -1,13 +1,10 @@
 from flask import request
 from flask_restx import Resource, Namespace, fields
 
-from api.models import user as user_model
+from api.models import User
 from api.auth import verify_password
 
 api = Namespace('user', description='User Auth')
-user_model = api.model(*user_model)
-user_list_model = api.model('Job List', {'jobs': fields.List(fields.Nested(user_model))})
-
 login_model = api.model('Auth', {'username': fields.String, 'password': fields.String})
 
 
