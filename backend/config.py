@@ -26,7 +26,7 @@ class BaseConfig(object):
 
     # AUTH
     SECRET_KEY = 'replace_me!'
-    AUTH_ENABLED = True
+    AUTH_ENABLED = False
     BASIC_AUTH_FORCE = True
     TOKEN_TTL = 3600 * 24 * 7  # 12 hours before the token expires
 
