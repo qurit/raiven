@@ -5,6 +5,8 @@ from bson.objectid import ObjectId
 from werkzeug import Response
 from pymongo.cursor import Cursor
 
+from api.models import BaseModel
+
 
 class MongoJsonEncoder(json.JSONEncoder):
     def default(self, obj):

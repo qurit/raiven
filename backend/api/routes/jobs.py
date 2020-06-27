@@ -17,19 +17,16 @@ api = Namespace('jobs', description='Background Tasks')
 @api.route('/')
 class JobsRoute(Resource):
 
-    @api.response(200, 'Ok', Job.list_model())
+    @api.response(200, 'Ok')
     def get(self):
         socketio.emit('my_response', {'data': 'First emit'})
         return jsonify({'jobs': db.jobs.find()})
 
-    @api.expect(Job.list_model())
+    # @api.expect(Job.model())
     def post(self):
-        # msg = count_words.send()
-        job = Job('test', status='Queued', info='15 Second Test Func')
-        print('Job', vars(job))
-        _id = db.jobs.insert_one(vars(job)).inserted_id
-
-        return jsonify(db.jobs.find_one({'_id': _id}))
+        count_words.send()
+        job = Job('test',  status='Queued', info='15 Second Test Func').insert()
+        return jsonify(vars(job))
 
     @api.response(200, 'Ok')
     def delete(self):
