@@ -10,6 +10,7 @@ def audit(func):
 
         print(f'TASK {message.message_id} IS NOW RUNNING')
         db.jobs.update_one({'pid': message.message_id}, {'$set': {'status': 'Running'}})
+        print(list(db.jobs.find({})))
         func()
         db.jobs.update_one({'pid': message.message_id}, {'$set': {'status': 'Finished'}})
         print(f'TASK {message.message_id} IS NOW FINISHED')
@@ -20,7 +21,8 @@ def audit(func):
 @dramatiq.actor
 @audit
 def count_words():
-    for x in range(0, 10):
-        time.sleep(10)
-        socketio.emit('my_response', {'data': 'Background event', 'count': x, 'progress': x / 10}, namespace='/test')
+    print('RUNNING')
+    # for x in range(0, 10):
+    #     time.sleep(10)
+    #     socketio.emit('my_response', {'data': 'Background event', 'count': x, 'progress': x / 10}, namespace='/test')
 
