@@ -29,24 +29,25 @@ def collection(cls: BaseModel) -> BaseModel:
     """
 
     def in_db(obj):
-        res = self.__collection__.find({'_id': obj.get_id()})
-        print(res)
+        res = obj.__collection__.find_one({'_id': obj.get_id()})
+        return res
 
     def insert(obj):
-        assert not obj.in_db, 'OBJECT IS ALREADY IN DB'
         _id = obj.__collection__.insert_one(vars(obj)).inserted_id
         setattr(obj, '_id', _id)
         return obj
 
     def update(obj):
-        assert obj.in_db, 'OBJECT IS NOT IN DB'
         obj.__collection__.replace_one({'_id': obj._id}, vars(obj))
 
+    def delete(obj):
+        return obj.__collection__.delete_one({'_id': obj._id}).deleted_count
 
     setattr(cls, '__collection__', db[f'{cls.__name__.lower()}s'])
     setattr(cls, 'in_db', in_db)
     setattr(cls, 'insert', insert)
     setattr(cls, 'update', update)
+    setattr(cls, 'delete', delete)
 
     return cls
 

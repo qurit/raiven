@@ -37,7 +37,7 @@ def collection(model=None):
     def decorator(func):
         assert type(model.__collection__) is wrappers.Collection
         assert model.__collection__.name == f'{model.__name__.lower()}s'
-        return func()
+        return func
     return decorator
 
 
@@ -46,3 +46,20 @@ def test_user():
     user = models.User(username='Adam')
     assert user, 'Should not be None'
     assert not user.get_id()
+    assert not user.in_db()
+
+    user.insert()
+    assert user.get_id()
+    assert user.in_db()
+    assert models.User.__collection__.find_one({'_id': user.get_id()})
+
+    user.username = "Joe"
+    user.company = "Google"
+    user.update()
+    assert models.User.__collection__.find_one({'_id': user.get_id(), 'username': 'Joe', 'company': 'Google'})
+
+    assert user.delete()
+    assert not models.User.__collection__.find_one({'_id': user.get_id()})
+
+
+
