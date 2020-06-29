@@ -7,7 +7,8 @@ def test_mongo_config():
     assert type(mongo) is flask_pymongo.PyMongo
     assert type(mongo.cx) is flask_pymongo.MongoClient
 
-    assert mongo.cx.HOST == config.MONGO_HOST
+    if config.MONGO_HOST != '127.0.0.1':
+        assert mongo.cx.HOST == config.MONGO_HOST
     assert mongo.cx.PORT == config.MONGO_PORT
 
 

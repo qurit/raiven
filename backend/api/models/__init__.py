@@ -8,9 +8,8 @@ class BaseModel:
     def __init__(self, **kwargs):
         [self.__setattr__(k, v) for k, v in kwargs.items()]
 
-    @property
-    def in_db(self):
-        return hasattr(self, '_id') and self._id
+    def get_id(self):
+        return self._id if hasattr(self, '_id') else None
 
     @classmethod
     def model(cls, name='Base'):
@@ -29,6 +28,10 @@ def collection(cls: BaseModel) -> BaseModel:
     :return: super charged class
     """
 
+    def in_db(obj):
+        res = self.__collection__.find({'_id': obj.get_id()})
+        print(res)
+
     def insert(obj):
         assert not obj.in_db, 'OBJECT IS ALREADY IN DB'
         _id = obj.__collection__.insert_one(vars(obj)).inserted_id
@@ -39,7 +42,9 @@ def collection(cls: BaseModel) -> BaseModel:
         assert obj.in_db, 'OBJECT IS NOT IN DB'
         obj.__collection__.replace_one({'_id': obj._id}, vars(obj))
 
+
     setattr(cls, '__collection__', db[f'{cls.__name__.lower()}s'])
+    setattr(cls, 'in_db', in_db)
     setattr(cls, 'insert', insert)
     setattr(cls, 'update', update)
 
@@ -72,6 +77,7 @@ class User(BaseModel):
         })
 
         return model
+
 
 @collection
 class Job(BaseModel):
