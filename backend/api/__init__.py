@@ -23,6 +23,9 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 mongo = PyMongo(app)
 db = mongo.db
 
+from docker import DockerClient
+docker = DockerClient(config.DOCKER_URI)
+
 from api.sockets import init_socketio
 
 socketio = init_socketio()
@@ -30,9 +33,6 @@ api = Api(app)
 
 from api import routes
 from api.sockets import test
-
-from docker import DockerClient
-docker = DockerClient(config.DOCKER_URI)
 
 
 @app.route('/test')

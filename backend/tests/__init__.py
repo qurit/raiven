@@ -1,1 +1,1 @@
-from api import app, mongo, db, config
+from api import app, mongo, db, config, docker

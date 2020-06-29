@@ -40,7 +40,7 @@ class BaseConfig(object):
     ASYNC_MODE = 'eventlet'
 
     # Docker
-    DOCKER_URI = 'tcp://localhost:2375'
+    DOCKER_URI = 'http://127.0.0.1:2375'
 
     @property
     def MONGO_URI(self):
