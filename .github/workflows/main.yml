@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker API Image CI
 
 on:
   push:
@@ -11,21 +11,11 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-      - name: Change work dir to backend
-        working-directory: backend
       - name: Build the Backend
         uses: docker/build-push-action@v1
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+          dockerfile: backend/Dockerfile
           registry: docker.pkg.github.com
           repository: qurit/picom/api
-      - name: Change work dir to frontend
-        working-directory: ../frontend
-      - name: Build the frontend
-        uses: docker/build-push-action@v1
-        with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: docker.pkg.github.com
-          repository: qurit/picom/frontend
