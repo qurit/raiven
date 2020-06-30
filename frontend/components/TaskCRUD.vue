@@ -11,11 +11,11 @@
       />
       <v-icon-btn
         @click="$store.dispatch('jobs/deleteAllJobs')"
-        icon="mdi-delete"
+        delete
       />
       <v-icon-btn
         @click="$store.dispatch('jobs/fetchJobs')"
-        icon="mdi-refresh"
+        refresh
       />
     </v-card-title>
     <v-data-table
