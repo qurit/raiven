@@ -14,9 +14,9 @@ jobs:
       - name: Build the Backend
         uses: docker/build-push-action@v1
         with:
+          path: ./backend
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
           dockerfile: backend/Dockerfile
-          path: backend
           repository: qurit/picom/api
