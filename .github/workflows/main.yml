@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-      - name: Change the working directory
-        run: cd backend && ls
       - name: Build the Backend
         uses: docker/build-push-action@v1
         with:
@@ -20,4 +18,5 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
           dockerfile: backend/Dockerfile
+          path: backend
           repository: qurit/picom/api
