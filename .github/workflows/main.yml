@@ -1,5 +1,10 @@
 name: Docker API Image CI
 
+defaults:
+  run:
+    working-directory: backend
+
+
 on:
   push:
     branches: [ master ]
