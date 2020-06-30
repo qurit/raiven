@@ -1,10 +1,5 @@
 name: Docker API Image CI
 
-defaults:
-  run:
-    working-directory: backend
-
-
 on:
   push:
     branches: [ master ]
@@ -16,11 +11,12 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+      - name: Change the working directory
+        run: cd backend
       - name: Build the Backend
         uses: docker/build-push-action@v1
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          dockerfile: backend/Dockerfile
           registry: docker.pkg.github.com
           repository: qurit/picom/api
