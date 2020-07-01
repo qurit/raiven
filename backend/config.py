@@ -53,7 +53,7 @@ class BaseConfig(object):
 class DockerConfig(BaseConfig):
     HOST = '0.0.0.0'
     MONGO_HOST = 'picom_mongo'
-    RABBITMQ_HOST = 'picom_rabbitmq'
+    RABBITMQ_HOST = 'picom_rabbit'
 
 
 class WorkerConfig(DockerConfig):
@@ -68,10 +68,11 @@ def init_config():
     }
 
     config = configs[env] if env in configs.keys() else BaseConfig
+
+    # Allows the configuration of all variables from environment variables
+    for env_var in environ.keys():
+        if env_var in vars(config) and not env_var.startswith('__'):
+            print('SETTING VAR', env_var, environ[env_var])
+            setattr(config, env_var, environ[env_var])
+
     return config()
-
-
-# Allows the configuration of all variables from environment variables
-for env_var in environ.keys():
-    if env_var in vars(BaseConfig) and not env_var.startswith('__'):
-        setattr(BaseConfig, env_var, environ[env_var])

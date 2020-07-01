@@ -3,7 +3,7 @@ version: '3.7'
 services:
     mongo:
         image: mongo
-        container_name: mongodb
+        container_name: picom_mongo
         ports:
           - '27017:27017'
         volumes:
@@ -32,7 +32,7 @@ services:
 
     rabbit:
       image: rabbitmq
-      container_name: rabbitmq
+      container_name: picom_rabbit
       ports:
         - 5672:5672
 

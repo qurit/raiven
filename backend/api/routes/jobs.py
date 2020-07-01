@@ -22,7 +22,6 @@ api.add_model(name=job_list_schema.name, definition=job_list_schema)
 
 @api.route('/')
 class JobsRoute(Resource):
-    print(api.models)
 
     @api.response(200, 'Ok', job_list_schema)
     def get(self):
