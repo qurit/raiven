@@ -8,7 +8,10 @@ eventlet.monkey_patch()
 import dramatiq
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 from dramatiq.middleware import CurrentMessage
-dramatiq.set_broker(RabbitmqBroker(host=config.RABBITMQ_HOST, middleware=[CurrentMessage()]))
+
+print('SETTING BROKER')
+broker = RabbitmqBroker(host=config.RABBITMQ_HOST, middleware=[CurrentMessage()])
+dramatiq.set_broker(broker)
 
 from flask import Flask, render_template
 from flask_restx import Api

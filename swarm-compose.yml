@@ -15,9 +15,11 @@ services:
           MONGO_APPLICATION_DATABASE: picom
           MONGO_APPLICATION_USERNAME: picom_admin
           MONGO_APPLICATION_PASSWORD: password
+
         deploy:
           placement:
             constraints: [node.role == manager]
+
 
     orthanc:
         image: jodogne/orthanc
@@ -41,13 +43,30 @@ services:
         placement:
           constraints: [node.role == manager]
 
+    api:
+      image: picom_api
+      environment:
+        FLASK_ENV: docker
+        RABBITMQ_HOST: 'picom_rabbit'
+      ports:
+        - 80:5000
+      deploy:
+        replicas: 1
+
+
     worker:
-      image: docker.pkg.github.com/qurit/picom/api
-      command: dramatiq api
+      image: picom_api
+      command: dramatiq api:broker
       environment:
         FLASK_ENV: worker
+        RABBITMQ_HOST: 'picom_rabbit'
+
       deploy:
-        replicas: 2
+        replicas: 1
+        restart_policy:
+          condition: on-failure
+          delay: 5s
+          max_attempts: 2
 
 secrets:
   orthanc.json:
