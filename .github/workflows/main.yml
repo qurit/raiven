@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-      - name: Build the Backend
+      - name: Push to GitHub Packages
         uses: docker/build-push-action@v1
         with:
           path: ./backend
@@ -20,3 +20,4 @@ jobs:
           registry: docker.pkg.github.com
           dockerfile: backend/Dockerfile
           repository: qurit/picom/api
+          tag_with_ref: true
