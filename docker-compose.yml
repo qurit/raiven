@@ -58,15 +58,6 @@ services:
       volumes:
         - ./backend:/backend
 
-#    frontend:
-#      build: ./frontend
-#      ports:
-#        - '3000:3000'
-#      environment:
-#        NUXT_HOST: '0.0.0.0'
-#      volumes:
-#        - ./frontend:/frontend
-
 secrets:
   orthanc.json:
     file: orthanc.json

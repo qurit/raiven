@@ -3,12 +3,9 @@ version: '3.7'
 services:
     mongo:
         image: mongo
-        ports:
-          - '27017:27017'
         volumes:
           - mongo_data:/data/db
           - ./mongo/:/docker-entrypoint-initdb.d/
-        restart: always
         environment:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: password
@@ -16,32 +13,8 @@ services:
           MONGO_APPLICATION_USERNAME: picom_admin
           MONGO_APPLICATION_PASSWORD: password
 
-        deploy:
-          placement:
-            constraints: [node.role == manager]
-
-
-    orthanc:
-        image: jodogne/orthanc
-        command: /run/secrets/ --verbose
-        ports:
-          - '8042:8042'
-          - '4242:4242'
-        secrets:
-          - orthanc.json
-        volumes:
-          - orthanc_data:/var/lib/orthanc/db/
-        deploy:
-          placement:
-            constraints: [node.role == manager]
-
     rabbit:
       image: rabbitmq
-      ports:
-        - 5672:5672
-      deploy:
-        placement:
-          constraints: [node.role == manager]
 
     api:
       image: picom_api
@@ -60,9 +33,8 @@ services:
       environment:
         FLASK_ENV: worker
         RABBITMQ_HOST: 'picom_rabbit'
-
       deploy:
-        replicas: 1
+        replicas: 2
         restart_policy:
           condition: on-failure
           delay: 5s
