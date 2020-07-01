@@ -1,0 +1,58 @@
+version: '3.7'
+
+services:
+    mongo:
+        image: mongo
+        ports:
+          - '27017:27017'
+        volumes:
+          - mongo_data:/data/db
+          - ./mongo/:/docker-entrypoint-initdb.d/
+        restart: always
+        environment:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
+          MONGO_APPLICATION_DATABASE: picom
+          MONGO_APPLICATION_USERNAME: picom_admin
+          MONGO_APPLICATION_PASSWORD: password
+        deploy:
+          placement:
+            constraints: [node.role == manager]
+
+    orthanc:
+        image: jodogne/orthanc
+        command: /run/secrets/ --verbose
+        ports:
+          - '8042:8042'
+          - '4242:4242'
+        secrets:
+          - orthanc.json
+        volumes:
+          - orthanc_data:/var/lib/orthanc/db/
+        deploy:
+          placement:
+            constraints: [node.role == manager]
+
+    rabbit:
+      image: rabbitmq
+      ports:
+        - 5672:5672
+      deploy:
+        placement:
+          constraints: [node.role == manager]
+
+    worker:
+      image: docker.pkg.github.com/qurit/picom/api
+      command: dramatiq api
+      environment:
+        FLASK_ENV: worker
+      deploy:
+        replicas: 2
+
+secrets:
+  orthanc.json:
+    file: orthanc.json
+
+volumes:
+  mongo_data:
+  orthanc_data:
