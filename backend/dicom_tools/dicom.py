@@ -13,7 +13,7 @@ def c_echo():
     status = assoc.send_c_echo()
     if status:
         # If the verification request succeeded this will be 0x0000
-        print('[GOOD]: C-ECHO request status: 0x{0:04x}'.format(status.Status))
+        print('[GOOD]: C-ECHO request status: '.format(status.Status))
     else:
         print('[ERROR]: C-ECHO Connection timed out, was aborted or received invalid response')
     assoc.release()

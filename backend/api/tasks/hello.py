@@ -22,7 +22,4 @@ def audit(func):
 @audit
 def count_words():
     print('RUNNING')
-    # for x in range(0, 10):
-    #     time.sleep(10)
-    #     socketio.emit('my_response', {'data': 'Background event', 'count': x, 'progress': x / 10}, namespace='/test')
-
+    socketio.emit('my_response', {'data': 'Background event', 'count': 2, 'progress': 5 / 10}, namespace='/test')

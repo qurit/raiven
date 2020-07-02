@@ -2,6 +2,7 @@ from os import environ
 
 LOCALHOST = '127.0.0.1'
 
+
 # noinspection PyPep8Naming
 class BaseConfig(object):
     HOST = LOCALHOST
@@ -54,6 +55,7 @@ class DockerConfig(BaseConfig):
     HOST = '0.0.0.0'
     MONGO_HOST = 'picom_mongo'
     RABBITMQ_HOST = 'picom_rabbit'
+    DOCKER_URI = 'unix://var/run/docker.sock'
 
 
 class WorkerConfig(DockerConfig):
