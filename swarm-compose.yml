@@ -22,7 +22,14 @@ services:
         FLASK_ENV: docker
         RABBITMQ_HOST: 'picom_rabbit'
       ports:
-        - 80:5000
+        - 5000:5000
+      deploy:
+        replicas: 1
+
+    frontend:
+      image: picom_frontend
+      ports:
+        - 80:3000
       deploy:
         replicas: 1
 
