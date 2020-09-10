@@ -10,6 +10,9 @@
     </v-row>
     <v-row>
       <v-col cols="6">
+        <MoveForm />
+      </v-col>
+      <v-col cols="6">
         <TaskCRUD />
       </v-col>
     </v-row>
@@ -20,8 +23,9 @@
 import StatusDoughnut from "../components/dashboard/StatusDoughnut";
 import TaskCRUD from "../components/TaskCRUD";
 import TestSocket from "../components/TestSocket";
+import MoveForm from "../components/MoveForm";
 export default {
-  components: {TestSocket, TaskCRUD, StatusDoughnut},
+  components: {MoveForm, TestSocket, TaskCRUD, StatusDoughnut},
   methods: {
     test() {
       this.$axios.post('/')

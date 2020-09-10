@@ -5,7 +5,7 @@ export const state = () => ({
 })
 
 export const getters = {
-  workers: state => state.containers.filter(c => c.Config.Image === 'picom_worker')
+  workers: state => state.containers.filter(c => c.Name.startsWith('/picom_worker'))
 }
 
 export const mutations = {
