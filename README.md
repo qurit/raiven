@@ -1,26 +1,9 @@
-# picom
+# PICOM
+Build using python, flask, and nuxt, PICOM is full-featured application for building and maintaining DICOM image processing pipelines.
 
-> My posh Nuxt.js project
+PICOM hope so fullfil these [user stories](./stories.md).
 
-## Build Setup
-
-```bash
-# install dependencies
-$ npm install
-
-# serve with hot reload at localhost:3000
-$ npm run dev
-
-# build for production and launch server
-$ npm run build
-$ npm run start
-
-# generate static project
-$ npm run generate
-```
-
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
-
+## Docker Deployment
 ```
 docker stack deploy --compose-file swarm-compose.yml picom
 docker stack rm picom
