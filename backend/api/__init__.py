@@ -1,3 +1,4 @@
+""" Config """
 from config import init_config
 config = init_config()
 
@@ -5,35 +6,41 @@ config = init_config()
 import eventlet
 eventlet.monkey_patch()
 
+""" Setting Up Background Tasks """
 import dramatiq
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 from dramatiq.middleware import CurrentMessage
-
-print('SETTING BROKER')
 broker = RabbitmqBroker(host=config.RABBITMQ_HOST, middleware=[CurrentMessage()])
 dramatiq.set_broker(broker)
 
+""" Setting Up Docker """
+from docker import DockerClient
+docker = DockerClient(config.DOCKER_URI)
+
+""" Setting Up Flask """
 from flask import Flask, render_template
 from flask_restx import Api
-from flask_pymongo import PyMongo
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.from_object(config)
 app.url_map.strict_slashes = False
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-mongo = PyMongo(app)
-db = mongo.db
+""" Setting up Database"""
+from api.database import init_db
 
-from docker import DockerClient
-docker = DockerClient(config.DOCKER_URI)
+db = SQLAlchemy(app)
+init_db(db)
 
+""" Setting up websockets """
 from api.sockets import init_socketio
 
 socketio = init_socketio()
 api = Api(app)
 
+""" Importing Routes """
 from api import routes
 from api.sockets import test
 
