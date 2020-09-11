@@ -9,8 +9,11 @@ dependencies:
   - eventlet=0.25.2
   - flask=1.1.2
   - flask-cors=3.0.8
+  - flask-httpauth=3.3.0
   - flask-restx=0.2.0
   - flask-socketio=4.3.0
+  - flask-sqlalchemy=2.4.4
+  - flask-marshmallow=0.13.0
   - kombu=4.6.8
   - nodejs=14.4.0
   - pika=1.1.0
@@ -20,7 +23,3 @@ dependencies:
   - pytest=5.4.3
   - python=3.8.3
   - werkzeug=0.16.1
-  - pip:
-    - flask-pymongo==2.3.0
-    - pymongo==3.10.1
-
