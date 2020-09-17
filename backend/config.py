@@ -55,9 +55,12 @@ class BaseConfig(object):
 
 class DockerConfig(BaseConfig):
     HOST = '0.0.0.0'
-    MONGO_HOST = 'picom_mongo'
     RABBITMQ_HOST = 'picom_rabbit'
     DOCKER_URI = 'unix://var/run/docker.sock'
+
+    @property
+    def SQLALCHEMY_DATABASE_URI(self):
+        return f'postgresql+psycopg2://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
 
 
 class WorkerConfig(DockerConfig):
@@ -76,8 +79,12 @@ def init_config():
 
     # Allows the configuration of all variables from environment variables
     for env_var in os.environ.keys():
-        if env_var in vars(config) and not env_var.startswith('__'):
-            print('SETTING VAR', env_var, os.environ[env_var])
+
+        if env_var in vars(BaseConfig) and not env_var.startswith('__'):
+            print(f'SETTING ENV VARIABLE {env_var}={os.environ[env_var]}')
             setattr(config, env_var, os.environ[env_var])
 
     return config()
+
+
+

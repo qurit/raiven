@@ -23,7 +23,6 @@ from flask_restx import Api
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -36,7 +35,6 @@ from api.database import init_db
 db = SQLAlchemy(app)
 init_db(db)
 ma = Marshmallow(app)
-migrate = Migrate(app, db, config.MIGRATION_DIR)
 
 """ Setting up websockets """
 from api.sockets import init_socketio
