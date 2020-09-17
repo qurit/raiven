@@ -9,7 +9,7 @@ login_model = api.model('Auth', {'username': fields.String, 'password': fields.S
 
 
 @api.route('/login', methods=['POST'])
-class LoginRout(Resource):
+class LoginRoute(Resource):
 
     @api.expect(login_model)
     def post(self):
@@ -22,3 +22,12 @@ class LoginRout(Resource):
             return 'Unauthorized', 401
 
         return user, 200
+
+
+@api.route('/users', methods=['GET'])
+class UsersRoute(Resource):
+
+    @api.expect(login_model)
+    def get(self):
+        return User.schema.dumps, 200
+
