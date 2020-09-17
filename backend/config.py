@@ -26,10 +26,11 @@ class BaseConfig(object):
     # DB
     MIGRATION_DIR = os.path.join(os.getcwd(), 'migrations')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    POSTGRES_HOST = 'db.mit.bccrc.ca'
-    POSTGRES_USER = 'biodi'
-    POSTGRES_PW = 'bccrcbiodi'
-    POSTGRES_DB = 'biodi'
+
+    POSTGRES_HOST = LOCALHOST
+    POSTGRES_USER = 'postgres'
+    POSTGRES_PW = 'password'
+    POSTGRES_DB = 'picom'
 
     # SOCKET IO
     WEB_SOCKETS_ENABLED = True
@@ -44,8 +45,8 @@ class BaseConfig(object):
     DOCKER_URI = 'tcp://127.0.0.1:2375'
 
     @property
-    def POSTGRES_URI(self):
-        return f'postgresql+psycopg2://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
+    def SQLALCHEMY_DATABASE_URI(self):
+        return f'postgresql+psycopg2://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}?gssencmode=disable'
 
     @property
     def RABBITMQ_URI(self):
