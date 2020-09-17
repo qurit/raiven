@@ -1,10 +1,10 @@
 from flask import request
 from flask_restx import Resource, Namespace, fields
 
-from api.models import User
+from api.models.user import User
 from api.auth import verify_password
 
-api = Namespace('user', description='User Auth')
+api = Namespace('Auth', description='User Authentication')
 login_model = api.model('Auth', {'username': fields.String, 'password': fields.String})
 
 
