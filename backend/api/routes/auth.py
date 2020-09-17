@@ -27,7 +27,6 @@ class LoginRoute(Resource):
 @api.route('/users', methods=['GET'])
 class UsersRoute(Resource):
 
-    @api.expect(login_model)
     def get(self):
-        return User.schema.dumps, 200
+        return {'users': User.Schema(many=True).dump(User.query.all())}
 
