@@ -1,4 +1,5 @@
-from os import environ
+import os
+from distutils.util import strtobool
 
 LOCALHOST = '127.0.0.1'
 
@@ -7,6 +8,12 @@ LOCALHOST = '127.0.0.1'
 class BaseConfig(object):
     HOST = LOCALHOST
     PORT = 5000
+
+    # AUTH
+    SECRET_KEY = 'replace_me!'
+    AUTH_ENABLED = False
+    BASIC_AUTH_FORCE = True
+    TOKEN_TTL = 3600 * 12  # 12 hours before the token expires
 
     # LDAP CONFIG
     LDAP_HOST = '10.9.2.37'
@@ -17,18 +24,14 @@ class BaseConfig(object):
     LDAP_TEST_USR = 'crcldapviewer'
     LDAP_TEST_PW = 'LD@P2020pw!'
 
-    # DB SETTINGS
-    MONGO_USER = 'picom_admin'
-    MONGO_PASSWORD = 'password'
-    MONGO_HOST = LOCALHOST
-    MONGO_PORT = 27017
-    MONGO_DB = 'picom'
+    # DB
+    MIGRATION_DIR = os.path.join(os.getcwd(), 'migrations')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # AUTH
-    SECRET_KEY = 'replace_me!'
-    AUTH_ENABLED = False
-    BASIC_AUTH_FORCE = True
-    TOKEN_TTL = 3600 * 24 * 7  # 12 hours before the token expires
+    POSTGRES_HOST = LOCALHOST
+    POSTGRES_USER = 'postgres'
+    POSTGRES_PW = 'password'
+    POSTGRES_DB = 'picom'
 
     # SOCKET IO
     WEB_SOCKETS_ENABLED = True
@@ -43,8 +46,8 @@ class BaseConfig(object):
     DOCKER_URI = 'tcp://127.0.0.1:2375'
 
     @property
-    def MONGO_URI(self):
-        return f'mongodb://{self.MONGO_USER}:{self.MONGO_PASSWORD}@{self.MONGO_HOST}:{self.MONGO_PORT}/{self.MONGO_DB}'
+    def SQLALCHEMY_DATABASE_URI(self):
+        return f'postgresql+psycopg2://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}?gssencmode=disable'
 
     @property
     def RABBITMQ_URI(self):
@@ -53,9 +56,12 @@ class BaseConfig(object):
 
 class DockerConfig(BaseConfig):
     HOST = '0.0.0.0'
-    MONGO_HOST = 'picom_mongo'
     RABBITMQ_HOST = 'picom_rabbit'
     DOCKER_URI = 'unix://var/run/docker.sock'
+
+    @property
+    def SQLALCHEMY_DATABASE_URI(self):
+        return f'postgresql+psycopg2://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
 
 
 class WorkerConfig(DockerConfig):
@@ -63,18 +69,36 @@ class WorkerConfig(DockerConfig):
 
 
 def init_config():
-    env = environ.get('FLASK_ENV')
+    env = os.environ.get('FLASK_ENV')
     configs = {
         'docker': DockerConfig,
         'worker': WorkerConfig
     }
 
+    # Setting config type
     config = configs[env] if env in configs.keys() else BaseConfig
 
     # Allows the configuration of all variables from environment variables
-    for env_var in environ.keys():
-        if env_var in vars(config) and not env_var.startswith('__'):
-            print('SETTING VAR', env_var, environ[env_var])
-            setattr(config, env_var, environ[env_var])
+    for env_var in os.environ.keys():
+
+        if env_var in vars(BaseConfig) and not env_var.startswith('__'):
+            # print(f'SETTING ENV VARIABLE {env_var}={os.environ[env_var]}')
+
+            # Trying to typecast the correct type
+            v = os.environ[env_var]
+            try:
+                type_ = type(getattr(BaseConfig, env_var))
+                if type_ is bool:
+                    v = strtobool(v)
+                else:
+                    v = type_(v)
+            except (TypeError, ValueError):
+                print(f'[FAILED] TYPE CASTING ENV VARIABLE {env_var} TO TYPE {type(getattr(BaseConfig, env_var))}')
+                print('[FAILED] ENV VARIABLE {env_var} MAY PRODUCE ERROR')
+
+            setattr(config, env_var, v)
 
     return config()
+
+
+

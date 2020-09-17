@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from inflection import underscore
 
 
-def init_db(db: Database):
+def init_db(db):
     # Initializes the database. Adapted from Biodi.
     session = db.session
 
