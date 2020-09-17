@@ -1,4 +1,5 @@
 import os
+from distutils.util import strtobool
 
 LOCALHOST = '127.0.0.1'
 
@@ -81,8 +82,21 @@ def init_config():
     for env_var in os.environ.keys():
 
         if env_var in vars(BaseConfig) and not env_var.startswith('__'):
-            print(f'SETTING ENV VARIABLE {env_var}={os.environ[env_var]}')
-            setattr(config, env_var, os.environ[env_var])
+            # print(f'SETTING ENV VARIABLE {env_var}={os.environ[env_var]}')
+
+            # Trying to typecast the correct type
+            v = os.environ[env_var]
+            try:
+                type_ = type(getattr(BaseConfig, env_var))
+                if type_ is bool:
+                    v = strtobool(v)
+                else:
+                    v = type_(v)
+            except (TypeError, ValueError):
+                print(f'[FAILED] TYPE CASTING ENV VARIABLE {env_var} TO TYPE {type(getattr(BaseConfig, env_var))}')
+                print('[FAILED] ENV VARIABLE {env_var} MAY PRODUCE ERROR')
+
+            setattr(config, env_var, v)
 
     return config()
 
