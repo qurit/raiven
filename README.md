@@ -3,8 +3,19 @@ Build using python, flask, and nuxt, PICOM is full-featured application for buil
 
 PICOM hope so fullfil these [user stories](./stories.md).
 
-## Docker Deployment
+## Development Using Docker
 ```
-docker stack deploy --compose-file swarm-compose.yml picom
-docker stack rm picom
+docker-compose up --build
+```
+
+Performing database migrations within a docker container.
+```bash
+# Init
+docker exec picom_api_1 python manage.py manager init
+
+# Migrate
+docker exec picom_api_1 python manage.py manager migrate
+
+# Upgrade
+docker exec picom_api_1 python manage.py manager upgrade
 ```
