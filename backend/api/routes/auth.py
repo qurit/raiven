@@ -2,6 +2,7 @@ from flask import request
 from flask_restx import Resource, Namespace, fields
 
 from api.models.user import User
+from api.models.application_entity import ApplicationEntity 
 from api.auth import verify_password
 
 api = Namespace('Auth', description='User Authentication')
@@ -29,4 +30,10 @@ class UsersRoute(Resource):
 
     def get(self):
         return {'users': User.Schema(many=True).dump(User.query.all())}
+
+@api.route('/applicationentity', methods=['GET'])
+class ApplicationEntityRoute(Resource):
+
+    def get(self):
+        return {'applicationentities': ApplicationEntity.Schema(many=True).dump(ApplicationEntity.query.all())}
 
