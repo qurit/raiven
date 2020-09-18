@@ -30,10 +30,3 @@ class UsersRoute(Resource):
 
     def get(self):
         return {'users': User.Schema(many=True).dump(User.query.all())}
-
-@api.route('/applicationentity', methods=['GET'])
-class ApplicationEntityRoute(Resource):
-
-    def get(self):
-        return {'applicationentities': ApplicationEntity.Schema(many=True).dump(ApplicationEntity.query.all())}
-
