@@ -25,9 +25,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
+CORS(app, support_credentials=True)
 app.config.from_object(config)
 app.url_map.strict_slashes = False
-CORS(app, resources={r'/*': {'origins': '*'}})
+# CORS(app, resources={r'/*': {'origins': '*'}})
 
 """ Setting up Database, Models, and Schemas"""
 from api.database import init_db
