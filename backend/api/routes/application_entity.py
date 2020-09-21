@@ -10,13 +10,21 @@ from api.models.dicom_study import DicomStudy
 from api.models.dicom_series import DicomSeries 
 
 api = Namespace('Application Entity', description='Dicom data related to the application entity')
+application_entity_model = api.model('Application Entity', {'id': fields.Integer, 'title': fields.String})
 
 # Application Entity 
-@api.route('/application-entity', methods=['GET', 'POST'])
+@api.route('/application-entity', methods=['GET', 'POST', 'DELETE'])
 class ApplicationEntityRoute(Resource):
     def get(self):
         return {'application_entities': ApplicationEntity.Schema(many=True).dump(ApplicationEntity.query.all())}
         
+    def delete(self):
+        data = request.get_json()
+        ApplicationEntity.query.filter(ApplicationEntity.id == data.get('id')).delete()
+        db.session.commit()
+        return "Application Entity deleted"
+
+    @api.expect(application_entity_model)
     def post(self):
         data = request.get_json()
         newApplicationEntity = ApplicationEntity(title=data.get('title'))
@@ -24,18 +32,22 @@ class ApplicationEntityRoute(Resource):
         db.session.commit()
         return "Application Entity added"
 
-@api.route('/application-entity/<id>')
+@api.route('/application-entity/<id>', methods=['GET', 'PUT', 'DELETE'])
 class ApplicationEntityRoute(Resource):
     def get(self, id):
-        return {'application-entity': ApplicationEntity.Schema(many=False).dump(ApplicationEntity.query.filter(ApplicationEntity.id == id))}
+        return {'application-entity': ApplicationEntity.Schema(many=False).dump(ApplicationEntity.query.filter(ApplicationEntity.id == id).first())}
 
+    def put(self, id):
+        data = request.get_json()
+        newApplicationEntity = ApplicationEntity.query.filter(ApplicationEntity.id == id).first()
+        newApplicationEntity.title = data.get('title')
+        db.session.commit()
+        return "Application Entity updated"
 
-    # def put(self, id)
-    #     applicationEntity = ApplicationEntity(id = id, title="testing") 
-
-    # def delete(self, id)
-    #     db.session.delete(ApplicationEntity.Schema(many=False).dump(ApplicationEntity.query.filter(ApplicationEntity.id == id)))
-    #     return "Application Entity deleted"
+    def delete(self, id):
+        ApplicationEntity.query.filter(ApplicationEntity.id == id).delete()
+        db.session.commit()
+        return "Application Entity deleted"
 
 # # Dicom Store Event
 # # belongs to an application entity
