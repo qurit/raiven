@@ -2,20 +2,20 @@
 from config import init_config
 config = init_config()
 
-# if not config.IS_WORKER:
-import eventlet
-eventlet.monkey_patch()
+# # if not config.IS_WORKER:
+# import eventlet
+# eventlet.monkey_patch()
 
 """ Setting Up Background Tasks """
-import dramatiq
-from dramatiq.brokers.rabbitmq import RabbitmqBroker
-from dramatiq.middleware import CurrentMessage
-broker = RabbitmqBroker(host=config.RABBITMQ_HOST, middleware=[CurrentMessage()])
-dramatiq.set_broker(broker)
+# import dramatiq
+# from dramatiq.brokers.rabbitmq import RabbitmqBroker
+# from dramatiq.middleware import CurrentMessage
+# broker = RabbitmqBroker(host=config.RABBITMQ_HOST, middleware=[CurrentMessage()])
+# dramatiq.set_broker(broker)
 
 """ Setting Up Docker """
-from docker import DockerClient
-docker = DockerClient(config.DOCKER_URI)
+# from docker import DockerClient
+# docker = DockerClient(config.DOCKER_URI)
 
 """ Setting Up Flask """
 from flask import Flask, render_template
