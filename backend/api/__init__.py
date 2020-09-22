@@ -7,10 +7,10 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from . import models
 from .database import session, engine
+from . import models, schemas
 
-models.BaseModel.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,

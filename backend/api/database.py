@@ -5,7 +5,6 @@ from sqlalchemy.orm import sessionmaker
 from inflection import underscore
 
 from api import config
-from api.models import BaseModel
 
 engine = create_engine(config.SQLALCHEMY_DATABASE_URI)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

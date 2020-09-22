@@ -1,10 +1,10 @@
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
-from api.models import BaseModel
+from .. import Base
 
 
-class DicomPatient(BaseModel):
+class DicomPatient(Base):
     id = Column(Integer, primary_key=True)
     dicom_store_event_id = Column(Integer, ForeignKey("dicom_store_event.id", ondelete="CASCADE"))
 
