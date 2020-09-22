@@ -1,43 +1,48 @@
-from sqlalchemy import Column, Integer
+from contextlib import contextmanager
+
+from sqlalchemy import create_engine, Column, Integer
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy.orm import sessionmaker, Session
 from inflection import underscore
 
+engine = create_engine(config.POSTGRES_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def init_db(db):
-    # Initializes the database. Adapted from Biodi.
-    session = db.session
 
-    class Base(object):
-        id = Column(Integer, primary_key=True)
+def session():
+    session = SessionLocal()
+    try:
+        yield session
+        session.commit()
+    finally:
+        session.close()
 
-        @declared_attr
-        def __tablename__(self):
-            return underscore(self.__name__)
 
-        def save(self):
-            session.add(self)
-            self._flush()
-            return self
+class BaseModel(object):
+    id = Column(Integer, primary_key=True, index=True)
 
-        def update(self, **kwargs):
-            for attr, value in kwargs.items():
-                setattr(self, attr, value)
-            return self.save()
+    @declared_attr
+    def __tablename__(self):
+        return underscore(self.__name__)
 
-        def delete(self):
-            session.delete(self)
-            self._flush()
+    def save(self, session: Session):
+        session.add(self)
+        self._flush(session)
+        return self
 
-        # noinspection PyMethodMayBeStatic
-        def _flush(self):
-            try:
-                session.flush()
-            except DatabaseError:
-                session.rollback()
-                raise
+    def delete(self, session: Session):
+        session.delete(self)
+        self._flush(session)
 
-    db.Model = declarative_base(cls=Base)
-    db.Model.query = session.query_property()
-    db.Model.metadata.create_all(bind=db.engine)
-    db.create_all()
+    # noinspection PyMethodMayBeStatic
+    def _flush(self, session: Session):
+        try:
+            session.flush()
+        except DatabaseError:
+            session.rollback()
+            raise
+
+
+BaseModel = declarative_base(cls=BaseModel)
+
