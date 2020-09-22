@@ -9,6 +9,7 @@ dist
 .env
 sw.*
 .DS_Store
+*pyc
 
 
 /backend/migrations/

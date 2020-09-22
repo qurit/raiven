@@ -47,7 +47,7 @@ class BaseConfig(object):
 
     @property
     def SQLALCHEMY_DATABASE_URI(self):
-        return f'postgresql+psycopg2://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}?gssencmode=disable'
+        return f'postgresql+psycopg2://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
 
     @property
     def RABBITMQ_URI(self):
