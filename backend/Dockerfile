@@ -1,8 +1,6 @@
 FROM python:3.8-slim
 WORKDIR /backend
 
-RUN pip install gunicorn
-
 # Install app reqs and copy src
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
@@ -14,4 +12,4 @@ ENV PYTHONUNBUFFERED 1
 COPY . .
 
 EXPOSE 5000
-CMD python wsgi.py
+CMD python asgi.py
