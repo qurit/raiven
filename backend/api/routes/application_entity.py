@@ -1,20 +1,31 @@
 from typing import List
+from pydantic import BaseModel
 
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends
 
-from api import session, schemas
-from api.models.dicom import application_entity
-
+from api import session, models, schemas
 router = APIRouter()
 
-# api = Namespace('Application Entity', description='Dicom data related to the application entity')
-# application_entity_model = api.model('Application Entity', {'id': fields.Integer, 'title': fields.String})
+
+@router.get("/ae/", response_model=List[schemas.ApplicationEntity])
+def get_application_entities(db: Session = Depends(session)):
+    return db.query(models.dicom.ApplicationEntity).all()
 
 
-@router.get("/ae/", response_model=List[schemas.dicom.ApplicationEntity])
-def get_application_entities(db: session = Depends(session)):
-    return db.query(application_entity.ApplicationEntity).all()
+@router.post("/ae/", response_model=schemas.ApplicationEntity)
+def create_application_entity(ae: schemas.ApplicationEntityCreate, db: Session = Depends(session)):
+    return models.dicom.ApplicationEntity(title=ae.title).save(db)
+
+
+#
+# @router.post("/ae/", response_model=schemas.ApplicationEntity)
+# def add_application_entity(application_entity: schemas.ApplicationEntityCreate):
+#     print(type(application_entity))
+#     print(application_entity)
+#     db_ae = models.dicom.ApplicationEntity(**application_entity.dict()).save(db)
+#
+#     return db_ae
 
 #
 # # Application Entity

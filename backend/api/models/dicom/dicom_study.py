@@ -2,10 +2,10 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
-from api.models import BaseModel
+from .. import Base
 
 
-class DicomStudy(BaseModel):
+class DicomStudy(Base):
     id = Column(Integer, primary_key=True)
     dicom_patient_id = Column(Integer, ForeignKey("dicom_patient.id", ondelete='CASCADE'))
     study_instance_uid = Column(String)
