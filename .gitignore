@@ -4,11 +4,13 @@ dist
 .idea
 .nuxt
 .pytest_cache
+__pycache__
 
 # Files
 .env
 sw.*
 .DS_Store
+.pyc
 
 
 /backend/migrations/
