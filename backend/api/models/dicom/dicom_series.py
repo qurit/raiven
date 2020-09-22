@@ -1,11 +1,10 @@
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
-from api import db
-from api.models.dicom_study import DicomStudy
+from api.models import BaseModel
 
 
-class DicomSeries(db.Model):
+class DicomSeries(BaseModel):
     id = Column(Integer, primary_key=True)
     dicom_study_id = Column(Integer, ForeignKey("dicom_study.id", ondelete="CASCADE"))
     series_instance_uid = Column(String)
