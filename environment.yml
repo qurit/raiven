@@ -3,22 +3,13 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - aiofiles=0.5.0=py_0
-  - brotlipy=0.7.0=py38h1e8a9f7_1000
-  - ca-certificates=2020.7.22=0
-  - certifi=2020.6.20=py38_0
-  - cffi=1.14.3=py38hba49e27_0
-  - chardet=3.0.4=py38h32f6830_1007
-  - click=7.1.2=pyh9f0ad1d_0
-  - cryptography=3.1=py38hba49e27_0
-  - fastapi=0.61.1=py_0
-  - graphene=1.4=py_0
-  - graphql-core=3.1.2=py_0
-  - graphql-relay=3.0.0=py_0
-  - h11=0.8.1=py_0
-  - idna=2.10=pyh9f0ad1d_0
-  - inflection=0.5.1=pyh9f0ad1d_0
-  - pip=20.2.3=py_0
-  - python=3.8.3=cpython_h5fd99cc_0
-  - sqlalchemy=1.3.19=py38he774522_0
-  - uvicorn=0.11.3=py38h32f6830_1
+  - fastapi=0.61.1
+  - inflection=0.5.1
+  - pip=20.2.2
+  - python=3.8.3
+  - python-multipart=0.0.5
+  - sqlalchemy=1.3.19
+  - uvicorn=0.11.3
+  - pynetdicom=1.5.3
+  - pip:
+    - psycopg2-binary==2.8.6
