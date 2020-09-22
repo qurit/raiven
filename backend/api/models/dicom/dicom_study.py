@@ -7,12 +7,11 @@ from .schemas import add_schema
 from api.models.dicom_patient import DicomPatient
 
 
-@add_schema
 class DicomStudy(db.Model):
     id = Column(Integer, primary_key=True)
     dicom_patient_id = Column(Integer, ForeignKey("dicom_patient.id", ondelete='CASCADE'))
     study_instance_uid = Column(String)
-    study_date = Column(DateTime, default=datetime.utcnow)
+    study_date = Column(DateTime)
 
     dicom_patient = relationship('DicomPatient')
 
