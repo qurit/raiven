@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  # api:
+  #   build: ./backend
+  #   command: python wsgi.py
+  #   depends_on:
+  #     - db
+  #   ports:
+  #     - '5000:5000'
+  #   env_file:
+  #     - .env.dev
+  #   volumes:
+  #     - ./backend:/backend
+  #     - /var/run/docker.sock:/var/run/docker.sock
+
+  db:
+    image: postgres
+    restart: always
+    env_file:
+      - .env.dev
+    ports:
+      - '5432:5432'
+
+
+
+
