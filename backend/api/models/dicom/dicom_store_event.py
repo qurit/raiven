@@ -3,11 +3,10 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 
 
-from api import db
-from api.models.application_entity import ApplicationEntity
+from api.models import BaseModel
 
 
-class DicomStoreEvent(db.Model):
+class DicomStoreEvent(BaseModel):
     id = Column(Integer, primary_key=True)
     application_entity_id = Column(Integer, ForeignKey('application_entity.id', ondelete='CASCADE'))
     timestamp = Column(DateTime, default=datetime.utcnow)
