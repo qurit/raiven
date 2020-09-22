@@ -29,4 +29,3 @@ class UsersRoute(Resource):
 
     def get(self):
         return {'users': User.Schema(many=True).dump(User.query.all())}
-
