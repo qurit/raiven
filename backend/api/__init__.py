@@ -1,5 +1,5 @@
-from config import init_config
-config = init_config()
+from config import BaseConfig
+config = BaseConfig()
 
 
 from fastapi import FastAPI
@@ -7,7 +7,7 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from . import models, schemas
+from . import models
 from .database import session, engine
 
 models.BaseModel.metadata.create_all(bind=engine)
