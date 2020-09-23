@@ -1,11 +1,18 @@
 import os
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
 from fastapi import Depends
 from pydantic import BaseModel
 
 # from . import models, schemas
 
-from api import session, models, schemas
+from api import config
+
+engine = create_engine(config.SQLALCHEMY_DATABASE_URI)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+session = SessionLocal()
+
+from api import models, schemas
 print("FJFJSFJSFJSFJSFJSFJSFJSFJSFJSFJ")
 print(session)
 print(Depends)
@@ -17,19 +24,19 @@ from pynetdicom import (
 # from backend.api import db
 debug_logger()
 
-def save_ae(title, application_entity: schemas.ApplicationEntityCreate, db: Session = Depends(session)):
-    # print(db)
-    # print(ae)
-    # print(type(db))
-    # models.dicom.ApplicationEntity(title=title).save(db)
-    # db.add(dicom_store)
-    # db.commit()
+# def save_ae(title, application_entity: schemas.ApplicationEntityCreate, db: Session = Depends(session)):
+#     # print(db)
+#     # print(ae)
+#     # print(type(db))
+#     # models.dicom.ApplicationEntity(title=title).save(db)
+#     # db.add(dicom_store)
+#     # db.commit()
 
-    newAE = models.dicom.ApplicationEntity(title=application_entity.title)
-    db.add(newAE)
-    db.commit()
-    db.refresh(newAE)
-    return newAE
+#     newAE = models.dicom.ApplicationEntity(title=application_entity.title)
+#     db.add(newAE)
+#     db.commit()
+#     db.refresh(newAE)
+#     return newAE
 
 def handle_store(event):
     """Handle EVT_C_STORE events."""
@@ -38,12 +45,13 @@ def handle_store(event):
     print(event.assoc.requestor.port)
     title = str(event.assoc.requestor.ae_title, encoding='utf-8').strip()
     newAE = models.dicom.ApplicationEntity(title=title)
+    print(session)
     session.add(newAE)
     session.commit()
-    print(newAE.title)
-    print(newAE)
-    print(db)
-    print(type(db))
+    # print(newAE.title)
+    # print(newAE)
+    # print(db)
+    # print(type(db))
     
     # db.add(newAE)
     # application_entity = schemas.ApplicationEntityCreate()
