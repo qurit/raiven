@@ -5,6 +5,9 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends
 
 from api import session, models, schemas
+print("S;DLKJFASD;LKFJASD;FLJASDF;LJSDFKL;J")
+print(session)
+print(Depends)
 router = APIRouter()
 
 
@@ -15,6 +18,8 @@ def get_application_entities(db: Session = Depends(session)):
 
 @router.post("/", response_model=schemas.ApplicationEntity)
 def create_application_entity(ae: schemas.ApplicationEntityCreate, db: Session = Depends(session)):
+    print(db)
+    print(type(db))
     return models.dicom.ApplicationEntity(title=ae.title).save(db)
 
 
