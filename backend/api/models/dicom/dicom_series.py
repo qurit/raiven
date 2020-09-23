@@ -1,13 +1,10 @@
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
-from api import db, config
-from .schemas import add_schema
-from api.models.dicom_study import DicomStudy
+from .. import Base
 
 
-@add_schema
-class DicomSeries(db.Model):
+class DicomSeries(Base):
     id = Column(Integer, primary_key=True)
     dicom_study_id = Column(Integer, ForeignKey("dicom_study.id", ondelete="CASCADE"))
     series_instance_uid = Column(String)

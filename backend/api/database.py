@@ -1,43 +1,19 @@
-from sqlalchemy import Column, Integer
-from sqlalchemy.exc import DatabaseError
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from contextlib import contextmanager
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from inflection import underscore
 
+from api import config
 
-def init_db(db):
-    # Initializes the database. Adapted from Biodi.
-    session = db.session
+engine = create_engine(config.SQLALCHEMY_DATABASE_URI)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-    class Base(object):
-        id = Column(Integer, primary_key=True)
 
-        @declared_attr
-        def __tablename__(self):
-            return underscore(self.__name__)
-
-        def save(self):
-            session.add(self)
-            self._flush()
-            return self
-
-        def update(self, **kwargs):
-            for attr, value in kwargs.items():
-                setattr(self, attr, value)
-            return self.save()
-
-        def delete(self):
-            session.delete(self)
-            self._flush()
-
-        # noinspection PyMethodMayBeStatic
-        def _flush(self):
-            try:
-                session.flush()
-            except DatabaseError:
-                session.rollback()
-                raise
-
-    db.Model = declarative_base(cls=Base)
-    db.Model.query = session.query_property()
-    db.Model.metadata.create_all(bind=db.engine)
-    db.create_all()
+def session():
+    session = SessionLocal()
+    try:
+        yield session
+        session.commit()
+    finally:
+        session.close()
