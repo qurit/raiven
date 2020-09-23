@@ -2,11 +2,9 @@ from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSign
 from sqlalchemy import *
 from datetime import datetime
 
-from api import db, config
 from .schemas import add_schema
 
 
-@add_schema
 class User(db.Model):
     username = Column(String, index=True, unique=True)
     name = Column(String)
