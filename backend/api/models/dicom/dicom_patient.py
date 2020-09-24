@@ -5,7 +5,6 @@ from .. import Base
 
 
 class DicomPatient(Base):
-    id = Column(Integer, primary_key=True)
     dicom_store_event_id = Column(Integer, ForeignKey("dicom_store_event.id", ondelete="CASCADE"))
 
     dicom_store_event = relationship('DicomStoreEvent')
