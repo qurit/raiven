@@ -18,12 +18,12 @@ class ApplicationEntity(ApplicationEntityCreate, BaseORMModel):
 
 
 class ContainerCreate(BaseModel):
-    user_id: int
     name: str
     dockerfile_path: str
 
 
 class Container(ContainerCreate, BaseORMModel):
+    user_id: str
     pass
 
 
