@@ -5,7 +5,6 @@ from .. import Base
 
 
 class DicomSeries(Base):
-    id = Column(Integer, primary_key=True)
     dicom_study_id = Column(Integer, ForeignKey("dicom_study.id", ondelete="CASCADE"))
     series_instance_uid = Column(String)
     series_description = Column(String)

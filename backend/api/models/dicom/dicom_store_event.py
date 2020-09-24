@@ -7,7 +7,6 @@ from .. import Base
 
 
 class DicomStoreEvent(Base):
-    id = Column(Integer, primary_key=True)
     application_entity_id = Column(Integer, ForeignKey('application_entity.id', ondelete='CASCADE'))
     timestamp = Column(DateTime, default=datetime.utcnow)
     path = Column(String)

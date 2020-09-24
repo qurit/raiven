@@ -6,7 +6,6 @@ from .. import Base
 
 
 class DicomStudy(Base):
-    id = Column(Integer, primary_key=True)
     dicom_patient_id = Column(Integer, ForeignKey("dicom_patient.id", ondelete='CASCADE'))
     study_instance_uid = Column(String)
     study_date = Column(DateTime)
