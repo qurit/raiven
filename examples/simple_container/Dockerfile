@@ -5,6 +5,6 @@ RUN pip install pydicom numpy
 COPY . .
 
 ENV PICOM_INPUT_DIR /mnt/picom/input
-ENV PICOM_OUTPUT_DIR /mnt/picom/ouput
+ENV PICOM_OUTPUT_DIR /mnt/picom/output
 
-CMD /bin/bash
+CMD python main.py
