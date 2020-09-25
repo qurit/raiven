@@ -26,6 +26,10 @@ class BaseConfig:
     # Docker
     DOCKER_URI = 'tcp://127.0.0.1:2375'
 
+    # Pipeline
+    PICOM_INPUT_DIR = '/mnt/picom/input'
+    PICOM_OUTPUT_DIR = '/mnt/picom/output'
+
     def __init__(self):
         env_vars = [v for v in os.environ.keys() if (v in vars(BaseConfig)) and not v.startswith('__')]
         [self.apply_env_var(k) for k in env_vars]

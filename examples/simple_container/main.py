@@ -7,7 +7,6 @@ OUTPUT_DIR = os.environ['PICOM_OUTPUT_DIR']
 
 
 if __name__ == '__main__':
-
     for file in os.listdir(INPUT_DIR):
         if file.endswith('.dcm'):
 
@@ -16,4 +15,3 @@ if __name__ == '__main__':
             pixels = pixels * 2
             ds.PixelData = pixels.tobytes()
             ds.save_as(os.path.join(OUTPUT_DIR, file))
-
