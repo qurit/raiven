@@ -41,12 +41,12 @@
       </v-row>
       <v-row>
         <v-col>
-          <v-file-input solo @change="parse"/>
+          <v-file-input solo @change="parse" />
         </v-col>
       </v-row>
       <v-row justify="center">
         <v-col cols="6">
-          <v-data-table :items="data" :headers="headers"/>
+          <v-data-table :items="data" :headers="headers" />
         </v-col>
       </v-row>
     </v-card-text>
@@ -54,14 +54,14 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'vuex'
 
 export default {
-  name: "MoveForm",
+  name: 'MoveForm',
   data: () => ({
     title: 'Query and Move',
     file: undefined,
-    descriptions: ["CT WB 50cm", "PET HD AC", "PET TOF AC"],
+    descriptions: ['CT WB 50cm', 'PET HD AC', 'PET TOF AC'],
     headers: undefined,
     data: undefined
   }),
@@ -69,7 +69,8 @@ export default {
     ...mapState('modalities', ['modalities'])
   },
   created() {
-    if (!this.modalities.length) this.$store.dispatch('modalities/fetchModalities')
+    if (!this.modalities.length)
+      this.$store.dispatch('modalities/fetchModalities')
     console.log(this)
   },
   methods: {
@@ -78,7 +79,7 @@ export default {
         header: true,
         complete: results => {
           this.data = results.data
-          this.headers = results.meta.fields.map(x => ({ text: x, value: x}))
+          this.headers = results.meta.fields.map(x => ({ text: x, value: x }))
         }
       })
     }
