@@ -12,7 +12,7 @@
         :key="container.id"
       >
         {{ container.title }}
-        <v-btn x-small color="blue">
+        <v-btn x-small color="blue" @click="deleteContainer(container)">
           Delete
         </v-btn>
       </v-list>
@@ -39,16 +39,19 @@ export default {
       currentFile: ''
     }
   },
-  computed: {
-    getContainers() {
-      return this.$store.state.containers.containers
-    }
-  },
+  // computed: {
+  //   getContainers() {
+  //     return this.$store.state.containers.containers
+  //   }
+  // },
   methods: {
     selectFile(file) {
       this.currentFile = file
       console.log(file)
-      this.containers.push({ id: 4, title: file.name })
+      this.$store.commit('containers/add', { id: 4, title: file.name })
+    },
+    deleteContainer(container) {
+      this.$store.commit('containers/delete', container)
     }
   }
 }

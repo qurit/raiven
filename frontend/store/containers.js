@@ -35,5 +35,11 @@ export const state = () => ({
 export const mutations = {
   get(state) {
     state.containers
+  },
+  add(state, container) {
+    state.containers.push(container)
+  },
+  delete(state, container) {
+    state.containers.splice(state.containers.indexOf(container), 1)
   }
 }

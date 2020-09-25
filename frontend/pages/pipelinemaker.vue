@@ -9,10 +9,10 @@
       </v-col>
     </v-row> -->
     <v-row>
-      <v-col cols="6">
+      <v-col cols="7">
         <Pipeline />
       </v-col>
-      <v-col cols="6">
+      <v-col cols="5">
         <ContainerList />
       </v-col>
     </v-row>
