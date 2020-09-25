@@ -9,6 +9,7 @@
         :key="container.id"
         :items="containers"
         label="Choose your container"
+        item-text="title"
         background-color="red"
         solo
         flat
@@ -23,6 +24,7 @@
     <v-btn @click="addPipelineContainer">
       Add to pipeline
     </v-btn>
+    <!-- TODO: add route to save the pipeline to the user -->
     <v-btn @click="addPipelineContainer">
       Save pipeline
     </v-btn>
@@ -30,17 +32,15 @@
 </template>
 
 <script>
+import { containers } from 'vuex'
+
 export default {
   data: function() {
     return {
       // TODO:
       // have to put containers in a store that persists with the user
       // also save the user pipeline
-      containers: [
-        { id: 1, text: 'Algorithm 1' },
-        { id: 2, text: 'Algorithm 2' },
-        { id: 3, text: 'Algorithm 3' }
-      ],
+      containers: this.$store.state.containers.containers,
       containersToList: [
         { id: 1, text: 'Testing 1' },
         { id: 2, text: 'Testing 2' },
