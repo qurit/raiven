@@ -1,19 +1,19 @@
 <template>
   <div>
-    <v-row justify="start">
+    <!-- <v-row justify="start">
       <v-col cols="2">
         <StatusDoughnut />
       </v-col>
       <v-col>
         <TestSocket />
       </v-col>
-    </v-row>
+    </v-row> -->
     <v-row>
       <v-col cols="6">
-        <MoveForm />
+        <Pipeline />
       </v-col>
       <v-col cols="6">
-        <TaskCRUD />
+        <ContainerList />
       </v-col>
     </v-row>
   </div>
@@ -21,11 +21,11 @@
 
 <script>
 import StatusDoughnut from '../components/dashboard/StatusDoughnut'
-import TaskCRUD from '../components/TaskCRUD'
+import ContainerList from '../components/ContainerList'
 import TestSocket from '../components/TestSocket'
-import MoveForm from '../components/MoveForm'
+import Pipeline from '../components/Pipeline'
 export default {
-  components: { MoveForm, TestSocket, TaskCRUD, StatusDoughnut },
+  components: { Pipeline, TestSocket, ContainerList, StatusDoughnut },
   methods: {
     test() {
       this.$axios.post('/')
@@ -33,3 +33,4 @@ export default {
   }
 }
 </script>
+

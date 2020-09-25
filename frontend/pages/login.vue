@@ -36,7 +36,7 @@
 
 <script>
 export default {
-  name: "login",
+  name: 'login',
   layout: 'fullHeight',
   data: () => ({
     username: '',

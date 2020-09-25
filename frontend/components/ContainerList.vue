@@ -1,0 +1,55 @@
+<template>
+  <v-card>
+    <v-card-title>
+      Your Containers
+    </v-card-title>
+    <!-- {{ console.log(containers) }} -->
+    <!-- <v-list color="purple" /> -->
+    <v-card-text>
+      <v-list
+        color="purple"
+        v-for="container in containers"
+        :key="container.id"
+      >
+        {{ container.title }}
+        <v-btn x-small color="blue">
+          Delete
+        </v-btn>
+      </v-list>
+    </v-card-text>
+    <v-file-input label="Upload new container" @change="selectFile" />
+
+    <!-- Jobs
+      <v-spacer />
+      <v-btn @click="addJob" color="primary" v-text="'test'" text />
+      <v-icon-btn @click="$store.dispatch('jobs/deleteAllJobs')" delete />
+      <v-icon-btn @click="$store.dispatch('jobs/fetchJobs')" refresh /> -->
+
+    <!-- <v-data-table :items="jobs" :headers="headers" /> -->
+  </v-card>
+</template>
+
+<script>
+import { containers } from 'vuex'
+
+export default {
+  data: function() {
+    return {
+      containers: this.$store.state.containers.containers,
+      currentFile: ''
+    }
+  },
+  computed: {
+    getContainers() {
+      return this.$store.state.containers.containers
+    }
+  },
+  methods: {
+    selectFile(file) {
+      this.currentFile = file
+      console.log(file)
+      this.containers.push({ id: 4, title: file.name })
+    }
+  }
+}
+</script>
