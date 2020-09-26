@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      Build Your Pipeline
+      TODO: put pipeline name here
     </v-card-title>
     <v-flex>
       <v-select
