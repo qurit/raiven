@@ -46,9 +46,11 @@ export default {
   // },
   methods: {
     selectFile(file) {
-      this.currentFile = file
-      console.log(file)
-      this.$store.commit('containers/add', { id: 4, title: file.name })
+      if (file) {
+        this.currentFile = file
+        console.log(file)
+        this.$store.commit('containers/add', { id: 4, title: file.name })
+      }
     },
     deleteContainer(container) {
       this.$store.commit('containers/delete', container)
