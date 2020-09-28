@@ -1,12 +1,6 @@
 <template>
   <v-app-bar app flat class="px-0" color="#27272f">
-    <v-img
-      class="mr-5"
-      src="logo.png"
-      height="40"
-      width="40"
-      style="filter: grayscale(100%)"
-    />
+    <v-img class="mr-5" src="logo.png" height="40" width="40" />
     <v-tabs>
       <v-tab v-for="link in links" :to="link.to" nuxt :ripple="false">
         <v-icon
@@ -33,9 +27,12 @@ export default {
   data: () => ({
     links: [
       { to: '/', label: 'Dashboard', icon: 'mdi-view-dashboard' },
-      //TODO: want to make this into a modal.. but maybe not..
-      //TODO: maybe make it a "mdi-graph-outline" or some other icon instead idk
-      { to: '/pipelines', label: 'Pipelines', icon: 'mdi-cable-data' },
+      { to: '/containers', label: 'Container', icon: 'mdi-toy-brick' },
+      {
+        to: '/pipeline',
+        label: 'Pipelines',
+        icon: 'mdi-transit-connection-variant'
+      },
       { to: '/settings', label: 'Settings', icon: 'mdi-cog' }
     ]
   })
