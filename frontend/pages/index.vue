@@ -49,12 +49,16 @@ export default {
         </DonutStatus> -->
         <PipelineStatus :pipelines="pipelines" />
       </v-col>
+      <v-col cols="6">
+        <UserGuide />
+      </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
 import PipelineStatus from '../components/PipelineStatus'
+import UserGuide from '../components/UserGuide'
 import { pipelines } from 'vuex'
 
 const options = {
@@ -66,7 +70,7 @@ const options = {
 }
 export default {
   name: 'App',
-  components: { PipelineStatus },
+  components: { PipelineStatus, UserGuide },
   data: function() {
     return {
       // TODO:
