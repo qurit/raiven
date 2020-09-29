@@ -47,7 +47,7 @@ export default {
         label: 'Pipelines',
         icon: 'mdi-transit-connection-variant'
       },
-      { to: '/settings', label: 'Settings', icon: 'mdi-cog' }
+      { to: '/settings', label: 'Account', icon: 'mdi-account' }
     ]
   })
 }

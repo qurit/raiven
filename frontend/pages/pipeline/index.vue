@@ -1,16 +1,22 @@
 <template>
   <v-card>
+    *** FULFILLS: As a researcher, I would like to have a dashboard to view the
+    status of my pipelines *** *** View all pipelines but the status of running
+    ones is on the index dashboard landing page ***
     <v-card-title>
       Your pipelines
     </v-card-title>
     <v-flex v-for="pipeline in pipelines" :key="pipeline.id">
-      {{ pipeline.id }}
+      <b>Pipeline Title:</b>
+      {{ pipeline.title }}
+      <b>Containers in Pipeline:</b>
       {{ pipeline.containerList }}
+      <b>Running status: </b>
       {{ pipeline.status }}
       <v-btn>
         <!-- TODO: fix the routing stuff properly with Vue probably /pipleine/:id -->
         <nuxt-link to="/pipeline/1">
-          Edit
+          View
         </nuxt-link>
       </v-btn>
       <v-btn @click="removePipeline(pipeline)">

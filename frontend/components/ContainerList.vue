@@ -1,16 +1,14 @@
 <template>
   <v-card>
+    *** FULFILLS: As a researcher, I would like to be able to add too add to the
+    list of components. ***
     <v-card-title>
       Your Containers
     </v-card-title>
     <!-- {{ console.log(containers) }} -->
     <!-- <v-list color="purple" /> -->
     <v-card-text>
-      <v-list
-        color="purple"
-        v-for="container in containers"
-        :key="container.id"
-      >
+      <v-list v-for="container in containers" :key="container.id">
         {{ container.title }}
         <v-btn x-small color="blue" @click="deleteContainer(container)">
           Delete
