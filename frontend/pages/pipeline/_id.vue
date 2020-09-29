@@ -19,9 +19,10 @@
     </v-card>
     <v-divider />
     <v-card>
-      Upload a DICOM file to run your pipeline
-      <v-file-input label="Upload your DICOM file" />
-      <!-- if there is no DICOM file the Run pipeline button -->
+      Choose a Store Event to run your pipeline
+      <!-- <v-file-input label="Upload your DICOM file" /> -->
+      <v-select :items="files" item-text="name" item-value="name" multiple />
+
       <v-btn color="primary" @click="showSnackbar">
         Run pipeline!
       </v-btn>
@@ -33,10 +34,13 @@
 </template>
 
 <script>
+import { files } from 'vuex'
+
 export default {
-  data: () => {
+  data: function() {
     return {
-      snackbar: false
+      snackbar: false,
+      files: this.$store.state.files.files
     }
   },
   methods: {
