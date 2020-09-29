@@ -1,3 +1,4 @@
+<!--
 <template>
   <div>
     <v-row justify="start">
@@ -29,6 +30,49 @@ export default {
   methods: {
     test() {
       this.$axios.post('/')
+    }
+  }
+}
+</script>
+-->
+
+<template>
+  <div>
+    <v-row>
+      <v-col cols="6">
+        <!-- <PipelineStatus /> -->
+        <!-- <DonutStatus
+          ref="skills_chart"
+          :chart-data="chartData"
+          :options="options"
+        >
+        </DonutStatus> -->
+        <PipelineStatus :pipelines="pipelines" />
+      </v-col>
+    </v-row>
+  </div>
+</template>
+
+<script>
+import PipelineStatus from '../components/PipelineStatus'
+import { pipelines } from 'vuex'
+
+const options = {
+  responsive: true,
+  maintainAspectRatio: false,
+  animation: {
+    animateRotate: false
+  }
+}
+export default {
+  name: 'App',
+  components: { PipelineStatus },
+  data: function() {
+    return {
+      // TODO:
+      // have to put containers in a store that persists with the user
+      // also save the user pipeline
+      pipelines: this.$store.state.pipelines.pipelines
     }
   }
 }

@@ -3,40 +3,26 @@
     <v-card-title>
       Jobs
       <v-spacer />
-      <v-btn
-        @click="addJob"
-        color="primary"
-        v-text="'test'"
-        text
-      />
-      <v-icon-btn
-        @click="$store.dispatch('jobs/deleteAllJobs')"
-        delete
-      />
-      <v-icon-btn
-        @click="$store.dispatch('jobs/fetchJobs')"
-        refresh
-      />
+      <v-btn @click="addJob" color="primary" v-text="'test'" text />
+      <v-icon-btn @click="$store.dispatch('jobs/deleteAllJobs')" delete />
+      <v-icon-btn @click="$store.dispatch('jobs/fetchJobs')" refresh />
     </v-card-title>
-    <v-data-table
-      :items="jobs"
-      :headers="headers"
-    />
+    <v-data-table :items="jobs" :headers="headers" />
   </v-card>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import VIconBtn from "./global/v-icon-btn";
+import VIconBtn from './global/v-icon-btn'
 
 export default {
-  name: "TaskCRUD",
-  components: {VIconBtn},
+  name: 'TaskCRUD',
+  components: { VIconBtn },
   data: () => ({
     headers: [
       { text: 'Job Id', value: 'pid' },
       { text: 'Job', value: 'info' },
-      { text: 'Status', value: 'status' },
+      { text: 'Status', value: 'status' }
     ]
   }),
   computed: {
