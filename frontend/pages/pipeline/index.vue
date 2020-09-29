@@ -6,6 +6,7 @@
     <v-flex v-for="pipeline in pipelines" :key="pipeline.id">
       {{ pipeline.id }}
       {{ pipeline.containerList }}
+      {{ pipeline.status }}
       <v-btn>
         <!-- TODO: fix the routing stuff properly with Vue probably /pipleine/:id -->
         <nuxt-link to="/pipeline/1">

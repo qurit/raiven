@@ -1,7 +1,17 @@
 export const state = () => ({
   pipelines: [
-    { id: 1, containerList: [{ id: 1, title: 'Algorithm 1' }] },
-    { id: 2, containerList: [{ id: 1, title: 'Algorithm 6' }] }
+    {
+      id: 1,
+      title: 'Cool Pipeline',
+      containerList: [{ id: 1, title: 'Algorithm 1' }],
+      status: 80
+    },
+    {
+      id: 2,
+      title: 'Machine Learning Tumor Detection',
+      containerList: [{ id: 1, title: 'Algorithm 6' }],
+      status: 40
+    }
   ]
 })
 
