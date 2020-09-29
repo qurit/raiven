@@ -38,35 +38,59 @@ debug_logger()
 #     db.refresh(newAE)
 #     return newAE
 
+# TODO: make helper functions to add the dicom patient / study/ other stuff 
+# to the database so its not all one big thing? 
 def handle_store(event):
     """Handle EVT_C_STORE events."""
     print(event)
-    print(event.assoc.requestor.address)
-    print(event.assoc.requestor.port)
+    print(event.dataset)
+    patient = event.dataset.PatientID
+    studyInstanceUID = event.dataset.StudyInstanceUID
+    studyDate = event.dataset.StudyDate
+    print(event.dataset.SeriesInstanceUID)
+    print(event.dataset.Modality)
+    # print(event.dataset.SeriesDescription)
+    host = event.assoc.requestor.address
+    port = event.assoc.requestor.port
     title = str(event.assoc.requestor.ae_title, encoding='utf-8').strip()
     newAE = models.dicom.ApplicationEntity(title=title)
-    print(session)
+    # newPatient = models.dicom.DicomPatient(id=123123)
+    # session.add(newPatient)
+    # session.commit()
     session.add(newAE)
     session.commit()
-    # print(newAE.title)
-    # print(newAE)
-    # print(db)
-    # print(type(db))
+
+    event.dataset.file_meta = event.file_meta
+    event.dataset.save_as(event.dataset.SOPInstanceUID, write_like_original=False)
     
-    # db.add(newAE)
-    # application_entity = schemas.ApplicationEntityCreate()
-    # application_entity.title = title
-    # save_ae(title, newAE)
+    ds = event.dataset
+    path = os.path.join(os.getcwd(), 'tmp')
+    if not os.path.exists(path):
+        os.mkdir(path)
+    print(path)
+    path = os.path.join(path, ds.PatientID)
+    if not os.path.exists(path):
+        print("make patient folder")
+        os.mkdir(path)
 
-    # dicom_store = models.dicom.ApplicationEntityCreate(title=title)
-    # db.add(dicom_store)
-    # db.commit()
+    path = os.path.join(path, ds.StudyInstanceUID)
+    if not os.path.exists(path):
+        print("make study folder")
+        os.mkdir(path)
+    path = os.path.join(path, ds.SeriesInstanceUID)
+    if not os.path.exists(path):
+        print("make series folder")
+        os.mkdir(path)
 
-    # ds = event.dataset
-    # ds.file_meta = event.file_meta
-    # ds.save_as(ds.SOPInstanceUID, write_like_original=False)
-    # models.dicom.ApplicationEntity(title)
-    # print(ds)
+    path = os.path.join(path, ds.SOPInstanceUID + '.dcm')
+    ds.save_as(path, write_like_original=False)
+    print( 'saved image at', path)
+    
+    newDicomStoreEvent = models.dicom.DicomStoreEvent(path=path)
+    session.add(newDicomStoreEvent)
+    session.commit()
+
+    print(os.getcwd())
     print("BLAHBLAHBLAH")
     # print(ds.PatientID)
     # TMP_DIR = os.path.join(os.getcwd(), 'tmp')

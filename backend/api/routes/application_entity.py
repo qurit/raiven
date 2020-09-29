@@ -5,9 +5,6 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends
 
 from api import session, models, schemas
-print("S;DLKJFASD;LKFJASD;FLJASDF;LJSDFKL;J")
-print(session)
-print(Depends)
 router = APIRouter()
 
 
