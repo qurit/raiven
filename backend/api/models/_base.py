@@ -52,11 +52,11 @@ class PathMixin(object):
 
     @property
     def path(self) -> str:
-        return os.path.join(self.__absolute_directory__, str(self.id))
+        return os.path.join(self.__directory__, str(self.id))
 
     @property
     def abs_path(self) -> str:
-        return os.path.join(self.__absolute_directory__, str(self.id))
+        return os.path.join(config.UPLOAD_DIR, self.path)
 
     def save(self, *args, **kwargs):
         """ Will Create a new directory upon completion """
@@ -72,3 +72,9 @@ class PathMixin(object):
         if os.path.exists(path := self.path):
             rmtree(path)
 
+
+class NestedPathMixin(PathMixin):
+
+    @property
+    def path(self) -> str:
+        raise NotImplementedError
