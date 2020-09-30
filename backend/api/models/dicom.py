@@ -1,8 +1,9 @@
 import os
 
 from sqlalchemy import *
+from sqlalchemy.orm import relationship
 
-from .. import Base, PathMixin, NestedPathMixin
+from . import Base, PathMixin, NestedPathMixin
 
 
 class DicomNode(PathMixin, Base):
@@ -13,6 +14,7 @@ class DicomNode(PathMixin, Base):
 
 class DicomPatient(NestedPathMixin, Base):
     dicom_node_id = Column(Integer, ForeignKey("dicom_node_id.id", ondelete="CASCADE"))
+    study_instance_id = Column(String)
 
     node = relationship('DicomNode')
 
