@@ -37,7 +37,7 @@ class Pipeline(PipelineCreate, BaseORMModel):
 class PipelineStepCreate(BaseModel):
     pipeline_id: int
     container_id: int
-    next_pipeline_step_id: Optional[int]
+    # next_pipeline_step_id: Optional[int]
 
 
 class PipelineStep(PipelineStepCreate, BaseORMModel):

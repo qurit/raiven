@@ -1,111 +1,76 @@
-import os
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
-from fastapi import Depends
-from pydantic import BaseModel
+from pynetdicom import AE, evt
+from pynetdicom.presentation import AllStoragePresentationContexts
+from pynetdicom.sop_class import VerificationSOPClass
 
-# from . import models, schemas
+from api import config, session
+from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
 
-from api import config
 
-engine = create_engine(config.SQLALCHEMY_DATABASE_URI)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-session = SessionLocal()
+def get_ae_title(event):
+    return str(event.assoc.requestor.ae_title, encoding='utf-8').strip()
 
-from api import models, schemas
-print("FJFJSFJSFJSFJSFJSFJSFJSFJSFJSFJ")
-print(session)
-print(Depends)
 
-from pynetdicom import (
-    AE, debug_logger, evt, AllStoragePresentationContexts,
-    ALL_TRANSFER_SYNTAXES
-)
-# from backend.api import db
-debug_logger()
-
-# def save_ae(title, application_entity: schemas.ApplicationEntityCreate, db: Session = Depends(session)):
-#     # print(db)
-#     # print(ae)
-#     # print(type(db))
-#     # models.dicom.ApplicationEntity(title=title).save(db)
-#     # db.add(dicom_store)
-#     # db.commit()
-
-#     newAE = models.dicom.ApplicationEntity(title=application_entity.title)
-#     db.add(newAE)
-#     db.commit()
-#     db.refresh(newAE)
-#     return newAE
-
-# TODO: make helper functions to add the dicom patient / study/ other stuff 
-# to the database so its not all one big thing? 
 def handle_store(event):
-    """Handle EVT_C_STORE events."""
-    print(event)
-    print(event.dataset)
-    patient = event.dataset.PatientID
-    studyInstanceUID = event.dataset.StudyInstanceUID
-    studyDate = event.dataset.StudyDate
-    print(event.dataset.SeriesInstanceUID)
-    print(event.dataset.Modality)
-    # print(event.dataset.SeriesDescription)
-    host = event.assoc.requestor.address
-    port = event.assoc.requestor.port
-    title = str(event.assoc.requestor.ae_title, encoding='utf-8').strip()
-    newAE = models.dicom.ApplicationEntity(title=title)
-    # newPatient = models.dicom.DicomPatient(id=123123)
-    # session.add(newPatient)
-    # session.commit()
-    session.add(newAE)
-    session.commit()
+    """ Handles EVT_C_STORE """
 
-    event.dataset.file_meta = event.file_meta
-    event.dataset.save_as(event.dataset.SOPInstanceUID, write_like_original=False)
-    
+    ae_title = get_ae_title(event)
+    # host = event.assoc.requestor.address
+    # port = event.assoc.requestor.port
+
     ds = event.dataset
-    path = os.path.join(os.getcwd(), 'tmp')
-    if not os.path.exists(path):
-        os.mkdir(path)
-    print(path)
-    path = os.path.join(path, ds.PatientID)
-    if not os.path.exists(path):
-        print("make patient folder")
-        os.mkdir(path)
 
-    path = os.path.join(path, ds.StudyInstanceUID)
-    if not os.path.exists(path):
-        print("make study folder")
-        os.mkdir(path)
-    path = os.path.join(path, ds.SeriesInstanceUID)
-    if not os.path.exists(path):
-        print("make series folder")
-        os.mkdir(path)
+    with session() as db:
+        """ 
+        The models will automatically create the folders because they inherit from NestedPathMixin found in database.py
+        Speed can be improved by starting query from series (requires joins) but will cut the avg amount of queries down
+        from n=4 to n=1
+        """
 
-    path = os.path.join(path, ds.SOPInstanceUID + '.dcm')
-    ds.save_as(path, write_like_original=False)
-    print( 'saved image at', path)
-    
-    newDicomStoreEvent = models.dicom.DicomStoreEvent(path=path)
-    session.add(newDicomStoreEvent)
-    session.commit()
+        # TODO: SHOULD START WITH SERIES FOR MORE EFFICIENCY
+        if not (node := db.query(DicomNode).filter_by(title=ae_title).first()):
+            node = DicomNode(
+                title=ae_title
+                # TODO: add port / host
+            ).save(db)
 
-    print(os.getcwd())
-    print("BLAHBLAHBLAH")
-    # print(ds.PatientID)
-    # TMP_DIR = os.path.join(os.getcwd(), 'tmp')
-    # path = os.path.join(TMP_DIR, ds.PatientId)
-    # if not os.path.exists(path):
-    #     os.mkdir(path)
+        if not (patient := db.query(Patient).filter_by(dicom_node_id=node.id, patient_id=ds.PatientID).first()):
+            patient = Patient(
+                dicom_node_id=node.id,
+                study_instance=ds.PatientID
+            ).save(db)
+
+        if not (study := db.query(Study).filter_by(dicom_patient_id=patient_id.id, study_instance_uid=ds.StudyInstanceUID).first()):
+            study = Study(
+                dicom_patient_id=patient.id,
+                study_instance=ds.StudyInstanceUID
+                # TODO: add study date
+            ).save(db)
+
+        if not (series := db.query(Series).filter_by(dicom_study_id=study.id, series_instance_uid=ds.StudyInstanceUID).first()):
+            series = Series(
+                dicom_study_id=study.id,
+                series_instance_uid=ds.StudyInstanceUID,
+                series_description=ds.SeriesDescription, # TODO: Add a series description table
+                modality=ds.Modality,
+            ).save(db)
+
+        # Grab the save path so we can release the session connection
+        save_path = series.abs_path
+
+    ds.save_as(save_path)
     return 0x0000
 
-handlers = [(evt.EVT_C_STORE, handle_store)]
 
-ae = AE()
-storage_sop_classes = [
-     cx.abstract_syntax for cx in AllStoragePresentationContexts
-]
-for uid in storage_sop_classes:
-    ae.add_supported_context(uid, ALL_TRANSFER_SYNTAXES)
+if __name__ == '__main__':
+    ae = AE()
+    ae.supported_contexts = AllStoragePresentationContexts
+    ae.add_supported_context(VerificationSOPClass)
+    handlers = [
+        (evt.EVT_C_STORE, handle_store),
+        (evt.EVT_ACCEPTED, handle_connection),
+        (evt.EVT_RELEASED, handle_release)
+    ]
 
-ae.start_server(('', 11112), block=True, evt_handlers=handlers)
+    print("Starting server...")
+    print("Waiting for connections...")
+    ae.start_server(('', 11112), block=True, evt_handlers=handlers)

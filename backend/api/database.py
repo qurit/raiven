@@ -10,6 +10,7 @@ engine = create_engine(config.SQLALCHEMY_DATABASE_URI)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
+@contextmanager
 def session():
     session = SessionLocal()
     try:
