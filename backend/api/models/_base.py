@@ -1,8 +1,13 @@
-from sqlalchemy import Column, Integer
+import os
+from shutil import rmtree
+
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.orm import Session
-from inflection import underscore
+from inflection import underscore, pluralize
+
+from api import config
 
 
 class _Base:
@@ -31,3 +36,39 @@ class _Base:
 
 
 Base = declarative_base(cls=_Base)
+
+
+class PathMixin(object):
+
+    @declared_attr
+    def __directory__(self) -> str:
+        """ The naming scheme for the folder containing all the objects """
+
+        return pluralize(self.__tablename__)
+
+    @declared_attr
+    def __absolute_directory__(self) -> str:
+        return os.path.join(config.UPLOAD_DIR, self.__directory__)
+
+    @property
+    def path(self) -> str:
+        return os.path.join(self.__absolute_directory__, str(self.id))
+
+    @property
+    def abs_path(self) -> str:
+        return os.path.join(self.__absolute_directory__, str(self.id))
+
+    def save(self, *args, **kwargs):
+        """ Will Create a new directory upon completion """
+
+        super().save(*args, **kwargs)
+        if not os.path.exists(path := self.path):
+            os.makedirs(path)
+
+    def delete(self, *args, **kwargs):
+        """ Will Delete a new directory upon completion """
+
+        super().delete(*args, **kwargs)
+        if os.path.exists(path := self.path):
+            rmtree(path)
+

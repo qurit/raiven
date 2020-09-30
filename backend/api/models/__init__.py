@@ -1,4 +1,4 @@
-from ._base import Base
+from ._base import Base, PathMixin
 
 from . import dicom
 from . import user

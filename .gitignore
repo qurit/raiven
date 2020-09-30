@@ -16,3 +16,4 @@ sw.*
 /backend/migrations/
 /examples/input/
 /examples/output/
+/uploads/
