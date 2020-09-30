@@ -1,10 +1,11 @@
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
-from .. import Base
+from api import config
+from .. import Base, PathMixin
 
 
-class Container(Base):
+class Container(PathMixin, Base):
     user_id = Column(ForeignKey("user.id", ondelete="CASCADE"))
     name = Column(String)
     dockerfile_path = Column(String)
@@ -15,13 +16,17 @@ class Pipeline(Base):
     name = Column(String)
 
 
-class PipelineStep(Base):
+class PipelineContainer(Base):
     pipeline_id = Column(ForeignKey("pipeline.id", ondelete="CASCADE"))
     container_id = Column(ForeignKey("container.id"))
-    next_pipeline_step_id = Column(ForeignKey("pipeline_step.id"))
 
-    # next = relationship("PipelineStep", backref="previous")
+    # next_steps = relationship('PipelineStep', foreign_keys=['input_container_id'])
+    # previous_steps = relationship('PipelineStep', foreign_keys=['output_container_id'])
 
+
+class PipelineStep(Base):
+    input_container_id = Column(ForeignKey("pipeline_container.id", ondelete="CASCADE"))
+    output_container_id = Column(ForeignKey("pipeline_container.id", ondelete="CASCADE"))
 
 
 
