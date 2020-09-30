@@ -1,10 +1,16 @@
-from pydicom import dcmread
-
-from pynetdicom import AE, StoragePresentationContexts
-from pynetdicom.sop_class import CTImageStorage
 import os
 
+from pydicom import dcmread
+from pynetdicom import AE, StoragePresentationContexts
+from pynetdicom.sop_class import CTImageStorage
+
+
+# Replace with your own path to a test folder
+UPLOAD_DIR = 'E:\\BCCRC\\dicom\\case1'
+
 if __name__ == '__main__':
+    """ Small test program that uploads an entire dicom directory to a node """
+
     ae = AE(ae_title='BC158VIPT1')
     ae.requested_contexts = StoragePresentationContexts
 
@@ -12,7 +18,7 @@ if __name__ == '__main__':
     if assoc.is_established:
         print('ESTABLISHED')
 
-        for root, _, files in os.walk('E:\\BCCRC\\dicom\\case1'):
+        for root, _, files in os.walk(UPLOAD_DIR):
             for file in files:
                 if file.endswith('.dcm'):
                     ds = dcmread(os.path.join(root, file), force=True)

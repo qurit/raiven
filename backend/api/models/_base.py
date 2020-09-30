@@ -48,19 +48,18 @@ class NestedPathMixin(object):
     def abs_path(self) -> str:
         return os.path.join(config.UPLOAD_DIR, self.path)
 
-
     def save(self, *args, **kwargs):
         """ Will Create a new directory upon completion """
 
         super().save(*args, **kwargs)
-        if not os.path.exists(path := self.path):
+        if not os.path.exists(path := self.abs_path):
             os.makedirs(path)
 
     def delete(self, *args, **kwargs):
         """ Will Delete a new directory upon completion """
 
         super().delete(*args, **kwargs)
-        if os.path.exists(path := self.path):
+        if os.path.exists(path := self.abs_path):
             rmtree(path)
 
 
