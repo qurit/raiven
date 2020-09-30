@@ -1,9 +1,13 @@
+import os
+
 from pynetdicom import AE, evt
 from pynetdicom.presentation import AllStoragePresentationContexts
 from pynetdicom.sop_class import VerificationSOPClass
 
-from api import config
+from api import config, session
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
+
+print(config.UPLOAD_DIR)
 
 
 def get_ae_title(event):
@@ -15,57 +19,56 @@ def handle_store(event):
     print("STORE EVENT")
 
     ae_title = get_ae_title(event)
-    # host = event.assoc.requestor.address
-    # port = event.assoc.requestor.port
-
     ds = event.dataset
 
-    with session() as db:
-        print("HERE")
+    try:
+        with session() as db:
+            """ 
+            The models will automatically create the folders because they inherit from NestedPathMixin found in database.py
+            Speed can be improved by starting query from series (requires joins) but will cut the avg amount of queries down
+            from n=4 to n=1. Calculating the storage path could be faster by not using lazy relationships in the NestedPathMixin
+            """
 
-        """ 
-        The models will automatically create the folders because they inherit from NestedPathMixin found in database.py
-        Speed can be improved by starting query from series (requires joins) but will cut the avg amount of queries down
-        from n=4 to n=1
-        """
+            # TODO: SHOULD START WITH SERIES FOR MORE EFFICIENCY
+            if not (node := db.query(DicomNode).filter_by(title=ae_title).first()):
+                node = DicomNode(
+                    title=ae_title,
+                    host=event.assoc.requestor.address,
+                    port=event.assoc.requestor.port
+                )
+                node.save(db)
 
-        # TODO: SHOULD START WITH SERIES FOR MORE EFFICIENCY
-        if not (node := db.query(DicomNode).filter_by(title=ae_title).first()):
-            node = DicomNode(
-                title=ae_title
-                # TODO: add port / host
-            ).save(db)
-            print("Node created")
+            if not (patient := db.query(DicomPatient).filter_by(dicom_node_id=node.id, patient_id=ds.PatientID).first()):
+                patient = DicomPatient(
+                    dicom_node_id=node.id,
+                    patient_id=ds.PatientID
+                )
+                patient.save(db)
 
-        if not (patient := db.query(Patient).filter_by(dicom_node_id=node.id, patient_id=ds.PatientID).first()):
-            patient = Patient(
-                dicom_node_id=node.id,
-                study_instance=ds.PatientID
-            ).save(db)
-            print("Patient created")
+            if not (study := db.query(DicomStudy).filter_by(dicom_patient_id=patient.id, study_instance_uid=ds.StudyInstanceUID).first()):
+                study = DicomStudy(
+                    dicom_patient_id=patient.id,
+                    study_instance_uid=ds.StudyInstanceUID
+                    # TODO: add study date
+                )
+                study.save(db)
 
-        if not (study := db.query(Study).filter_by(dicom_patient_id=patient_id.id, study_instance_uid=ds.StudyInstanceUID).first()):
-            study = Study(
-                dicom_patient_id=patient.id,
-                study_instance=ds.StudyInstanceUID
-                # TODO: add study date
-            ).save(db)
-            print("Study created")
+            if not (series := db.query(DicomSeries).filter_by(dicom_study_id=study.id, series_instance_uid=ds.StudyInstanceUID).first()):
+                series = DicomSeries(
+                    dicom_study_id=study.id,
+                    series_instance_uid=ds.StudyInstanceUID,
+                    series_description=ds.SeriesDescription,  # TODO: Add a series description table
+                    modality=ds.Modality,
+                )
+                series.save(db)
 
-        if not (series := db.query(Series).filter_by(dicom_study_id=study.id, series_instance_uid=ds.StudyInstanceUID).first()):
-            series = Series(
-                dicom_study_id=study.id,
-                series_instance_uid=ds.StudyInstanceUID,
-                series_description=ds.SeriesDescription, # TODO: Add a series description table
-                modality=ds.Modality,
-            ).save(db)
-            print("Series created")
+            # Grab the save path so we can release the session connection
+            save_path = series.abs_path
 
-        # Grab the save path so we can release the session connection
-        save_path = series.abs_path
-        print(save_path)
+        ds.save_as(os.path.join(save_path, ds.SOPInstanceUID + '.dcm'))
+    except Exception as e:
+        print(e)
 
-    ds.save_as(save_path)
     return 0x0000
 
 
