@@ -4,7 +4,8 @@ from pynetdicom import AE, evt
 from pynetdicom.presentation import AllStoragePresentationContexts
 from pynetdicom.sop_class import VerificationSOPClass
 
-from api import config, session
+from api import config
+from api.database import worker_session as session
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
 
 print(config.UPLOAD_DIR)
