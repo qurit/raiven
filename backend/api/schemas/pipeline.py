@@ -1,4 +1,25 @@
+from typing import List, Optional
+
 from . import BaseModel, BaseORMModel
+
+
+class PipelineContainerCreate(BaseModel):
+    pipeline_id: int
+    container_id: int
+
+
+class PipelineLinkCreate(BaseModel):
+    pipeline_id: int
+    input_pipeline_container_id: Optional[int]
+    output_pipeline_container_id: Optional[int]
+
+
+class PipelineLink(PipelineLinkCreate, BaseORMModel):
+    pass
+
+
+class PipelineContainer(PipelineContainerCreate, BaseORMModel):
+    pass
 
 
 class PipelineCreate(BaseModel):
@@ -6,18 +27,9 @@ class PipelineCreate(BaseModel):
 
 
 class Pipeline(PipelineCreate, BaseORMModel):
-    pass
+    user_id: Optional[int]
+    pipeline_containers: Optional[List[PipelineContainer]] = []
 
 
 class PipelineFull(Pipeline):
-    pass
-
-
-class PipelineStepCreate(BaseModel):
-    pipeline_id: int
-    container_id: int
-    # next_pipeline_step_id: Optional[int]
-
-
-class PipelineStep(PipelineStepCreate, BaseORMModel):
     pass
