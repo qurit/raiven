@@ -3,8 +3,9 @@ from typing import List
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends
 
-from api import session, schemas
+from api import session
 from api.models.pipeline import Pipeline, PipelineStep
+from api.schemas import pipeline as schemas
 
 router = APIRouter()
 

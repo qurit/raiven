@@ -40,6 +40,6 @@ def get_container(container_id: int, db: Session = Depends(session)):
     return db.query(Container).get(container_id)
 
 
-@router.delete("/{container_id}", response_model=schemas.Pipeline)
+@router.delete("/{container_id}", response_model=schemas.Container)
 def delete_container(container_id: int, db: Session = Depends(session)):
     return db.query(Container).get(container_id).delete(db)
