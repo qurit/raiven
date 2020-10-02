@@ -33,3 +33,13 @@ class Pipeline(PipelineCreate, BaseORMModel):
 
 class PipelineFull(Pipeline):
     pass
+
+# TODO: to delete, added just for now to get container to work
+
+
+class UserCreate(BaseModel):
+    username: str
+    name = str
+    title = str
+    department = str
+    company = str
