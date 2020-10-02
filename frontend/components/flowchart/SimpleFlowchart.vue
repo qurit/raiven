@@ -21,7 +21,7 @@
       @linkingStart="linkingStart(node.id)"
       @linkingStop="linkingStop(node.id)"
       @nodeSelected="nodeSelected(node.id, $event)"
-      @deleteNode="deleteNode"
+      @deleteNode="deleteNode(node.id)"
     >
     </flowchart-node>
   </div>
@@ -122,9 +122,9 @@
       },
       getPortPosition(type, x, y) {
         if (type === 'top') {
-          return [x + 40, y]
+          return [x + 100, y]
         } else if (type === 'bottom') {
-          return [x + 40, y + 80]
+          return [x + 100, y + 200]  // TODO: Make dynamic
         }
       },
       linkingStart(index) {
@@ -175,10 +175,8 @@
         this.action.dragging = id
         this.action.selected = id
         this.$emit('nodeClick', id)
-        this.mouse.lastX =
-          e.pageX || e.clientX + document.documentElement.scrollLeft
-        this.mouse.lastY =
-          e.pageY || e.clientY + document.documentElement.scrollTop
+        this.mouse.lastX = e.pageX || e.clientX + document.documentElement.scrollLeft
+        this.mouse.lastY = e.pageY || e.clientY + document.documentElement.scrollTop
       },
       handleMove(e) {
         if (this.action.linking) {
