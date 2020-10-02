@@ -17,31 +17,21 @@
     </v-card-text>
     <v-file-input label="Upload new container" @change="selectFile" />
 
-    <!-- Jobs
-      <v-spacer />
-      <v-btn @click="addJob" color="primary" v-text="'test'" text />
-      <v-icon-btn @click="$store.dispatch('jobs/deleteAllJobs')" delete />
-      <v-icon-btn @click="$store.dispatch('jobs/fetchJobs')" refresh /> -->
-
-    <!-- <v-data-table :items="jobs" :headers="headers" /> -->
   </v-card>
 </template>
 
 <script>
-import { containers } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   data: function() {
     return {
-      containers: this.$store.state.containers.containers,
       currentFile: ''
     }
   },
-  // computed: {
-  //   getContainers() {
-  //     return this.$store.state.containers.containers
-  //   }
-  // },
+  computed: {
+    ...mapState('containers', ['containers'])
+  },
   methods: {
     selectFile(file) {
       if (file) {

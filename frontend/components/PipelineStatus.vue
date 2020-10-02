@@ -52,12 +52,5 @@
 export default {
   name: 'PipelineStatus',
   props: ['pipelines']
-  // can do prop validation
-  // props: {
-  //   pipelines: {
-  //     type: Array,
-  //     required: true
-  //   }
-  // }
 }
 </script>
