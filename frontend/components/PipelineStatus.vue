@@ -2,6 +2,9 @@
   <div>
     *** FULFILLS: As a researcher, I would like to have a dashboard to view the
     status of my pipelines ***
+    <div>
+      Welcome, [User]
+    </div>
     <v-card-title>
       Your pipelines in progress
     </v-card-title>
@@ -18,6 +21,7 @@
               :value="pipeline.status"
               stream
             ></v-progress-linear>
+
             <v-btn color="error">
               Stop
             </v-btn>
@@ -48,12 +52,5 @@
 export default {
   name: 'PipelineStatus',
   props: ['pipelines']
-  // can do prop validation
-  // props: {
-  //   pipelines: {
-  //     type: Array,
-  //     required: true
-  //   }
-  // }
 }
 </script>

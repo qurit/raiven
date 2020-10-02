@@ -16,13 +16,6 @@ export const state = () => ({
 })
 
 export const mutations = {
-  get(state) {
-    state.pipelines
-  },
-  add(state, container) {
-    state.pipelines.push(container)
-  },
-  delete(state, pipeline) {
-    state.pipelines.splice(state.pipelines.indexOf(pipeline), 1)
-  }
+  add: (state, container) => state.pipelines.push(container),
+  delete: (state, pipeline) => state.pipelines.splice(state.pipelines.indexOf(pipeline), 1)
 }
