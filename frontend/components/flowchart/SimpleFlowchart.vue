@@ -5,7 +5,7 @@
     @mouseup="handleUp"
     @mousedown="handleDown"
   >
-    <svg>
+    <svg width="100%" height="100%">
       <flowchart-link
         v-bind.sync="link"
         v-for="(link, index) in lines"
