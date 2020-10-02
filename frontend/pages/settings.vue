@@ -1,18 +1,12 @@
 <template>
   <v-row>
-    <v-col cols="6">
-      <ModalityCRUD />
-    </v-col>
-    <v-col cols="6">
-      <DockerList />
-    </v-col>
+    <v-card>
+      <v-card-title>
+        Hello, [User]
+      </v-card-title>
+      <v-card-subtitle>
+        Change settings or something
+      </v-card-subtitle>
+    </v-card>
   </v-row>
 </template>
-
-<script>
-import ModalityCRUD from "../components/ModalityCRUD";
-import DockerList from "../components/DockerList";
-export default {
-  components: {DockerList, ModalityCRUD}
-}
-</script>

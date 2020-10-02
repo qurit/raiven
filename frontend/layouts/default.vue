@@ -14,13 +14,13 @@
   </v-app>
 </template>
 <script>
-  import NavDrawer from "../components/NavDrawer";
-  import Toast from "../components/generic/Toast";
-  import TabBar from "../components/TabBar";
-  export default {
-    components: {TabBar, Toast, NavDrawer},
-    created() {
-      console.log(this.$vuetify.breakpoint)
-    }
+import NavDrawer from "../components/nav/NavDrawer";
+import Toast from "../components/generic/Toast";
+import TabBar from "../components/nav/TabBar";
+export default {
+  components: {TabBar, Toast, NavDrawer},
+  created() {
+    console.log(this.$vuetify.breakpoint)
   }
+}
 </script>
