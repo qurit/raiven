@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import SimpleFlowchart from '../components/SimpleFlowchart'
+import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
 
 export default {
   components: {
