@@ -83,7 +83,7 @@
     },
     data() {
       return {
-        containerList: true,
+        containerList: false,
         scene: {
           centerX: 1024,
           centerY: 140,
