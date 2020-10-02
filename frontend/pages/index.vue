@@ -32,7 +32,7 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'App',
-  components: { PipelineStatus },
+  components: { PipelineStatus, UserGuide },
   computed: {
     ...mapState('pipelines', ['pipelines'])
   }
