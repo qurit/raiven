@@ -1,21 +1,29 @@
 <template>
   <div>
-    <h1>simple flowchart</h1>
+    <h1>Pipeline Maker Test</h1>
     <div class="tool-wrapper">
-      <select v-model="newNodeType">
+      <!-- <select v-model="newNodeType">
         <option
           v-for="(item, index) in nodeCategory"
           :key="index"
           :value="index"
           >{{ item }}</option
         >
-      </select>
-      <input
+      </select> -->
+      <v-select
+        v-model="newNodeType"
+        :items="nodeCategory"
+        item-text="title"
+        item-value="id"
+        key="id"
+      >
+      </v-select>
+      <!-- <input
         type="text"
         v-model="newNodeLabel"
         placeholder="Input node label"
-      />
-      <button @click="addNode">ADD</button>
+      /> -->
+      <v-btn @click="addNode">Add Container</v-btn>
     </div>
     <SimpleFlowchart
       :scene.sync="scene"
@@ -75,7 +83,7 @@ export default {
       },
       newNodeType: 0,
       newNodeLabel: '',
-      nodeCategory: ['rule', 'action', 'script', 'decision', 'fork', 'join']
+      nodeCategory: this.$store.state.containers.containers
     }
   },
   methods: {
@@ -93,12 +101,12 @@ export default {
         id: maxID + 1,
         x: -400,
         y: 50,
-        type: this.nodeCategory[this.newNodeType],
-        label: this.newNodeLabel ? this.newNodeLabel : `test${maxID + 1}`
+        type: this.nodeCategory[this.newNodeType - 1].title
       })
     },
     nodeClick(id) {
       console.log('node click', id)
+      console.log(this.newNodeType)
     },
     nodeDelete(id) {
       console.log('node delete', id)
