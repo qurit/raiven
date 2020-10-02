@@ -11,17 +11,24 @@
       <v-sheet color="info">
         {{ type }}
       </v-sheet>
+
+      <!-- Input Node  -->
       <div
         class="node-port node-input"
         @mousedown="inputMouseDown"
         @mouseup="inputMouseUp"
-      ></div>
+      />
+
+      <!-- output Node  -->
+      <div
+        class="node-port node-output"
+        @mousedown="outputMouseDown"
+      />
 
       <v-expand-x-transition>
-        <v-icon-btn v-if="hover" delete color="tertiary" @click=""/>
+        <v-icon-btn v-if="hover" delete color="tertiary" @click="$emit('deleteNode', id)"/>
       </v-expand-x-transition>
-      <div v-show="show.delete" class="node-delete">&times;</div>
-
+      <v-sheet color="secondary">Output</v-sheet>
     </v-card>
   </v-hover>
 </template>
@@ -30,31 +37,10 @@
   export default {
     name: 'FlowchartNode',
     props: {
-      id: {
-        type: Number,
-        default: 1000,
-        validator(val) {
-          return typeof val === 'number'
-        }
-      },
-      x: {
-        type: Number,
-        default: 0,
-        validator(val) {
-          return typeof val === 'number'
-        }
-      },
-      y: {
-        type: Number,
-        default: 0,
-        validator(val) {
-          return typeof val === 'number'
-        }
-      },
-      type: {
-        type: String,
-        default: 'Default'
-      },
+      id: undefined,
+      x: 0,
+      y: 0,
+      type: undefined,
       options: {
         type: Object,
         default() {
@@ -66,15 +52,11 @@
         }
       }
     },
-    data() {
-      return {
-        show: {
+    data: () => ({
+      show: {
           delete: false
         }
-      }
-    },
-    mounted() {
-    },
+    }),
     computed: {
       nodeStyle() {
         return {
@@ -87,11 +69,7 @@
     methods: {
       handleMousedown(e) {
         const target = e.target || e.srcElement
-        // console.log(target);
-        if (
-          target.className.indexOf('node-input') < 0 &&
-          target.className.indexOf('node-output') < 0
-        ) {
+        if (target.className.indexOf('node-input') < 0 && target.className.indexOf('node-output') < 0) {
           this.$emit('nodeSelected', e)
         }
         e.preventDefault()
@@ -172,29 +150,5 @@
     .node-output {
       bottom: #{-2 + $portSize/-2}px;
     }
-
-    .node-delete {
-      position: absolute;
-      right: -6px;
-      top: -6px;
-      font-size: 12px;
-      width: 12px;
-      height: 12px;
-      color: $themeColor;
-      cursor: pointer;
-      background: red;
-      border: 1px solid $themeColor;
-      border-radius: 100px;
-      text-align: center;
-
-      &:hover {
-        background: $themeColor;
-        color: red;
-      }
-    }
-  }
-
-  .selected {
-    box-shadow: 0 0 0 2px $themeColor;
   }
 </style>

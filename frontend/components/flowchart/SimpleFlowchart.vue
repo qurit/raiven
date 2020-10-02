@@ -21,6 +21,7 @@
       @linkingStart="linkingStart(node.id)"
       @linkingStop="linkingStop(node.id)"
       @nodeSelected="nodeSelected(node.id, $event)"
+      @deleteNode="deleteNode"
     >
     </flowchart-node>
   </div>
@@ -181,91 +182,70 @@
       },
       handleMove(e) {
         if (this.action.linking) {
-          ;[this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e)
-          ;[this.draggingLink.mx, this.draggingLink.my] = [
-            this.mouse.x,
-            this.mouse.y
-          ]
+          [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e)
+          this.draggingLink.mx = this.mouse.x
+          this.draggingLink.my = this.mouse.y
         }
+
         if (this.action.dragging) {
-          this.mouse.x =
-            e.pageX || e.clientX + document.documentElement.scrollLeft
+          this.mouse.x = e.pageX || e.clientX + document.documentElement.scrollLeft
           this.mouse.y = e.pageY || e.clientY + document.documentElement.scrollTop
+
           let diffX = this.mouse.x - this.mouse.lastX
           let diffY = this.mouse.y - this.mouse.lastY
           this.mouse.lastX = this.mouse.x
           this.mouse.lastY = this.mouse.y
           this.moveSelectedNode(diffX, diffY)
         }
+
         if (this.action.scrolling) {
-          ;[this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e)
+          [this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e)
+
           let diffX = this.mouse.x - this.mouse.lastX
           let diffY = this.mouse.y - this.mouse.lastY
           this.mouse.lastX = this.mouse.x
           this.mouse.lastY = this.mouse.y
           this.scene.centerX += diffX
           this.scene.centerY += diffY
-          // this.hasDragged = true
         }
       },
       handleUp(e) {
-        const target = e.target || e.srcElement
+        const target = e.target
         if (this.$el.contains(target)) {
-          if (
-            typeof target.className !== 'string' ||
-            target.className.indexOf('node-input') < 0
-          ) {
+          if (typeof target.className !== 'string' || target.className.indexOf('node-input') < 0) {
             this.draggingLink = null
           }
-          if (
-            typeof target.className === 'string' &&
-            target.className.indexOf('node-delete') > -1
-          ) {
-            // console.log('delete2', this.action.dragging);
-            this.nodeDelete(this.action.dragging)
-          }
         }
+
         this.action.linking = false
         this.action.dragging = null
         this.action.scrolling = false
       },
       handleDown(e) {
-        const target = e.target || e.srcElement
-        // console.log('for scroll', target, e.keyCode, e.which)
-        if (
-          (target === this.$el || target.matches('svg, svg *')) &&
-          e.which === 1
-        ) {
-          this.action.scrolling = true
-          ;[this.mouse.lastX, this.mouse.lastY] = getMousePosition(this.$el, e)
+        const target = e.target
+        if ((target === this.$el || target.matches('svg, svg *')) && e.which === 1) {
+          this.action.scrolling = true;
+          [this.mouse.lastX, this.mouse.lastY] = getMousePosition(this.$el, e)
           this.action.selected = null // deselectAll
         }
+
         this.$emit('canvasClick', e)
       },
       moveSelectedNode(dx, dy) {
-        let index = this.scene.nodes.findIndex(item => {
-          return item.id === this.action.dragging
-        })
+        let index = this.scene.nodes.findIndex(item => item.id === this.action.dragging)
         let left = this.scene.nodes[index].x + dx / this.scene.scale
         let top = this.scene.nodes[index].y + dy / this.scene.scale
-        this.$set(
-          this.scene.nodes,
-          index,
-          Object.assign(this.scene.nodes[index], {
+
+        this.$set(this.scene.nodes, index, Object.assign(this.scene.nodes[index], {
             x: left,
             y: top
           })
         )
       },
-      nodeDelete(id) {
-        this.scene.nodes = this.scene.nodes.filter(node => {
-          return node.id !== id
-        })
-        this.scene.links = this.scene.links.filter(link => {
-          return link.from !== id && link.to !== id
-        })
-        this.$emit('nodeDelete', id)
-      }
+      deleteNode(id) {
+        this.scene.nodes = this.scene.nodes.filter(node => node.id !== id)
+        this.scene.links = this.scene.links.filter(link => link.from !== id && link.to !== id)
+      },
     }
   }
 </script>

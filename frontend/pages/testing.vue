@@ -88,7 +88,7 @@ export default {
   },
   methods: {
     canvasClick(e) {
-      console.log('canvas Click, event:', e)
+      // console.log('canvas Click, event:', e)
     },
     addNode() {
       let maxID = Math.max(
@@ -105,17 +105,17 @@ export default {
       })
     },
     nodeClick(id) {
-      console.log('node click', id)
-      console.log(this.newNodeType)
+      // console.log('node click', id)
+      // console.log(this.newNodeType)
     },
     nodeDelete(id) {
-      console.log('node delete', id)
+      // console.log('node delete', id)
     },
     linkBreak(id) {
-      console.log('link break', id)
+      // console.log('link break', id)
     },
     linkAdded(link) {
-      console.log('new link added:', link)
+      // console.log('new link added:', link)
     }
   }
 }
