@@ -32,7 +32,7 @@
       @linkBreak="linkBreak"
       @linkAdded="linkAdded"
       @canvasClick="canvasClick"
-      :height="400"
+      :height="800"
     />
   </div>
 </template>
