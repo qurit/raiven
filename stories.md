@@ -3,7 +3,7 @@
 * Users should be able to drag and drop components onto a canvas
 * Users should be able to directionally link components together; showing a flow of data
 
-> As a researcher, I  would like to be able to add too add to the list of components.
+> As a researcher, I  would like to be able to add to the list of components.
 * Users should be able to upload an algorithm they have created to be used in the pipelines.
 * This process should be language and requirements agnostic.
 
@@ -25,7 +25,7 @@
 
 > As an admin, I would like to view and control about how users are using the application
 * The admin should be able to view an admin dashboard which will display all relevant information about the app and its users.
-* The admin should be able to to make changes to any and all parts of the application (including created pipelines).
+* The admin should be able to make changes to any and all parts of the application (including created pipelines).
 
 ## Definitions
 | Term | Definition |
