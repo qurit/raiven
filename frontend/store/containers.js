@@ -1,23 +1,12 @@
-import { getContainers, scaleWorkers } from "../api/containers";
-
 export const state = () => ({
-  containers: []
+  containers: [
+    { id: 1, title: 'Algorithm 1' },
+    { id: 2, title: 'Algorithm 2' },
+    { id: 3, title: 'Algorithm 3' }
+  ]
 })
 
-export const getters = {
-  workers: state => state.containers.filter(c => c.Name.startsWith('/picom_worker'))
-}
-
 export const mutations = {
-  setContainers: (state, containers) => state.containers = containers,
-}
-
-export const actions = {
-  async fetchContainers({commit}) {
-      commit('setContainers', await getContainers(this))
-  },
-  async scaleWorkers({commit}, count) {
-      await scaleWorkers(this, count)
-      commit('setContainers', await getContainers(this))
-  }
+  add: (state, container) => state.containers.push(container),
+  delete: (state, container) => state.containers.splice(state.containers.indexOf(container), 1)
 }

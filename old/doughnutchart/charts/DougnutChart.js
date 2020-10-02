@@ -5,7 +5,7 @@ export default {
   extends: Doughnut,
   mixins: [reactiveProp],
   props: ['options'],
-  mounted () {
+  mounted() {
     this.renderChart(this.chartData, this.options)
   }
 }
