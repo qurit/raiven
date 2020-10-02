@@ -50,10 +50,10 @@ export default {
       type: String,
       default: 'Default'
     },
-    label: {
-      type: String,
-      default: 'input name'
-    },
+    // label: {
+    //   type: String,
+    //   default: 'input name'
+    // },
     options: {
       type: Object,
       default() {
@@ -117,16 +117,18 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-$themeColor: rgb(255, 136, 85);
+$themeColor: #ffcf44;
 $portSize: 12;
 .flowchart-node {
   margin: 0;
   width: 80px;
   height: 80px;
+  // width: 160px;
+  // height: 100px;
   position: absolute;
   box-sizing: border-box;
   border: none;
-  background: white;
+  background: blue;
   z-index: 1;
   opacity: 0.9;
   cursor: move;
@@ -135,7 +137,7 @@ $portSize: 12;
     text-align: center;
     .node-type {
       background: $themeColor;
-      color: white;
+      color: black;
       font-size: 13px;
       padding: 6px;
     }
@@ -151,7 +153,7 @@ $portSize: 12;
     transform: translate(-50%);
     border: 1px solid #ccc;
     border-radius: 100px;
-    background: white;
+    background: purple;
     &:hover {
       background: $themeColor;
       border: 1px solid $themeColor;
@@ -172,13 +174,13 @@ $portSize: 12;
     height: 12px;
     color: $themeColor;
     cursor: pointer;
-    background: white;
+    background: red;
     border: 1px solid $themeColor;
     border-radius: 100px;
     text-align: center;
     &:hover {
       background: $themeColor;
-      color: white;
+      color: red;
     }
   }
 }
