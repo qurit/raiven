@@ -9,27 +9,32 @@
       </v-col>
     </v-row>
     <v-row>
+       <v-col cols="12">
+        <!-- Example on how to use the $toaster plugin i wrote (Used to display notifications to the user)  -->
+         <V-btn color="success" flat @click="$toaster.toastSuccess('Hello!')">Click me for a toast</V-btn>
+         <V-btn color="error" flat @click="$toaster.toastError('Grrrr')">Click me for an error toast</V-btn>
+         <V-btn color="purple" flat @click="$toaster.toastMessage({content: 'I am purple', color: 'purple'})">Click me for a purple toast</V-btn>
+       </v-col>
       <v-col cols="6">
-        <MoveForm />
+        <PipelineStatus :pipelines="pipelines" />
       </v-col>
       <v-col cols="6">
-        <TaskCRUD />
+        <UserGuide />
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
-import StatusDoughnut from "../components/dashboard/StatusDoughnut";
-import TaskCRUD from "../components/TaskCRUD";
-import TestSocket from "../components/TestSocket";
-import MoveForm from "../components/MoveForm";
+import PipelineStatus from '../components/PipelineStatus'
+import UserGuide from '../components/UserGuide'
+import { mapState } from 'vuex'
+
 export default {
-  components: {MoveForm, TestSocket, TaskCRUD, StatusDoughnut},
-  methods: {
-    test() {
-      this.$axios.post('/')
-    }
+  name: 'App',
+  components: { PipelineStatus, UserGuide },
+  computed: {
+    ...mapState('pipelines', ['pipelines'])
   }
 }
 </script>
