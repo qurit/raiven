@@ -5,7 +5,7 @@
     @mouseup="handleUp"
     @mousedown="handleDown"
   >
-    <svg width="100%" :height="`${height}px`">
+    <svg>
       <flowchart-link
         v-bind.sync="link"
         v-for="(link, index) in lines"
@@ -30,7 +30,7 @@
 <script>
   import FlowchartLink from './FlowchartLink.vue'
   import FlowchartNode from './FlowchartNode.vue'
-  import {getMousePosition} from '~/assets/position'
+  import {getMousePosition} from './position'
 
   export default {
     name: 'VueFlowchart',
@@ -252,6 +252,8 @@
 <style scoped lang="scss">
   .flowchart-container {
     margin: 0;
+    width: 100%;
+    height: calc(100vh - 24px);
     background: #ddd;
     position: relative;
     overflow: hidden;
