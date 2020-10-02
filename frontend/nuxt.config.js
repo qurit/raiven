@@ -35,7 +35,7 @@ export default {
   },
 
 
-  plugins: ['~/plugins/GlobalComponents', "~/plugins/toaster", "~/plugins/validation", "~/plugins/papa"],
+  plugins: ['~/plugins/GlobalComponents', "~/plugins/toaster", "~/plugins/validation"],
 
   // Axios config
   axios: {
