@@ -1,8 +1,9 @@
 export const state = () => ({
   containers: [
-    { id: 1, title: 'Algorithm 1' },
-    { id: 2, title: 'Algorithm 2' },
-    { id: 3, title: 'Algorithm 3' }
+    { id: 1, title: 'Input' },
+    { id: 2, title: 'Anonymization' },
+    { id: 3, title: 'Segmentation' },
+    { id: 4, title: 'Output' }
   ]
 })
 
