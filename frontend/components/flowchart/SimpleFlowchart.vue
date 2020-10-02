@@ -29,7 +29,7 @@
 <script>
 import FlowchartLink from './FlowchartLink.vue'
 import FlowchartNode from './FlowchartNode.vue'
-import { getMousePosition } from '../assets/position'
+import { getMousePosition } from '~/assets/position'
 export default {
   name: 'VueFlowchart',
   props: {
