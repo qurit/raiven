@@ -20,19 +20,48 @@ def get_all_containers(db: Session = Depends(session)):
 @router.post("/", response_model=schemas.Container)
 def create_container(container: schemas.ContainerCreate, db: Session = Depends(session)):
     """ Allows the creation of a new container """
+
+    # dockerfile_path = os.path.join(container.get_path(), 'dockerfile')
+    # with open(dockerfile_path) as fp:
+    #     fp.write(dockerfile)
+    # print(container)
+    # print(container.dockerfile_path)
+    test = 'blah'
+    container.dockerfile_path = test
+    # print(container.dockerfile_path)
+    print(container)
+
+    save_path = 'C:\\Users\\kevin\Desktop\\picom\\backend\\user_files'
+    completeFile = os.path.join(save_path, 'DockerfileTest')
+
+    file1 = open(completeFile, "w")
+    file1.write(container.dockerfile)
+    file1.close()
+
+    # with open(completeFile) as fp:
+    #     fp.write(container.dockerfile)
+    #     fp.close()
+
+    # dockerfile_path = os.path.join('backend/user_files', 'dockerfile')
+    print(container)
+    # print(dockerfile_path)
+    # with open(dockerfile_path) as fp:
+    #     fp.write(container.dockerfile)
+
     return Container(**container.dict()).save(db)
 
 
-@router.post("/{container_id}", response_model=schemas.Container)
-def upload_dockerfile(container_id: int, dockerfile: bytes = File(...), db: Session = Depends(session)):
-    """ Allows the upload of dockerfile to be used with a container """
-    container = db.query(Container).get(container_id)
-    dockerfile_path = os.path.join(container.get_path(), 'dockerfile')
+# @router.post("/{container_id}", response_model=schemas.Container)
+# def upload_dockerfile(container_id: int, dockerfile: bytes = File(...), db: Session = Depends(session)):
+#     """ Allows the upload of dockerfile to be used with a container """
+#     container = db.query(Container).get(container_id)
+#     dockerfile_path = os.path.join(container.get_path(), 'dockerfile')
 
-    with open(dockerfile_path) as fp:
-        fp.write(dockerfile)
+#     with open(dockerfile_path) as fp:
+#         fp.write(dockerfile)
+#         fp.close()
 
-    return container
+#     return container
 
 
 @router.get("/{container_id}", response_model=schemas.Container)
