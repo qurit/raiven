@@ -31,7 +31,11 @@
           class="mx-10"
         />
       </v-row>
-      <v-file-input label="Upload new container" @change="updateDockerFile" />
+      <v-file-input
+        v-model="file"
+        label="Upload new container"
+        @change="updateDockerFile"
+      />
       <v-btn @click="submit"> Add container </v-btn>
     </v-container>
   </v-form>
@@ -47,13 +51,19 @@ export default {
       description: '',
       input: '0',
       output: '0',
-      dockerFileName: ''
+      dockerFileName: '',
+      file: ''
     }
   },
   methods: {
     updateDockerFile(file) {
       console.log(file)
-      this.dockerFileName = file.name
+      const test = JSON.stringify(file)
+      console.log(typeof file)
+      console.log(typeof test)
+      // this.dockerFileName = file.name
+
+      this.file = test
     },
     addContainer(payload) {
       const path = 'http://localhost:5000/container'
@@ -72,7 +82,8 @@ export default {
         name: this.name,
         dockerfile_path: this.description,
         is_input_container: this.input,
-        is_output_container: this.output
+        is_output_container: this.output,
+        dockerfile: this.file
         // docker_file_name: this.dockerFileName
         // dockerfile_path: this.description
       }

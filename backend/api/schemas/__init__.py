@@ -26,6 +26,7 @@ class ContainerCreate(BaseModel):
     dockerfile_path: str
     is_input_container: bool
     is_output_container: bool
+    dockerfile: str
 
 
 class Container(ContainerCreate, BaseORMModel):
