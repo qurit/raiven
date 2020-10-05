@@ -6,6 +6,8 @@ from . import BaseModel, BaseORMModel
 class PipelineContainerCreate(BaseModel):
     pipeline_id: int
     container_id: int
+    next_container_id: int
+    previous_container_id: int
 
 
 class PipelineLinkCreate(BaseModel):
