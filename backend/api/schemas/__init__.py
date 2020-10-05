@@ -24,6 +24,8 @@ class ContainerCreate(BaseModel):
     user_id: int
     name: str
     dockerfile_path: str
+    is_input_container: bool
+    is_output_container: bool
 
 
 class Container(ContainerCreate, BaseORMModel):

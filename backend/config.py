@@ -7,7 +7,8 @@ LOCALHOST = '127.0.0.1'
 class BaseConfig:
     HOST = LOCALHOST
     PORT = 5000
-    UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+    UPLOAD_DIR = os.path.join(os.path.dirname(
+        os.path.dirname(__file__)), 'uploads')
 
     # LDAP CONFIG
     LDAP_HOST = '10.9.2.37'
@@ -31,7 +32,8 @@ class BaseConfig:
     PICOM_OUTPUT_DIR = '/mnt/picom/output'
 
     def __init__(self):
-        env_vars = [v for v in os.environ.keys() if (v in vars(BaseConfig)) and not v.startswith('__')]
+        env_vars = [v for v in os.environ.keys() if (
+            v in vars(BaseConfig)) and not v.startswith('__')]
         [self.apply_env_var(k) for k in env_vars]
 
         if not os.path.exists(self.UPLOAD_DIR):
@@ -47,14 +49,18 @@ class BaseConfig:
             else:
                 v = type_(v)
         except (TypeError, ValueError):
-            print(f'[FAILED] TYPE CASTING ENV VARIABLE {env_var} TO TYPE {type(getattr(BaseConfig, env_var))}')
-            print(f'[FAILED] ENV VARIABLE {env_var} MAY PRODUCE AN UNEXPECTED ERROR')
+            print(
+                f'[FAILED] TYPE CASTING ENV VARIABLE {env_var} TO TYPE {type(getattr(BaseConfig, env_var))}')
+            print(
+                f'[FAILED] ENV VARIABLE {env_var} MAY PRODUCE AN UNEXPECTED ERROR')
         finally:
             setattr(self, env_var, v)
 
     @property
+    # def SQLALCHEMY_DATABASE_URI(self):
+    #     return f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
     def SQLALCHEMY_DATABASE_URI(self):
-        return f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
+        return "sqlite:///./sql_app.db"
 
     @property
     def RABBITMQ_URI(self):
