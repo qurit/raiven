@@ -19,10 +19,10 @@ class ApplicationEntity(ApplicationEntityCreate, BaseORMModel):
 #     user_id: str
 #     pass
 
-# TODO: to delete, put this here for now to get container working
 class ContainerCreate(BaseModel):
     user_id: int
     name: str
+    description: str
     dockerfile_path: str
     is_input_container: bool
     is_output_container: bool

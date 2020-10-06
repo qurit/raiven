@@ -59,8 +59,7 @@ export default {
     updateDockerFile(file) {
       console.log(file)
       // const test = JSON.stringify(file)
-      console.log(typeof file)
-      console.log(typeof test)
+      // console.log(typeof file)
       // this.dockerFileName = file.name
 
       // const testing = new Blob([JSON.stringify(file)], {
@@ -72,27 +71,22 @@ export default {
       // const reader = new FileReader()
       // const test = reader.readAsText(testing, 'UTF-8')
 
-      this.file = test
+      this.file = file
     },
     addContainer(payload) {
       console.log(payload)
       this.$store.dispatch('containers/addContainer', payload)
     },
     submit() {
-      console.log(this.dockerFileName)
-      console.log(this.name)
-      console.log(this.input)
-      console.log(this.output)
+      console.log(this.file)
       const payload = {
-        // replace with current user
         user_id: '1',
         name: this.name,
-        dockerfile_path: this.description,
+        dockerfile_path: 'blah',
+        description: this.description,
         is_input_container: this.input,
         is_output_container: this.output,
-        dockerfile: this.file
-        // docker_file_name: this.dockerFileName
-        // dockerfile_path: this.description
+        dockerfile: this.file || 'No file'
       }
       this.addContainer(payload)
     }

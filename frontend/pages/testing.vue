@@ -122,26 +122,28 @@ export default {
         id: maxID + 1,
         x: -400,
         y: 50,
-        type: container.name
+        type: container.name,
+        container_id: container.id
       })
     },
     getContainers() {
       this.$store.dispatch('containers/fetchContainers')
     },
     getContainerNodes() {
+      // think actually want to join the container + pipeline container together
+      // pipeline container contains info about the placement on the scene and flow (next and previous containers)
+      // actual container contains the path to the dockerfile
       const path = 'http://localhost:5000/pipeline/1/containers'
       axios.get(path).then(res => {
-        // console.log(res)
-        // this.rawContainers = res.data
-        // console.log(rawContainers)
         res.data.forEach(test => {
+          console.log(test)
           const containerNode = {
             id: test.id,
             x: test.x_coord,
             y: test.y_coord,
-            type: test.container_id,
-            label: test.container_id
+            container_id: test.container_id
           }
+          console.log(containerNode)
           this.scene.nodes.push(containerNode)
         })
       })

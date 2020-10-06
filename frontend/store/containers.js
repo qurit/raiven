@@ -16,9 +16,6 @@ export const actions = {
   async fetchContainers({ commit }) {
     const res = await axios.get('http://localhost:5000/container')
     commit('setContainers', res.data)
-    console.log('got here')
-    console.log(this.containers)
-    console.log(res)
     return res.data
   },
   async deleteContainer({ commit }, id) {
