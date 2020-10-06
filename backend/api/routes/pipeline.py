@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends
 
 from api import session
-from api.models.pipeline import Pipeline, PipelineLink, PipelineContainer
+from api.models.pipeline import Pipeline, PipelineLink, PipelineNode
 from api.schemas import pipeline as schemas
 
 router = APIRouter()
@@ -27,28 +27,33 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
     return db.query(Pipeline).get(pipeline_id)
 
 
+@router.post("/{pipeline_id}", response_model=schemas.PipelineUpdate)
+def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, db: Session = Depends(session)):
+    """ This Allows you to update / add pipeline containers and links """
+    nodes = [PipelineNode(
+        pipeline_id=pipeline_id,
+        container_id=node.container_id,
+        x_coord=node.x,
+        y_coord=node.y
+    ).save(db) for node in pipeline_update.nodes]
+
+    for link in pipeline_update.links:
+        pipeline_link = PipelineLink(pipeline_id)
+
+        try:
+            if link.to:
+                pipeline_link.to_node_id = nodes[link.to]
+
+            if link.from_:
+                pipeline_link.from_node_id = nodes[link.from_]
+        except KeyError:
+            print("Invalid Link")
+        else:
+            pipeline_link.save(db)
+
+    return 'OK'
+
+
 @router.delete("/{pipeline_id}", response_model=schemas.Pipeline)
 def delete_pipeline(pipeline_id: int, db: Session = Depends(session)):
     return db.query(Pipeline).get(pipeline_id).delete(db)
-
-
-@router.post("/{pipeline_id}/containers", response_model=schemas.PipelineContainer)
-def create_pipeline_container(container: schemas.PipelineContainerCreate, db: Session = Depends(session)):
-    return PipelineContainer(**container.dict()).save(db)
-
-
-@router.post("/{pipeline_id}/links", response_model=schemas.PipelineLink)
-def create_pipeline_link(link: schemas.PipelineLinkCreate, db: Session = Depends(session)):
-    return PipelineLink(**link.dict()).save(db)
-
-# for testing
-
-
-@router.get("/{pipeline_id}/containers")
-def get_pipeline_containers(db: Session = Depends(session)):
-    return db.query(PipelineContainer).all()
-
-
-@router.get("/{pipeline_id}/links")
-def get_pipeline_links(db: Session = Depends(session)):
-    return db.query(PipelineLink).all()

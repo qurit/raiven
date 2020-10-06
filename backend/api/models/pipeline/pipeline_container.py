@@ -25,18 +25,14 @@ class Pipeline(Base):
         return [c for c in self.containers if c.is_root_node()]
 
 
-class PipelineContainer(Base):
+class PipelineNode(Base):
     pipeline_id = Column(ForeignKey("pipeline.id", ondelete="CASCADE"))
     container_id = Column(ForeignKey("container.id"))
     x_coord = Column(Integer)
     y_coord = Column(Integer)
-    # next_containers_id = Column(Integer)
-    # previous_containers_id = Column(Integer)
 
-    next_links = relationship(
-        'PipelineLink', foreign_keys='PipelineLink.input_pipeline_container_id')
-    previous_links = relationship(
-        'PipelineLink', foreign_keys='PipelineLink.output_pipeline_container_id')
+    next_links = relationship('PipelineLink', foreign_keys='PipelineLink.input_pipeline_container_id')
+    previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.output_pipeline_container_id')
 
     def is_root_node(self):
         return not len(self.previous_links)
@@ -47,7 +43,11 @@ class PipelineContainer(Base):
 
 class PipelineLink(Base):
     pipeline_id = Column(ForeignKey("pipeline.id", ondelete="CASCADE"))
-    input_pipeline_container_id = Column(ForeignKey(
-        "pipeline_container.id", ondelete="CASCADE"))
-    output_pipeline_container_id = Column(ForeignKey(
-        "pipeline_container.id", ondelete="CASCADE"))
+    to_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
+    from_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
+
+
+class PipelineRun(Base):
+    pipeline_id = Column(ForeignKey("pipeline.id", ondelete="CASCADE"))
+    complete = Column(Boolean, default=False)
+    start_datetime = Column(DateTime)

@@ -57,9 +57,8 @@ class BaseConfig:
             setattr(self, env_var, v)
 
     @property
-    # def SQLALCHEMY_DATABASE_URI(self):
-    #     return f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
     def SQLALCHEMY_DATABASE_URI(self):
+        # return f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
         return "sqlite:///./sql_app.db"
 
     @property
