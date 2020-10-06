@@ -224,7 +224,6 @@ export default {
           this.draggingLink = null
         }
       }
-
       this.action.linking = false
       this.action.dragging = null
       this.action.scrolling = false
@@ -264,43 +263,72 @@ export default {
         link => link.from !== id && link.to !== id
       )
     },
-    saveContainers() {
-      const path = 'http://localhost:5000/pipeline/1/containers'
+    saveNodesAndLinks() {
       const nodes = this.scene.nodes
-      nodes.forEach(test => {
-        const payload = {
-          user_id: '1',
-          // have to set to current pipeline
-          pipeline_id: '1',
-          container_id: test.container_id,
-          x_coord: test.x,
-          y_coord: test.y
-        }
-        console.log(payload)
-        axios.post(path, payload).catch(error => {
-          console.log(error)
-        })
-      })
-    },
-    saveContainerConnections() {
-      const path = 'http://localhost:5000/pipeline/1/links'
       const links = this.scene.links
-      links.forEach(test => {
-        const payload = {
-          pipeline_id: '1',
-          input_pipeline_container_id: test.from,
-          output_pipeline_container_id: test.to
+      var nodeArray = []
+      var linkArray = []
+      nodes.forEach(node => {
+        const newPipelineNode = {
+          container_id: node.container_id,
+          x: node.x,
+          y: node.y
         }
-        axios.post(path, payload).catch(error => {
-          console.log(error)
-        })
+        nodeArray.push(newPipelineNode)
+      })
+      links.forEach(link => {
+        const newPipelineLink = {
+          to: link.to,
+          from: link.from
+        }
+        linkArray.push(newPipelineLink)
+      })
+      const payload = {
+        nodes: nodeArray,
+        links: linkArray
+      }
+      console.log(payload)
+      const path = 'http://localhost:5000/pipeline/1/'
+      axios.post(path, payload).catch(err => {
+        console.log(err)
       })
     },
+    // saveContainers() {
+    //   const path = 'http://localhost:5000/pipeline/1/containers'
+    //   const nodes = this.scene.nodes
+    //   nodes.forEach(test => {
+    //     const payload = {
+    //       user_id: '1',
+    //       // have to set to current pipeline
+    //       pipeline_id: '1',
+    //       container_id: test.container_id,
+    //       x_coord: test.x,
+    //       y_coord: test.y
+    //     }
+    //     console.log(payload)
+    //     axios.post(path, payload).catch(error => {
+    //       console.log(error)
+    //     })
+    //   })
+    // },
+    // saveContainerConnections() {
+    //   const path = 'http://localhost:5000/pipeline/1/links'
+    //   const links = this.scene.links
+    //   links.forEach(test => {
+    //     const payload = {
+    //       pipeline_id: '1',
+    //       input_pipeline_container_id: test.from,
+    //       output_pipeline_container_id: test.to
+    //     }
+    //     axios.post(path, payload).catch(error => {
+    //       console.log(error)
+    //     })
+    //   })
+    // },
     savePipeline() {
-      console.log(this.scene.links)
-      console.log(this.scene.nodes)
-      this.saveContainers()
-      this.saveContainerConnections()
+      // console.log(this.scene.links)
+      // console.log(this.scene.nodes)
+      this.saveNodesAndLinks()
     }
   }
 }
