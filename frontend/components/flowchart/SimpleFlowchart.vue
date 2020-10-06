@@ -264,9 +264,7 @@ export default {
         link => link.from !== id && link.to !== id
       )
     },
-    savePipeline() {
-      console.log(this.scene.links)
-      console.log(this.scene.nodes)
+    saveContainers() {
       const path = 'http://localhost:5000/pipeline/1/containers'
       const payload = {
         user_id: '1',
@@ -274,10 +272,24 @@ export default {
         pipeline_id: '1',
         // have to set the container to the node
         container_id: '1',
-        next_container_id: this.scene.links[0].to,
-        previous_container_id: this.scene.links[0].from
+        x_coord: this.scene.nodes[0].x,
+        y_coord: this.scene.nodes[0].y
       }
       axios.post(path, payload).catch(error => {
+        console.log(error)
+      })
+    },
+    savePipeline() {
+      console.log(this.scene.links)
+      console.log(this.scene.nodes)
+
+      const path2 = 'http://localhost:5000/pipeline/1/links'
+      const payload2 = {
+        pipeline_id: '1',
+        input_pipeline_container_id: this.scene.links[0].from,
+        output_pipeline_container_id: this.scene.links[0].to
+      }
+      axios.post(path2, payload2).catch(error => {
         console.log(error)
       })
     }

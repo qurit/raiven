@@ -27,17 +27,21 @@ class Pipeline(Base):
 class PipelineContainer(Base):
     pipeline_id = Column(ForeignKey("pipeline.id", ondelete="CASCADE"))
     container_id = Column(ForeignKey("container.id"))
+    x_coord = Column(Integer)
+    y_coord = Column(Integer)
+    # next_containers_id = Column(Integer)
+    # previous_containers_id = Column(Integer)
 
-    next_steps = relationship(
+    next_container_id = relationship(
         'PipelineLink', foreign_keys='PipelineLink.input_pipeline_container_id')
-    previous_steps = relationship(
+    previous_container_id = relationship(
         'PipelineLink', foreign_keys='PipelineLink.output_pipeline_container_id')
 
     def is_root_node(self):
-        return not len(self.previous_steps)
+        return not len(self.previous_container_id)
 
     def is_leaf_node(self):
-        return not len(self.next_steps)
+        return not len(self.next_container_id)
 
 
 class PipelineLink(Base):
