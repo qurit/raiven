@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, File, Form
 
 from api import session, schemas, config
-from api.models.pipeline import Container
+from api.models.container import Container
 
 router = APIRouter()
 

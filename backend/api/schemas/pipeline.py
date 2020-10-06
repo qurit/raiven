@@ -44,6 +44,7 @@ class PipelineUpdate(BaseModel):
 
 class Pipeline(PipelineCreate, BaseORMModel):
     user_id: Optional[int]
+    name: str
 
 
 class PipelineFull(Pipeline):
