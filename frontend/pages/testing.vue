@@ -36,6 +36,9 @@
         align="center"
       >
         <!-- <v-card class="pa-2 title">Pipeline Creator</v-card> -->
+        <v-btn @click="getSavedPipeline">
+          get containers
+        </v-btn>
         <v-btn class="ml-2" large icon>
           <v-icon large color="#373740" v-text="'mdi-content-save'" />
         </v-btn>
@@ -105,36 +108,8 @@ export default {
         centerX: 1024,
         centerY: 140,
         scale: 1,
-        nodes: [
-          {
-            id: 2,
-            x: -700,
-            y: -69,
-            type: 'Action',
-            label: 'test1'
-          },
-          {
-            id: 4,
-            x: -357,
-            y: 80,
-            type: 'Script',
-            label: 'test2'
-          },
-          {
-            id: 6,
-            x: -557,
-            y: 80,
-            type: 'Rule',
-            label: 'test3'
-          }
-        ],
-        links: [
-          {
-            id: 3,
-            from: 2, // node id the link start
-            to: 4 // node id the link end
-          }
-        ]
+        nodes: [],
+        links: []
       }
     }
   },
@@ -162,6 +137,44 @@ export default {
           console.log(err)
           this.getContainers()
         })
+    },
+    getContainerNodes() {
+      const path = 'http://localhost:5000/pipeline/1/containers'
+      axios.get(path).then(res => {
+        // console.log(res)
+        // this.rawContainers = res.data
+        // console.log(rawContainers)
+        res.data.forEach(test => {
+          const containerNode = {
+            id: test.id,
+            x: test.x_coord,
+            y: test.y_coord,
+            type: test.container_id,
+            label: test.container_id
+          }
+          this.scene.nodes.push(containerNode)
+        })
+      })
+    },
+    getContainerLinks() {
+      const path = 'http://localhost:5000/pipeline/1/links'
+      axios.get(path).then(res => {
+        res.data.forEach(test => {
+          console.log(test)
+          const containerLink = {
+            id: test.id,
+            to: test.output_pipeline_container_id,
+            from: test.input_pipeline_container_id
+          }
+          this.scene.links.push(containerLink)
+        })
+        console.log(this.scene.links)
+      })
+    },
+    getSavedPipeline() {
+      console.log('got here')
+      this.getContainerNodes()
+      this.getContainerLinks()
     }
   },
   created() {
