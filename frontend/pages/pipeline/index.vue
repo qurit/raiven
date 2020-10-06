@@ -47,7 +47,7 @@
 
 <script>
 import axios from 'axios'
-import { pipelines } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   data: function() {
@@ -55,40 +55,28 @@ export default {
       // TODO:
       // have to put containers in a store that persists with the user
       // also save the user pipeline
-      pipelines: '',
       dialog: false,
       pipelineName: ''
     }
   },
   methods: {
     removePipeline(pipeline) {
-      this.$store.commit('pipelines/delete', pipeline)
-    },
-    getPipelines() {
-      const path = 'http://localhost:5000/pipeline'
-      axios
-        .get(path)
-        .then(res => {
-          this.pipelines = res.data
-        })
-        .catch(err => {
-          console.log(err)
-        })
+      this.$store.dispatch('pipelines/deletePipeline', pipeline.id)
     },
     savePipeline() {
-      const path = 'http://localhost:5000/pipeline'
       const payload = {
         user_id: 1,
         name: this.pipelineName
       }
-      axios.post(path, payload).catch(error => {
-        console.log(error)
-      })
+      this.$store.dispatch('pipelines/addPipeline', payload)
       this.dialog = false
     }
   },
+  computed: {
+    ...mapState('pipelines', ['pipelines'])
+  },
   created() {
-    this.getPipelines()
+    this.$store.dispatch('pipelines/fetchPipelines')
   }
 }
 </script>
