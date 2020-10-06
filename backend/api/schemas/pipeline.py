@@ -3,38 +3,17 @@ from typing import List, Optional
 from . import BaseModel, BaseORMModel
 
 
-class PipelineContainerCreate(BaseModel):
-    pipeline_id: int
-    container_id: int
-    x_coord: int
-    y_coord: int
-
-    # this stuff
-    # next_links: Optional[List[int]]
-    # previous_links: Optional[List[int]]
-
-
-class PipelineLinkCreate(BaseModel):
-    input_pipeline_container_id: Optional[int]
-    output_pipeline_container_id: Optional[int]
-
-
-class PipelineLink(PipelineLinkCreate, BaseORMModel):
-    pass
-
-
-class PipelineContainer(PipelineContainerCreate, BaseORMModel):
-    pass
-
-
-class PipelineCreate(BaseModel):
-    name: str
-
-
 class PipelineNodeCreate(BaseModel):
     container_id: int
     x: str
     y: str
+
+
+class PipelineNode(BaseORMModel):
+    pipeline_id: int
+    container_id: int
+    x_coord = int
+    y_coord = int
 
 
 class PipelineLinkCreate(BaseModel):
@@ -47,18 +26,30 @@ class PipelineLinkCreate(BaseModel):
         }
 
 
+class PipelineLink(BaseORMModel):
+    pipeline_id = int
+    to_node_id = int
+    from_node_id = int
+
+
+class PipelineCreate(BaseModel):
+    name: str
+
+
 class PipelineUpdate(BaseModel):
+    pipeline_id: Optional[int]
     nodes: Optional[List[PipelineNodeCreate]] = []
     links: Optional[List[PipelineLinkCreate]] = []
 
 
 class Pipeline(PipelineCreate, BaseORMModel):
     user_id: Optional[int]
-    pipeline_containers: Optional[List[PipelineContainer]] = []
 
 
 class PipelineFull(Pipeline):
     pass
+    # nodes = Optional[List[PipelineNode]]
+    # links = Optional[List[PipelineLink]]
 
 
 class UserCreate(BaseModel):

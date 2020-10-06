@@ -19,7 +19,7 @@ class Pipeline(Base):
     user_id = Column(ForeignKey("user.id", ondelete="CASCADE"))
     name = Column(String)
 
-    pipeline_containers = relationship("PipelineContainer", backref="pipeline")
+    nodes = relationship("PipelineContainer", backref="pipeline")
 
     def starting_containers(self):
         return [c for c in self.containers if c.is_root_node()]
