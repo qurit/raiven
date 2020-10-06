@@ -102,7 +102,6 @@ export default {
   },
   data() {
     return {
-      containers: '',
       containerList: false,
       scene: {
         centerX: 1024,
@@ -127,16 +126,7 @@ export default {
       })
     },
     getContainers() {
-      const path = 'http://localhost:5000/container'
-      axios
-        .get(path)
-        .then(res => {
-          this.containers = res.data
-        })
-        .catch(err => {
-          console.log(err)
-          this.getContainers()
-        })
+      this.$store.dispatch('containers/fetchContainers')
     },
     getContainerNodes() {
       const path = 'http://localhost:5000/pipeline/1/containers'
@@ -176,6 +166,9 @@ export default {
       this.getContainerNodes()
       this.getContainerLinks()
     }
+  },
+  computed: {
+    ...mapState('containers', ['containers'])
   },
   created() {
     this.getContainers()
