@@ -58,8 +58,8 @@ class BaseConfig:
 
     @property
     def SQLALCHEMY_DATABASE_URI(self):
-        # return f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
-        return "sqlite:///./sql_app.db"
+        return f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
+        # return "sqlite:///./sql_app.db"
 
     @property
     def RABBITMQ_URI(self):

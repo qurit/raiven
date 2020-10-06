@@ -2,24 +2,14 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
 from api import config
-from .. import Base, PathMixin
-
-
-class Container(PathMixin, Base):
-    user_id = Column(ForeignKey("user.id", ondelete="CASCADE"))
-    name = Column(String)
-    dockerfile_path = Column(String)
-    is_input_container = Column(Boolean)
-    is_output_container = Column(Boolean)
-    dockerfile = Column(String)
-    description = Column(String)
+from . import Base, PathMixin
 
 
 class Pipeline(Base):
     user_id = Column(ForeignKey("user.id", ondelete="CASCADE"))
     name = Column(String)
 
-    nodes = relationship("PipelineContainer", backref="pipeline")
+    nodes = relationship("PipelineNode", backref="pipeline")
 
     def starting_containers(self):
         return [c for c in self.containers if c.is_root_node()]
@@ -31,8 +21,8 @@ class PipelineNode(Base):
     x_coord = Column(Integer)
     y_coord = Column(Integer)
 
-    next_links = relationship('PipelineLink', foreign_keys='PipelineLink.input_pipeline_container_id')
-    previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.output_pipeline_container_id')
+    next_links = relationship('PipelineLink', foreign_keys='PipelineLink.to_node_id')
+    previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.from_node_id')
 
     def is_root_node(self):
         return not len(self.previous_links)
