@@ -58,18 +58,25 @@ export default {
   methods: {
     updateDockerFile(file) {
       console.log(file)
-      const test = JSON.stringify(file)
+      // const test = JSON.stringify(file)
       console.log(typeof file)
       console.log(typeof test)
       // this.dockerFileName = file.name
 
+      // const testing = new Blob([JSON.stringify(file)], {
+      //   type: 'application/json'
+      // })
+
+      // console.log(testing)
+
+      // const reader = new FileReader()
+      // const test = reader.readAsText(testing, 'UTF-8')
+
       this.file = test
     },
     addContainer(payload) {
-      const path = 'http://localhost:5000/container'
-      axios.post(path, payload).catch(error => {
-        console.log(error)
-      })
+      console.log(payload)
+      this.$store.dispatch('containers/addContainer', payload)
     },
     submit() {
       console.log(this.dockerFileName)
