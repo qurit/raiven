@@ -26,28 +26,27 @@ def create_container(container: schemas.ContainerCreate, db: Session = Depends(s
     #     fp.write(dockerfile)
     # print(container)
     # print(container.dockerfile_path)
-    test = 'blah'
-    container.dockerfile_path = test
-    # print(container.dockerfile_path)
-    print(container)
+    # test = 'blah'
+    # container.dockerfile_path = test
+    # # print(container.dockerfile_path)
 
-    save_path = 'C:\\Users\\kevin\Desktop\\picom\\backend\\user_files'
-    completeFile = os.path.join(save_path, 'DockerfileTest')
+    # save_path = 'C:\\Users\\kevin\Desktop\\picom\\backend\\user_files'
+    # completeFile = os.path.join(save_path, 'DockerfileTest')
 
-    file1 = open(completeFile, "w")
-    file1.write(container.dockerfile)
-    file1.close()
+    # file1 = open(completeFile, "w")
+    # file1.write(container.dockerfile)
+    # file1.close()
 
     # with open(completeFile) as fp:
     #     fp.write(container.dockerfile)
     #     fp.close()
 
     # dockerfile_path = os.path.join('backend/user_files', 'dockerfile')
-    print(container)
     # print(dockerfile_path)
     # with open(dockerfile_path) as fp:
     #     fp.write(container.dockerfile)
-
+    print('IN THE CREATE CONTAINER BACKEND')
+    print(container)
     return Container(**container.dict()).save(db)
 
 

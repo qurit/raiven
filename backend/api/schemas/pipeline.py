@@ -8,8 +8,10 @@ class PipelineContainerCreate(BaseModel):
     container_id: int
     x_coord: int
     y_coord: int
-    # next_containers_id: Optional[List[int]]
-    # previous_containers_id: Optional[List[int]]
+
+    # this stuff
+    # next_links: Optional[List[int]]
+    # previous_links: Optional[List[int]]
 
 
 class PipelineLinkCreate(BaseModel):

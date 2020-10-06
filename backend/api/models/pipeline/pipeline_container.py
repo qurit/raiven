@@ -12,6 +12,7 @@ class Container(PathMixin, Base):
     is_input_container = Column(Boolean)
     is_output_container = Column(Boolean)
     dockerfile = Column(String)
+    description = Column(String)
 
 
 class Pipeline(Base):
@@ -32,16 +33,16 @@ class PipelineContainer(Base):
     # next_containers_id = Column(Integer)
     # previous_containers_id = Column(Integer)
 
-    next_container_id = relationship(
+    next_links = relationship(
         'PipelineLink', foreign_keys='PipelineLink.input_pipeline_container_id')
-    previous_container_id = relationship(
+    previous_links = relationship(
         'PipelineLink', foreign_keys='PipelineLink.output_pipeline_container_id')
 
     def is_root_node(self):
-        return not len(self.previous_container_id)
+        return not len(self.previous_links)
 
     def is_leaf_node(self):
-        return not len(self.next_container_id)
+        return not len(self.next_links)
 
 
 class PipelineLink(Base):

@@ -270,13 +270,13 @@ export default {
       nodes.forEach(test => {
         const payload = {
           user_id: '1',
-          // have to auto increment the pipeline for a new pipeline creation
+          // have to set to current pipeline
           pipeline_id: '1',
-          // have to set the container to the node
-          container_id: '1',
+          container_id: test.container_id,
           x_coord: test.x,
           y_coord: test.y
         }
+        console.log(payload)
         axios.post(path, payload).catch(error => {
           console.log(error)
         })
