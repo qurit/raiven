@@ -36,6 +36,11 @@ def delete_pipeline(pipeline_id: int, db: Session = Depends(session)):
 def create_pipeline_container(container: schemas.PipelineContainerCreate, db: Session = Depends(session)):
     return PipelineContainer(**container.dict()).save(db)
 
+
+@router.post("/{pipeline_id}/links", response_model=schemas.PipelineLink)
+def create_pipeline_link(link: schemas.PipelineLinkCreate, db: Session = Depends(session)):
+    return PipelineLink(**link.dict()).save(db)
+
 # for testing
 
 
@@ -44,6 +49,6 @@ def get_pipeline_containers(db: Session = Depends(session)):
     return db.query(PipelineContainer).all()
 
 
-@router.post("/{pipeline_id}/links", response_model=schemas.PipelineLink)
-def create_pipeline_link(link: schemas.PipelineLinkCreate, db: Session = Depends(session)):
-    return PipelineLink(**link.dict()).save(db)
+@router.get("/{pipeline_id}/links")
+def get_pipeline_links(db: Session = Depends(session)):
+    return db.query(PipelineLink).all()
