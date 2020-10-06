@@ -15,7 +15,6 @@ class PipelineContainerCreate(BaseModel):
 
 
 class PipelineLinkCreate(BaseModel):
-    pipeline_id: int
     input_pipeline_container_id: Optional[int]
     output_pipeline_container_id: Optional[int]
 
@@ -32,6 +31,27 @@ class PipelineCreate(BaseModel):
     name: str
 
 
+class PipelineNodeCreate(BaseModel):
+    container_id: int
+    x: str
+    y: str
+
+
+class PipelineLinkCreate(BaseModel):
+    to: int
+    from_: int
+
+    class Config:
+        fields = {
+            'from_': 'from'
+        }
+
+
+class PipelineUpdate(BaseModel):
+    nodes: Optional[List[PipelineNodeCreate]] = []
+    links: Optional[List[PipelineLinkCreate]] = []
+
+
 class Pipeline(PipelineCreate, BaseORMModel):
     user_id: Optional[int]
     pipeline_containers: Optional[List[PipelineContainer]] = []
@@ -39,8 +59,6 @@ class Pipeline(PipelineCreate, BaseORMModel):
 
 class PipelineFull(Pipeline):
     pass
-
-# TODO: to delete, added just for now to get container to work
 
 
 class UserCreate(BaseModel):

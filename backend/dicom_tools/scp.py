@@ -8,8 +8,6 @@ from api import config
 from api.database import worker_session as session
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
 
-print(config.UPLOAD_DIR)
-
 
 def get_ae_title(event):
     return str(event.assoc.requestor.ae_title, encoding='utf-8').strip()
