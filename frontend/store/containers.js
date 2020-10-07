@@ -29,7 +29,13 @@ export const actions = {
   async addContainer({ commit }, data) {
     try {
       await axios.post('http://localhost:5000/container', data)
-      commit('addContainer', data)
+      const newContainer = {
+        name: data.get('name'),
+        descritpion: data.get('description'),
+        is_input_container: data.get('is_input_container'),
+        is_output_container: data.get('is_output_container')
+      }
+      commit('addContainer', newContainer)
     } catch (err) {
       console.log(err)
     }
