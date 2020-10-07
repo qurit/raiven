@@ -263,12 +263,13 @@ export default {
         link => link.from !== id && link.to !== id
       )
     },
-    saveNodesAndLinks() {
+    async saveNodesAndLinks() {
       const nodes = this.scene.nodes
       const links = this.scene.links
       var nodeArray = []
       var linkArray = []
       nodes.forEach(node => {
+        console.log(node)
         const newPipelineNode = {
           container_id: node.container_id,
           x: node.x,
@@ -277,6 +278,7 @@ export default {
         nodeArray.push(newPipelineNode)
       })
       links.forEach(link => {
+        console.log(link)
         const newPipelineLink = {
           to: link.to,
           from: link.from
@@ -288,16 +290,20 @@ export default {
         links: linkArray
       }
       console.log(payload)
+      const nodePath = 'http://localhost:5000/pipeline/1/nodes'
+      const linkPath = 'http://localhost:5000/pipeline/1/links'
+
+      await Promise.all([axios.delete(nodePath), axios.delete(linkPath)])
+
       //TODO: need to actually delete the PipelineNode and PipelineLinks for this pipeline before repopulating it
       const path = 'http://localhost:5000/pipeline/1/'
-      axios.post(path, payload).catch(err => {
+      await axios.post(path, payload).catch(err => {
         console.log(err)
       })
     },
     savePipeline() {
       // console.log(this.scene.links)
       // console.log(this.scene.nodes)
-      console.log('trying to delete')
       this.saveNodesAndLinks()
     }
   }

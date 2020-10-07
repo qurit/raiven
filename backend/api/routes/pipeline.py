@@ -33,14 +33,30 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
 # @router.get("/{pipeline_id}/nodes", response_model=List[schemas.PipelineNode])
 @router.get("/{pipeline_id}/nodes")
 def get_pipeline_nodes(pipeline_id: int, db: Session = Depends(session)):
-    print("got here")
-    return db.query(PipelineNode).get(pipeline_id)
+    print("in pipeline node")
+    return db.query(PipelineNode).filter(PipelineNode.pipeline_id == pipeline_id).all()
+
+# need this because want to delete any existing links and nodes before creating/updating pipeline nodes and links for this pipeline
+
+
+@router.delete("/{pipeline_id}/nodes")
+def delete_pipeline_nodes(pipeline_id: int, db: Session = Depends(session)):
+    print("in delete pipeline nodes")
+    return db.query(PipelineNode).filter(PipelineNode.pipeline_id == pipeline_id).delete()
 
 
 @router.get("/{pipeline_id}/links")
 def get_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
     print("in pipeline link")
-    return db.query(PipelineLink).get(pipeline_id)
+    return db.query(PipelineLink).filter(PipelineLink.pipeline_id == pipeline_id).all()
+
+# need this because want to delete any existing links and nodes before creating/updating pipeline nodes and links for this pipeline
+
+
+@router.delete("/{pipeline_id}/links")
+def delete_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
+    print("in delete pipeline links")
+    return db.query(PipelineLink).filter(PipelineLink.pipeline_id == pipeline_id).delete()
 
 
 @router.post("/{pipeline_id}", response_model=schemas.Pipeline)

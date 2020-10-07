@@ -153,6 +153,7 @@ export default {
       axios.get(path).then(res => {
         res.data.forEach(test => {
           console.log(test)
+          // TODO: should we actually save the node ids as well, so that we know the containers but also the nodes properly?
           const containerLink = {
             id: test.id,
             to: test.to_node_id,
@@ -174,6 +175,7 @@ export default {
   },
   created() {
     this.getContainers()
+    this.getSavedPipeline()
   }
 }
 </script>
