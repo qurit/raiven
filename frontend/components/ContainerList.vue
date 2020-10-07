@@ -5,6 +5,9 @@
     <v-card-title>
       Your Containers
     </v-card-title>
+    <v-btn>
+      click
+    </v-btn>
     <!-- {{ console.log(containers) }} -->
     <!-- <v-list color="purple" /> -->
     <v-card-text>
@@ -31,6 +34,9 @@ export default {
   methods: {
     deleteContainer(containerId) {
       this.$store.dispatch('containers/deleteContainer', containerId)
+    },
+    click() {
+      console.log(containers)
     }
   },
   computed: {

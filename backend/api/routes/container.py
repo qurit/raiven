@@ -19,68 +19,22 @@ def get_all_containers(db: Session = Depends(session)):
 
 
 @router.post("/")
-async def create_container(file: bytes = File(...), filename: str = Form(...), description: str = Form(...), db: session = Depends(session)):
-    print('in here')
-    # print(file)
-    # print(filename)
-    # print(description)
+async def create_container(file: bytes = File(...), name: str = Form(...), filename: str = Form(...), description: str = Form(...), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
+    # TODO: maybe change to user_id directory or something?
+    save_path = 'user_files'
+    # write file to local storage. added the underscore so users can add mutliple dockerfiles to same directory
+    complete_path = os.path.join(save_path, filename + '_' + name)
+    file_ = open(complete_path, "wb")
+    file_.write(file)
+    file_.close()
 
-    save_path = 'C:\\Users\\kevin\\Desktop\\picom\\backend\\user_files'
-    # TODO: this gave me a "permission denied error" when trying to write to file
-    # with open(save_path) as f:
-    #     f.write(file)
-    completeFile = os.path.join(save_path, filename)
-    file1 = open(completeFile, "wb")
-    file1.write(file)
-    file1.close()
-
+    # save container to databse
     new_container = container.ContainerCreate(user_id=1, name=filename, description=description,
-                                              dockerfile_path=completeFile, is_input_container=False, is_output_container=False)
-    print(new_container)
+                                              dockerfile_path=complete_path, is_input_container=is_input_container, is_output_container=is_output_container)
     db_container = Container(**new_container.dict())
     db_container.save(db)
 
     return db_container
-    # db_assignment = db.query(models.Assignment).get(assignment_id)
-    # if not os.path.exists(assignment_folder := db_assignment.path):
-    #     os.mkdir(assignment_folder)
-    # with open('tmp', 'wb') as f:
-    #     f.write(file)
-    # shutil.unpack_archive('tmp', extract_dir=assignment_folder, format='zip')
-
-# @router.post("/", response_model=container.Container)
-# def create_container(container: container.ContainerCreate, db: Session = Depends(session)):
-    """ Allows the creation of a new container """
-
-    # dockerfile_path = os.path.join(container.get_path(), 'dockerfile')
-    # with open(dockerfile_path) as fp:
-    #     fp.write(dockerfile)
-    # print(container)
-    # print(container.dockerfile_path)
-    # test = 'blah'
-    # container.dockerfile_path = test
-    # # print(container.dockerfile_path)
-
-    # save_path = 'C:\\Users\\kevin\Desktop\\picom\\backend\\user_files'
-    # completeFile = os.path.join(save_path, 'DockerfileTest')
-
-    # file1 = open(completeFile, "w")
-    # file1.write(container.dockerfile)
-    # file1.close()
-
-    # with open(completeFile) as fp:
-    #     fp.write(container.dockerfile)
-    #     fp.close()
-
-    # dockerfile_path = os.path.join('backend/user_files', 'dockerfile')
-    # print(dockerfile_path)
-    # with open(dockerfile_path) as fp:
-    #     fp.write(container.dockerfile)
-
-    # db_container = Container(**container.dict())
-    # db_container.save(db)
-
-    # return db_container
 
 
 @router.get("/{container_id}", response_model=container.Container)
