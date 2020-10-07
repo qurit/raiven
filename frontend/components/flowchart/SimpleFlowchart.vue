@@ -88,11 +88,11 @@ export default {
         const fromNode = this.findNodeWithID(link.from)
         const toNode = this.findNodeWithID(link.to)
         let x, y, cy, cx, ex, ey
-        x = this.scene.centerX + fromNode.x
-        y = this.scene.centerY + fromNode.y
+        x = this.scene.centerX + fromNode?.x
+        y = this.scene.centerY + fromNode?.y
         ;[cx, cy] = this.getPortPosition('bottom', x, y)
-        x = this.scene.centerX + toNode.x
-        y = this.scene.centerY + toNode.y
+        x = this.scene.centerX + toNode?.x
+        y = this.scene.centerY + toNode?.y
         ;[ex, ey] = this.getPortPosition('top', x, y)
         return {
           start: [cx, cy],
@@ -288,46 +288,16 @@ export default {
         links: linkArray
       }
       console.log(payload)
+      //TODO: need to actually delete the PipelineNode and PipelineLinks for this pipeline before repopulating it
       const path = 'http://localhost:5000/pipeline/1/'
       axios.post(path, payload).catch(err => {
         console.log(err)
       })
     },
-    // saveContainers() {
-    //   const path = 'http://localhost:5000/pipeline/1/containers'
-    //   const nodes = this.scene.nodes
-    //   nodes.forEach(test => {
-    //     const payload = {
-    //       user_id: '1',
-    //       // have to set to current pipeline
-    //       pipeline_id: '1',
-    //       container_id: test.container_id,
-    //       x_coord: test.x,
-    //       y_coord: test.y
-    //     }
-    //     console.log(payload)
-    //     axios.post(path, payload).catch(error => {
-    //       console.log(error)
-    //     })
-    //   })
-    // },
-    // saveContainerConnections() {
-    //   const path = 'http://localhost:5000/pipeline/1/links'
-    //   const links = this.scene.links
-    //   links.forEach(test => {
-    //     const payload = {
-    //       pipeline_id: '1',
-    //       input_pipeline_container_id: test.from,
-    //       output_pipeline_container_id: test.to
-    //     }
-    //     axios.post(path, payload).catch(error => {
-    //       console.log(error)
-    //     })
-    //   })
-    // },
     savePipeline() {
       // console.log(this.scene.links)
       // console.log(this.scene.nodes)
+      console.log('trying to delete')
       this.saveNodesAndLinks()
     }
   }

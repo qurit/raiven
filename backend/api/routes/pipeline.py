@@ -26,6 +26,22 @@ def create_pipeline(pipeline: schemas.PipelineCreate, db: Session = Depends(sess
 def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
     return db.query(Pipeline).get(pipeline_id)
 
+# make a route to get the nodes and links where the pipeline id is {pipeline_id}
+
+
+# TODO: ask Adam why this didnt send the x and y coordinates... even tho they're defined in the model?
+# @router.get("/{pipeline_id}/nodes", response_model=List[schemas.PipelineNode])
+@router.get("/{pipeline_id}/nodes")
+def get_pipeline_nodes(pipeline_id: int, db: Session = Depends(session)):
+    print("got here")
+    return db.query(PipelineNode).get(pipeline_id)
+
+
+@router.get("/{pipeline_id}/links")
+def get_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
+    print("in pipeline link")
+    return db.query(PipelineLink).get(pipeline_id)
+
 
 @router.post("/{pipeline_id}", response_model=schemas.Pipeline)
 def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, db: Session = Depends(session)):
@@ -37,17 +53,15 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
         x_coord=node.x,
         y_coord=node.y
     ).save(db) for node in pipeline_update.nodes]
-    print(pipeline_update)
-
     for link in pipeline_update.links:
         pipeline_link = PipelineLink(pipeline_id=pipeline_id)
 
         try:
             if link.to:
-                pipeline_link.to_node_id = nodes[link.to].id
+                pipeline_link.to_node_id = nodes[link.to - 1].id
 
             if link.from_:
-                pipeline_link.from_node_id = nodes[link.from_].id
+                pipeline_link.from_node_id = nodes[link.from_ - 1].id
         except KeyError:
             print("Invalid Link")
         else:
@@ -58,4 +72,5 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
 
 @router.delete("/{pipeline_id}", response_model=schemas.Pipeline)
 def delete_pipeline(pipeline_id: int, db: Session = Depends(session)):
+    print("in delete")
     return db.query(Pipeline).get(pipeline_id).delete(db)
