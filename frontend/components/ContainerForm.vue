@@ -56,22 +56,32 @@ export default {
     }
   },
   methods: {
-    updateDockerFile(file) {
-      console.log(file)
-      // const test = JSON.stringify(file)
-      // console.log(typeof file)
-      // this.dockerFileName = file.name
+    readFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = reject
+        reader.readAsArrayBuffer(file)
+      })
+    },
+    async updateDockerFile(file) {
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+      const f = await this.readFile(file)
+      const formData = new FormData()
+      formData.append('name', this.name)
+      formData.append('dockerfile_path', 'blah')
+      formData.append('description', this.description)
+      formData.append('is_input_container', this.input)
+      formData.append('is_output_container', this.output)
+      formData.append('filename', file.name)
+      formData.append('file', new Blob([f]))
+      for (var pair of formData.entries()) {
+        console.log(pair[0] + ', ' + pair[1])
+      }
 
-      // const testing = new Blob([JSON.stringify(file)], {
-      //   type: 'application/json'
-      // })
-
-      // console.log(testing)
-
-      // const reader = new FileReader()
-      // const test = reader.readAsText(testing, 'UTF-8')
-
-      this.file = file
+      console.log('got in here')
+      const path = 'http://localhost:5000/container'
+      await axios.post(path, formData)
     },
     addContainer(payload) {
       console.log(payload)
