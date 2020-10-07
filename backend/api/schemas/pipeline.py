@@ -5,8 +5,8 @@ from . import BaseModel, BaseORMModel
 
 class PipelineNodeCreate(BaseModel):
     container_id: int
-    x: str
-    y: str
+    x: int
+    y: int
 
 
 class PipelineNode(BaseORMModel):

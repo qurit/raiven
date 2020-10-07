@@ -46,9 +46,11 @@ def create_container(container: container.ContainerCreate, db: Session = Depends
     # print(dockerfile_path)
     # with open(dockerfile_path) as fp:
     #     fp.write(container.dockerfile)
-    print('IN THE CREATE CONTAINER BACKEND')
-    print(container)
-    return Container(**container.dict()).save(db)
+
+    db_container = Container(**container.dict())
+    db_container.save(db)
+
+    return db_container
 
 
 # @router.post("/{container_id}", response_model=schemas.Container)

@@ -21,6 +21,9 @@ def test_add_container(container: ContainerCreate = None) -> dict:
 
     response = client.post('/container/', json=container.dict())
     assert response.status_code == 200
+
+    print(type(response.json()))
+    print(response.json())
     return response.json()
 
 
