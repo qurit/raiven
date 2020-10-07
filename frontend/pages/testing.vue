@@ -133,7 +133,7 @@ export default {
       // think actually want to join the container + pipeline container together
       // pipeline container contains info about the placement on the scene and flow (next and previous containers)
       // actual container contains the path to the dockerfile
-      const path = 'http://localhost:5000/pipeline/1/containers'
+      const path = 'http://localhost:5000/pipeline/1/nodes'
       axios.get(path).then(res => {
         res.data.forEach(test => {
           console.log(test)
@@ -155,8 +155,8 @@ export default {
           console.log(test)
           const containerLink = {
             id: test.id,
-            to: test.output_pipeline_container_id,
-            from: test.input_pipeline_container_id
+            to: test.to_node_id,
+            from: test.from_node_id
           }
           this.scene.links.push(containerLink)
         })
@@ -164,7 +164,7 @@ export default {
       })
     },
     getSavedPipeline() {
-      console.log('got here')
+      console.log('SDKLFHKLFHASDFLASDFHLASDFHL')
       this.getContainerNodes()
       this.getContainerLinks()
     }
