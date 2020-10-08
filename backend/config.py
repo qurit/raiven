@@ -23,6 +23,7 @@ class BaseConfig:
     POSTGRES_USER = 'postgres'
     POSTGRES_PW = 'password'
     POSTGRES_DB = 'picom'
+    SQLALCHEMY_DATABASE_URI = ''
 
     # Docker
     DOCKER_URI = 'tcp://127.0.0.1:2375'
@@ -31,13 +32,20 @@ class BaseConfig:
     PICOM_INPUT_DIR = '/mnt/picom/input'
     PICOM_OUTPUT_DIR = '/mnt/picom/output'
 
+
+
     def __init__(self):
-        env_vars = [v for v in os.environ.keys() if (
-            v in vars(BaseConfig)) and not v.startswith('__')]
+        env_vars = [v for v in os.environ.keys() if (v in vars(BaseConfig)) and not v.startswith('__')]
         [self.apply_env_var(k) for k in env_vars]
 
         if not os.path.exists(self.UPLOAD_DIR):
             os.mkdir(self.UPLOAD_DIR)
+
+        if not self.SQLALCHEMY_DATABASE_URI:
+            self.SQLALCHEMY_DATABASE_URI = f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
+
+        # if not hasattr(self, 'RABBITMQ_URI'):
+        #     self.RABBITMQ_URI = f'amqp://{self.RABBITMQ_HOST}'
 
     def apply_env_var(self, env_var) -> None:
         v = os.environ[env_var]
@@ -55,12 +63,3 @@ class BaseConfig:
                 f'[FAILED] ENV VARIABLE {env_var} MAY PRODUCE AN UNEXPECTED ERROR')
         finally:
             setattr(self, env_var, v)
-
-    @property
-    def SQLALCHEMY_DATABASE_URI(self):
-        return f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
-        # return "sqlite:///./sql_app.db"
-
-    @property
-    def RABBITMQ_URI(self):
-        return f'amqp://{self.RABBITMQ_HOST}'
