@@ -31,13 +31,15 @@ export const actions = {
   async addContainer({ commit }, data) {
     try {
       await axios.post('http://localhost:5000/container', data)
-      const newContainer = {
-        name: data.get('name'),
-        description: data.get('description'),
-        is_input_container: data.get('is_input_container'),
-        is_output_container: data.get('is_output_container')
-      }
-      commit('addContainer', newContainer)
+      // const newContainer = {
+      //   name: data.get('name'),
+      //   description: data.get('description'),
+      //   is_input_container: data.get('is_input_container'),
+      //   is_output_container: data.get('is_output_container')
+      // }
+      const res = await axios.get('http://localhost:5000/container')
+      commit('setContainers', res.data)
+      // commit('addContainer', newContainer)
     } catch (err) {
       console.log(err)
     }
