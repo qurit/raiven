@@ -3,7 +3,7 @@
     <v-card-title>
       Your pipelines
     </v-card-title>
-    <v-flex v-for="pipeline in pipelines" :key="pipeline.id" class="mx-2">
+    <v-flex v-for="pipeline in pipelines" :key="pipeline.id" class="ma-2">
       <b>Pipeline Name:</b>
       {{ pipeline.name }}
       <!-- <b>Containers in Pipeline:</b>
@@ -46,9 +46,6 @@ import { mapState } from 'vuex'
 export default {
   data: function() {
     return {
-      // TODO:
-      // have to put containers in a store that persists with the user
-      // also save the user pipeline
       dialog: false,
       pipelineName: ''
     }

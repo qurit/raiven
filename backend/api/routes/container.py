@@ -21,15 +21,16 @@ def get_all_containers(db: Session = Depends(session)):
 @router.post("/")
 async def create_container(file: bytes = File(...), name: str = Form(...), filename: str = Form(...), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
     # TODO: maybe change to user_id directory or something?
-    save_path = 'user_files'
+    if not os.path.exists('user_files'):
+        os.mkdir('user_files')
     # write file to local storage. added the underscore so users can add mutliple dockerfiles to same directory
-    complete_path = os.path.join(save_path, filename + '_' + name)
+    complete_path = os.path.join('user_files', filename + '_' + name)
     file_ = open(complete_path, "wb")
     file_.write(file)
     file_.close()
 
     # save container to databse
-    new_container = container.ContainerCreate(user_id=1, name=filename, description=description,
+    new_container = container.ContainerCreate(user_id=1, name=name, description=description,
                                               dockerfile_path=complete_path, is_input_container=is_input_container, is_output_container=is_output_container)
     db_container = Container(**new_container.dict())
     db_container.save(db)
@@ -40,6 +41,18 @@ async def create_container(file: bytes = File(...), name: str = Form(...), filen
 @router.get("/{container_id}", response_model=container.Container)
 def get_container(container_id: int, db: Session = Depends(session)):
     return db.query(Container).get(container_id)
+
+
+@router.put("/{container_id}")
+def update_container(container_id: int, file: bytes = File(...), name: str = Form(...), filename: str = Form(...), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
+    return db.query(Container).filter(Container.id == container_id).update({
+        "name": name,
+        # TODO: add filename?
+        # "filename": filename,
+        "description": description,
+        "is_input_container": is_input_container,
+        "is_output_container": is_output_container
+    })
 
 
 @router.delete("/{container_id}", response_model=container.Container)
