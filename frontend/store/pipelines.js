@@ -26,8 +26,12 @@ export const actions = {
   },
   async addPipeline({ commit }, data) {
     try {
-      await axios.post('http://localhost:5000/pipeline', data)
+      var response = ''
+      await axios.post('http://localhost:5000/pipeline', data).then(res => {
+        response = res
+      })
       commit('addPipeline', data)
+      return response
     } catch (err) {
       console.log(err)
     }

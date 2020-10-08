@@ -31,11 +31,11 @@
           class="pa-15"
         />
         <v-btn @click="dialog = false" class="ma-2"> Close </v-btn>
-        <nuxt-link to="/testing">
-          <v-btn @click="savePipeline">
-            Save
-          </v-btn>
-        </nuxt-link>
+        <!-- <nuxt-link to="/"> -->
+        <v-btn @click="savePipeline">
+          Save
+        </v-btn>
+        <!-- </nuxt-link> -->
       </v-card>
     </v-dialog>
     <v-btn @click="dialog = true">
@@ -68,7 +68,13 @@ export default {
         user_id: 1,
         name: this.pipelineName
       }
-      this.$store.dispatch('pipelines/addPipeline', payload)
+      const test = this.$store.dispatch('pipelines/addPipeline', payload)
+      var new_pipeline_id
+      test.then(x => {
+        this.$router.push({ path: `/pipeline/${x.data.id}` })
+        console.log(x)
+      })
+      console.log(new_pipeline_id)
       this.dialog = false
     }
   },
