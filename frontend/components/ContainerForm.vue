@@ -1,44 +1,47 @@
 <template>
-  <v-form v-model="form">
-    <v-container>
-      <v-col cols="12" md="12">
-        <v-text-field
-          v-model="name"
-          label="Container name"
+  <v-card elevation="6">
+    <v-form v-model="form">
+      <v-container>
+        <v-col cols="12" md="12">
+          <v-text-field
+            v-model="name"
+            label="Container name*"
+            :rules="[v => !!v || 'Container name is required']"
+            required
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" md="12">
+          <v-textarea v-model="description" label="Description"></v-textarea>
+        </v-col>
+        <v-row>
+          <v-checkbox
+            v-model="input"
+            label="Input"
+            false-value="0"
+            true-value="1"
+            class="mx-10"
+          />
+          <v-checkbox
+            v-model="output"
+            label="Output"
+            false-value="0"
+            true-value="1"
+            class="mx-10"
+          />
+        </v-row>
+        <v-file-input
+          v-model="file"
+          label="Upload new container*"
+          @change="updateDockerFile"
+          :rules="[v => !!v || 'Dockerfile is required']"
           required
-        ></v-text-field>
-      </v-col>
-      <v-col cols="12" md="12">
-        <v-textarea
-          v-model="description"
-          label="Description"
-          required
-        ></v-textarea>
-      </v-col>
-      <v-row>
-        <v-checkbox
-          v-model="input"
-          label="Input"
-          false-value="0"
-          true-value="1"
-          class="mx-10"
         />
-        <v-checkbox
-          v-model="output"
-          label="Output"
-          false-value="0"
-          true-value="1"
-          class="mx-10"
-        />
-      </v-row>
-      <v-file-input
-        v-model="file"
-        label="Upload new container"
-        @change="updateDockerFile"
-      />
-      <v-btn @click="submit"> Add container </v-btn>
-    </v-container>
-  </v-form>
+        <v-btn :disabled="this.isDisabled" @click="submit">
+          Add container
+        </v-btn>
+      </v-container>
+    </v-form>
+  </v-card>
 </template>
 
 <script>
@@ -82,6 +85,11 @@ export default {
       formData.append('filename', this.file.name)
       formData.append('file', new Blob([f]))
       this.addContainer(formData)
+    }
+  },
+  computed: {
+    isDisabled: function() {
+      return !(this.name && this.file)
     }
   }
 }

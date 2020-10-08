@@ -31,7 +31,7 @@ export const actions = {
       await axios.post('http://localhost:5000/container', data)
       const newContainer = {
         name: data.get('name'),
-        descritpion: data.get('description'),
+        description: data.get('description'),
         is_input_container: data.get('is_input_container'),
         is_output_container: data.get('is_output_container')
       }

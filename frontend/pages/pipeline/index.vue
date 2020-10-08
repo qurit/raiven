@@ -1,22 +1,17 @@
 <template>
-  <v-card>
-    *** FULFILLS: As a researcher, I would like to have a dashboard to view the
-    status of my pipelines *** *** View all pipelines but the status of running
-    ones is on the index dashboard landing page ***
+  <v-card elevation="6">
     <v-card-title>
       Your pipelines
     </v-card-title>
-    <v-flex v-for="pipeline in pipelines" :key="pipeline.id">
+    <v-flex v-for="pipeline in pipelines" :key="pipeline.id" class="mx-2">
       <b>Pipeline Name:</b>
       {{ pipeline.name }}
       <!-- <b>Containers in Pipeline:</b>
       {{ pipeline.pipeline_containers }} -->
 
-      <v-btn>
+      <v-btn @click="viewPipeline(pipeline.id)">
         <!-- TODO: fix the routing stuff properly with Vue probably /pipleine/:id -->
-        <nuxt-link to="/pipeline/1">
-          View
-        </nuxt-link>
+        View
       </v-btn>
       <v-btn @click="removePipeline(pipeline)">
         Remove
@@ -38,8 +33,7 @@
         <!-- </nuxt-link> -->
       </v-card>
     </v-dialog>
-    <v-btn @click="dialog = true">
-      <!-- TODO: maybe this routing should be to "/pipeline/:id/edit" or something instead of pipelinemaker (this is for new pipelines)-->
+    <v-btn class="ma-2" @click="dialog = true">
       Add Pipeline
     </v-btn>
   </v-card>
@@ -60,6 +54,9 @@ export default {
     }
   },
   methods: {
+    viewPipeline(pipelineId) {
+      this.$router.push({ path: `/pipeline/${pipelineId}` })
+    },
     removePipeline(pipeline) {
       this.$store.dispatch('pipelines/deletePipeline', pipeline.id)
     },

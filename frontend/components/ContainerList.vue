@@ -1,15 +1,8 @@
 <template>
-  <v-card>
-    *** FULFILLS: As a researcher, I would like to be able to add too add to the
-    list of components. ***
+  <v-card elevation="6">
     <v-card-title>
       Your Containers
     </v-card-title>
-    <v-btn>
-      click
-    </v-btn>
-    <!-- {{ console.log(containers) }} -->
-    <!-- <v-list color="purple" /> -->
     <v-card-text>
       <v-list v-for="container in containers" :key="container.id">
         {{ container }}
@@ -93,12 +86,8 @@ export default {
         this.containerDescription = res.data.description
         this.containerIsInput = res.data.is_input_container.toString()
         this.containerIsOutput = res.data.is_output_container.toString()
-        console.log(res.data.is_input_container)
       })
       this.dialog = true
-    },
-    click() {
-      console.log(containers)
     }
   },
   computed: {
