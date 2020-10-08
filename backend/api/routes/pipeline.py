@@ -63,6 +63,10 @@ def delete_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
 def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, db: Session = Depends(session)):
     """ This Allows you to update / add pipeline containers and links """
 
+    print("LINKS")
+    print(pipeline_update.links)
+    print("NODES")
+    print(pipeline_update.nodes)
     nodes = [PipelineNode(
         pipeline_id=pipeline_id,
         container_id=node.container_id,
