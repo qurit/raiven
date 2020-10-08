@@ -21,19 +21,26 @@ def get_all_containers(db: Session = Depends(session)):
 @router.post("/")
 async def create_container(file: bytes = File(...), name: str = Form(...), filename: str = Form(...), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
     # TODO: maybe change to user_id directory or something?
-    if not os.path.exists('user_files'):
-        os.mkdir('user_files')
-    # write file to local storage. added the underscore so users can add mutliple dockerfiles to same directory
-    complete_path = os.path.join('user_files', filename + '_' + name)
-    file_ = open(complete_path, "wb")
-    file_.write(file)
-    file_.close()
+    # if not os.path.exists('user_files'):
+    #       os.mkdir('user_files')
+    # # write file to local storage. added the underscore so users can add mutliple dockerfiles to same directory
+    # complete_path = os.path.join('user_files', filename + '_' + name)
+    # file_ = open(complete_path, "wb")
+    # file_.write(file)
+    # file_.close()
 
-    # save container to databse
-    new_container = container.ContainerCreate(user_id=1, name=name, description=description,
-                                              dockerfile_path=complete_path, is_input_container=is_input_container, is_output_container=is_output_container)
-    db_container = Container(**new_container.dict())
+    # save container to database
+    db_container = Container(
+        user_id=1,
+        name=name,
+        description=description,
+        is_input_container=is_input_container,
+        is_output_container=is_output_container
+    )
     db_container.save(db)
+
+    with open(os.path.join(db_container.abs_path, filename), 'wb') as fp:
+        fp.write(file)
 
     return db_container
 
