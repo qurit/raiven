@@ -115,7 +115,6 @@ export default {
           end: [this.draggingLink.mx, this.draggingLink.my]
         })
       }
-      // console.log(lines)
       return lines
     }
   },
@@ -272,7 +271,6 @@ export default {
       var nodeArray = []
       var linkArray = []
       nodes.forEach(node => {
-        console.log(node)
         const newPipelineNode = {
           container_id: node.container_id,
           x: node.x,
@@ -281,7 +279,6 @@ export default {
         nodeArray.push(newPipelineNode)
       })
       links.forEach(link => {
-        console.log(link)
         const newPipelineLink = {
           to: link.to,
           from: link.from
@@ -292,7 +289,6 @@ export default {
         nodes: nodeArray,
         links: linkArray
       }
-      console.log(payload)
       const nodePath = `http://localhost:5000/pipeline/${this.id}/nodes`
       const linkPath = `http://localhost:5000/pipeline/${this.id}/links`
 
@@ -305,8 +301,10 @@ export default {
       })
     },
     savePipeline() {
-      // console.log(this.scene.links)
-      // console.log(this.scene.nodes)
+      console.log('LINKS')
+      console.log(this.scene.links)
+      console.log('NODES')
+      console.log(this.scene.nodes)
       this.saveNodesAndLinks()
     }
   }

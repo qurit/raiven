@@ -90,7 +90,6 @@ export default {
     editContainer(containerId) {
       const path = `http://localhost:5000/container/${containerId}`
       axios.get(path).then(res => {
-        console.log(res.data)
         this.containerId = res.data.id
         this.containerName = res.data.name
         this.containerDescription = res.data.description

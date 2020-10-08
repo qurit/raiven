@@ -35,10 +35,7 @@
         no-gutters
         align="center"
       >
-        <v-btn class="ml-2" large icon>
-          <v-icon large color="#373740" v-text="'mdi-content-save'" />
-        </v-btn>
-        <v-btn @click="containerList = !containerList" class="ml-2" large icon>
+        <v-btn @click="containerList = !containerList" class="my-6" large icon>
           <v-icon
             large
             color="#373740"
@@ -134,7 +131,6 @@ export default {
             y: test.y_coord,
             container_id: test.container_id
           }
-          console.log(containerNode)
           this.scene.nodes.push(containerNode)
         })
       })
