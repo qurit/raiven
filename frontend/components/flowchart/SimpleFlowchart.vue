@@ -53,6 +53,9 @@ export default {
     height: {
       type: Number,
       default: 400
+    },
+    id: {
+      type: Number
     }
   },
   data: () => ({
@@ -290,13 +293,13 @@ export default {
         links: linkArray
       }
       console.log(payload)
-      const nodePath = 'http://localhost:5000/pipeline/1/nodes'
-      const linkPath = 'http://localhost:5000/pipeline/1/links'
+      const nodePath = `http://localhost:5000/pipeline/${this.id}/nodes`
+      const linkPath = `http://localhost:5000/pipeline/${this.id}/links`
 
       await Promise.all([axios.delete(nodePath), axios.delete(linkPath)])
 
       //TODO: need to actually delete the PipelineNode and PipelineLinks for this pipeline before repopulating it
-      const path = 'http://localhost:5000/pipeline/1/'
+      const path = `http://localhost:5000/pipeline/${this.id}/`
       await axios.post(path, payload).catch(err => {
         console.log(err)
       })
