@@ -5,11 +5,11 @@
     </v-card-title>
     <v-card-text>
       <v-list v-for="container in containers" :key="container.id">
-        {{ container }}
+        {{ container.name }}
         <v-btn x-small color="blue" @click="editContainer(container.id)">
           Edit
         </v-btn>
-        <v-btn x-small color="blue" @click="deleteContainer(container.id)">
+        <v-btn x-small color="red" @click="deleteContainer(container.id)">
           Delete
         </v-btn>
       </v-list>
@@ -100,7 +100,7 @@ export default {
     },
     async update() {
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
-      const f = await this.readFile(this.file)
+
       const formData = new FormData()
       formData.append('name', this.containerName)
       formData.append('dockerfile_path', 'blah')
@@ -108,12 +108,16 @@ export default {
       formData.append('is_input_container', this.containerIsInput)
       formData.append('is_output_container', this.containerIsOutput)
       formData.append('filename', this.currentFile.name)
+      if (this.file) {
+      const f = await this.readFile(this.file)
       formData.append('file', new Blob([f]))
+      }
 
       const path = `http://localhost:5000/container/${this.containerId}/`
       await axios.put(path, formData).catch(err => {
         console.log(err)
       })
+      this.dialog = false
     }
   },
   computed: {
