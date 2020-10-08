@@ -36,7 +36,7 @@ def test_update_pipeline():
         schemas.pipeline.PipelineNodeCreate(container_id=container_1['id'], x=0, y=1).dict(),
         schemas.pipeline.PipelineNodeCreate(container_id=container_2['id'], x=50, y=-10).dict()
     ]
-    links = [{'to': 0, 'from': 1}]
+    links = [{'to': container_1['id'], 'from': container_2['id']}]
     pipeline_update = {
         'nodes': nodes,
         'links': links
