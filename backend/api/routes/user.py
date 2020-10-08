@@ -5,20 +5,19 @@ from fastapi import APIRouter, Depends
 
 from api import session
 from api.models.user import User
-from api.schemas import pipeline as schemas
+from api.schemas.user import User as UserSchema, UserCreate as UserCreateSchema
 
 router = APIRouter()
 
-# TODO: delete this stuff, need this to get it working with the containe stuff
 
-
-@router.get("/")
+@router.get("/", response_model=List[UserSchema])
 def get_all_users(db: Session = Depends(session)):
-    print("the users")
     return db.query(User).all()
 
 
-@router.post("/")
-def create_user(user: schemas.UserCreate, db: Session = Depends(session)):
-    print(user)
+@router.post("/", response_model=UserSchema)
+def create_user(user: UserCreateSchema, db: Session = Depends(session)):
+    """
+    Allows the creation of a user. This route should exist purely for testing purposes. User creation should be done by LDAP.
+    """
     return User(**user.dict()).save(db)
