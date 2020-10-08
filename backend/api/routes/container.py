@@ -19,7 +19,7 @@ def get_all_containers(db: Session = Depends(session)):
 
 
 @router.post("/")
-async def create_container(file: bytes = File(...), name: str = Form(...), filename: str = Form(...), description: str = Form(...), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
+async def create_container(file: bytes = File(...), name: str = Form(...), filename: str = Form(...), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
     # TODO: maybe change to user_id directory or something?
     save_path = 'user_files'
     # write file to local storage. added the underscore so users can add mutliple dockerfiles to same directory
