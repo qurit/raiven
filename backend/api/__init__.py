@@ -12,6 +12,7 @@ from . import models, schemas
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
+
 # TODO: delete postman origin
 # adding postman here for testing purposes for now 
 app.add_middleware(

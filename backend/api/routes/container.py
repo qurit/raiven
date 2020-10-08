@@ -42,6 +42,9 @@ async def create_container(file: bytes = File(...), name: str = Form(...), filen
     with open(os.path.join(db_container.abs_path, filename), 'wb') as fp:
         fp.write(file)
 
+    db_container.dockerfile_path = os.path.join(db_container.path, filename)
+    db_container.save(db)
+
     return db_container
 
 

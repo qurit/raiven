@@ -1,11 +1,9 @@
 import os
-from fastapi.testclient import TestClient
-from fastapi.middleware.cors import CORSMiddleware
 
-from api import app, schemas
-from tests.test_container import test_add_container
+from api import schemas
 
-client = TestClient(app)
+from . import client
+from .test_container import test_add_container
 
 
 def test_get_pipelines() -> dict:
@@ -33,10 +31,10 @@ def test_update_pipeline():
     pipeline = test_add_pipeline()
 
     nodes = [
-        schemas.pipeline.PipelineNodeCreate(container_id=container_1['id'], x=0, y=1).dict(),
-        schemas.pipeline.PipelineNodeCreate(container_id=container_2['id'], x=50, y=-10).dict()
+        schemas.pipeline.PipelineNodeCreate(node_id=1, container_id=container_1['id'], x=0, y=1).dict(),
+        schemas.pipeline.PipelineNodeCreate(node_id=2, container_id=container_2['id'], x=50, y=-10).dict()
     ]
-    links = [{'to': container_1['id'], 'from': container_2['id']}]
+    links = [{'to': nodes[0]['node_id'], 'from': nodes[1]['node_id']}]
     pipeline_update = {
         'nodes': nodes,
         'links': links
