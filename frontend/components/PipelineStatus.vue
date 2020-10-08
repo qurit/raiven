@@ -1,7 +1,5 @@
 <template>
   <div>
-    *** FULFILLS: As a researcher, I would like to have a dashboard to view the
-    status of my pipelines ***
     <div>
       Welcome, [User]
     </div>

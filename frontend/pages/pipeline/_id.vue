@@ -35,10 +35,6 @@
         no-gutters
         align="center"
       >
-        <!-- <v-card class="pa-2 title">Pipeline Creator</v-card> -->
-        <v-btn @click="getSavedPipeline">
-          get containers
-        </v-btn>
         <v-btn class="ml-2" large icon>
           <v-icon large color="#373740" v-text="'mdi-content-save'" />
         </v-btn>
@@ -100,11 +96,6 @@ export default {
     VIconBtn,
     SimpleFlowchart
   },
-  // async asyncData({ params }) {
-  //   const pipeline_id = params.id
-  //   console.log(pipeline_id)
-  //   this.pipeline_id = pipeline_id
-  // },
   data() {
     return {
       containerList: false,
@@ -118,9 +109,6 @@ export default {
       pipeline_id: ''
     }
   },
-  // computed: {
-  //   ...mapState('containers', ['containers'])
-  // },
   methods: {
     addNode(container) {
       let maxID = Math.max(0, ...this.scene.nodes.map(link => link.id))
@@ -136,9 +124,6 @@ export default {
       this.$store.dispatch('containers/fetchContainers')
     },
     getContainerNodes(currentPpelineId) {
-      // think actually want to join the container + pipeline container together
-      // pipeline container contains info about the placement on the scene and flow (next and previous containers)
-      // actual container contains the path to the dockerfile
       const path = `http://localhost:5000/pipeline/${this.pipeline_id}/nodes`
       axios.get(path).then(res => {
         res.data.forEach(test => {
@@ -171,7 +156,6 @@ export default {
       })
     },
     getSavedPipeline() {
-      // console.log('SDKLFHKLFHASDFLASDFHLASDFHL')
       this.getContainerNodes()
       this.getContainerLinks()
     }
