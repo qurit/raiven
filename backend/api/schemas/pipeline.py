@@ -54,9 +54,4 @@ class PipelineFull(Pipeline):
     # links = Optional[List[PipelineLink]]
 
 
-class UserCreate(BaseModel):
-    username: str
-    name = str
-    title = str
-    department = str
-    company = str
+
