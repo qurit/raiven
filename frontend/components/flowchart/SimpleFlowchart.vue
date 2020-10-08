@@ -272,6 +272,7 @@ export default {
       var linkArray = []
       nodes.forEach(node => {
         const newPipelineNode = {
+          node_id: node.id,
           container_id: node.container_id,
           x: node.x,
           y: node.y
