@@ -51,7 +51,9 @@ def get_container(container_id: int, db: Session = Depends(session)):
 
 
 @router.put("/{container_id}")
-def update_container(container_id: int, file: bytes = File(...), name: str = Form(...), filename: str = Form(...), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
+def update_container(container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(...), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
+    print(file)
+    # do the save to file thing if there is a "file" and update the Container.filepath to go to that path
     return db.query(Container).filter(Container.id == container_id).update({
         "name": name,
         # TODO: add filename?
