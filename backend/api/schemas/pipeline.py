@@ -4,6 +4,7 @@ from . import BaseModel, BaseORMModel
 
 
 class PipelineNodeCreate(BaseModel):
+    node_id: int
     container_id: int
     x: int
     y: int

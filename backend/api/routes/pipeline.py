@@ -62,8 +62,9 @@ def delete_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
 @router.post("/{pipeline_id}", response_model=schemas.Pipeline)
 def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, db: Session = Depends(session)):
     """ This Allows you to update / add pipeline containers and links """
-
-    nodes = {node.container_id: PipelineNode(
+    print("pipeline payload from frontend")
+    print(pipeline_update)
+    nodes = {node.node_id: PipelineNode(
         pipeline_id=pipeline_id,
         container_id=node.container_id,
         x_coord=node.x,
