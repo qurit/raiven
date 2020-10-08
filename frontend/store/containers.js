@@ -8,8 +8,10 @@ export const state = () => ({
 export const mutations = {
   setContainers: (state, containers) => (state.containers = containers),
   addContainer: (state, container) => state.containers.push(container),
-  deleteContainer: (state, container) =>
-    state.containers.splice(state.containers.indexOf(container), 1)
+  deleteContainer: (state, id) => {
+    const index = state.containers.findIndex(container => container.id === id)
+    state.containers.splice(index, 1)
+  }
 }
 
 export const actions = {

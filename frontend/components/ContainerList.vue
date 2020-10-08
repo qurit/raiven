@@ -52,7 +52,7 @@
             label="Replace container file"
             @change="updateDockerFile"
           />
-          <v-btn @click="submit"> Save </v-btn>
+          <v-btn @click="update"> Save </v-btn>
         </v-form>
       </v-card>
     </v-dialog>
@@ -66,6 +66,7 @@ import { mapState } from 'vuex'
 export default {
   data: function() {
     return {
+      containerId: '',
       currentFile: '',
       dialog: false,
       containerName: '',
@@ -75,6 +76,14 @@ export default {
     }
   },
   methods: {
+    readFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = reject
+        reader.readAsArrayBuffer(file)
+      })
+    },
     deleteContainer(containerId) {
       this.$store.dispatch('containers/deleteContainer', containerId)
     },
@@ -82,12 +91,30 @@ export default {
       const path = `http://localhost:5000/container/${containerId}`
       axios.get(path).then(res => {
         console.log(res.data)
+        this.containerId = res.data.id
         this.containerName = res.data.name
         this.containerDescription = res.data.description
         this.containerIsInput = res.data.is_input_container.toString()
         this.containerIsOutput = res.data.is_output_container.toString()
       })
       this.dialog = true
+    },
+    async update() {
+      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
+      const f = await this.readFile(this.file)
+      const formData = new FormData()
+      formData.append('name', this.containerName)
+      formData.append('dockerfile_path', 'blah')
+      formData.append('description', this.containerDescription)
+      formData.append('is_input_container', this.containerIsInput)
+      formData.append('is_output_container', this.containerIsOutput)
+      formData.append('filename', this.currentFile.name)
+      formData.append('file', new Blob([f]))
+
+      const path = `http://localhost:5000/container/${this.containerId}/`
+      await axios.put(path, formData).catch(err => {
+        console.log(err)
+      })
     }
   },
   computed: {
@@ -96,10 +123,5 @@ export default {
   created() {
     this.$store.dispatch('containers/fetchContainers')
   }
-  // methods: {
-  //   deleteContainer(container) {
-  //     this.$store.commit('containers/delete', container)
-  //   }
-  // }
 }
 </script>

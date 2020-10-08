@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn @click="savePipeline"> testing </v-btn>
+    <v-icon-btn @click="savePipeline" icon="mdi-content-save" />
     <div
       class="flowchart-container"
       @mousemove="handleMove"
