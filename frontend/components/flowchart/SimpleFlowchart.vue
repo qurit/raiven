@@ -130,7 +130,7 @@ export default {
       if (type === 'top') {
         return [x + 100, y]
       } else if (type === 'bottom') {
-        return [x + 100, y + 200] // TODO: Make dynamic
+        return [x + 100, y + 170] // TODO: Make dynamic
       }
     },
     linkingStart(index) {
