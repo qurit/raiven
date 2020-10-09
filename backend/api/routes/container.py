@@ -56,6 +56,7 @@ def get_container(container_id: int, db: Session = Depends(session)):
 
 @router.put("/{container_id}")
 def update_container(container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(None), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
+    print(description)
     if (file != None):
         print(filename)
         container = db.query(Container).get(container_id)
