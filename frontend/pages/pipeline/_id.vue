@@ -120,45 +120,38 @@ export default {
     getContainers() {
       this.$store.dispatch('containers/fetchContainers')
     },
-    getContainerNodes(currentPpelineId) {
-      const path = `http://localhost:5000/pipeline/${this.pipeline_id}/nodes`
-      axios.get(path).then(res => {
-        res.data.forEach(test => {
-          console.log(test)
-          const containerNode = {
-            id: test.id,
-            x: test.x_coord,
-            y: test.y_coord,
-            container_id: test.container_id
-          }
-          this.scene.nodes.push(containerNode)
+    getPipelineNodes(nodes) {
+      nodes.forEach(node => {
+        console.log(node)
+        const containerNode = {
+           id: node.id,
+            x: node.x_coord,
+            y: node.y_coord,
+            container_id: node.container_id,
+            type: node.container.description,
+            label: node.container.name
+        }
+         this.scene.nodes.push(containerNode)
         })
-      })
     },
-    getContainerLinks() {
-      const path = `http://localhost:5000/pipeline/${this.pipeline_id}/links`
-      axios.get(path).then(res => {
-        res.data.forEach(test => {
-          console.log(test)
-          // TODO: should we actually save the node ids as well, so that we know the containers but also the nodes properly?
-          const containerLink = {
-            id: test.id,
-            to: test.to_node_id,
-            from: test.from_node_id
+    getPipelineLinks(links) {
+      links.forEach(link => {
+        const containerLink = {
+            id: link.id,
+            to: link.to_node_id,
+            from: link.from_node_id
           }
           this.scene.links.push(containerLink)
-        })
-        console.log(this.scene.links)
       })
     },
-    getSavedPipeline() {
-      console.log("HAHAHHAHAHAH")
-      // this.getContainerNodes()
-      // this.getContainerLinks()
+    async getSavedPipeline() {
       const path = `http://localhost:5000/pipeline/${this.pipeline_id}`
-      axios.get(path).then(res => {
-        console.log(res)
-    })}
+      const {data} = await axios.get(path)
+      const {nodes, links} = data
+      this.getPipelineNodes(nodes)
+      this.getPipelineLinks(links)
+
+    }
   },
   computed: {
     ...mapState('containers', ['containers'])
