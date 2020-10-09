@@ -47,9 +47,14 @@
               class="mx-10"
             />
           </v-row>
+          <v-col cols="12" md="12">
+            <v-text>
+              Upload a new file to replace the current file
+            </v-text>
+          </v-col>
           <v-file-input
             v-model="file"
-            label="Replace container file"
+            :label="fileName"
             @change="updateDockerFile"
           />
           <v-btn @click="update"> Save </v-btn>
@@ -90,11 +95,13 @@ export default {
     editContainer(containerId) {
       const path = `http://localhost:5000/container/${containerId}`
       axios.get(path).then(res => {
+        console.log(res)
         this.containerId = res.data.id
         this.containerName = res.data.name
         this.containerDescription = res.data.description
         this.containerIsInput = res.data.is_input_container.toString()
         this.containerIsOutput = res.data.is_output_container.toString()
+        this.fileName = res.data.filename
       })
       this.dialog = true
     },
