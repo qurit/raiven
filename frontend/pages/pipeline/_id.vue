@@ -1,33 +1,5 @@
 <template>
   <v-row class="pipeline-creator" no-gutters>
-    <!--    <v-col cols="12">-->
-    <!--        <h1>Pipeline Maker Test</h1>-->
-    <!--    <div class="tool-wrapper">-->
-    <!--      &lt;!&ndash; <select v-model="newNodeType">-->
-    <!--        <option-->
-    <!--          v-for="(item, index) in nodeCategory"-->
-    <!--          :key="index"-->
-    <!--          :value="index"-->
-    <!--          >{{ item }}</option-->
-    <!--        >-->
-    <!--      </select> &ndash;&gt;-->
-    <!--      <v-select-->
-    <!--        v-model="newNodeType"-->
-    <!--        :items="nodeCategory"-->
-    <!--        item-text="title"-->
-    <!--        item-value="id"-->
-    <!--        key="id"-->
-    <!--      >-->
-    <!--      </v-select>-->
-    <!--      &lt;!&ndash; <input-->
-    <!--        type="text"-->
-    <!--        v-model="newNodeLabel"-->
-    <!--        placeholder="Input node label"-->
-    <!--      /> &ndash;&gt;-->
-    <!--      <v-btn @click="addNode">Add Container</v-btn>-->
-    <!--    </div>-->
-    <!--    </v-col>-->
-
     <v-col cols="12">
       <v-row
         class="ma-2"
@@ -43,9 +15,7 @@
           />
         </v-btn>
       </v-row>
-
       <SimpleFlowchart :scene.sync="scene" :id="pipeline_id" />
-
       <v-navigation-drawer v-model="containerList" absolute right>
         <template v-slot:prepend>
           <v-list-item two-line>
@@ -128,8 +98,8 @@ export default {
             x: node.x_coord,
             y: node.y_coord,
             container_id: node.container_id,
-            type: node.container.description,
-            label: node.container.name
+            type: node.container.name,
+            label: node.container.description
         }
          this.scene.nodes.push(containerNode)
         })

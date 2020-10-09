@@ -6,15 +6,12 @@
       @mousedown="handleMousedown"
       v-bind:class="{ selected: options.selected === id }"
     >
-      <v-sheet class="pt-2 title text-center" color="info">
+      <v-sheet class="pa-4 title text-center" color="info" height="170" width="200">
         {{ type }}
         <v-expand-x-transition style="float: right">
         <v-icon-btn v-if="hover" delete color="tertiary" @click="$emit('deleteNode')"/>
       </v-expand-x-transition>
       </v-sheet>
-      <v-card-text class="text-h1 text-center pt-8">
-        👿
-      </v-card-text>
       <FlowchartNodePort class="node-port node-input" @mouseup="$emit('linkingStop')"/>
       <FlowchartNodePort class="node-port node-output" @mousedown="$emit('linkingStart')"/>
 
@@ -75,7 +72,7 @@
   .flowchart-node {
     margin: 0;
     width: 200px;
-    height: 200px;
+    height: 170px;
     position: absolute;
     box-sizing: border-box;
     z-index: 10;
