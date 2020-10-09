@@ -16,7 +16,6 @@ class PipelineNode(BaseORMModel):
     container_id: int
     x_coord: int
     y_coord: int
-
     container: Container
 
 
@@ -54,6 +53,3 @@ class Pipeline(PipelineCreate, BaseORMModel):
 class PipelineFull(Pipeline):
     nodes: Optional[List[PipelineNode]] = []
     links: Optional[List[PipelineLink]] = []
-
-
-

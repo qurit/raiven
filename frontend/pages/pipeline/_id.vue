@@ -152,9 +152,13 @@ export default {
       })
     },
     getSavedPipeline() {
-      this.getContainerNodes()
-      this.getContainerLinks()
-    }
+      console.log("HAHAHHAHAHAH")
+      // this.getContainerNodes()
+      // this.getContainerLinks()
+      const path = `http://localhost:5000/pipeline/${this.pipeline_id}`
+      axios.get(path).then(res => {
+        console.log(res)
+    })}
   },
   computed: {
     ...mapState('containers', ['containers'])
