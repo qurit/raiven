@@ -107,10 +107,10 @@ export default {
       formData.append('description', this.containerDescription)
       formData.append('is_input_container', this.containerIsInput)
       formData.append('is_output_container', this.containerIsOutput)
-      formData.append('filename', this.currentFile.name)
       if (this.file) {
-      const f = await this.readFile(this.file)
-      formData.append('file', new Blob([f]))
+        const f = await this.readFile(this.file)
+        formData.append('file', new Blob([f]))
+        formData.append('filename', this.file.name)
       }
 
       const path = `http://localhost:5000/container/${this.containerId}/`
