@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from . import BaseModel, BaseORMModel
+from .container import Container
 
 
 class PipelineNodeCreate(BaseModel):
@@ -13,8 +14,10 @@ class PipelineNodeCreate(BaseModel):
 class PipelineNode(BaseORMModel):
     pipeline_id: int
     container_id: int
-    x_coord = int
-    y_coord = int
+    x_coord: int
+    y_coord: int
+
+    container: Container
 
 
 class PipelineLinkCreate(BaseModel):
@@ -28,9 +31,9 @@ class PipelineLinkCreate(BaseModel):
 
 
 class PipelineLink(BaseORMModel):
-    pipeline_id = int
-    to_node_id = int
-    from_node_id = int
+    pipeline_id: int
+    to_node_id: int
+    from_node_id: int
 
 
 class PipelineCreate(BaseModel):
@@ -49,9 +52,8 @@ class Pipeline(PipelineCreate, BaseORMModel):
 
 
 class PipelineFull(Pipeline):
-    pass
-    # nodes = Optional[List[PipelineNode]]
-    # links = Optional[List[PipelineLink]]
+    nodes: Optional[List[PipelineNode]] = []
+    links: Optional[List[PipelineLink]] = []
 
 
 
