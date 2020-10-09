@@ -10,6 +10,7 @@ class Pipeline(Base):
     name = Column(String)
 
     nodes = relationship("PipelineNode", backref="pipeline")
+    links = relationship("PipelineLink", backref="pipeline")
 
     def starting_containers(self):
         return [c for c in self.containers if c.is_root_node()]
@@ -21,10 +22,8 @@ class PipelineNode(Base):
     x_coord = Column(Integer)
     y_coord = Column(Integer)
 
-    next_links = relationship(
-        'PipelineLink', foreign_keys='PipelineLink.to_node_id')
-    previous_links = relationship(
-        'PipelineLink', foreign_keys='PipelineLink.from_node_id')
+    next_links = relationship('PipelineLink', foreign_keys='PipelineLink.to_node_id')
+    previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.from_node_id')
 
     def is_root_node(self):
         return not len(self.previous_links)
