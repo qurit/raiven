@@ -47,11 +47,6 @@
               class="mx-10"
             />
           </v-row>
-          <v-col cols="12" md="12">
-            <v-text>
-              Upload a new file to replace the current file
-            </v-text>
-          </v-col>
           <v-file-input
             v-model="file"
             :label="fileName"
@@ -99,6 +94,7 @@ export default {
         this.containerId = res.data.id
         this.containerName = res.data.name
         this.containerDescription = res.data.description
+        console.log(this.containerDescription)
         this.containerIsInput = res.data.is_input_container.toString()
         this.containerIsOutput = res.data.is_output_container.toString()
         this.fileName = res.data.filename
@@ -111,13 +107,17 @@ export default {
       const formData = new FormData()
       formData.append('name', this.containerName)
       formData.append('dockerfile_path', 'blah')
-      formData.append('description', this.containerDescription)
+      // console.log(JSON.parse(this.containerDescription))
+      // formData.append('description', JSON.parse(this.containerDescription))
       formData.append('is_input_container', this.containerIsInput)
       formData.append('is_output_container', this.containerIsOutput)
       if (this.file) {
         const f = await this.readFile(this.file)
         formData.append('file', new Blob([f]))
         formData.append('filename', this.file.name)
+      }
+      if (this.containerDescription !== null) {
+        formData.append('description', this.containerDescription)
       }
 
       const path = `http://localhost:5000/container/${this.containerId}/`
