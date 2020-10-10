@@ -1,22 +1,36 @@
 <template>
-  <v-card elevation="6">
+  <v-card
+    elevation="6"
+    max-height="700"
+    class="overflow-y-auto"
+    :class="scrollbarTheme"
+  >
     <v-card-title>
       Your Containers
     </v-card-title>
     <v-card-text>
-      <v-list v-for="container in containers" :key="container.id">
-        {{ container.name }}
-        <v-btn x-small color="blue" @click="editContainer(container.id)">
-          Edit
-        </v-btn>
-        <v-btn x-small color="red" @click="deleteContainer(container.id)">
-          Delete
-        </v-btn>
-      </v-list>
+      <v-row v-for="container in containers" :key="container.id">
+        <v-col cols="8">
+          {{ container.name }}
+        </v-col>
+        <v-col cols="4">
+          <v-btn small color="blue" @click="editContainer(container.id)">
+            Edit
+          </v-btn>
+          <v-btn
+            small
+            color="red"
+            @click="deleteContainer(container.id)"
+            class="mx-2"
+          >
+            Delete
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-card-text>
     <v-dialog v-model="dialog" max-width="900px" min-height="600px">
-      <v-card>
-        <v-form v-model="form">
+      <v-card class="overflow-x-hidden">
+        <v-form v-model="form" class="ma-5">
           <v-col cols="12" md="12">
             <v-text-field
               v-model="containerName"
@@ -28,7 +42,6 @@
             <v-textarea
               v-model="containerDescription"
               label="Description"
-              required
             ></v-textarea>
           </v-col>
           <v-row>
@@ -51,8 +64,11 @@
             v-model="file"
             :label="fileName"
             @change="updateDockerFile"
+            prepend-icon="mdi-docker"
           />
-          <v-btn @click="update"> Save </v-btn>
+          <v-row justify="center">
+            <v-btn @click="update" color="green"> Save </v-btn>
+          </v-row>
         </v-form>
       </v-card>
     </v-dialog>
@@ -124,6 +140,7 @@ export default {
       await axios.put(path, formData).catch(err => {
         console.log(err)
       })
+      this.$store.dispatch('containers/updateContainer')
       this.dialog = false
     }
   },

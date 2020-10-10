@@ -14,7 +14,7 @@ def test_add_container(form_data: dict = None, user_id: int = None, file: bytes 
             "description": 'A Default Container',
             "filename": 'Dockerfile',
             "is_input_container": False,
-            "is_output_container": False
+            "is_output_container": False,
             "filename": "Dockerfile Name"
         }
 
