@@ -1,6 +1,9 @@
 <template>
   <v-card elevation="6">
-    <v-form v-model="form">
+    <v-card-title>
+      Add a Container
+    </v-card-title>
+    <v-form v-model="form" ref="form">
       <v-container>
         <v-col cols="12" md="12">
           <v-text-field
@@ -31,14 +34,17 @@
         </v-row>
         <v-file-input
           v-model="file"
-          label="Upload new container*"
+          label="Upload a Dockerfile*"
           @change="updateDockerFile"
-          :rules="[v => !!v || 'Dockerfile is required']"
+          :rules="[v => !!v || 'A Dockerfile is required']"
           required
+          prepend-icon="mdi-docker"
         />
-        <v-btn :disabled="this.isDisabled" @click="submit">
-          Add container
-        </v-btn>
+        <v-row justify="center">
+          <v-btn :disabled="this.isDisabled" @click="submit" color="green">
+            Add container
+          </v-btn>
+        </v-row>
       </v-container>
     </v-form>
   </v-card>
@@ -70,8 +76,9 @@ export default {
     async updateDockerFile(file) {
       this.file = file
     },
-    addContainer(payload) {
-      this.$store.dispatch('containers/addContainer', payload)
+    async addContainer(payload) {
+      await this.$store.dispatch('containers/addContainer', payload)
+      this.$refs.form.reset()
     },
     async submit() {
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
@@ -85,6 +92,7 @@ export default {
       formData.append('filename', this.file.name)
       formData.append('file', new Blob([f]))
       this.addContainer(formData)
+      // this.$refs.form.resetValidation()
     }
   },
   computed: {

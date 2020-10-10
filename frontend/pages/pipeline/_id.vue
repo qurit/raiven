@@ -20,10 +20,12 @@
         <template v-slot:prepend>
           <v-list-item two-line>
             <v-list-item-content>
-              <v-list-item-title>Containers</v-list-item-title>
-              <v-list-item-subtitle
-                >A list of all the containers</v-list-item-subtitle
-              >
+              <v-list-item-title>Your containers</v-list-item-title>
+              <v-btn class="mt-2">
+                <nuxt-link to="/containers">
+                  Add a Container
+                </nuxt-link>
+              </v-btn>
             </v-list-item-content>
           </v-list-item>
         </template>
@@ -94,33 +96,32 @@ export default {
       nodes.forEach(node => {
         console.log(node)
         const containerNode = {
-           id: node.id,
-            x: node.x_coord,
-            y: node.y_coord,
-            container_id: node.container_id,
-            type: node.container.name,
-            label: node.container.description
+          id: node.id,
+          x: node.x_coord,
+          y: node.y_coord,
+          container_id: node.container_id,
+          type: node.container.name,
+          label: node.container.description
         }
-         this.scene.nodes.push(containerNode)
-        })
+        this.scene.nodes.push(containerNode)
+      })
     },
     getPipelineLinks(links) {
       links.forEach(link => {
         const containerLink = {
-            id: link.id,
-            to: link.to_node_id,
-            from: link.from_node_id
-          }
-          this.scene.links.push(containerLink)
+          id: link.id,
+          to: link.to_node_id,
+          from: link.from_node_id
+        }
+        this.scene.links.push(containerLink)
       })
     },
     async getSavedPipeline() {
       const path = `http://localhost:5000/pipeline/${this.pipeline_id}`
-      const {data} = await axios.get(path)
-      const {nodes, links} = data
+      const { data } = await axios.get(path)
+      const { nodes, links } = data
       this.getPipelineNodes(nodes)
       this.getPipelineLinks(links)
-
     }
   },
   computed: {
