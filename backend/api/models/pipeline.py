@@ -38,7 +38,7 @@ class PipelineLink(Base):
     from_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
 
 
-class PipelineRun(Base):
-    pipeline_id = Column(ForeignKey("pipeline.id", ondelete="CASCADE"))
-    complete = Column(Boolean, default=False)
-    start_datetime = Column(DateTime)
+class PipelineJob(PathMixin):
+    pipeline_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
+    status = Column(String)
+    path = Column(String)

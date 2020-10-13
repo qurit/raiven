@@ -40,26 +40,24 @@ Base = declarative_base(cls=_Base)
 
 class NestedPathMixin(object):
 
-    @property
-    def path(self) -> str:
+    def get_path(self) -> str:
         raise NotImplementedError
 
-    @property
-    def abs_path(self) -> str:
-        return os.path.join(config.UPLOAD_DIR, self.path)
+    def get_abs_path(self) -> str:
+        return os.path.join(config.UPLOAD_DIR, self.get_path())
 
     def save(self, *args, **kwargs):
         """ Will Create a new directory upon completion """
 
         super().save(*args, **kwargs)
-        if not os.path.exists(path := self.abs_path):
+        if not os.path.exists(path := self.get_abs_path()):
             os.makedirs(path)
 
     def delete(self, *args, **kwargs):
         """ Will Delete a new directory upon completion """
 
         super().delete(*args, **kwargs)
-        if os.path.exists(path := self.abs_path):
+        if os.path.exists(path := self.get_abs_path()):
             rmtree(path)
 
 
@@ -75,6 +73,5 @@ class PathMixin(NestedPathMixin):
     def __absolute_directory__(self) -> str:
         return os.path.join(config.UPLOAD_DIR, self.__directory__)
 
-    @property
-    def path(self) -> str:
+    def get_path(self) -> str:
         return os.path.join(self.__directory__, str(self.id))
