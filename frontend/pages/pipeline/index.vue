@@ -37,7 +37,7 @@
         </v-col>
       </v-row>
     </v-card-text>
-    <v-dialog v-model="dialog" persistent max-width="600px">
+    <v-dialog v-model="dialog" max-width="600px">
       <v-card class="overflow-x-hidden">
         <v-text-field
           v-model="pipelineName"
@@ -50,12 +50,10 @@
           <v-btn
             @click="savePipeline"
             :disabled="this.isDisabled"
+            class="ma-4"
             color="green"
           >
             Save
-          </v-btn>
-          <v-btn @click="dialog = false" class="ma-2" color="red">
-            Close
           </v-btn>
         </v-row>
       </v-card>
