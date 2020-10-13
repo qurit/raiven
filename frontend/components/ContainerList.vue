@@ -9,9 +9,14 @@
       Your Containers
     </v-card-title>
     <v-card-text>
-      <v-row v-for="container in containers" :key="container.id">
+      <v-list-item v-for="container in containers" :key="container.id">
         <v-col cols="8">
-          {{ container.name }}
+          <v-list-item-title>
+            {{ container.name }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            {{ container.description }}
+          </v-list-item-subtitle>
         </v-col>
         <v-col cols="4">
           <v-btn small color="blue" @click="editContainer(container.id)">
@@ -26,7 +31,7 @@
             Delete
           </v-btn>
         </v-col>
-      </v-row>
+      </v-list-item>
     </v-card-text>
     <v-dialog v-model="dialog" max-width="900px" min-height="600px">
       <v-card class="overflow-x-hidden">
@@ -35,6 +40,7 @@
             <v-text-field
               v-model="containerName"
               label="Container name"
+              :rules="[v => !!v || 'Container name is required']"
               required
             ></v-text-field>
           </v-col>
