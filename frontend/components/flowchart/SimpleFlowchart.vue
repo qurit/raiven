@@ -291,12 +291,7 @@ export default {
         nodes: nodeArray,
         links: linkArray
       }
-      const nodePath = `http://localhost:5000/pipeline/${this.id}/nodes`
-      const linkPath = `http://localhost:5000/pipeline/${this.id}/links`
-
-      await Promise.all([axios.delete(nodePath), axios.delete(linkPath)])
-
-      //TODO: need to actually delete the PipelineNode and PipelineLinks for this pipeline before repopulating it
+      // since there's no state change / only post in this component, didn't put it in the store
       const path = `http://localhost:5000/pipeline/${this.id}/`
       await axios.post(path, payload).catch(err => {
         console.log(err)
