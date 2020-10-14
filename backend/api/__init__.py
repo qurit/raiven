@@ -7,7 +7,7 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from .database import session, engine
+from .database import session, worker_session, engine
 from . import models, schemas
 
 models.Base.metadata.create_all(bind=engine)
