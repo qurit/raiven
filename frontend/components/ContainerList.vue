@@ -110,13 +110,12 @@ export default {
       this.$store.dispatch('containers/deleteContainer', containerId)
     },
     editContainer(containerId) {
+      // https://stackoverflow.com/questions/52630866/vuex-actions-that-do-not-need-to-commit-a-mutation#:~:text=1%20Answer&text=The%20main%20reasons%20for%20using,them%20logically%20into%20one%20action
       const path = `http://localhost:5000/container/${containerId}`
       axios.get(path).then(res => {
-        console.log(res)
         this.containerId = res.data.id
         this.containerName = res.data.name
         this.containerDescription = res.data.description
-        console.log(this.containerDescription)
         this.containerIsInput = res.data.is_input_container.toString()
         this.containerIsOutput = res.data.is_output_container.toString()
         this.fileName = res.data.filename
@@ -125,12 +124,9 @@ export default {
     },
     async update() {
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
-
       const formData = new FormData()
       formData.append('name', this.containerName)
       formData.append('dockerfile_path', 'blah')
-      // console.log(JSON.parse(this.containerDescription))
-      // formData.append('description', JSON.parse(this.containerDescription))
       formData.append('is_input_container', this.containerIsInput)
       formData.append('is_output_container', this.containerIsOutput)
       if (this.file) {
@@ -141,12 +137,10 @@ export default {
       if (this.containerDescription !== null) {
         formData.append('description', this.containerDescription)
       }
-
-      const path = `http://localhost:5000/container/${this.containerId}/`
-      await axios.put(path, formData).catch(err => {
-        console.log(err)
+      this.$store.dispatch('containers/updateContainer', {
+        id: this.containerId,
+        data: formData
       })
-      this.$store.dispatch('containers/updateContainer')
       this.dialog = false
     }
   },
