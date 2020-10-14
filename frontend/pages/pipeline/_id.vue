@@ -21,11 +21,12 @@
           <v-list-item two-line>
             <v-list-item-content>
               <v-list-item-title>Your containers</v-list-item-title>
-              <v-btn class="mt-2">
-                <nuxt-link to="/containers">
-                  Add a Container
-                </nuxt-link>
+              <v-btn class="mt-2" @click="addContainer">
+                Add a Container
               </v-btn>
+              <v-dialog v-model="dialog" max-width="900px" min-height="600px">
+                <ContainerForm :isEditing="false" @closeDialog="closeDialog" />
+              </v-dialog>
             </v-list-item-content>
           </v-list-item>
         </template>
@@ -59,11 +60,13 @@ import { mapState } from 'vuex'
 
 import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
 import VIconBtn from '../../components/global/v-icon-btn'
+import ContainerForm from '~/components/ContainerForm'
 
 export default {
   components: {
     VIconBtn,
-    SimpleFlowchart
+    SimpleFlowchart,
+    ContainerForm
   },
   data() {
     return {
@@ -75,10 +78,17 @@ export default {
         nodes: [],
         links: []
       },
-      pipeline_id: ''
+      pipeline_id: '',
+      dialog: false
     }
   },
   methods: {
+    addContainer() {
+      this.dialog = true
+    },
+    closeDialog() {
+      this.dialog = false
+    },
     addNode(container) {
       let maxID = Math.max(0, ...this.scene.nodes.map(link => link.id))
       this.scene.nodes.push({
