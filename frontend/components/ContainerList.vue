@@ -34,49 +34,16 @@
       </v-list-item>
     </v-card-text>
     <v-dialog v-model="dialog" max-width="900px" min-height="600px">
-      <v-card class="overflow-x-hidden">
-        <v-form v-model="form" class="ma-5">
-          <v-col cols="12" md="12">
-            <v-text-field
-              v-model="containerName"
-              label="Container name"
-              :rules="[v => !!v || 'Container name is required']"
-              required
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="12">
-            <v-textarea
-              v-model="containerDescription"
-              label="Description"
-            ></v-textarea>
-          </v-col>
-          <v-row>
-            <v-checkbox
-              v-model="containerIsInput"
-              label="Input"
-              false-value="false"
-              true-value="true"
-              class="mx-10"
-            />
-            <v-checkbox
-              v-model="containerIsOutput"
-              label="Output"
-              false-value="false"
-              true-value="true"
-              class="mx-10"
-            />
-          </v-row>
-          <v-file-input
-            v-model="file"
-            :label="fileName"
-            @change="updateDockerFile"
-            prepend-icon="mdi-docker"
-          />
-          <v-row justify="center">
-            <v-btn @click="update" color="green"> Save </v-btn>
-          </v-row>
-        </v-form>
-      </v-card>
+      <ContainerForm
+        :isEditing="true"
+        :containerId="containerId"
+        :containerName="containerName"
+        :containerDescription="containerDescription"
+        :containerIsInput="containerIsInput"
+        :containerIsOutput="containerIsOutput"
+        :filename="filename"
+        @closeDialog="closeDialog"
+      />
     </v-dialog>
   </v-card>
 </template>
@@ -84,12 +51,16 @@
 <script>
 import axios from 'axios'
 import { mapState } from 'vuex'
+import ContainerForm from '../components/ContainerForm'
 
 export default {
+  components: {
+    ContainerForm
+  },
   data: function() {
     return {
       containerId: '',
-      currentFile: '',
+      filename: '',
       dialog: false,
       containerName: '',
       containerDescription: '',
@@ -98,50 +69,24 @@ export default {
     }
   },
   methods: {
-    readFile(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = reject
-        reader.readAsArrayBuffer(file)
-      })
+    closeDialog() {
+      this.dialog = false
     },
     deleteContainer(containerId) {
       this.$store.dispatch('containers/deleteContainer', containerId)
     },
     editContainer(containerId) {
-      // https://stackoverflow.com/questions/52630866/vuex-actions-that-do-not-need-to-commit-a-mutation#:~:text=1%20Answer&text=The%20main%20reasons%20for%20using,them%20logically%20into%20one%20action
-      const path = `http://localhost:5000/container/${containerId}`
-      axios.get(path).then(res => {
-        this.containerId = res.data.id
-        this.containerName = res.data.name
-        this.containerDescription = res.data.description
-        this.containerIsInput = res.data.is_input_container.toString()
-        this.containerIsOutput = res.data.is_output_container.toString()
-        this.fileName = res.data.filename
+      const containers = this.$store.state.containers.containers
+      const containerToUpdate = containers.find(container => {
+        return container.id === containerId
       })
+      this.containerId = containerToUpdate.id
+      this.containerName = containerToUpdate.name
+      this.containerDescription = containerToUpdate.description
+      this.containerIsInput = containerToUpdate.is_input_container?.toString()
+      this.containerIsOutput = containerToUpdate.is_output_container?.toString()
+      this.filename = containerToUpdate.filename
       this.dialog = true
-    },
-    async update() {
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
-      const formData = new FormData()
-      formData.append('name', this.containerName)
-      formData.append('dockerfile_path', 'blah')
-      formData.append('is_input_container', this.containerIsInput)
-      formData.append('is_output_container', this.containerIsOutput)
-      if (this.file) {
-        const f = await this.readFile(this.file)
-        formData.append('file', new Blob([f]))
-        formData.append('filename', this.file.name)
-      }
-      if (this.containerDescription !== null) {
-        formData.append('description', this.containerDescription)
-      }
-      this.$store.dispatch('containers/updateContainer', {
-        id: this.containerId,
-        data: formData
-      })
-      this.dialog = false
     }
   },
   computed: {
