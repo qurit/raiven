@@ -56,7 +56,8 @@ def handle_store(event):
                 series = DicomSeries(
                     dicom_study_id=study.id,
                     series_instance_uid=ds.StudyInstanceUID,
-                    series_description=ds.SeriesDescription,  # TODO: Add a series description table
+                    # TODO: Add a series description table
+                    series_description=ds.SeriesDescription,
                     modality=ds.Modality,
                 )
                 series.save(db)

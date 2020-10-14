@@ -53,3 +53,7 @@ class Pipeline(PipelineCreate, BaseORMModel):
 class PipelineFull(Pipeline):
     nodes: Optional[List[PipelineNode]] = []
     links: Optional[List[PipelineLink]] = []
+
+
+class Dicom(BaseModel):
+    test: str
