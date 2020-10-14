@@ -7,7 +7,8 @@ export const state = () => ({
 // TODO: UPDATE CONTAINER WITH MODAL FORM
 export const mutations = {
   setContainers: (state, containers) => (state.containers = containers),
-  addContainer: (state, container) => state.containers.push(container),
+  addContainer: (state, container) =>
+    (state.containers = state.containers.concat(container)),
   deleteContainer: (state, id) => {
     const index = state.containers.findIndex(container => container.id === id)
     state.containers.splice(index, 1)
@@ -29,6 +30,7 @@ export const mutations = {
 export const actions = {
   async fetchContainers({ commit }) {
     const res = await axios.get('http://localhost:5000/container')
+    console.log(res)
     commit('setContainers', res.data)
     return res.data
   },
@@ -43,6 +45,7 @@ export const actions = {
   async addContainer({ commit }, data) {
     try {
       const res = await axios.post('http://localhost:5000/container', data)
+      console.log(res)
       commit('addContainer', res.data)
     } catch (err) {
       console.log(err)
