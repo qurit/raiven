@@ -78,7 +78,9 @@ export default {
     },
     async addContainer(payload) {
       await this.$store.dispatch('containers/addContainer', payload)
-      this.$refs.form.reset()
+      // comment this out for now because seemed to be resetting before actually sending the payload
+      // but should be async awaited for payload to send, so don't know why this is happening
+      // this.$refs.form.reset()
     },
     async submit() {
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
@@ -92,7 +94,6 @@ export default {
       formData.append('filename', this.file.name)
       formData.append('file', new Blob([f]))
       this.addContainer(formData)
-      // this.$refs.form.resetValidation()
     }
   },
   computed: {

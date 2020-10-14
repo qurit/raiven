@@ -11,6 +11,18 @@ export const mutations = {
   deleteContainer: (state, id) => {
     const index = state.containers.findIndex(container => container.id === id)
     state.containers.splice(index, 1)
+  },
+  updateContainer: (state, { id, resultData }) => {
+    const index = state.containers.findIndex(container => container.id === id)
+    const container = state.containers[index]
+    console.log(resultData)
+    console.log(container)
+    container.name = resultData.name
+    container.description = resultData.description
+    container.is_input_container = resultData.is_input_container
+    container.is_output_container = resultData.is_output_container
+    container.filename = resultData?.filename
+    container.file = resultData?.file
   }
 }
 
@@ -30,18 +42,18 @@ export const actions = {
   },
   async addContainer({ commit }, data) {
     try {
-      await axios.post('http://localhost:5000/container', data)
-      const res = await axios.get('http://localhost:5000/container')
-      commit('setContainers', res.data)
+      const res = await axios.post('http://localhost:5000/container', data)
+      commit('addContainer', res.data)
     } catch (err) {
       console.log(err)
     }
   },
-  //TODO: fix this and store updates stuff in general
-  async updateContainer({ commit }) {
+  async updateContainer({ commit }, payload) {
     try {
-      const res = await axios.get('http://localhost:5000/container')
-      commit('setContainers', res.data)
+      const { id, data } = payload
+      const res = await axios.put(`http://localhost:5000/container/${id}`, data)
+      const resultData = res.data
+      commit('updateContainer', { id, resultData })
     } catch (err) {
       console.log(err)
     }
