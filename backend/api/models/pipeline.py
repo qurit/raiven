@@ -1,8 +1,9 @@
+import os
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
 from api import config
-from . import Base, PathMixin
+from . import Base, PathMixin, NestedPathMixin
 
 
 class Pipeline(Base):
@@ -12,8 +13,9 @@ class Pipeline(Base):
     nodes = relationship("PipelineNode", backref="pipeline")
     links = relationship("PipelineLink", backref="pipeline")
 
-    def starting_containers(self):
-        return [c for c in self.containers if c.is_root_node()]
+    # TODO: This query can be optimized by joins
+    def get_starting_nodes(self):
+        return [n for n in self.nodes if n.is_root_node()]
 
 
 class PipelineNode(Base):
@@ -38,7 +40,30 @@ class PipelineLink(Base):
     from_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
 
 
-class PipelineJob(PathMixin):
+class PipelineRun(Base):
+    pass
+
+
+INPUT_DIRNAME = 'input'
+OUTPUT_DIRNAME = 'output'
+
+
+class PipelineJob(PathMixin, Base):
+    pipeline_run_id = Column(ForeignKey("pipeline_run.id", ondelete="CASCADE"))
     pipeline_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
     status = Column(String)
-    path = Column(String)
+    input_path = Column(String)
+    output_path = Column(String)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        # Making folders
+        abs_path = self.get_abs_path()
+        [os.makedirs(p) for dirname in [INPUT_DIRNAME, OUTPUT_DIRNAME] if not os.path.exists(p := os.path.join(abs_path, dirname))]
+
+        # Saving Path info
+        rel_path = self.get_path()
+        self.input_path = os.path.join(rel_path, INPUT_DIRNAME)
+        self.output_path = os.path.join(rel_path, OUTPUT_DIRNAME)
+        super().save(*args, **kwargs)
