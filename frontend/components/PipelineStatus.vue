@@ -1,11 +1,9 @@
 <template>
-  <div>
-    <div>
-      Welcome, [User]
-    </div>
+<v-card elevation="6">
     <v-card-title>
       Your pipelines in progress
     </v-card-title>
+    <v-divider light />
     <div v-if="pipelines.length > 0">
       <v-flex v-for="pipeline in pipelines" :key="pipeline.id">
         <v-card>
@@ -20,7 +18,7 @@
               stream
             ></v-progress-linear>
 
-            <v-btn color="error">
+            <v-btn color="error" class="mt-2">
               Stop
             </v-btn>
           </v-flex>
@@ -28,22 +26,19 @@
       </v-flex>
     </div>
     <div v-else>
-      <v-row>
-        You have no pipelines running. Click "Add a Pipeline" to customize a
-        pipeline to run or "View Pipelines" to choose a pipeline to run.
-        <v-btn>
-          <nuxt-link to="/pipelinemaker">
-            Add a Pipeline
-          </nuxt-link>
-        </v-btn>
-        <v-btn>
+      <v-card>
+      <v-card-title>
+        You have no pipelines running.
+      </v-card-title>
+      <v-btn class="ma-2">
           <nuxt-link to="/pipeline">
             View Pipelines
           </nuxt-link>
-        </v-btn>
-      </v-row>
+      </v-btn>
+      </v-card>
     </div>
   </div>
+  </v-card>
 </template>
 
 <script>

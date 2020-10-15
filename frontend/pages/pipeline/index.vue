@@ -1,41 +1,63 @@
 <template>
-  <v-card elevation="6">
-    <v-card-title>
-      Your pipelines
-    </v-card-title>
-    <v-flex v-for="pipeline in pipelines" :key="pipeline.id" class="ma-2">
-      <b>Pipeline Name:</b>
-      {{ pipeline.name }}
-      <!-- <b>Containers in Pipeline:</b>
-      {{ pipeline.pipeline_containers }} -->
-
-      <v-btn @click="viewPipeline(pipeline.id)">
-        <!-- TODO: fix the routing stuff properly with Vue probably /pipleine/:id -->
-        View
-      </v-btn>
-      <v-btn @click="removePipeline(pipeline)">
-        Remove
-      </v-btn>
-    </v-flex>
-    <v-dialog v-model="dialog" persistent max-width="600px">
-      <v-card>
+  <!-- hardcode with but maybe put in columns and stuff if we figure out what to populate this page with... -->
+  <v-card
+    elevation="6"
+    width="900"
+    height="750"
+    class="overflow-y-auto overflow-x-hidden"
+  >
+    <v-row align="center">
+      <v-col cols="8">
+        <v-card-title>
+          Your Pipelines
+        </v-card-title>
+      </v-col>
+      <v-col cols="1">
+        <v-btn color="green" @click="dialog = true">
+          Add Pipeline
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-divider light />
+    <v-card-text>
+      <v-row v-for="pipeline in pipelines" :key="pipeline.id">
+        <v-col cols="8">
+          <b>Pipeline Name:</b>
+          {{ pipeline.name }}
+        </v-col>
+        <v-col cols="1">
+          <v-btn small color="blue" @click="viewPipeline(pipeline.id)">
+            View
+          </v-btn>
+        </v-col>
+        <v-col cols="1">
+          <v-btn small color="red" @click="removePipeline(pipeline)">
+            Remove
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-card-text>
+    <v-dialog v-model="dialog" max-width="600px">
+      <v-card class="overflow-x-hidden">
         <v-text-field
           v-model="pipelineName"
-          label="Pipeline Name"
+          label="Pipeline Name*"
           required
+          :rules="[v => !!v || 'A Pipeline Name is required']"
           class="pa-15"
         />
-        <v-btn @click="dialog = false" class="ma-2"> Close </v-btn>
-        <!-- <nuxt-link to="/"> -->
-        <v-btn @click="savePipeline">
-          Save
-        </v-btn>
-        <!-- </nuxt-link> -->
+        <v-row justify="center" align="center">
+          <v-btn
+            @click="savePipeline"
+            :disabled="this.isDisabled"
+            class="ma-4"
+            color="green"
+          >
+            Save
+          </v-btn>
+        </v-row>
       </v-card>
     </v-dialog>
-    <v-btn class="ma-2" @click="dialog = true">
-      Add Pipeline
-    </v-btn>
   </v-card>
 </template>
 
@@ -73,7 +95,10 @@ export default {
     }
   },
   computed: {
-    ...mapState('pipelines', ['pipelines'])
+    ...mapState('pipelines', ['pipelines']),
+    isDisabled: function() {
+      return !this.pipelineName
+    }
   },
   created() {
     this.$store.dispatch('pipelines/fetchPipelines')

@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-icon-btn @click="savePipeline" icon="mdi-content-save" />
+    <!-- <v-icon-btn @click="savePipeline" icon="mdi-content-save" /> -->
+    <v-btn @click="savePipeline" color="green"> Save Pipeline </v-btn>
     <div
       class="flowchart-container"
       @mousemove="handleMove"
@@ -130,7 +131,7 @@ export default {
       if (type === 'top') {
         return [x + 100, y]
       } else if (type === 'bottom') {
-        return [x + 100, y + 200] // TODO: Make dynamic
+        return [x + 100, y + 170] // TODO: Make dynamic
       }
     },
     linkingStart(index) {
@@ -290,12 +291,7 @@ export default {
         nodes: nodeArray,
         links: linkArray
       }
-      const nodePath = `http://localhost:5000/pipeline/${this.id}/nodes`
-      const linkPath = `http://localhost:5000/pipeline/${this.id}/links`
-
-      await Promise.all([axios.delete(nodePath), axios.delete(linkPath)])
-
-      //TODO: need to actually delete the PipelineNode and PipelineLinks for this pipeline before repopulating it
+      // since there's no state change / only post in this component, didn't put it in the store
       const path = `http://localhost:5000/pipeline/${this.id}/`
       await axios.post(path, payload).catch(err => {
         console.log(err)

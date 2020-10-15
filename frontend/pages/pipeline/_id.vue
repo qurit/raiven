@@ -1,33 +1,5 @@
 <template>
   <v-row class="pipeline-creator" no-gutters>
-    <!--    <v-col cols="12">-->
-    <!--        <h1>Pipeline Maker Test</h1>-->
-    <!--    <div class="tool-wrapper">-->
-    <!--      &lt;!&ndash; <select v-model="newNodeType">-->
-    <!--        <option-->
-    <!--          v-for="(item, index) in nodeCategory"-->
-    <!--          :key="index"-->
-    <!--          :value="index"-->
-    <!--          >{{ item }}</option-->
-    <!--        >-->
-    <!--      </select> &ndash;&gt;-->
-    <!--      <v-select-->
-    <!--        v-model="newNodeType"-->
-    <!--        :items="nodeCategory"-->
-    <!--        item-text="title"-->
-    <!--        item-value="id"-->
-    <!--        key="id"-->
-    <!--      >-->
-    <!--      </v-select>-->
-    <!--      &lt;!&ndash; <input-->
-    <!--        type="text"-->
-    <!--        v-model="newNodeLabel"-->
-    <!--        placeholder="Input node label"-->
-    <!--      /> &ndash;&gt;-->
-    <!--      <v-btn @click="addNode">Add Container</v-btn>-->
-    <!--    </div>-->
-    <!--    </v-col>-->
-
     <v-col cols="12">
       <v-row
         class="ma-2"
@@ -43,17 +15,18 @@
           />
         </v-btn>
       </v-row>
-
       <SimpleFlowchart :scene.sync="scene" :id="pipeline_id" />
-
       <v-navigation-drawer v-model="containerList" absolute right>
         <template v-slot:prepend>
           <v-list-item two-line>
             <v-list-item-content>
-              <v-list-item-title>Containers</v-list-item-title>
-              <v-list-item-subtitle
-                >A list of all the containers</v-list-item-subtitle
-              >
+              <v-list-item-title>Your containers</v-list-item-title>
+              <v-btn class="mt-2" @click="addContainer">
+                Add a Container
+              </v-btn>
+              <v-dialog v-model="dialog" max-width="900px" min-height="600px">
+                <ContainerForm :isEditing="false" @closeDialog="closeDialog" />
+              </v-dialog>
             </v-list-item-content>
           </v-list-item>
         </template>
@@ -87,11 +60,13 @@ import { mapState } from 'vuex'
 
 import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
 import VIconBtn from '../../components/global/v-icon-btn'
+import ContainerForm from '~/components/ContainerForm'
 
 export default {
   components: {
     VIconBtn,
-    SimpleFlowchart
+    SimpleFlowchart,
+    ContainerForm
   },
   data() {
     return {
@@ -103,10 +78,17 @@ export default {
         nodes: [],
         links: []
       },
-      pipeline_id: ''
+      pipeline_id: '',
+      dialog: false
     }
   },
   methods: {
+    addContainer() {
+      this.dialog = true
+    },
+    closeDialog() {
+      this.dialog = false
+    },
     addNode(container) {
       let maxID = Math.max(0, ...this.scene.nodes.map(link => link.id))
       this.scene.nodes.push({
@@ -120,40 +102,37 @@ export default {
     getContainers() {
       this.$store.dispatch('containers/fetchContainers')
     },
-    getContainerNodes(currentPpelineId) {
-      const path = `http://localhost:5000/pipeline/${this.pipeline_id}/nodes`
-      axios.get(path).then(res => {
-        res.data.forEach(test => {
-          console.log(test)
-          const containerNode = {
-            id: test.id,
-            x: test.x_coord,
-            y: test.y_coord,
-            container_id: test.container_id
-          }
-          this.scene.nodes.push(containerNode)
-        })
+    getPipelineNodes(nodes) {
+      nodes.forEach(node => {
+        console.log(node)
+        const containerNode = {
+          id: node.id,
+          x: node.x_coord,
+          y: node.y_coord,
+          container_id: node.container_id,
+          type: node.container.name,
+          label: node.container.description
+        }
+        this.scene.nodes.push(containerNode)
       })
     },
-    getContainerLinks() {
-      const path = `http://localhost:5000/pipeline/${this.pipeline_id}/links`
-      axios.get(path).then(res => {
-        res.data.forEach(test => {
-          console.log(test)
-          // TODO: should we actually save the node ids as well, so that we know the containers but also the nodes properly?
-          const containerLink = {
-            id: test.id,
-            to: test.to_node_id,
-            from: test.from_node_id
-          }
-          this.scene.links.push(containerLink)
-        })
-        console.log(this.scene.links)
+    getPipelineLinks(links) {
+      links.forEach(link => {
+        const containerLink = {
+          id: link.id,
+          to: link.to_node_id,
+          from: link.from_node_id
+        }
+        this.scene.links.push(containerLink)
       })
     },
-    getSavedPipeline() {
-      this.getContainerNodes()
-      this.getContainerLinks()
+    async getSavedPipeline() {
+      // since only getting the pipeline here, didn't put it in the store
+      const path = `http://localhost:5000/pipeline/${this.pipeline_id}`
+      const { data } = await axios.get(path)
+      const { nodes, links } = data
+      this.getPipelineNodes(nodes)
+      this.getPipelineLinks(links)
     }
   },
   computed: {

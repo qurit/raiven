@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from api import config
 from . import Base, PathMixin
+from api.models.pipeline import PipelineNode
 
 
 class Container(PathMixin, Base):
@@ -12,4 +13,7 @@ class Container(PathMixin, Base):
     is_input_container = Column(Boolean)
     is_output_container = Column(Boolean)
     description = Column(String)
+    filename = Column(String)
 
+    container = relationship(
+        'PipelineNode', foreign_keys='PipelineNode.container_id')

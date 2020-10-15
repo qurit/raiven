@@ -26,36 +26,16 @@ def create_pipeline(pipeline: schemas.PipelineCreate, db: Session = Depends(sess
 def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
     return db.query(Pipeline).get(pipeline_id)
 
-# make a route to get the nodes and links where the pipeline id is {pipeline_id}
-
 
 # TODO: ask Adam why this didnt send the x and y coordinates... even tho they're defined in the model?
 # @router.get("/{pipeline_id}/nodes", response_model=List[schemas.PipelineNode])
 @router.get("/{pipeline_id}/nodes")
 def get_pipeline_nodes(pipeline_id: int, db: Session = Depends(session)):
-    print("in pipeline node")
     return db.query(PipelineNode).filter(PipelineNode.pipeline_id == pipeline_id).all()
-
-# need this because want to delete any existing links and nodes before creating/updating pipeline nodes and links for this pipeline
-
-
-@router.delete("/{pipeline_id}/nodes")
-def delete_pipeline_nodes(pipeline_id: int, db: Session = Depends(session)):
-    print("in delete pipeline nodes")
-    return db.query(PipelineNode).filter(PipelineNode.pipeline_id == pipeline_id).delete()
 
 
 @router.get("/{pipeline_id}/links")
 def get_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
-    print("in pipeline link")
-    return db.query(PipelineLink).filter(PipelineLink.pipeline_id == pipeline_id).all()
-
-# need this because want to delete any existing links and nodes before creating/updating pipeline nodes and links for this pipeline
-
-
-@router.delete("/{pipeline_id}/links")
-def delete_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
-    print("in delete pipeline links")
     return db.query(PipelineLink).filter(PipelineLink.pipeline_id == pipeline_id).delete()
 
 
@@ -64,6 +44,13 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
     """ This Allows you to update / add pipeline containers and links """
     print("pipeline payload from frontend")
     print(pipeline_update)
+
+    # clear out any previous nodes / links
+    db.query(PipelineNode).filter(
+        PipelineNode.pipeline_id == pipeline_id).delete()
+    db.query(PipelineLink).filter(
+        PipelineLink.pipeline_id == pipeline_id).delete()
+    # save new nodes and links
     nodes = {node.node_id: PipelineNode(
         pipeline_id=pipeline_id,
         container_id=node.container_id,
