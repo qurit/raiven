@@ -27,7 +27,6 @@
         </v-col>
         <v-col cols="1">
           <v-btn small color="blue" @click="viewPipeline(pipeline.id)">
-            <!-- TODO: fix the routing stuff properly with Vue probably /pipleine/:id -->
             View
           </v-btn>
         </v-col>
