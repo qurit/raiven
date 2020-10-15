@@ -5,6 +5,7 @@
     width="900"
     height="750"
     class="overflow-y-auto overflow-x-hidden"
+    :class="'dark'"
   >
     <v-row align="center">
       <v-col cols="8">

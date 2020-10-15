@@ -1,5 +1,10 @@
 <template>
-  <v-card elevation="6" max-height="700" class="overflow-y-auto">
+  <v-card
+    elevation="6"
+    max-height="700"
+    class="overflow-y-auto"
+    :class="'dark'"
+  >
     <v-card-title>
       Your Containers
     </v-card-title>
@@ -93,3 +98,25 @@ export default {
   }
 }
 </script>
+
+<style>
+/* not sure if this should be defined in another style */
+.dark::-webkit-scrollbar {
+  width: 15px;
+}
+
+.dark::-webkit-scrollbar-track {
+  background: #202020;
+  border-left: 1px solid #2c2c2c;
+}
+
+.dark::-webkit-scrollbar-thumb {
+  background: #3e3e3e;
+  border: solid 3px #252525;
+  border-radius: 7px;
+}
+
+.dark::-webkit-scrollbar-thumb:hover {
+  background: #808080;
+}
+</style>
