@@ -6,6 +6,14 @@ from api import config, worker_session, models
 client = docker.from_env()
 
 
+def build_container(container_id: int):
+    print(f"BUILDING CONTAINER: {container_id}")
+
+    with worker_session() as db:
+        container = db.query.get
+
+    client.build()
+
 def run_node(run_id: int, node_id: int, previous_job_id: int = None):
     print(f"RUNNING NODE: {node_id}, RUN: {run_id}")
 
@@ -59,4 +67,5 @@ def run_pipeline(folder: str, pipeline_id: int):
 
 
 if __name__ == '__main__':
+    build_container(2)
     run_pipeline('xyz', 1)
