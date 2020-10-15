@@ -18,6 +18,7 @@
         </v-btn>
       </v-col>
     </v-row>
+    <v-divider light />
     <v-card-text>
       <v-row v-for="pipeline in pipelines" :key="pipeline.id">
         <v-col cols="8">
