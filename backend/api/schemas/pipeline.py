@@ -16,7 +16,6 @@ class PipelineNode(BaseORMModel):
     container_id: int
     x_coord: int
     y_coord: int
-
     container: Container
 
 
@@ -56,4 +55,5 @@ class PipelineFull(Pipeline):
     links: Optional[List[PipelineLink]] = []
 
 
-
+class Dicom(BaseModel):
+    test: str

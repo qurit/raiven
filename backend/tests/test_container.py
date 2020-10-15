@@ -14,11 +14,13 @@ def test_add_container(form_data: dict = None, user_id: int = None, file: bytes 
             "description": 'A Default Container',
             "filename": 'Dockerfile',
             "is_input_container": False,
-            "is_output_container": False
+            "is_output_container": False,
+            "filename": "Dockerfile Name"
         }
 
     form_data["user_id"] = user_id if user_id else get_test_user().id
-    form_data['file'] = file if file else (io.BytesIO(b"test bytes"), 'test.jpg')
+    form_data['file'] = file if file else (
+        io.BytesIO(b"test bytes"), 'test.jpg')
     response = client.post('/container/', data=form_data)
 
     print(response.json())

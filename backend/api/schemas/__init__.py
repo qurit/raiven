@@ -10,4 +10,3 @@ class ApplicationEntityCreate(BaseModel):
 
 class ApplicationEntity(ApplicationEntityCreate, BaseORMModel):
     pass
-

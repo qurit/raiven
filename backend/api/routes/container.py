@@ -20,32 +20,42 @@ def get_all_containers(db: Session = Depends(session)):
 
 @router.post("/")
 async def create_container(file: bytes = File(...), name: str = Form(...), filename: str = Form(...), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
-    # TODO: maybe change to user_id directory or something?
-    # if not os.path.exists('user_files'):
-    #       os.mkdir('user_files')
-    # # write file to local storage. added the underscore so users can add mutliple dockerfiles to same directory
-    # complete_path = os.path.join('user_files', filename + '_' + name)
-    # file_ = open(complete_path, "wb")
-    # file_.write(file)
-    # file_.close()
+    newContainerList = []
 
-    # save container to database
-    db_container = Container(
-        user_id=1,
-        name=name,
-        description=description,
-        is_input_container=is_input_container,
-        is_output_container=is_output_container
-    )
-    db_container.save(db)
-
-    with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
-        fp.write(file)
-
-    db_container.dockerfile_path = os.path.join(db_container.get_path(), filename)
-    db_container.save(db)
-
-    return db_container
+    # need to check why zipfile.is_zip(file) didn't work
+    if ".zip" in filename:
+        z = zipfile.ZipFile(io.BytesIO(file))
+        for file in z.namelist():
+            db_container1 = Container(
+                user_id=1,
+                name=name,
+                description=description,
+                is_input_container=is_input_container,
+                is_output_container=is_output_container,
+                filename=file)
+            db_container1.save(db)
+            db_container1.dockerfile_path = os.path.join(
+                db_container1.path, file)
+            db_container1.save(db)
+            z.extract(file, path=os.path.join(
+                db_container1.abs_path))
+            newContainerList.append(db_container1)
+    else:
+        db_container = Container(
+            user_id=1,
+            name=name,
+            description=description,
+            is_input_container=is_input_container,
+            is_output_container=is_output_container,
+            filename=filename)
+        db_container.save(db)
+        with open(os.path.join(db_container.abs_path, filename), 'wb') as fp:
+            fp.write(file)
+        db_container.dockerfile_path = os.path.join(
+            db_container.path, filename)
+        db_container.save(db)
+        newContainerList.append(db_container)
+    return newContainerList
 
 
 @router.get("/{container_id}", response_model=container.Container)
@@ -54,15 +64,31 @@ def get_container(container_id: int, db: Session = Depends(session)):
 
 
 @router.put("/{container_id}")
-def update_container(container_id: int, file: bytes = File(...), name: str = Form(...), filename: str = Form(...), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
-    return db.query(Container).filter(Container.id == container_id).update({
-        "name": name,
-        # TODO: add filename?
-        # "filename": filename,
-        "description": description,
-        "is_input_container": is_input_container,
-        "is_output_container": is_output_container
-    })
+def update_container(container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(None), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
+    if (file != None):
+        container = db.query(Container).get(container_id)
+        # remove previous file
+        os.remove(os.path.join(container.abs_path, container.filename))
+        # write new file
+        with open(os.path.join(container.abs_path, filename), 'wb') as fp:
+            fp.write(file)
+        db.query(Container).filter(Container.id == container_id).update({
+            "name": name,
+            "description": description,
+            "is_input_container": is_input_container,
+            "is_output_container": is_output_container,
+            "dockerfile_path": os.path.join(container.path, filename),
+            "filename": filename
+        })
+        return db.query(Container).get(container_id)
+    else:
+        db.query(Container).filter(Container.id == container_id).update({
+            "name": name,
+            "description": description,
+            "is_input_container": is_input_container,
+            "is_output_container": is_output_container
+        })
+        return db.query(Container).get(container_id)
 
 
 @router.delete("/{container_id}", response_model=container.Container)
