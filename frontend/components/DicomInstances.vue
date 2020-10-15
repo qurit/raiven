@@ -6,62 +6,102 @@
     <v-divider light />
     <v-list-item v-for="dicomEvent in dicomEvents" :key="dicomEvent.id">
       <v-list-group :value="true" no-action :ripple="false">
+        <v-btn
+          color="blue"
+          small
+          :ripple="false"
+          @click="sendNode(dicomEvent.id)"
+        >
+          Send DICOM Node {{ dicomEvent.id }} to a Pipeline
+        </v-btn>
         <template v-slot:activator>
           <v-list-item-content>
             <v-list-item-title
-              >{{ dicomEvent.id }}. Host:
+              >{{ dicomEvent.id }}. Received from Host:
               {{ dicomEvent.host }}</v-list-item-title
             >
           </v-list-item-content>
         </template>
-        <v-list-group no-action sub-group :ripple="false">
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>Patients</v-list-item-title>
-            </v-list-item-content>
-          </template>
-          <v-list-item
-            v-for="dicomPatient in dicomEvent.dicom_patient"
-            :key="dicomPatient.id"
-          >
-            <v-list-group no-action sub-group :ripple="false">
-              <template v-slot:activator>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    Patient
-                    {{ dicomPatient.patient_id }} Studies</v-list-item-title
+        <v-list-item
+          v-for="dicomPatient in dicomEvent.dicom_patient"
+          :key="dicomPatient.id"
+        >
+          <v-list-group no-action sub-group :ripple="false">
+            <v-btn
+              color="blue"
+              small
+              :ripple="false"
+              class="ml-16"
+              @click="sendPatient(dicomEvent.id, dicomPatient.id)"
+            >
+              Send Patient {{ dicomPatient.id }} to a Pipeline
+            </v-btn>
+            <template v-slot:activator>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ dicomPatient.id }}. Patient
+                  {{ dicomPatient.patient_id }}</v-list-item-title
+                >
+              </v-list-item-content>
+            </template>
+            <v-list-item
+              v-for="dicomStudy in dicomPatient.dicom_study"
+              :key="dicomStudy.id"
+            >
+              <v-list-group no-action sub-group :ripple="false">
+                <v-btn
+                  color="blue"
+                  small
+                  :ripple="false"
+                  class="ml-16"
+                  @click="
+                    sendStudy(dicomEvent.id, dicomPatient.id, dicomStudy.id)
+                  "
+                >
+                  Send Study {{ dicomStudy.id }} to a Pipeline
+                </v-btn>
+                <template v-slot:activator>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ dicomStudy.id }}. Study date:
+                      {{ dicomStudy.study_date }}
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </template>
+
+                <v-list-item
+                  v-for="dicomSeries in dicomStudy.dicom_series"
+                  :key="dicomSeries.id"
+                >
+                  {{ dicomSeries.series_description }}
+                  <v-btn
+                    color="blue"
+                    small
+                    :ripple="false"
+                    class="ml-6"
+                    @click="
+                      sendSeries(
+                        dicomEvent.id,
+                        dicomPatient.id,
+                        dicomStudy.id,
+                        dicomSeries.id
+                      )
+                    "
                   >
-                </v-list-item-content>
-              </template>
-              <v-list-item
-                v-for="dicomStudy in dicomPatient.dicom_study"
-                :key="dicomStudy.id"
-              >
-                <v-list-group no-action sub-group :ripple="false">
-                  <template v-slot:activator>
-                    <v-list-item-content>
-                      <v-list-item-title>
-                        Study {{ dicomStudy.study_instance_uid }} Series
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </template>
-                  <v-list-item
-                    v-for="dicomSeries in dicomStudy.dicom_series"
-                    :key="dicomSeries.id"
-                  >
-                    {{ dicomSeries.series_instance_uid }}
-                  </v-list-item>
-                </v-list-group>
-              </v-list-item>
-            </v-list-group>
-          </v-list-item>
-        </v-list-group>
+                    Send Series {{ dicomSeries.id }} to a Pipeline
+                  </v-btn>
+                </v-list-item>
+              </v-list-group>
+            </v-list-item>
+          </v-list-group>
+        </v-list-item>
       </v-list-group>
     </v-list-item>
   </v-card>
 </template>
 
 <script>
+import axios from 'axios'
 import { mapState } from 'vuex'
 
 export default {
@@ -70,6 +110,30 @@ export default {
   },
   created() {
     this.$store.dispatch('dicomEvents/fetchDicomEvents')
+  },
+  methods: {
+    async sendNode(nodeId) {
+      const res = await axios.put(`http://localhost:5000/dicom/node/${nodeId}`)
+      console.log(res.data)
+    },
+    async sendPatient(nodeId, patientId) {
+      const res = await axios.put(
+        `http://localhost:5000/dicom/node/${nodeId}/${patientId}`
+      )
+      console.log(res.data)
+    },
+    async sendStudy(nodeId, patientId, studyId) {
+      const res = await axios.put(
+        `http://localhost:5000/dicom/node/${nodeId}/${patientId}/${studyId}`
+      )
+      console.log(res.data)
+    },
+    async sendSeries(nodeId, patientId, studyId, seriesId) {
+      const res = await axios.put(
+        `http://localhost:5000/dicom/node/${nodeId}/${patientId}/${studyId}/${seriesId}`
+      )
+      console.log(res.data)
+    }
   }
 }
 </script>
