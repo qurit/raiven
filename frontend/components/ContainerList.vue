@@ -1,10 +1,5 @@
 <template>
-  <v-card
-    elevation="6"
-    max-height="700"
-    class="overflow-y-auto"
-    :class="scrollbarTheme"
-  >
+  <v-card elevation="6" max-height="700" class="overflow-y-auto">
     <v-card-title>
       Your Containers
     </v-card-title>

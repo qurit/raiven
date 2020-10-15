@@ -49,7 +49,7 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
     db.query(PipelineNode).filter(
         PipelineNode.pipeline_id == pipeline_id).delete()
     db.query(PipelineLink).filter(
-        PipelineLink.pipeline_id == pipeline_id).all()
+        PipelineLink.pipeline_id == pipeline_id).delete()
     # save new nodes and links
     nodes = {node.node_id: PipelineNode(
         pipeline_id=pipeline_id,
