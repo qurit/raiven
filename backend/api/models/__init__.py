@@ -1,4 +1,4 @@
-from ._base import Base, PathMixin, NestedPathMixin
+from ._base import Base, PathMixin, NestedPathMixin, TimestampMixin
 
 from . import dicom
 from . import user
