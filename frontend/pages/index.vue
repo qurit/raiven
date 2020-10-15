@@ -26,10 +26,10 @@
           >Click me for a purple toast</V-btn
         >
       </v-col>
-      <v-col cols="6">
+      <v-col cols="5">
         <PipelineStatus :pipelines="pipelines" />
       </v-col>
-      <v-col cols="6">
+      <v-col cols="7">
         <!-- <UserGuide /> -->
         <DicomInstances />
       </v-col>

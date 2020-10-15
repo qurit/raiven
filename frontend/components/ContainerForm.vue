@@ -54,6 +54,7 @@
       <v-card-title>
         Add a Container
       </v-card-title>
+      <v-divider light />
       <v-form v-model="form" ref="form">
         <v-container>
           <v-col cols="12" md="12">

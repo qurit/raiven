@@ -8,6 +8,7 @@
     <v-card-title>
       Your Containers
     </v-card-title>
+    <v-divider light />
     <v-card-text>
       <v-list-item v-for="container in containers" :key="container.id">
         <v-col cols="8">

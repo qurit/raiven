@@ -1,36 +1,63 @@
 <template>
-  <v-card elevation="6">
+  <v-card class="mx-auto" elevation="6">
     <v-card-title>
-      DICOM events received
+      Received DICOM Instances
     </v-card-title>
-    <v-list-item
-      class="mx-4"
-      v-for="dicomEvent in dicomEvents"
-      :key="dicomEvent.id"
-    >
-      <!-- TODO: fix this stuff man rip -->
-      sdfsdf
-      {{ blah }}
-      Host
-      {{ dicomEvent.host }}
-      <br />
-      Patient
-      {{ dicomEvent.dicom_patient[0].patient_id }}
-      <br />
-      Study Instance UID
-      {{ dicomEvent.dicom_patient[0].dicom_study[0].study_instance_uid }}
-      <br />
-      <!-- check the databse write to file -->
-      Series Instance UID
-      {{
-        dicomEvent.dicom_patient[0].dicom_study[0].dicom_series[0]
-          .series_instance_uid
-      }}
-      <br />
+    <v-divider light />
+    <v-list-item v-for="dicomEvent in dicomEvents" :key="dicomEvent.id">
+      <v-list-group :value="true" no-action :ripple="false">
+        <template v-slot:activator>
+          <v-list-item-content>
+            <v-list-item-title
+              >{{ dicomEvent.id }}. Host:
+              {{ dicomEvent.host }}</v-list-item-title
+            >
+          </v-list-item-content>
+        </template>
+        <v-list-group no-action sub-group :ripple="false">
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title>Patients</v-list-item-title>
+            </v-list-item-content>
+          </template>
+          <v-list-item
+            v-for="dicomPatient in dicomEvent.dicom_patient"
+            :key="dicomPatient.id"
+          >
+            <v-list-group no-action sub-group :ripple="false">
+              <template v-slot:activator>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Patient
+                    {{ dicomPatient.patient_id }} Studies</v-list-item-title
+                  >
+                </v-list-item-content>
+              </template>
+              <v-list-item
+                v-for="dicomStudy in dicomPatient.dicom_study"
+                :key="dicomStudy.id"
+              >
+                <v-list-group no-action sub-group :ripple="false">
+                  <template v-slot:activator>
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        Study {{ dicomStudy.study_instance_uid }} Series
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </template>
+                  <v-list-item
+                    v-for="dicomSeries in dicomStudy.dicom_series"
+                    :key="dicomSeries.id"
+                  >
+                    {{ dicomSeries.series_instance_uid }}
+                  </v-list-item>
+                </v-list-group>
+              </v-list-item>
+            </v-list-group>
+          </v-list-item>
+        </v-list-group>
+      </v-list-group>
     </v-list-item>
-    <v-btn @click="test">
-      click
-    </v-btn>
   </v-card>
 </template>
 
@@ -38,11 +65,6 @@
 import { mapState } from 'vuex'
 
 export default {
-  methods: {
-    test() {
-      console.log(dicomEvents)
-    }
-  },
   computed: {
     ...mapState('dicomEvents', ['dicomEvents'])
   },
