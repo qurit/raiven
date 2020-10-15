@@ -129,7 +129,9 @@ export default {
     async getSavedPipeline() {
       // since only getting the pipeline here, didn't put it in the store
       const path = `http://localhost:5000/pipeline/${this.pipeline_id}`
-      const { data } = await axios.get(path)
+      const { data } = await axios.get(path).catch(e => {
+        console.log(e)
+      })
       const { nodes, links } = data
       this.getPipelineNodes(nodes)
       this.getPipelineLinks(links)

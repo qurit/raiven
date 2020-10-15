@@ -11,9 +11,13 @@ export const mutations = {
 
 export const actions = {
   async fetchDicomEvents({ commit }) {
-    const res = await axios.get('http://localhost:5000/dicom/nodes')
-    console.log(res.data)
-    commit('setDicomEvents', res.data)
-    return res.data
+    try {
+      const res = await axios.get('http://localhost:5000/dicom/nodes')
+      console.log(res.data)
+      commit('setDicomEvents', res.data)
+      return res.data
+    } catch (err) {
+      console.log(err)
+    }
   }
 }
