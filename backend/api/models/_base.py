@@ -26,6 +26,9 @@ class _Base:
         session.delete(self)
         self._flush(session)
 
+    def detach(self, session: Session):
+        session.expunge(self)
+
     # noinspection PyMethodMayBeStatic
     def _flush(self, session: Session):
         try:
@@ -40,11 +43,15 @@ Base = declarative_base(cls=_Base)
 
 class NestedPathMixin(object):
 
+    @staticmethod
+    def to_abs_path(rel_path):
+        return os.path.join(config.UPLOAD_DIR, rel_path)
+
     def get_path(self) -> str:
         raise NotImplementedError
 
     def get_abs_path(self) -> str:
-        return os.path.join(config.UPLOAD_DIR, self.get_path())
+        return self.to_abs_path(self.get_path())
 
     def save(self, *args, **kwargs):
         """ Will Create a new directory upon completion """
