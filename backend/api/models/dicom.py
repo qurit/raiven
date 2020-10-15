@@ -20,7 +20,7 @@ class DicomPatient(NestedPathMixin, Base):
         "dicom_node.id", ondelete="CASCADE"))
     patient_id = Column(String)
 
-    # dicom_node = relationship('DicomNode')
+    node = relationship('DicomNode')
     dicom_study = relationship('DicomStudy')
 
     @property
@@ -34,7 +34,7 @@ class DicomStudy(NestedPathMixin, Base):
     study_instance_uid = Column(String)
     study_date = Column(DateTime)
 
-    # patient = relationship('DicomPatient')
+    patient = relationship('DicomPatient')
     dicom_series = relationship('DicomSeries')
 
     @property
@@ -49,7 +49,7 @@ class DicomSeries(NestedPathMixin, Base):
     series_description = Column(String)
     modality = Column(String)
 
-    # study = relationship('DicomStudy')
+    study = relationship('DicomStudy')
 
     @property
     def path(self) -> str:

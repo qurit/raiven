@@ -1,6 +1,7 @@
 import os
+import datetime
 
-from pynetdicom import AE, evt
+from pynetdicom import AE, evt, debug_logger
 from pynetdicom.presentation import AllStoragePresentationContexts
 from pynetdicom.sop_class import VerificationSOPClass
 
@@ -14,7 +15,7 @@ def get_ae_title(event):
 
 
 def handle_store(event):
-    """ Handles EVT_C_STORE """
+    # """ Handles EVT_C_STORE """
     print("STORE EVENT")
 
     ae_title = get_ae_title(event)
@@ -22,7 +23,7 @@ def handle_store(event):
 
     try:
         with session() as db:
-            """ 
+            """
             The models will automatically create the folders because they inherit from NestedPathMixin found in database.py
             Speed can be improved by starting query from series (requires joins) but will cut the avg amount of queries down
             from n=4 to n=1. Calculating the storage path could be faster by not using lazy relationships in the NestedPathMixin
@@ -45,17 +46,21 @@ def handle_store(event):
                 patient.save(db)
 
             if not (study := db.query(DicomStudy).filter_by(dicom_patient_id=patient.id, study_instance_uid=ds.StudyInstanceUID).first()):
+                print(ds)
+                raw_date_time = ds.StudyDate + ds.StudyTime
+                formatted_date_time = datetime.datetime.strptime(
+                    raw_date_time, '%Y%m%d%H%M%S')
                 study = DicomStudy(
                     dicom_patient_id=patient.id,
-                    study_instance_uid=ds.StudyInstanceUID
-                    # TODO: add study date
+                    study_instance_uid=ds.StudyInstanceUID,
+                    study_date=formatted_date_time
                 )
                 study.save(db)
 
             if not (series := db.query(DicomSeries).filter_by(dicom_study_id=study.id, series_instance_uid=ds.StudyInstanceUID).first()):
                 series = DicomSeries(
                     dicom_study_id=study.id,
-                    series_instance_uid=ds.StudyInstanceUID,
+                    series_instance_uid=ds.SeriesInstanceUID,
                     # TODO: Add a series description table
                     series_description=ds.SeriesDescription,
                     modality=ds.Modality,
@@ -73,6 +78,7 @@ def handle_store(event):
 
 
 if __name__ == '__main__':
+    debug_logger()
     ae = AE()
     ae.supported_contexts = AllStoragePresentationContexts
     ae.add_supported_context(VerificationSOPClass)
