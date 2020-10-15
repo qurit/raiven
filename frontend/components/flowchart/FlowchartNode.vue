@@ -7,13 +7,12 @@
       v-bind:class="{ selected: options.selected === id }"
     >
       <v-sheet
-        class="pa-4 title text-center"
+        class="pa-2 title text-center poll-name"
         color="blue"
         height="170"
         width="200"
       >
-        {{ type }}
-        <v-expand-x-transition style="float: right">
+        <v-expand-x-transition style="float: left">
           <v-icon-btn
             v-if="hover"
             delete
@@ -21,6 +20,7 @@
             @click="$emit('deleteNode')"
           />
         </v-expand-x-transition>
+        {{ type }}
       </v-sheet>
       <FlowchartNodePort
         class="node-port node-input"
@@ -86,6 +86,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.poll-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  // white-space: nowrap;
+  word-wrap: break-word;
+  // display: block;
+  // line-height: 1em; /* a */
+  // max-height: 2em; /* a x number of line to show (ex : 2 line)  */
+}
 .flowchart-node {
   margin: 0;
   width: 200px;

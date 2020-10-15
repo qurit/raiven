@@ -6,8 +6,13 @@
 
       <!-- Delete Icon -->
       <a v-if="hover" @click="deleteLink">
-        <text text-anchor="middle" :transform="arrowTransform" font-size="22"
-          >x</text
+        <text
+          text-anchor="middle"
+          :transform="arrowTransform"
+          font-size="20"
+          color="red"
+          bold
+          >X</text
         >
       </a>
       <!-- Arrow -->
