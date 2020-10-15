@@ -1,7 +1,9 @@
 import os
+from datetime import datetime
+
 from shutil import rmtree
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.orm import Session
@@ -16,6 +18,10 @@ class _Base:
     @declared_attr
     def __tablename__(self):
         return underscore(self.__name__)
+
+    @classmethod
+    def query(cls, session):
+        return session.query(cls)
 
     def save(self, session: Session):
         session.add(self)
@@ -36,6 +42,10 @@ class _Base:
         except DatabaseError:
             session.rollback()
             raise
+
+    def __repr__(self, **kwargs) -> str:
+        info = ''.join(f'{k}={v} ' for k, v in kwargs.items()).strip()
+        return f'<{self.__class__.__name__} id={self.id}{" " if info else ""}{info}>'
 
 
 Base = declarative_base(cls=_Base)
@@ -82,3 +92,7 @@ class PathMixin(NestedPathMixin):
 
     def get_path(self) -> str:
         return os.path.join(self.__directory__, str(self.id))
+
+
+class TimestampMixin(object):
+    timestamp = Column(DateTime, default=datetime.utcnow)
