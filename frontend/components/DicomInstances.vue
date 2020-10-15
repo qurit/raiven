@@ -9,6 +9,8 @@
       :key="dicomEvent.id"
     >
       <!-- TODO: fix this stuff man rip -->
+      sdfsdf
+      {{ blah }}
       Host
       {{ dicomEvent.host }}
       <br />
@@ -24,9 +26,7 @@
         dicomEvent.dicom_patient[0].dicom_study[0].dicom_series[0]
           .series_instance_uid
       }}
-      <!-- <br />
-      Series
-      {{ dicomEvent.dicom_patient.dicom_study.dicom_series }} -->
+      <br />
     </v-list-item>
     <v-btn @click="test">
       click
