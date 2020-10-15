@@ -29,10 +29,14 @@ export const mutations = {
 
 export const actions = {
   async fetchContainers({ commit }) {
-    const res = await axios.get('http://localhost:5000/container')
-    console.log(res)
-    commit('setContainers', res.data)
-    return res.data
+    try {
+      const res = await axios.get('http://localhost:5000/container')
+      console.log(res)
+      commit('setContainers', res.data)
+      return res.data
+    } catch (err) {
+      console.log(err)
+    }
   },
   async deleteContainer({ commit }, id) {
     try {

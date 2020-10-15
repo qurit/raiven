@@ -12,9 +12,13 @@ export const mutations = {
 }
 export const actions = {
   async fetchPipelines({ commit }) {
-    const res = await axios.get('http://localhost:5000/pipeline')
-    commit('setPipelines', res.data)
-    return res.data
+    try {
+      const res = await axios.get('http://localhost:5000/pipeline')
+      commit('setPipelines', res.data)
+      return res.data
+    } catch (err) {
+      console.log(err)
+    }
   },
   async deletePipeline({ commit }, id) {
     try {

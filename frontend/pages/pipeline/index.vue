@@ -3,7 +3,7 @@
   <v-card
     elevation="6"
     width="900"
-    height="750"
+    max-height="750"
     class="overflow-y-auto overflow-x-hidden"
     :class="'dark'"
   >
