@@ -18,7 +18,8 @@ def get_all_destinations(db: Session = Depends(session)):
 
 
 @router.post("/")
-def create_destination(host: str, port: int, db: Session = Depends(session)):
-    destination = Destination(host=host, port=port, full_name=host + str(port))
-    destination.save(db)
-    return destination
+def create_destination(destination: destination.CreateDestination, db: Session = Depends(session)):
+    new_destination = Destination(
+        host=destination.host, port=destination.port, full_name=destination.host + " " + str(destination.port))
+    new_destination.save(db)
+    return new_destination

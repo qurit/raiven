@@ -44,7 +44,7 @@
               >
                 <OutputDestinationForm
                   :isEditing="false"
-                  @closeDialog="closeOutputDestinationDialog"
+                  @closeDialog="closeOutputDestination"
                 />
               </v-dialog>
             </v-list-item-content>

@@ -52,7 +52,7 @@
             filled
             class="mt-4"
             :items="destinations"
-            item-text="fullHostPort"
+            item-text="full_name"
             item-value="id"
           >
           </v-select>
@@ -79,7 +79,7 @@
           </v-expand-x-transition>
           {{ type }}
           <div v-if="container_is_input">
-            THIS IS AN INPUT CONTINAER
+            THIS IS AN INPUT CONTAINER
           </div>
         </v-sheet>
         <FlowchartNodePort
@@ -133,7 +133,7 @@ export default {
         transform: `scale(${this.options.scale})`
       }
     },
-    ...mapState('destinations', ['destinations'])
+    ...mapState('destination', ['destinations'])
   },
   methods: {
     handleMousedown(e) {
@@ -148,7 +148,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('destinations/fetchDestinations')
+    this.$store.dispatch('destination/fetchDestinations')
   }
 }
 </script>
@@ -158,11 +158,7 @@ export default {
 .poll-name {
   overflow: hidden;
   text-overflow: ellipsis;
-  // white-space: nowrap;
   word-wrap: break-word;
-  // display: block;
-  // line-height: 1em; /* a */
-  // max-height: 2em; /* a x number of line to show (ex : 2 line)  */
 }
 .flowchart-node {
   margin: 0;

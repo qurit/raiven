@@ -5,3 +5,8 @@ class Destination(BaseORMModel):
     host: str
     port: int
     full_name: str
+
+
+class CreateDestination(BaseModel):
+    host: str
+    port: int
