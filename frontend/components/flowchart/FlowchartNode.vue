@@ -6,30 +6,85 @@
       @mousedown="handleMousedown"
       v-bind:class="{ selected: options.selected === id }"
     >
-      <v-sheet
-        class="pa-2 title text-center poll-name"
-        color="blue"
-        height="170"
-        width="200"
-      >
-        <v-expand-x-transition style="float: left">
-          <v-icon-btn
+      <div v-if="container_is_input">
+        <v-sheet
+          class="pa-2 title text-center poll-name"
+          color="orange"
+          height="170"
+          width="200"
+        >
+          <v-expand-x-transition style="float: left">
+            <v-icon-btn
+              v-if="hover"
+              delete
+              color="red"
+              @click="$emit('deleteNode')"
+            />
+          </v-expand-x-transition>
+          {{ type }} <br />
+          INPUT
+        </v-sheet>
+        <FlowchartNodePort
+          class="node-port node-output"
+          @mousedown="$emit('linkingStart')"
+        />
+      </div>
+      <div v-else-if="container_is_output">
+        <v-sheet
+          class="pa-2 title text-center poll-name"
+          color="orange"
+          height="170"
+          width="200"
+        >
+          <v-expand-x-transition style="float: left">
+            <v-icon-btn
+              v-if="hover"
+              delete
+              color="red"
+              @click="$emit('deleteNode')"
+            />
+          </v-expand-x-transition>
+          {{ type }} <br />
+          Send to:
+          <v-select dense outlined filled class="mt-4"> </v-select>
+        </v-sheet>
+        <FlowchartNodePort
+          class="node-port node-input"
+          @mouseup="$emit('linkingStop')"
+        />
+      </div>
+      <div v-else>
+        <v-sheet
+          class="pa-2 title text-center poll-name"
+          color="blue"
+          height="170"
+          width="200"
+        >
+          <v-expand-x-transition style="float: left">
+            <!-- <v-icon-btn
             v-if="hover"
             delete
             color="red"
             @click="$emit('deleteNode')"
-          />
-        </v-expand-x-transition>
-        {{ type }}
-      </v-sheet>
-      <FlowchartNodePort
-        class="node-port node-input"
-        @mouseup="$emit('linkingStop')"
-      />
-      <FlowchartNodePort
-        class="node-port node-output"
-        @mousedown="$emit('linkingStart')"
-      />
+          /> -->
+            <v-icon-btn v-if="hover" delete color="red" @click="test" />
+          </v-expand-x-transition>
+          {{ type }}
+          {{ container_is_input }}
+          {{ id }}
+          <div v-if="container_is_input">
+            THIS IS AN INPUT CONTINAER
+          </div>
+        </v-sheet>
+        <FlowchartNodePort
+          class="node-port node-input"
+          @mouseup="$emit('linkingStop')"
+        />
+        <FlowchartNodePort
+          class="node-port node-output"
+          @mousedown="$emit('linkingStart')"
+        />
+      </div>
     </v-card>
   </v-hover>
 </template>
@@ -44,6 +99,8 @@ export default {
     x: 0,
     y: 0,
     type: undefined,
+    container_is_input: undefined,
+    container_is_output: undefined,
     options: {
       type: Object,
       default() {
@@ -70,6 +127,9 @@ export default {
     }
   },
   methods: {
+    test() {
+      console.log(this.container_is_input)
+    },
     handleMousedown(e) {
       // This could be removed with click.stop maybe?
       if (

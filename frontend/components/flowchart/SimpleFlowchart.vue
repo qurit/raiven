@@ -9,14 +9,14 @@
       @mousedown="handleDown"
     >
       <svg width="100%" height="100%">
-        <flowchart-link
+        <FlowchartLink
           v-bind.sync="link"
           v-for="(link, index) in lines"
           :key="`link${index}`"
           @deleteLink="linkDelete(link.id)"
-        ></flowchart-link>
+        ></FlowchartLink>
       </svg>
-      <flowchart-node
+      <FlowchartNode
         v-bind.sync="node"
         v-for="(node, index) in scene.nodes"
         :key="`node${index}`"
@@ -26,7 +26,7 @@
         @nodeSelected="nodeSelected(node.id, $event)"
         @deleteNode="deleteNode(node.id)"
       >
-      </flowchart-node>
+      </FlowchartNode>
     </div>
   </div>
 </template>
@@ -277,6 +277,8 @@ export default {
           container_id: node.container_id,
           x: node.x,
           y: node.y
+          // container_is_input: node.container_is_input,
+          // container_is_output: node.container_is_output
         }
         nodeArray.push(newPipelineNode)
       })
