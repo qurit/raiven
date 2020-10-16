@@ -28,21 +28,19 @@ async def create_container(file: bytes = File(...), name: str = Form(...), filen
     # need to check why zipfile.is_zip(file) didn't work
     if ".zip" in filename:
         z = zipfile.ZipFile(io.BytesIO(file))
-        for file in z.namelist():
-            db_container1 = Container(
-                user_id=1,
-                name=name,
-                description=description,
-                is_input_container=is_input_container,
-                is_output_container=is_output_container,
-                filename=file)
-            db_container1.save(db)
-            db_container1.dockerfile_path = os.path.join(
-                db_container1.path, file)
-            db_container1.save(db)
-            z.extract(file, path=os.path.join(
-                db_container1.abs_path))
-            newContainerList.append(db_container1)
+        db_container1 = Container(
+            user_id=1,
+            name=name,
+            description=description,
+            is_input_container=is_input_container,
+            is_output_container=is_output_container,
+            filename='Dockerfile')
+        db_container1.save(db)
+        db_container1.dockerfile_path = os.path.join(
+            db_container1.path, 'Dockerfile')
+        db_container1.save(db)
+        z.extractall(db_container1.abs_path)
+        newContainerList.append(db_container1)
     else:
         db_container = Container(
             user_id=1,
