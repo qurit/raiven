@@ -24,8 +24,28 @@
               <v-btn class="mt-2" @click="addContainer">
                 Add a Container
               </v-btn>
-              <v-dialog v-model="dialog" max-width="900px" min-height="600px">
-                <ContainerForm :isEditing="false" @closeDialog="closeDialog" />
+              <v-dialog
+                v-model="containerDialog"
+                max-width="900px"
+                min-height="600px"
+              >
+                <ContainerForm
+                  :isEditing="false"
+                  @closeDialog="closeContainerDialog"
+                />
+              </v-dialog>
+              <v-btn class="mt-2" @click="addOutputDestination" small>
+                Add an Output Destination
+              </v-btn>
+              <v-dialog
+                v-model="outputDestinationDialog"
+                max-width="900px"
+                min-height="600px"
+              >
+                <OutputDestinationForm
+                  :isEditing="false"
+                  @closeDialog="closeOutputDestinationDialog"
+                />
               </v-dialog>
             </v-list-item-content>
           </v-list-item>
@@ -40,8 +60,18 @@
         >
           <v-card class="ma-2 title" :color="hover ? 'orange' : ''">
             <v-card-title v-text="container.name" />
+            <div v-if="container.is_input_container">
+              <v-card-subtitle>
+                Input
+              </v-card-subtitle>
+            </div>
+            <div v-if="container.is_output_container">
+              <v-card-subtitle>
+                Output
+              </v-card-subtitle>
+            </div>
             <v-card-text>
-              {{ container.description }}
+              {{ container }}
             </v-card-text>
             <v-card-actions>
               <v-spacer />
@@ -61,16 +91,18 @@ import { mapState } from 'vuex'
 import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
 import VIconBtn from '../../components/global/v-icon-btn'
 import ContainerForm from '~/components/ContainerForm'
+import OutputDestinationForm from '~/components/OutputDestinationForm'
 
 export default {
   components: {
     VIconBtn,
     SimpleFlowchart,
-    ContainerForm
+    ContainerForm,
+    OutputDestinationForm
   },
   data() {
     return {
-      containerList: false,
+      containerList: true,
       scene: {
         centerX: 1024,
         centerY: 140,
@@ -79,15 +111,22 @@ export default {
         links: []
       },
       pipeline_id: '',
-      dialog: false
+      containerDialog: false,
+      outputDestinationDialog: false
     }
   },
   methods: {
     addContainer() {
-      this.dialog = true
+      this.containerDialog = true
     },
-    closeDialog() {
-      this.dialog = false
+    addOutputDestination() {
+      this.outputDestinationDialog = true
+    },
+    closeContainerDialog() {
+      this.containerDialog = false
+    },
+    closeOutputDestination() {
+      this.outputDestinationDialog = false
     },
     addNode(container) {
       let maxID = Math.max(0, ...this.scene.nodes.map(link => link.id))
@@ -96,7 +135,9 @@ export default {
         x: -400,
         y: 50,
         type: container.name,
-        container_id: container.id
+        container_id: container.id,
+        container_is_input: container.is_input_container,
+        container_is_output: container.is_output_container
       })
     },
     getContainers() {

@@ -81,7 +81,7 @@ export default {
     },
     arrowStyle() {
       return {
-        stroke: '#00cc00',
+        stroke: '#42b883',
         strokeWidth: 8,
         fill: 'none'
       }
