@@ -13,10 +13,11 @@ class Container(PathMixin, Base):
     is_input_container = Column(Boolean)
     is_output_container = Column(Boolean)
     description = Column(String)
-    # filename = Column(String)
+    filename = Column(String)
 
     # TODO: This doesnt make sense
-    container = relationship('PipelineNode', foreign_keys='PipelineNode.container_id')
+    container = relationship(
+        'PipelineNode', foreign_keys='PipelineNode.container_id')
     build = relationship('ContainerBuild', uselist=False)
 
 
