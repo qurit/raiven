@@ -98,7 +98,12 @@
       </v-list-group>
     </v-list-item>
     <v-dialog v-model="dialog" width="500px" height="600px">
-      <DicomForm :nodeId="nodeId" />
+      <DicomForm
+        :nodeId="nodeId"
+        :patientId="patientId"
+        :studyId="studyId"
+        :seriesId="seriesId"
+      />
     </v-dialog>
   </v-card>
 </template>
@@ -117,7 +122,10 @@ export default {
   data: function() {
     return {
       dialog: false,
-      nodeId: ''
+      nodeId: '',
+      patientId: '',
+      studyId: '',
+      seriesId: ''
     }
   },
   computed: {
@@ -128,28 +136,50 @@ export default {
   },
   methods: {
     async sendNode(nodeId) {
+      this.setInitialState()
       this.dialog = true
       this.nodeId = nodeId
       // const res = await axios.put(`http://localhost:5000/dicom/node/${nodeId}`)
       // console.log(res.data)
     },
     async sendPatient(nodeId, patientId) {
-      const res = await axios.put(
-        `http://localhost:5000/dicom/node/${nodeId}/${patientId}`
-      )
-      console.log(res.data)
+      this.setInitialState()
+      this.dialog = true
+      this.nodeId = nodeId
+      this.patientId = patientId
+      // const res = await axios.put(
+      //   `http://localhost:5000/dicom/node/${nodeId}/${patientId}`
+      // )
+      // console.log(res.data)
     },
     async sendStudy(nodeId, patientId, studyId) {
-      const res = await axios.put(
-        `http://localhost:5000/dicom/node/${nodeId}/${patientId}/${studyId}`
-      )
-      console.log(res.data)
+      this.setInitialState()
+      this.dialog = true
+      this.nodeId = nodeId
+      this.patientId = patientId
+      this.studyId = studyId
+      // const res = await axios.put(
+      //   `http://localhost:5000/dicom/node/${nodeId}/${patientId}/${studyId}`
+      // )
+      // console.log(res.data)
     },
     async sendSeries(nodeId, patientId, studyId, seriesId) {
-      const res = await axios.put(
-        `http://localhost:5000/dicom/node/${nodeId}/${patientId}/${studyId}/${seriesId}`
-      )
-      console.log(res.data)
+      this.setInitialState()
+      this.dialog = true
+      this.nodeId = nodeId
+      this.patientId = patientId
+      this.studyId = studyId
+      this.seriesId = seriesId
+      //   const res = await axios.put(
+      //     `http://localhost:5000/dicom/node/${nodeId}/${patientId}/${studyId}/${seriesId}`
+      //   )
+      //   console.log(res.data)
+    },
+    setInitialState() {
+      this.nodeId = ''
+      this.patientId = ''
+      this.studyId = ''
+      this.seriesId = ''
     }
   }
 }
