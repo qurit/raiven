@@ -68,7 +68,7 @@ def handle_store(event):
                 series.save(db)
 
             # Grab the save path so we can release the session connection
-            save_path = series.abs_path
+            save_path = series.get_abs_path
 
         ds.save_as(os.path.join(save_path, ds.SOPInstanceUID + '.dcm'))
     except Exception as e:

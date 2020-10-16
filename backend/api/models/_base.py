@@ -1,7 +1,9 @@
 import os
+from datetime import datetime
+
 from shutil import rmtree
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.orm import Session
@@ -17,6 +19,10 @@ class _Base:
     def __tablename__(self):
         return underscore(self.__name__)
 
+    @classmethod
+    def query(cls, session):
+        return session.query(cls)
+
     def save(self, session: Session):
         session.add(self)
         self._flush(session)
@@ -26,6 +32,9 @@ class _Base:
         session.delete(self)
         self._flush(session)
 
+    def detach(self, session: Session):
+        session.expunge(self)
+
     # noinspection PyMethodMayBeStatic
     def _flush(self, session: Session):
         try:
@@ -34,32 +43,38 @@ class _Base:
             session.rollback()
             raise
 
+    def __repr__(self, **kwargs) -> str:
+        info = ''.join(f'{k}={v} ' for k, v in kwargs.items()).strip()
+        return f'<{self.__class__.__name__} id={self.id}{" " if info else ""}{info}>'
+
 
 Base = declarative_base(cls=_Base)
 
 
 class NestedPathMixin(object):
 
-    @property
-    def path(self) -> str:
+    @staticmethod
+    def to_abs_path(rel_path):
+        return os.path.join(config.UPLOAD_DIR, rel_path)
+
+    def get_path(self) -> str:
         raise NotImplementedError
 
-    @property
-    def abs_path(self) -> str:
-        return os.path.join(config.UPLOAD_DIR, self.path)
+    def get_abs_path(self) -> str:
+        return self.to_abs_path(self.get_path())
 
     def save(self, *args, **kwargs):
         """ Will Create a new directory upon completion """
 
         super().save(*args, **kwargs)
-        if not os.path.exists(path := self.abs_path):
+        if not os.path.exists(path := self.get_abs_path()):
             os.makedirs(path)
 
     def delete(self, *args, **kwargs):
         """ Will Delete a new directory upon completion """
 
         super().delete(*args, **kwargs)
-        if os.path.exists(path := self.abs_path):
+        if os.path.exists(path := self.get_abs_path()):
             rmtree(path)
 
 
@@ -75,6 +90,9 @@ class PathMixin(NestedPathMixin):
     def __absolute_directory__(self) -> str:
         return os.path.join(config.UPLOAD_DIR, self.__directory__)
 
-    @property
-    def path(self) -> str:
+    def get_path(self) -> str:
         return os.path.join(self.__directory__, str(self.id))
+
+
+class TimestampMixin(object):
+    timestamp = Column(DateTime, default=datetime.utcnow)
