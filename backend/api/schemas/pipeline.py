@@ -55,5 +55,5 @@ class PipelineFull(Pipeline):
     links: Optional[List[PipelineLink]] = []
 
 
-class Dicom(BaseModel):
-    test: str
+class PipelineId(BaseModel):
+    pipeline_id: int

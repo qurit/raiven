@@ -97,14 +97,29 @@
         </v-list-item>
       </v-list-group>
     </v-list-item>
+    <v-dialog v-model="dialog" width="500px" height="600px">
+      <DicomForm :nodeId="nodeId" />
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
 import axios from 'axios'
 import { mapState } from 'vuex'
+import DicomForm from '../components/DicomForm'
+import ContainerForm from '../components/ContainerForm'
 
 export default {
+  components: {
+    ContainerForm,
+    DicomForm
+  },
+  data: function() {
+    return {
+      dialog: false,
+      nodeId: ''
+    }
+  },
   computed: {
     ...mapState('dicomEvents', ['dicomEvents'])
   },
@@ -113,8 +128,10 @@ export default {
   },
   methods: {
     async sendNode(nodeId) {
-      const res = await axios.put(`http://localhost:5000/dicom/node/${nodeId}`)
-      console.log(res.data)
+      this.dialog = true
+      this.nodeId = nodeId
+      // const res = await axios.put(`http://localhost:5000/dicom/node/${nodeId}`)
+      // console.log(res.data)
     },
     async sendPatient(nodeId, patientId) {
       const res = await axios.put(
