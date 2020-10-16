@@ -16,13 +16,14 @@ class Container(PathMixin, Base):
     # filename = Column(String)
 
     # TODO: This doesnt make sense
-    container = relationship(
-        'PipelineNode', foreign_keys='PipelineNode.container_id')
+    container = relationship('PipelineNode', foreign_keys='PipelineNode.container_id')
+    build = relationship('ContainerBuild', uselist=False)
 
 
 class ContainerBuild(TimestampMixin, Base):
     container_id = Column(ForeignKey("container.id", ondelete="CASCADE"))
     exit_code = Column(Integer)
+    status = Column(String)
     tag = Column(String)
 
     error = relationship('ContainerBuildError', uselist=False, backref='build')
