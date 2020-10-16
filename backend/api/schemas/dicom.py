@@ -14,7 +14,6 @@ class DicomSeries(BaseORMModel):
 class DicomStudy(BaseORMModel):
     dicom_patient_id: int
     study_instance_uid: str
-    # TODO: FIX THIS OPTIONAL, SHOULD NOT BE OPTIONAL, SHOULD BE ABLE TO GET THE STUDY DATE
     study_date: datetime
     dicom_series: List[DicomSeries]
 
