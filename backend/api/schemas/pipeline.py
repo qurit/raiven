@@ -9,6 +9,8 @@ class PipelineNodeCreate(BaseModel):
     container_id: int
     x: int
     y: int
+    container_is_input: bool
+    container_is_output: bool
 
 
 class PipelineNode(BaseORMModel):
@@ -16,6 +18,8 @@ class PipelineNode(BaseORMModel):
     container_id: int
     x_coord: int
     y_coord: int
+    container_is_input: bool
+    container_is_output: bool
     container: Container
 
 

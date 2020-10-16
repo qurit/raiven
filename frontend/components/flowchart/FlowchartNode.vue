@@ -22,7 +22,7 @@
             />
           </v-expand-x-transition>
           {{ type }} <br />
-          INPUT
+          INPUT CONTAINER
         </v-sheet>
         <FlowchartNodePort
           class="node-port node-output"
@@ -45,8 +45,17 @@
             />
           </v-expand-x-transition>
           {{ type }} <br />
-          Send to:
-          <v-select dense outlined filled class="mt-4"> </v-select>
+          Destination:
+          <v-select
+            dense
+            outlined
+            filled
+            class="mt-4"
+            :items="destinations"
+            item-text="fullHostPort"
+            item-value="id"
+          >
+          </v-select>
         </v-sheet>
         <FlowchartNodePort
           class="node-port node-input"
@@ -61,17 +70,14 @@
           width="200"
         >
           <v-expand-x-transition style="float: left">
-            <!-- <v-icon-btn
-            v-if="hover"
-            delete
-            color="red"
-            @click="$emit('deleteNode')"
-          /> -->
-            <v-icon-btn v-if="hover" delete color="red" @click="test" />
+            <v-icon-btn
+              v-if="hover"
+              delete
+              color="red"
+              @click="$emit('deleteNode')"
+            />
           </v-expand-x-transition>
           {{ type }}
-          {{ container_is_input }}
-          {{ id }}
           <div v-if="container_is_input">
             THIS IS AN INPUT CONTINAER
           </div>
@@ -91,6 +97,8 @@
 
 <script>
 import FlowchartNodePort from './FlowchartNodePort.vue'
+import { mapState } from 'vuex'
+
 export default {
   name: 'FlowchartNode',
   components: { FlowchartNodePort },
@@ -124,12 +132,10 @@ export default {
         left: this.options.centerX + this.x * this.options.scale + 'px',
         transform: `scale(${this.options.scale})`
       }
-    }
+    },
+    ...mapState('destinations', ['destinations'])
   },
   methods: {
-    test() {
-      console.log(this.container_is_input)
-    },
     handleMousedown(e) {
       // This could be removed with click.stop maybe?
       if (
@@ -140,6 +146,9 @@ export default {
       }
       e.preventDefault()
     }
+  },
+  created() {
+    this.$store.dispatch('destinations/fetchDestinations')
   }
 }
 </script>

@@ -23,10 +23,14 @@ class PipelineNode(Base):
     container_id = Column(ForeignKey("container.id"))
     x_coord = Column(Integer)
     y_coord = Column(Integer)
+    container_is_input = Column(Boolean)
+    container_is_output = Column(Boolean)
 
     container = relationship("Container", uselist=False)
-    next_links = relationship('PipelineLink', foreign_keys='PipelineLink.from_node_id')
-    previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.to_node_id')
+    next_links = relationship(
+        'PipelineLink', foreign_keys='PipelineLink.from_node_id')
+    previous_links = relationship(
+        'PipelineLink', foreign_keys='PipelineLink.to_node_id')
     jobs = relationship('PipelineJob', backref='node')
 
     def is_root_node(self):
@@ -47,8 +51,10 @@ class PipelineLink(Base):
     to_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
     from_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
 
-    next_node = relationship('PipelineNode', foreign_keys='PipelineLink.to_node_id', uselist=False)
-    previous_node = relationship('PipelineNode', foreign_keys='PipelineLink.from_node_id', uselist=False)
+    next_node = relationship(
+        'PipelineNode', foreign_keys='PipelineLink.to_node_id', uselist=False)
+    previous_node = relationship(
+        'PipelineNode', foreign_keys='PipelineLink.from_node_id', uselist=False)
 
     def __repr__(self, **kwargs) -> str:
         return super().__repr__(to_node=self.to_node_id, from_node=self.from_node_id, **kwargs)
@@ -64,7 +70,8 @@ OUTPUT_DIRNAME = 'output'
 
 class PipelineJob(PathMixin, TimestampMixin, Base):
     pipeline_run_id = Column(ForeignKey("pipeline_run.id", ondelete="CASCADE"))
-    pipeline_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
+    pipeline_node_id = Column(ForeignKey(
+        "pipeline_node.id", ondelete="CASCADE"))
     status = Column(String)
     exit_code = Column(Integer)
     # TODO: Add Error logging (seperate table)
@@ -79,7 +86,8 @@ class PipelineJob(PathMixin, TimestampMixin, Base):
 
         # Making folders
         abs_path = self.get_abs_path()
-        [os.makedirs(p) for dirname in [INPUT_DIRNAME, OUTPUT_DIRNAME] if not os.path.exists(p := os.path.join(abs_path, dirname))]
+        [os.makedirs(p) for dirname in [INPUT_DIRNAME, OUTPUT_DIRNAME]
+         if not os.path.exists(p := os.path.join(abs_path, dirname))]
 
         # Saving Path info
         rel_path = self.get_path()
