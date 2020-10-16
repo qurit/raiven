@@ -2,7 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
 from api import config
-from . import Base, PathMixin
+from . import Base, PathMixin, TimestampMixin
 from api.models.pipeline import PipelineNode
 
 
@@ -13,7 +13,22 @@ class Container(PathMixin, Base):
     is_input_container = Column(Boolean)
     is_output_container = Column(Boolean)
     description = Column(String)
-    filename = Column(String)
+    # filename = Column(String)
 
-    container = relationship(
-        'PipelineNode', foreign_keys='PipelineNode.container_id')
+    # TODO: This doesnt make sense
+    container = relationship('PipelineNode', foreign_keys='PipelineNode.container_id')
+    build = relationship('ContainerBuild', uselist=False)
+
+
+class ContainerBuild(TimestampMixin, Base):
+    container_id = Column(ForeignKey("container.id", ondelete="CASCADE"))
+    exit_code = Column(Integer)
+    status = Column(String)
+    tag = Column(String)
+
+    error = relationship('ContainerBuildError', uselist=False, backref='build')
+
+
+class ContainerBuildError(Base):
+    container_id = Column(ForeignKey("container_build.id", ondelete="CASCADE"))
+    stderr = Column(String)

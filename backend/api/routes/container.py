@@ -1,6 +1,4 @@
 import os
-import zipfile
-import io
 from typing import List
 
 from sqlalchemy.orm import Session
@@ -22,7 +20,6 @@ def get_all_containers(db: Session = Depends(session)):
 
 @router.post("/")
 async def create_container(file: bytes = File(...), name: str = Form(...), filename: str = Form(...), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
-
     newContainerList = []
 
     # need to check why zipfile.is_zip(file) didn't work
@@ -59,12 +56,12 @@ async def create_container(file: bytes = File(...), name: str = Form(...), filen
     return newContainerList
 
 
-@ router.get("/{container_id}", response_model=container.Container)
+@router.get("/{container_id}", response_model=container.Container)
 def get_container(container_id: int, db: Session = Depends(session)):
     return db.query(Container).get(container_id)
 
 
-@ router.put("/{container_id}")
+@router.put("/{container_id}")
 def update_container(container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(None), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
     if (file != None):
         container = db.query(Container).get(container_id)
@@ -92,6 +89,6 @@ def update_container(container_id: int, file: bytes = File(None), name: str = Fo
         return db.query(Container).get(container_id)
 
 
-@ router.delete("/{container_id}", response_model=container.Container)
+@router.delete("/{container_id}", response_model=container.Container)
 def delete_container(container_id: int, db: Session = Depends(session)):
     return db.query(Container).get(container_id).delete(db)
