@@ -26,18 +26,18 @@ def send_dicom_node(dicom_node_id: int, pipeline_id: pipeline.PipelineId, db: Se
 
 
 @router.put("/node/{dicom_node_id}/{dicom_patient_id}")
-def send_dicom_patient(dicom_node_id: int, dicom_patient_id: int, db: Session = Depends(session)):
+def send_dicom_patient(dicom_node_id: int, dicom_patient_id: int, pipeline_id: pipeline.PipelineId, db: Session = Depends(session)):
     dicom_patient = db.query(DicomPatient).get(dicom_patient_id)
     return(dicom_patient.abs_path)
 
 
 @router.put("/node/{dicom_node_id}/{dicom_patient_id}/{dicom_study_id}")
-def send_dicom_study(dicom_node_id: int, dicom_patient_id: int, dicom_study_id: int, db: Session = Depends(session)):
+def send_dicom_study(dicom_node_id: int, dicom_patient_id: int, dicom_study_id: int,   pipeline_id: pipeline.PipelineId, db: Session = Depends(session)):
     dicom_study = db.query(DicomStudy).get(dicom_study_id)
     return(dicom_study.abs_path)
 
 
 @router.put("/node/{dicom_node_id}/{dicom_patient_id}/{dicom_study_id}/{dicom_series_id}")
-def send_dicom_series(dicom_node_id: int, dicom_patient_id: int, dicom_study_id: int, dicom_series_id: int, db: Session = Depends(session)):
+def send_dicom_series(dicom_node_id: int, dicom_patient_id: int, dicom_study_id: int, dicom_series_id: int,  pipeline_id: pipeline.PipelineId, db: Session = Depends(session)):
     dicom_series = db.query(DicomSeries).get(dicom_series_id)
     return(dicom_series.abs_path)
