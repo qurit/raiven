@@ -24,6 +24,7 @@ class PipelineNode(Base):
     x_coord = Column(Integer)
     y_coord = Column(Integer)
 
+    container = relationship("Container", uselist=False)
     next_links = relationship('PipelineLink', foreign_keys='PipelineLink.from_node_id')
     previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.to_node_id')
     jobs = relationship('PipelineJob', backref='node')

@@ -11,9 +11,20 @@ def build_container(container_id: int):
 
     with worker_session() as db:
         container = models.container.Container.query(db).get(container_id)
-        print(container)
+        container_build = models.container.ContainerBuild(
+            container_id=container.id,
+            status='building'
+        )
+        container_build.save(db)
+        container_build.detach(db)
 
-    return None
+    image, build_logs = client.images.build(path='C:\\Users\\Adam\\Programming\\picom\\uploads\\containers\\2', tag='mycontainer')
+    with worker_session() as db:
+        container_build.status = 'exited'
+        container_build.exit_code = 0
+        container_build.tag = image.tags[0]
+        container_build.save(db)
+
     # client.build()
 
 
@@ -25,6 +36,8 @@ def run_node(run_id: int, node_id: int, previous_job_id: int = None):
     with worker_session() as db:
         job = models.pipeline.PipelineJob(pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
         job.save(db)
+
+        image_tag = job.node.container.build.tag
         job.detach(db)
 
         # TODO: Locking
@@ -39,7 +52,7 @@ def run_node(run_id: int, node_id: int, previous_job_id: int = None):
             job.to_abs_path(job.output_path): {'bind': config.PICOM_OUTPUT_DIR, 'mode': 'rw'}
         }
 
-    container: Container = client.containers.run('picom_example_container', detach=True, volumes=volumes, remove=True)
+    container: Container = client.containers.run(image_tag, detach=True, volumes=volumes)
     with worker_session() as db:
         job.status = 'running'
         job.save(db)
@@ -65,6 +78,8 @@ def run_node(run_id: int, node_id: int, previous_job_id: int = None):
         else:
             next_nodes = job.node.get_next_nodes()
             [run_node(run_id, n.id, job.id) for n in next_nodes]
+
+    # TODO: remove containers
 
 
 def run_pipeline(folder: str, pipeline_id: int):
