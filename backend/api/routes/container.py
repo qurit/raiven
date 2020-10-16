@@ -1,5 +1,8 @@
 import os
 from typing import List
+import zipfile
+import io
+
 
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, File, Form
@@ -22,6 +25,12 @@ def get_all_containers(db: Session = Depends(session)):
 async def create_container(file: bytes = File(...), name: str = Form(...), filename: str = Form(...), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
     newContainerList = []
 
+    print(description)
+    print(name)
+    print(is_input_container)
+    print(is_output_container)
+    print(filename)
+
     # need to check why zipfile.is_zip(file) didn't work
     if ".zip" in filename:
         z = zipfile.ZipFile(io.BytesIO(file))
@@ -34,9 +43,9 @@ async def create_container(file: bytes = File(...), name: str = Form(...), filen
             filename='Dockerfile')
         db_container1.save(db)
         db_container1.dockerfile_path = os.path.join(
-            db_container1.path, 'Dockerfile')
+            db_container1.get_path(), 'Dockerfile')
         db_container1.save(db)
-        z.extractall(db_container1.abs_path)
+        z.extractall(db_container1.get_abs_path())
         newContainerList.append(db_container1)
     else:
         db_container = Container(
@@ -47,10 +56,10 @@ async def create_container(file: bytes = File(...), name: str = Form(...), filen
             is_output_container=is_output_container,
             filename=filename)
         db_container.save(db)
-        with open(os.path.join(db_container.abs_path, filename), 'wb') as fp:
+        with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
             fp.write(file)
         db_container.dockerfile_path = os.path.join(
-            db_container.path, filename)
+            db_container.get_path(), filename)
         db_container.save(db)
         newContainerList.append(db_container)
     return newContainerList
