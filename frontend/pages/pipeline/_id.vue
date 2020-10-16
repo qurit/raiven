@@ -35,7 +35,7 @@
                 />
               </v-dialog>
               <v-btn class="mt-2" @click="addOutputDestination" small>
-                Add an Output Destination
+                Add a Destination
               </v-btn>
               <v-dialog
                 v-model="outputDestinationDialog"
@@ -152,7 +152,9 @@ export default {
           y: node.y_coord,
           container_id: node.container_id,
           type: node.container.name,
-          label: node.container.description
+          label: node.container.description,
+          container_is_input: node.container_is_input,
+          container_is_output: node.container_is_output
         }
         this.scene.nodes.push(containerNode)
       })

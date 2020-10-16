@@ -276,9 +276,9 @@ export default {
           node_id: node.id,
           container_id: node.container_id,
           x: node.x,
-          y: node.y
-          // container_is_input: node.container_is_input,
-          // container_is_output: node.container_is_output
+          y: node.y,
+          container_is_input: node.container_is_input,
+          container_is_output: node.container_is_output
         }
         nodeArray.push(newPipelineNode)
       })
