@@ -32,7 +32,7 @@
       <div v-else-if="container_is_output">
         <v-sheet
           class="pa-2 title text-center poll-name"
-          color="orange"
+          color="purple"
           height="170"
           width="200"
         >

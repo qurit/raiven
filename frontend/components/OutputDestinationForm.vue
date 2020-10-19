@@ -22,8 +22,13 @@
       </v-row>
     </v-form>
     <v-row justify="center">
-      <v-btn class="ma-4" color="green" @click="submit">
-        Add
+      <v-btn
+        :disabled="this.isDisabled"
+        @click="submit"
+        color="green"
+        class="ma-4"
+      >
+        Add container
       </v-btn>
     </v-row>
   </v-card>
@@ -45,6 +50,11 @@ export default {
         port: this.port
       })
       this.$emit('closeDialog')
+    }
+  },
+  computed: {
+    isDisabled: function() {
+      return !(this.host && this.port)
     }
   }
 }
