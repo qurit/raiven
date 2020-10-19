@@ -58,26 +58,42 @@
           :key="container.id"
           v-slot:default="{ hover }"
         >
-          <v-card class="ma-2 title" :color="hover ? 'orange' : ''">
-            <v-card-title v-text="container.name" />
-            <div v-if="container.is_input_container">
-              <v-card-subtitle>
-                Input
-              </v-card-subtitle>
-            </div>
-            <div v-if="container.is_output_container">
-              <v-card-subtitle>
-                Output
-              </v-card-subtitle>
-            </div>
-            <v-card-text>
-              {{ container }}
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer />
-              <v-icon-btn add @click="addNode(container)" />
-            </v-card-actions>
-          </v-card>
+          <div v-if="container.is_input_container">
+            <v-card class="ma-2 title" :color="hover ? 'blue' : 'orange'">
+              <v-card-title v-text="container.name" />
+              <v-card-text>
+                {{ container }}
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer />
+                <v-icon-btn add @click="addNode(container)" />
+              </v-card-actions>
+            </v-card>
+          </div>
+          <div v-else-if="container.is_output_container">
+            <v-card class="ma-2 title" :color="hover ? 'blue' : 'purple'">
+              <v-card-title v-text="container.name" />
+              <v-card-text>
+                {{ container }}
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer />
+                <v-icon-btn add @click="addNode(container)" />
+              </v-card-actions>
+            </v-card>
+          </div>
+          <div v-else>
+            <v-card class="ma-2 title" :color="hover ? 'blue' : ''">
+              <v-card-title v-text="container.name" />
+              <v-card-text>
+                {{ container }}
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer />
+                <v-icon-btn add @click="addNode(container)" />
+              </v-card-actions>
+            </v-card>
+          </div>
         </v-hover>
       </v-navigation-drawer>
     </v-col>
