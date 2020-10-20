@@ -14,6 +14,7 @@ router = APIRouter()
 
 @router.get("/nodes", response_model=List[dicom.DicomNode])
 def get_all_dicom_nodes(db: Session = Depends(session)):
+    print("Here")
     return db.query(DicomNode).all()
 
 
