@@ -32,7 +32,10 @@ class BaseConfig:
     PICOM_INPUT_DIR = '/mnt/picom/input'
     PICOM_OUTPUT_DIR = '/mnt/picom/output'
 
-
+    # DICOM SCP
+    SCP_AE_TITLE = 'PICOM_SCP'
+    SCP_HOST = ''
+    SCP_PORT = 11112
 
     def __init__(self):
         env_vars = [v for v in os.environ.keys() if (v in vars(BaseConfig)) and not v.startswith('__')]
