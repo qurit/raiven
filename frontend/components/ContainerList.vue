@@ -15,9 +15,21 @@
           <v-list-item-title>
             {{ container.name }}
           </v-list-item-title>
-          <v-list-item-subtitle>
-            {{ container.description }}
-          </v-list-item-subtitle>
+          <div v-if="container.is_input_container">
+            <v-list-item-subtitle>
+              {{ '(Input) ' + container.description }}
+            </v-list-item-subtitle>
+          </div>
+          <div v-if="container.is_output_container">
+            <v-list-item-subtitle>
+              {{ '(Output) ' + container.description }}
+            </v-list-item-subtitle>
+          </div>
+          <div v-else>
+            <v-list-item-subtitle>
+              {{ container.description }}
+            </v-list-item-subtitle>
+          </div>
         </v-col>
         <v-col cols="4">
           <v-btn small color="blue" @click="editContainer(container.id)">
@@ -46,7 +58,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { mapState } from 'vuex'
 import ContainerForm from '../components/ContainerForm'
 
@@ -98,7 +109,7 @@ export default {
 </script>
 
 <style>
-/* not sure if this should be defined in another style */
+/* TODO: move this to a global CSS assest*/
 .dark::-webkit-scrollbar {
   width: 15px;
 }

@@ -80,18 +80,16 @@ export default {
     removePipeline(pipeline) {
       this.$store.dispatch('pipelines/deletePipeline', pipeline.id)
     },
-    savePipeline() {
+    async savePipeline() {
       const payload = {
         user_id: 1,
         name: this.pipelineName
       }
-      const test = this.$store.dispatch('pipelines/addPipeline', payload)
-      var new_pipeline_id
-      test.then(x => {
-        this.$router.push({ path: `/pipeline/${x.data.id}` })
-        console.log(x)
-      })
-      console.log(new_pipeline_id)
+      const { data } = await this.$store.dispatch(
+        'pipelines/addPipeline',
+        payload
+      )
+      this.$router.push({ path: `/pipeline/${data.id}` })
       this.dialog = false
     }
   },

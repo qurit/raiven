@@ -69,7 +69,7 @@
           v-slot:default="{ hover }"
         >
           <div v-if="container.is_input_container">
-            <v-card class="ma-2 title" :color="hover ? 'blue' : 'orange'">
+            <v-card class="ma-2 title" :color="hover ? 'green' : 'orange'">
               <v-card-title v-text="container.name" />
               <v-card-text>
                 {{ container }}
@@ -81,7 +81,7 @@
             </v-card>
           </div>
           <div v-else-if="container.is_output_container">
-            <v-card class="ma-2 title" :color="hover ? 'blue' : 'purple'">
+            <v-card class="ma-2 title" :color="hover ? 'green' : 'purple'">
               <v-card-title v-text="container.name" />
               <v-card-text>
                 {{ container }}
@@ -93,7 +93,7 @@
             </v-card>
           </div>
           <div v-else>
-            <v-card class="ma-2 title" :color="hover ? 'blue' : ''">
+            <v-card class="ma-2 title" :color="hover ? 'green' : 'blue'">
               <v-card-title v-text="container.name" />
               <v-card-text>
                 {{ container }}
