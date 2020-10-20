@@ -3,6 +3,7 @@ from pydantic import validator
 
 from . import BaseModel, BaseORMModel
 from .container import Container
+from api.models import dicom, Base
 
 
 class PipelineNodeCreate(BaseModel):
@@ -64,10 +65,10 @@ class PipelineId(BaseModel):
     pipeline_id: int
 
 
-DICOM_TYPES = ['node', 'patient', 'study', 'series']
-
-
 class PipelineRunOptions(BaseModel):
+    _DICOM_TYPES = {'node': dicom.DicomNode, 'patient': dicom.DicomPatient, 'study': dicom.DicomStudy, 'series': dicom.DicomSeries}
+
+    pipeline_id: Optional[int]
     dicom_obj_type: str
     dicom_obj_id: str
 
@@ -81,6 +82,9 @@ class PipelineRunOptions(BaseModel):
 
     @validator('dicom_obj_type')
     def type_must_be(cls, v: str):
-        if v := v.lower() not in DICOM_TYPES:
-            raise ValueError(f'{v} is not a valid type. Valid types are {DICOM_TYPES}')
+        if v.lower() not in cls._DICOM_TYPES.keys():
+            raise ValueError(f'{v} is not a valid type. Valid types are {cls.DICOM_TYPES.keys()}')
         return v
+
+    def get_cls_type(self) -> Base:
+        return self._DICOM_TYPES[self.dicom_obj_type]

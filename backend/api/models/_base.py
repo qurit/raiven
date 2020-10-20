@@ -106,14 +106,20 @@ class IOPathMixin(PathMixin):
 
         # Making folders
         abs_path = self.get_abs_path()
-        [os.makedirs(p) for dirname in [_INPUT_DIRNAME, _OUTPUT_DIRNAME]
+        [os.makedirs(p) for dirname in [self._INPUT_DIRNAME, self._OUTPUT_DIRNAME]
          if not os.path.exists(p := os.path.join(abs_path, dirname))]
 
         # Saving Path info
         rel_path = self.get_path()
-        self.input_path = os.path.join(rel_path, _INPUT_DIRNAME)
-        self.output_path = os.path.join(rel_path, _OUTPUT_DIRNAME)
+        self.input_path = os.path.join(rel_path, self._INPUT_DIRNAME)
+        self.output_path = os.path.join(rel_path, self._OUTPUT_DIRNAME)
         super().save(*args, **kwargs)
+
+    def get_abs_input_path(self):
+        return os.path.join(config.UPLOAD_DIR, self.input_path)
+
+    def get_abs_output_path(self):
+        return os.path.join(config.UPLOAD_DIR, self.output_path)
 
 
 class TimestampMixin(object):
