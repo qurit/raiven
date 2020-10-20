@@ -1,4 +1,5 @@
 from typing import List, Optional
+from pydantic import validator
 
 from . import BaseModel, BaseORMModel
 from .container import Container
@@ -61,3 +62,25 @@ class PipelineFull(Pipeline):
 
 class PipelineId(BaseModel):
     pipeline_id: int
+
+
+DICOM_TYPES = ['node', 'patient', 'study', 'series']
+
+
+class PipelineRunOptions(BaseModel):
+    dicom_obj_type: str
+    dicom_obj_id: str
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "dicom_obj_type": "study",
+                "dicom_obj_id": "some study id",
+            }
+        }
+
+    @validator('dicom_obj_type')
+    def type_must_be(cls, v: str):
+        if v := v.lower() not in DICOM_TYPES:
+            raise ValueError(f'{v} is not a valid type. Valid types are {DICOM_TYPES}')
+        return v

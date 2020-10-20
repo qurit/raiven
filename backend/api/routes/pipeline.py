@@ -27,6 +27,12 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
     return db.query(Pipeline).get(pipeline_id)
 
 
+@router.put("/{pipeline_id}")
+def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, db: Session = Depends(session)):
+    """ Runs A Pipeline. """
+    print(run_options)
+    return 'Dockerfile'
+
 # TODO: ask Adam why this didnt send the x and y coordinates... even tho they're defined in the model?
 # @router.get("/{pipeline_id}/nodes", response_model=List[schemas.PipelineNode])
 @router.get("/{pipeline_id}/nodes")
