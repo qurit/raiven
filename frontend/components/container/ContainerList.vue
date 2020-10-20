@@ -47,7 +47,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import ContainerForm from '../components/ContainerForm'
+import ContainerForm from '~/components/container/ContainerForm'
 
 export default {
   components: {

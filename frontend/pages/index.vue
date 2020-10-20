@@ -30,7 +30,7 @@
 
 <script>
 import PipelineStatus from '../components/PipelineStatus'
-import DicomInstances from '../components/DicomInstances'
+import DicomInstances from '~/components/dicom/DicomInstances'
 import { mapState } from 'vuex'
 
 export default {
