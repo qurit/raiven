@@ -15,8 +15,6 @@ class Container(PathMixin, Base):
     description = Column(String)
     filename = Column(String)
 
-    # TODO: This doesnt make sense
-    # container = relationship('PipelineNode', foreign_keys='PipelineNode.container_id')
     build = relationship('ContainerBuild', uselist=False)
 
 
