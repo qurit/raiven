@@ -8,23 +8,22 @@ class DicomSeries(BaseORMModel):
     series_instance_uid: str
     series_description: str
     modality: str
-    # dicom_study: DicomStudy
 
 
 class DicomStudy(BaseORMModel):
     dicom_patient_id: int
     study_instance_uid: str
     study_date: datetime
-    dicom_series: List[DicomSeries]
+    series: Optional[List[DicomSeries]]
 
 
 class DicomPatient(BaseORMModel):
     patient_id: str
-    dicom_study: List[DicomStudy]
+    studies: Optional[List[DicomStudy]]
 
 
 class DicomNode(BaseORMModel):
     title: str
     host: str
     port: int
-    dicom_patient: List[DicomPatient]
+    patients: Optional[List[DicomPatient]]
