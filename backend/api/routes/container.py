@@ -75,16 +75,16 @@ def update_container(container_id: int, file: bytes = File(None), name: str = Fo
     if (file != None):
         container = db.query(Container).get(container_id)
         # remove previous file
-        os.remove(os.path.join(container.abs_path, container.filename))
+        os.remove(os.path.join(container.get_abs_path(), container.filename))
         # write new file
-        with open(os.path.join(container.abs_path, filename), 'wb') as fp:
+        with open(os.path.join(container.get_abs_path(), filename), 'wb') as fp:
             fp.write(file)
         db.query(Container).filter(Container.id == container_id).update({
             "name": name,
             "description": description,
             "is_input_container": is_input_container,
             "is_output_container": is_output_container,
-            "dockerfile_path": os.path.join(container.path, filename),
+            "dockerfile_path": os.path.join(container.get_path(), filename),
             "filename": filename
         })
         return db.query(Container).get(container_id)
