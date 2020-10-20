@@ -30,7 +30,6 @@
         <template v-slot:prepend>
           <v-list-item two-line>
             <v-list-item-content>
-              <v-list-item-title>Your containers</v-list-item-title>
               <v-btn class="mt-2" @click="addContainer">
                 Add a Container
               </v-btn>
@@ -72,7 +71,7 @@
             <v-card class="ma-2 title" :color="hover ? 'green' : 'orange'">
               <v-card-title v-text="container.name" />
               <v-card-text>
-                {{ container }}
+                {{ container.description }}
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
@@ -84,7 +83,7 @@
             <v-card class="ma-2 title" :color="hover ? 'green' : 'purple'">
               <v-card-title v-text="container.name" />
               <v-card-text>
-                {{ container }}
+                {{ container.description }}
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
@@ -96,7 +95,7 @@
             <v-card class="ma-2 title" :color="hover ? 'green' : 'blue'">
               <v-card-title v-text="container.name" />
               <v-card-text>
-                {{ container }}
+                {{ container.description }}
               </v-card-text>
               <v-card-actions>
                 <v-spacer />
@@ -113,6 +112,7 @@
 <script>
 import axios from 'axios'
 import { mapState } from 'vuex'
+import { generic_get } from '~/api'
 
 import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
 import VIconBtn from '../../components/global/v-icon-btn'
@@ -174,7 +174,6 @@ export default {
     },
     getPipelineNodes(nodes) {
       nodes.forEach(node => {
-        console.log(node)
         const containerNode = {
           id: node.id,
           x: node.x_coord,
@@ -200,13 +199,14 @@ export default {
     },
     async getSavedPipeline() {
       // since only getting the pipeline here, didn't put it in the store
-      const path = `http://localhost:5000/pipeline/${this.pipeline_id}`
-      const { data } = await axios.get(path).catch(e => {
+      const URL = `pipeline/${this.pipeline_id}`
+      try {
+        const { nodes, links } = await generic_get(this, URL)
+        this.getPipelineNodes(nodes)
+        this.getPipelineLinks(links)
+      } catch (e) {
         console.log(e)
-      })
-      const { nodes, links } = data
-      this.getPipelineNodes(nodes)
-      this.getPipelineLinks(links)
+      }
     }
   },
   computed: {

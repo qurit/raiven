@@ -34,6 +34,7 @@ import axios from 'axios'
 import FlowchartLink from './FlowchartLink.vue'
 import FlowchartNode from './FlowchartNode.vue'
 import { getMousePosition } from './position'
+import { generic_post } from '~/api'
 
 export default {
   name: 'VueFlowchart',
@@ -287,15 +288,17 @@ export default {
         }
         linkArray.push(newPipelineLink)
       })
-      const payload = {
+      const PAYLOAD = {
         nodes: nodeArray,
         links: linkArray
       }
       // since there's no state change / only post in this component, didn't put it in the store
-      const path = `http://localhost:5000/pipeline/${this.id}/`
-      await axios.post(path, payload).catch(err => {
-        console.log(err)
-      })
+      const URL = `/pipeline/${this.id}`
+      try {
+        await generic_post(this, URL, PAYLOAD)
+      } catch (e) {
+        console(e)
+      }
     },
     savePipeline() {
       console.log('LINKS')

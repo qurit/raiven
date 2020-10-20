@@ -18,7 +18,7 @@
               stream
             ></v-progress-linear>
 
-            <v-btn color="error" class="mt-2">
+            <v-btn color="error" class="ma-2">
               Stop
             </v-btn>
           </v-flex>
