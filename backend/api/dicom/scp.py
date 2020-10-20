@@ -4,6 +4,7 @@ import datetime
 from pynetdicom import AE, evt, debug_logger
 from pynetdicom.presentation import AllStoragePresentationContexts
 from pynetdicom.sop_class import VerificationSOPClass
+from pydicom import uid
 
 from api import config
 from api.database import worker_session as session
@@ -18,6 +19,8 @@ def handle_store(event):
     """ Handles EVT_C_STORE """
     ae_title = get_ae_title(event)
     ds = event.dataset
+    ds.file_meta = event.file_meta
+    ds.file_meta.TransferSyntaxUID = uid.ImplicitVRLittleEndian
 
     with session() as db:
         """
@@ -65,7 +68,7 @@ def handle_store(event):
         # Grab the save path so we can release the session connection
         save_path = series.get_abs_path()
 
-    ds.save_as(os.path.join(save_path, ds.SOPInstanceUID + '.dcm'))
+    ds.save_as(os.path.join(save_path, ds.SOPInstanceUID + '.dcm'), write_like_original=False)
 
     return 0x0000
 
