@@ -45,12 +45,15 @@ def run_node(run_id: int, node_id: int, previous_job_id: int = None):
         job.detach(db)
 
         if not previous_job_id:
+            src_subdir = 'input'
             prev = db.query(models.pipeline.PipelineRun).get(run_id)
         else:
+            src_subdir = 'output'
             prev = db.query(models.pipeline.PipelineJob).get(previous_job_id)
 
         # TODO: Locking
-        models.utils.copy_model_fs(prev, job)
+
+        models.utils.copy_model_fs(prev, job, src_subdir=src_subdir)
 
         volumes = {
             job.get_abs_input_path(): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
