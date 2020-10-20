@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { generic_get } from '~/api'
 
 export const state = () => ({
   dicomEvents: []
@@ -12,10 +12,9 @@ export const mutations = {
 export const actions = {
   async fetchDicomEvents({ commit }) {
     try {
-      const res = await axios.get('http://localhost:5000/dicom/nodes')
-      console.log(res.data)
-      commit('setDicomEvents', res.data)
-      return res.data
+      const URL = '/dicom/nodes'
+      const res = await generic_get(this, URL)
+      commit('setDicomEvents', res)
     } catch (err) {
       console.log(err)
     }

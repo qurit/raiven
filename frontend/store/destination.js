@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { generic_get, generic_post } from '~/api'
 
 export const state = () => ({
   destinations: []
@@ -13,23 +13,22 @@ export const mutations = {
 export const actions = {
   async fetchDestinations({ commit }) {
     try {
-      const res = await axios.get('http://localhost:5000/destination')
-      commit('setDestinations', res.data)
-      console.log(res.data)
-      return res.data
+      const URL = '/destination'
+      const res = await generic_get(this, URL)
+      commit('setDestinations', res)
+      return res
     } catch (err) {
       console.log(err)
     }
   },
   async addDestination({ commit }, data) {
-    console.log(data)
     try {
-      const res = await axios.post('http://localhost:5000/destination', {
+      const URL = '/destination'
+      const res = await generic_post(this, URL, {
         host: data.host,
         port: data.port
       })
-      console.log(res)
-      commit('addDestination', res.data)
+      commit('addDestination', res)
     } catch (err) {
       console.log(err)
     }

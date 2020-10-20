@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { generic_get, generic_post, generic_put, generic_delete } from '~/api'
 
 export const state = () => ({
   containers: []
@@ -13,34 +13,33 @@ export const mutations = {
     const index = state.containers.findIndex(container => container.id === id)
     state.containers.splice(index, 1)
   },
-  updateContainer: (state, { id, resultData }) => {
+  updateContainer: (state, { id, res }) => {
     const index = state.containers.findIndex(container => container.id === id)
     const container = state.containers[index]
-    console.log(resultData)
-    console.log(container)
-    container.name = resultData.name
-    container.description = resultData.description
-    container.is_input_container = resultData.is_input_container
-    container.is_output_container = resultData.is_output_container
-    container.filename = resultData?.filename
-    container.file = resultData?.file
+    container.name = res.name
+    container.description = res.description
+    container.is_input_container = res.is_input_container
+    container.is_output_container = res.is_output_container
+    container.filename = res?.filename
+    container.file = res?.file
   }
 }
 
 export const actions = {
   async fetchContainers({ commit }) {
     try {
-      const res = await axios.get('http://localhost:5000/container')
-      console.log(res)
-      commit('setContainers', res.data)
-      return res.data
+      const URL = '/container'
+      const data = await generic_get(this, URL)
+      commit('setContainers', data)
+      return data
     } catch (err) {
       console.log(err)
     }
   },
   async deleteContainer({ commit }, id) {
     try {
-      await axios.delete(`http://localhost:5000/container/${id}`)
+      const URL = `/container/${id}`
+      await generic_delete(this, URL)
       commit('deleteContainer', id)
     } catch (err) {
       console.log(err)
@@ -48,9 +47,9 @@ export const actions = {
   },
   async addContainer({ commit }, data) {
     try {
-      const res = await axios.post('http://localhost:5000/container', data)
-      console.log(res)
-      commit('addContainer', res.data)
+      const URL = '/container'
+      const res = await generic_post(this, URL, data)
+      commit('addContainer', res)
     } catch (err) {
       console.log(err)
     }
@@ -58,9 +57,9 @@ export const actions = {
   async updateContainer({ commit }, payload) {
     try {
       const { id, data } = payload
-      const res = await axios.put(`http://localhost:5000/container/${id}`, data)
-      const resultData = res.data
-      commit('updateContainer', { id, resultData })
+      const URL = `/container/${id}`
+      const res = await generic_put(this, URL, data)
+      commit('updateContainer', { id, res })
     } catch (err) {
       console.log(err)
     }

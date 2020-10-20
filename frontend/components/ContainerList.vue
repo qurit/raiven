@@ -15,21 +15,9 @@
           <v-list-item-title>
             {{ container.name }}
           </v-list-item-title>
-          <div v-if="container.is_input_container">
-            <v-list-item-subtitle>
-              {{ '(Input) ' + container.description }}
-            </v-list-item-subtitle>
-          </div>
-          <div v-if="container.is_output_container">
-            <v-list-item-subtitle>
-              {{ '(Output) ' + container.description }}
-            </v-list-item-subtitle>
-          </div>
-          <div v-else>
-            <v-list-item-subtitle>
-              {{ container.description }}
-            </v-list-item-subtitle>
-          </div>
+          <v-list-item-subtitle>
+            {{ container.description }}
+          </v-list-item-subtitle>
         </v-col>
         <v-col cols="4">
           <v-btn small color="blue" @click="editContainer(container.id)">

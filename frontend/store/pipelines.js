@@ -1,3 +1,4 @@
+import { generic_get, generic_delete, full_data_post } from '~/api'
 import axios from 'axios'
 
 export const state = () => ({
@@ -7,22 +8,26 @@ export const state = () => ({
 export const mutations = {
   setPipelines: (state, pipelines) => (state.pipelines = pipelines),
   addPipeline: (state, pipeline) => state.pipelines.push(pipeline),
-  deletePipeline: (state, pipeline) =>
-    state.pipelines.splice(state.pipelines.indexOf(pipeline), 1)
+  deletePipeline: (state, id) => {
+    const index = state.pipelines.findIndex(pipeline => pipeline.id === id)
+    state.pipelines.splice(index, 1)
+  }
 }
 export const actions = {
   async fetchPipelines({ commit }) {
     try {
-      const res = await axios.get('http://localhost:5000/pipeline')
-      commit('setPipelines', res.data)
-      return res.data
+      const URL = '/pipeline'
+      const res = await generic_get(this, URL)
+      commit('setPipelines', res)
+      return res
     } catch (err) {
       console.log(err)
     }
   },
   async deletePipeline({ commit }, id) {
     try {
-      await axios.delete(`http://localhost:5000/pipeline/${id}`)
+      const URL = `/pipeline/${id}`
+      await generic_delete(this, URL)
       commit('deletePipeline', id)
     } catch (err) {
       console.log(err)
@@ -30,12 +35,11 @@ export const actions = {
   },
   async addPipeline({ commit }, data) {
     try {
-      var response = ''
-      await axios.post('http://localhost:5000/pipeline', data).then(res => {
-        response = res
-      })
+      // can't use generic_post here because need all of response, not just the response.data
+      const URL = '/pipeline'
+      const res = await full_data_post(this, URL, data)
       commit('addPipeline', data)
-      return response
+      return res
     } catch (err) {
       console.log(err)
     }
