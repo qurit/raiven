@@ -16,7 +16,7 @@ def copy_model_fs(src: NestedPathMixin, dst: IOPathMixin, dst_subdir='input'):
 
     if dst_subdir not in ['input', 'output']:
         ValueError('output_subdir kwarg can only be "input" or "output"')
-    dst_dir = dst.get_abs_input_path() if dst_subdir == 'input' else dst.get_abs_output_path()
+    dst_dir = dst.get_abs_path() if dst_subdir == 'input' else dst.get_abs_output_path()
 
     # TODO: LOCKING ?
     copytree(src_dir, dst_dir, dirs_exist_ok=True, )

@@ -37,19 +37,24 @@ def run_node(run_id: int, node_id: int, previous_job_id: int = None):
         job = models.pipeline.PipelineJob(pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
         job.save(db)
 
-        image_tag = job.node.container.build.tag
+        if not (build := job.node.container.build):
+            # TODO: ABORT AND BUILD
+            pass
+
+        image_tag = build.tag
         job.detach(db)
 
-        # TODO: Locking
         if not previous_job_id:
-            shutil.copytree('C:\\Users\\Adam\\Programming\\picom\\examples\\input', job.to_abs_path(job.input_path), dirs_exist_ok=True)
+            prev = db.query(models.pipeline.PipelineRun).get(run_id)
         else:
-            prev_job = db.query(models.pipeline.PipelineJob).get(previous_job_id)
-            shutil.copytree(prev_job.to_abs_path(prev_job.output_path), job.to_abs_path(job.input_path), dirs_exist_ok=True)
+            prev = db.query(models.pipeline.PipelineJob).get(previous_job_id)
+
+        # TODO: Locking
+        models.utils.copy_model_fs(prev, job)
 
         volumes = {
-            job.to_abs_path(job.input_path): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
-            job.to_abs_path(job.output_path): {'bind': config.PICOM_OUTPUT_DIR, 'mode': 'rw'}
+            job.get_abs_input_path(): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
+            job.get_abs_output_path(): {'bind': config.PICOM_OUTPUT_DIR, 'mode': 'rw'}
         }
 
     container: Container = client.containers.run(image_tag, detach=True, volumes=volumes)
@@ -74,7 +79,14 @@ def run_node(run_id: int, node_id: int, previous_job_id: int = None):
             job_error.save(db)
         elif job.node.is_leaf_node():
             # TODO: Handle multiple lead nodes
-            pass
+
+            # Run Complete
+            run = db.query(models.pipeline.PipelineRun).get(run_id)
+            models.utils.copy_model_fs(job, run, dst_subdir='output')
+            run.status = 'complete'
+            run.save(db)
+
+            # TODO: Clean up old jobs
         else:
             next_nodes = job.node.get_next_nodes()
             [run_node(run_id, n.id, job.id) for n in next_nodes]
@@ -87,9 +99,12 @@ def run_pipeline(pipeline_run_id: models.pipeline.PipelineRun):
         run = models.pipeline.PipelineRun.query(db).get(pipeline_run_id)
         starting_nodes = run.pipeline.get_starting_nodes()
 
-        models.pipeline.PipelineRun(status='running').save(db)
+        run.status = 'running'
+        run.save(db)
         db.commit()
 
         [run_node(run.id, n.id) for n in starting_nodes]
 
 
+if __name__ == '__main__':
+    build_container(2)
