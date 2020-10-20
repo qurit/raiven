@@ -37,12 +37,8 @@
     <v-dialog v-model="dialog" max-width="900px" min-height="600px">
       <ContainerForm
         :isEditing="true"
-        :containerId="containerId"
-        :containerName="containerName"
-        :containerDescription="containerDescription"
-        :containerIsInput="containerIsInput"
-        :containerIsOutput="containerIsOutput"
-        :filename="filename"
+        :containerToEdit="this.container"
+        :key="this.container.containerId"
         @closeDialog="closeDialog"
       />
     </v-dialog>
@@ -60,13 +56,15 @@ export default {
   },
   data: function() {
     return {
-      containerId: '',
-      filename: '',
       dialog: false,
-      containerName: '',
-      containerDescription: '',
-      containerIsInput: false,
-      containerIsOutput: false
+      container: {
+        containerId: '',
+        filename: '',
+        containerName: '',
+        containerDescription: '',
+        containerIsInput: false,
+        containerIsOutput: false
+      }
     }
   },
   methods: {
@@ -81,12 +79,12 @@ export default {
       const containerToUpdate = containers.find(container => {
         return container.id === containerId
       })
-      this.containerId = containerToUpdate.id
-      this.containerName = containerToUpdate.name
-      this.containerDescription = containerToUpdate.description
-      this.containerIsInput = containerToUpdate.is_input_container?.toString()
-      this.containerIsOutput = containerToUpdate.is_output_container?.toString()
-      this.filename = containerToUpdate.filename
+      this.container.containerId = containerToUpdate.id
+      this.container.containerName = containerToUpdate.name
+      this.container.containerDescription = containerToUpdate.description
+      this.container.containerIsInput = containerToUpdate.is_input_container?.toString()
+      this.container.containerIsOutput = containerToUpdate.is_output_container?.toString()
+      this.container.filename = containerToUpdate.filename
       this.dialog = true
     }
   },

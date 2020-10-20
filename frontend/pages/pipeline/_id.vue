@@ -7,15 +7,25 @@
         no-gutters
         align="center"
       >
-        <v-btn @click="containerList = !containerList" class="my-6" large icon>
+        <v-btn @click="containerList = !containerList" large icon>
           <v-icon
             large
             color="#373740"
             v-text="containerList ? 'mdi-minus' : 'mdi-plus'"
           />
         </v-btn>
+        <v-icon-btn
+          large
+          color="#373740"
+          @click="savePipeline"
+          icon="mdi-content-save"
+        />
       </v-row>
-      <SimpleFlowchart :scene.sync="scene" :id="pipeline_id" />
+      <SimpleFlowchart
+        :scene.sync="scene"
+        :id="pipeline_id"
+        ref="simpleFlowchart"
+      />
       <v-navigation-drawer v-model="containerList" absolute right>
         <template v-slot:prepend>
           <v-list-item two-line>
@@ -155,6 +165,9 @@ export default {
         container_is_input: container.is_input_container,
         container_is_output: container.is_output_container
       })
+    },
+    savePipeline() {
+      this.$refs.simpleFlowchart.savePipeline()
     },
     getContainers() {
       this.$store.dispatch('containers/fetchContainers')
