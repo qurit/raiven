@@ -60,7 +60,7 @@ class NestedPathMixin(object):
     def get_path(self) -> str:
         raise NotImplementedError(f"{type(self)} must implement get_path as it is a subclass of NestedPathMixin")
 
-    def get_abs_path(self) -> str:
+    def get_abs_path(self, **kwargs) -> str:
         return self.to_abs_path(self.get_path())
 
     def save(self, *args, **kwargs):
@@ -114,6 +114,14 @@ class IOPathMixin(PathMixin):
         self.input_path = os.path.join(rel_path, self._INPUT_DIRNAME)
         self.output_path = os.path.join(rel_path, self._OUTPUT_DIRNAME)
         super().save(*args, **kwargs)
+
+    def get_abs_path(self, subdir: str = None) -> str:
+        if subdir == 'input':
+            return self.get_abs_input_path()
+        elif subdir == 'output':
+            return self.get_abs_output_path()
+        else:
+            return super().get_abs_path()
 
     def get_abs_input_path(self):
         return os.path.join(config.UPLOAD_DIR, self.input_path)

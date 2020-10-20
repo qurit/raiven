@@ -24,7 +24,8 @@ app.add_middleware(
 )
 
 from . import routes
-from .dicom import SCP
 
+# Start the Dicom Server
+from .dicom import SCP
 scp_server = SCP(ae_title=config.SCP_AE_TITLE, host=config.SCP_HOST, port=config.SCP_PORT)
 scp_server.start_server(blocking=False)
