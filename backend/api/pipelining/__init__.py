@@ -82,17 +82,14 @@ def run_node(run_id: int, node_id: int, previous_job_id: int = None):
     # TODO: remove containers
 
 
-def run_pipeline(folder: str, pipeline_id: int):
+def run_pipeline(pipeline_run_id: models.pipeline.PipelineRun):
     with worker_session() as db:
-        pipeline = db.query(models.pipeline.Pipeline).get(pipeline_id)
-        starting_nodes = pipeline.get_starting_nodes()
+        run = models.pipeline.PipelineRun.query(db).get(pipeline_run_id)
+        starting_nodes = run.pipeline.get_starting_nodes()
 
-        run = models.pipeline.PipelineRun(status='running').save(db)
+        models.pipeline.PipelineRun(status='running').save(db)
         db.commit()
 
         [run_node(run.id, n.id) for n in starting_nodes]
 
 
-if __name__ == '__main__':
-    build_container(2)
-    run_pipeline('xyz', 1)
