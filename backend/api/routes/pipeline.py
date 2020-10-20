@@ -1,7 +1,7 @@
 from typing import List
 
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, BackgroundTasks
 
 from api import session
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode
@@ -28,13 +28,16 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
     return db.query(Pipeline).get(pipeline_id)
 
 
-@router.put("/{pipeline_id}")
-def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, db: Session = Depends(session)):
+@router.put("/{pipeline_id}", response_model=schemas.PipelineRun)
+def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, background_tasks: BackgroundTasks, db: Session = Depends(session)):
     """ Runs A Pipeline. """
     run_options.pipeline_id = pipeline_id
+    run = PipelineController(db).create_pipeline_run(run_options)
+    db.commit()
 
-    PipelineController(db).run_pipeline(run_options)
-    return 'Dockerfile'
+    background_tasks.add_task(PipelineController.run_pipeline_task, run.id)
+
+    return run
 
 
 # TODO: ask Adam why this didnt send the x and y coordinates... even tho they're defined in the model?

@@ -1,5 +1,7 @@
+from datetime import datetime
 from typing import List, Optional
 from pydantic import validator
+
 
 from . import BaseModel, BaseORMModel
 from .container import Container
@@ -88,3 +90,9 @@ class PipelineRunOptions(BaseModel):
 
     def get_cls_type(self) -> Base:
         return self._DICOM_TYPES[self.dicom_obj_type]
+
+
+class PipelineRun(BaseORMModel):
+    status: str
+    created_datetime: datetime
+    finished_datetime: Optional[datetime]
