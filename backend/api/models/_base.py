@@ -58,7 +58,7 @@ class NestedPathMixin(object):
         return os.path.join(config.UPLOAD_DIR, rel_path)
 
     def get_path(self) -> str:
-        raise NotImplementedError
+        raise NotImplementedError(f"{type(self)} must implement get_path as it is a subclass of NestedPathMixin")
 
     def get_abs_path(self) -> str:
         return self.to_abs_path(self.get_path())
