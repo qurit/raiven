@@ -116,7 +116,7 @@ import { generic_get } from '~/api'
 
 import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
 import VIconBtn from '../../components/global/v-icon-btn'
-import ContainerForm from '~/components/ContainerForm'
+import ContainerForm from '~/components/container/ContainerForm'
 import OutputDestinationForm from '~/components/OutputDestinationForm'
 
 export default {

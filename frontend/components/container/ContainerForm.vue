@@ -135,7 +135,6 @@ export default {
           id: this.container.containerId,
           data: formData
         })
-        this.$emit('closeDialog')
       } else {
         this.$store.dispatch('containers/addContainer', formData).then(() => {
           this.$refs.form.reset()
@@ -143,6 +142,7 @@ export default {
           this.container.containerIsOutput = false
         })
       }
+      this.$emit('closeDialog')
     }
   }
 }
