@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends
 
 from api import session
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode
+from api.controllers.pipeline import PipelineController
 from api.schemas import pipeline as schemas
 
 router = APIRouter()
@@ -30,8 +31,11 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
 @router.put("/{pipeline_id}")
 def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, db: Session = Depends(session)):
     """ Runs A Pipeline. """
-    print(run_options)
+    run_options.pipeline_id = pipeline_id
+
+    PipelineController(db).run_pipeline(run_options)
     return 'Dockerfile'
+
 
 # TODO: ask Adam why this didnt send the x and y coordinates... even tho they're defined in the model?
 # @router.get("/{pipeline_id}/nodes", response_model=List[schemas.PipelineNode])
