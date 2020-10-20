@@ -1,135 +1,109 @@
 <template>
   <v-card elevation="6">
-    <!-- Edit an exiting container -->
-    <div v-if="isEditing">
-      <v-card-title>
-        Edit your Container
-      </v-card-title>
-      <v-form v-model="form" class="ma-5">
-        <v-col cols="12" md="12">
-          <v-text-field
-            v-model="containerName"
-            label="Container name"
-            :rules="[v => !!v || 'Container name is required']"
-            required
-          ></v-text-field>
-        </v-col>
-        <v-col cols="12" md="12">
-          <v-textarea
-            v-model="containerDescription"
-            label="Description"
-          ></v-textarea>
-        </v-col>
-        <v-row>
-          <v-checkbox
-            v-model="containerIsInput"
-            label="Input"
-            false-value="false"
-            true-value="true"
-            class="mx-10"
-          />
-          <v-checkbox
-            v-model="containerIsOutput"
-            label="Output"
-            false-value="false"
-            true-value="true"
-            class="mx-10"
-          />
-        </v-row>
-        <v-file-input
-          v-model="file"
-          :label="filename"
-          @change="updateDockerFile"
-          prepend-icon="mdi-docker"
+    <v-card-title>
+      {{ !!containerToEdit ? 'Edit your Container' : 'Add a Container' }}
+    </v-card-title>
+    <v-divider light />
+    <v-form v-model="form" class="ma-5" ref="form">
+      <v-col cols="12" md="12">
+        <v-text-field
+          v-model="container.containerName"
+          label="Container name"
+          :rules="[v => !!v || 'Container name is required']"
+          required
+        ></v-text-field>
+      </v-col>
+      <v-col cols="12" md="12">
+        <v-textarea
+          v-model="container.containerDescription"
+          label="Description"
+        ></v-textarea>
+      </v-col>
+      <v-row>
+        <v-checkbox
+          v-model="container.containerIsInput"
+          label="Input"
+          false-value="false"
+          true-value="true"
+          class="mx-10"
         />
-        <v-row justify="center">
-          <v-btn @click="update" color="green">
-            Save
-          </v-btn>
-        </v-row>
-      </v-form>
-    </div>
-    <!-- Add a new container -->
-    <div v-else>
-      <v-card-title>
-        Add a Container
-      </v-card-title>
-      <v-divider light />
-      <v-form v-model="form" ref="form">
-        <v-container>
-          <v-col cols="12" md="12">
-            <v-text-field
-              v-model="name"
-              label="Container name*"
-              :rules="[v => !!v || 'Container name is required']"
-              required
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="12">
-            <v-textarea v-model="description" label="Description"></v-textarea>
-          </v-col>
-          <v-row>
-            <v-checkbox
-              v-model="input"
-              label="Input"
-              false-value="0"
-              true-value="1"
-              class="mx-10"
-            />
-            <v-checkbox
-              v-model="output"
-              label="Output"
-              false-value="0"
-              true-value="1"
-              class="mx-10"
-            />
-          </v-row>
-          <v-file-input
-            v-model="file"
-            label="Upload a Dockerfile*"
-            @change="updateDockerFile"
-            :rules="[v => !!v || 'A Dockerfile is required']"
-            required
-            prepend-icon="mdi-docker"
-          />
-          <v-row justify="center">
-            <v-btn :disabled="this.isDisabled" @click="submit" color="green">
-              Add container
-            </v-btn>
-          </v-row>
-        </v-container>
-      </v-form>
-    </div>
+        <v-checkbox
+          v-model="container.containerIsOutput"
+          label="Output"
+          false-value="false"
+          true-value="true"
+          class="mx-10"
+        />
+      </v-row>
+      <v-file-input
+        v-model="file"
+        :label="container.filename"
+        @change="updateDockerFile"
+        prepend-icon="mdi-docker"
+      />
+      <v-row justify="center">
+        <v-btn
+          :disabled="this.isDisabled"
+          @click="submit"
+          color="green"
+          class="ma-4"
+        >
+          {{ !!containerToEdit ? 'Save Edits' : 'Add Container' }}
+        </v-btn>
+      </v-row>
+    </v-form>
   </v-card>
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
-  props: [
-    'isEditing',
-    'containerId',
-    'containerName',
-    'containerDescription',
-    'containerIsInput',
-    'containerIsOutput',
-    'currentFile',
-    'filename'
-  ],
+  props: {
+    containerToEdit: {
+      type: Object,
+      default: () => {
+        return undefined
+      }
+    }
+  },
   data() {
     return {
-      name: '',
-      description: '',
-      input: '0',
-      output: '0',
-      dockerFileName: '',
-      file: ''
+      file: '',
+      container: {
+        containerId: '',
+        filename: '',
+        containerName: '',
+        containerDescription: '',
+        containerIsInput: false,
+        containerIsOutput: false
+      }
+    }
+  },
+  created() {
+    this.populate()
+  },
+  computed: {
+    // disables button if no name or dockerfile for new container
+    // dont disable for edit container
+    isDisabled: function() {
+      !!this.containerToEdit
+        ? false
+        : !(this.container.containerName && this.file)
     }
   },
   methods: {
-    test() {
-      console.log(isEditing)
+    populate() {
+      if (!!this.containerToEdit) {
+        // getting the values for the existing container
+        this.container = JSON.parse(JSON.stringify(this.containerToEdit))
+      } else {
+        // default values for adding a new container
+        this.container.containerId = ''
+        this.container.filename = ''
+        this.container.containerName = ''
+        this.container.containerDescription = ''
+        this.container.containerIsInput = false
+        this.container.containerIsOutput = false
+      }
     },
     readFile(file) {
       return new Promise((resolve, reject) => {
@@ -139,51 +113,37 @@ export default {
         reader.readAsArrayBuffer(file)
       })
     },
-    async updateDockerFile(file) {
+    updateDockerFile(file) {
       this.file = file
     },
-    // submitting a new container
     async submit() {
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
-      const f = await this.readFile(this.file)
       const formData = new FormData()
-      formData.append('name', this.name)
-      formData.append('dockerfile_path', 'blah')
-      formData.append('description', this.description)
-      formData.append('is_input_container', this.input)
-      formData.append('is_output_container', this.output)
-      formData.append('filename', this.file.name)
-      formData.append('file', new Blob([f]))
-      await this.$store.dispatch('containers/addContainer', formData)
-      // this.$refs.form.reset()
-      this.$emit('closeDialog')
-    },
-    // updating an existing container
-    async update() {
-      const config = { headers: { 'Content-Type': 'multipart/form-data' } }
-      const formData = new FormData()
-      formData.append('name', this.containerName)
-      formData.append('dockerfile_path', 'blah')
-      formData.append('is_input_container', this.containerIsInput)
-      formData.append('is_output_container', this.containerIsOutput)
+      formData.append('name', this.container?.containerName)
+      formData.append('is_input_container', this.container.containerIsInput)
+      formData.append('is_output_container', this.container.containerIsOutput)
       if (this.file) {
         const f = await this.readFile(this.file)
         formData.append('file', new Blob([f]))
         formData.append('filename', this.file.name)
       }
-      if (this.containerDescription !== null) {
-        formData.append('description', this.containerDescription)
+      if (!!this.container.containerDescription) {
+        formData.append('description', this.container.containerDescription)
       }
-      this.$store.dispatch('containers/updateContainer', {
-        id: this.containerId,
-        data: formData
-      })
-      this.$emit('closeDialog')
-    }
-  },
-  computed: {
-    isDisabled: function() {
-      return !(this.name && this.file)
+      if (!!this.containerToEdit) {
+        console.log('reached')
+        this.$store.dispatch('containers/updateContainer', {
+          id: this.container.containerId,
+          data: formData
+        })
+        this.$emit('closeDialog')
+      } else {
+        this.$store.dispatch('containers/addContainer', formData).then(() => {
+          this.$refs.form.reset()
+          this.container.containerIsInput = false
+          this.container.containerIsOutput = false
+        })
+      }
     }
   }
 }
