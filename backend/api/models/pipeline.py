@@ -60,40 +60,24 @@ class PipelineLink(Base):
         return super().__repr__(to_node=self.to_node_id, from_node=self.from_node_id, **kwargs)
 
 
-class PipelineRun(Base):
-    status = Column(String)
-
-
 INPUT_DIRNAME = 'input'
 OUTPUT_DIRNAME = 'output'
 
 
-class PipelineJob(PathMixin, TimestampMixin, Base):
+class PipelineRun(IOPathMixin, Base):
+    status = Column(String, default='Created')
+
+    created_datetime = Column(DateTime, default=datetime.utcnow)
+    finished_datetime = Column(DateTime)
+
+
+class PipelineJob(IOPathMixin, TimestampMixin, Base):
     pipeline_run_id = Column(ForeignKey("pipeline_run.id", ondelete="CASCADE"))
-    pipeline_node_id = Column(ForeignKey(
-        "pipeline_node.id", ondelete="CASCADE"))
+    pipeline_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
     status = Column(String)
     exit_code = Column(Integer)
-    # TODO: Add Error logging (seperate table)
-
-    input_path = Column(String)
-    output_path = Column(String)
 
     error = relationship('PipelineJobError', backref="job", uselist=False)
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
-        # Making folders
-        abs_path = self.get_abs_path()
-        [os.makedirs(p) for dirname in [INPUT_DIRNAME, OUTPUT_DIRNAME]
-         if not os.path.exists(p := os.path.join(abs_path, dirname))]
-
-        # Saving Path info
-        rel_path = self.get_path()
-        self.input_path = os.path.join(rel_path, INPUT_DIRNAME)
-        self.output_path = os.path.join(rel_path, OUTPUT_DIRNAME)
-        super().save(*args, **kwargs)
 
 
 class PipelineJobError(Base):

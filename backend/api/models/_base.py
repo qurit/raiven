@@ -94,5 +94,27 @@ class PathMixin(NestedPathMixin):
         return os.path.join(self.__directory__, str(self.id))
 
 
+class IOPathMixin(PathMixin):
+    _INPUT_DIRNAME = "input"
+    _OUTPUT_DIRNAME = "output"
+
+    input_path = Column(String)
+    output_path = Column(String)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        # Making folders
+        abs_path = self.get_abs_path()
+        [os.makedirs(p) for dirname in [_INPUT_DIRNAME, _OUTPUT_DIRNAME]
+         if not os.path.exists(p := os.path.join(abs_path, dirname))]
+
+        # Saving Path info
+        rel_path = self.get_path()
+        self.input_path = os.path.join(rel_path, _INPUT_DIRNAME)
+        self.output_path = os.path.join(rel_path, _OUTPUT_DIRNAME)
+        super().save(*args, **kwargs)
+
+
 class TimestampMixin(object):
     timestamp = Column(DateTime, default=datetime.utcnow)
