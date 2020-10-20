@@ -85,7 +85,7 @@ export default {
     // disables button if no name or dockerfile for new container
     // dont disable for edit container
     isDisabled: function() {
-      !!this.containerToEdit
+      return !!this.containerToEdit
         ? false
         : !(this.container.containerName && this.file)
     }
@@ -131,7 +131,6 @@ export default {
         formData.append('description', this.container.containerDescription)
       }
       if (!!this.containerToEdit) {
-        console.log('reached')
         this.$store.dispatch('containers/updateContainer', {
           id: this.container.containerId,
           data: formData
