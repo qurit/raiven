@@ -16,8 +16,6 @@ def get_ae_title(event):
 
 def handle_store(event):
     """ Handles EVT_C_STORE """
-    print("STORE EVENT")
-
     ae_title = get_ae_title(event)
     ds = event.dataset
 
