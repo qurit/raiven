@@ -46,10 +46,8 @@ def handle_store(event):
                 patient.save(db)
 
             if not (study := db.query(DicomStudy).filter_by(dicom_patient_id=patient.id, study_instance_uid=ds.StudyInstanceUID).first()):
-                print(ds)
                 raw_date_time = ds.StudyDate + ds.StudyTime
-                formatted_date_time = datetime.datetime.strptime(
-                    raw_date_time, '%Y%m%d%H%M%S')
+                formatted_date_time = datetime.datetime.strptime(raw_date_time, '%Y%m%d%H%M%S')
                 study = DicomStudy(
                     dicom_patient_id=patient.id,
                     study_instance_uid=ds.StudyInstanceUID,
@@ -68,17 +66,17 @@ def handle_store(event):
                 series.save(db)
 
             # Grab the save path so we can release the session connection
-            save_path = series.get_abs_path
+            save_path = series.get_abs_path()
 
         ds.save_as(os.path.join(save_path, ds.SOPInstanceUID + '.dcm'))
     except Exception as e:
-        print(e)
+        raise e
 
     return 0x0000
 
 
 if __name__ == '__main__':
-    debug_logger()
+    # debug_logger()
     ae = AE()
     ae.supported_contexts = AllStoragePresentationContexts
     ae.add_supported_context(VerificationSOPClass)

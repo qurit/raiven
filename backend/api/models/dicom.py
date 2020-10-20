@@ -18,9 +18,8 @@ class DicomPatient(NestedPathMixin, Base):
 
     node = relationship('DicomNode')
 
-    @property
-    def path(self) -> str:
-        return os.path.join(self.node.path, str(self.id))
+    def get_path(self) -> str:
+        return os.path.join(self.node.get_path(), str(self.id))
 
 
 class DicomStudy(NestedPathMixin, Base):
@@ -30,9 +29,8 @@ class DicomStudy(NestedPathMixin, Base):
 
     patient = relationship('DicomPatient')
 
-    @property
-    def path(self) -> str:
-        return os.path.join(self.patient.path, str(self.id))
+    def get_path(self) -> str:
+        return os.path.join(self.patient.get_path(), str(self.id))
 
 
 class DicomSeries(NestedPathMixin, Base):
@@ -43,8 +41,7 @@ class DicomSeries(NestedPathMixin, Base):
 
     study = relationship('DicomStudy')
 
-    @property
-    def path(self) -> str:
-        return os.path.join(self.study.path, str(self.id))
+    def get_path(self) -> str:
+        return os.path.join(self.study.get_path(), str(self.id))
 
 
