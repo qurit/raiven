@@ -1,87 +1,55 @@
 <template>
-  <v-card width="400" height="300">
-    <v-row justify="center">
-      <div v-if="!!seriesId">
-        <v-card-title> Send Series {{ seriesId }} to a Pipeline </v-card-title>
-      </div>
-      <div v-else-if="!!studyId">
-        <v-card-title> Send Study {{ studyId }} to a Pipeline </v-card-title>
-      </div>
-      <div v-else-if="!!patientId">
-        <v-card-title>
-          Send Patient {{ patientId }} to a Pipeline
-        </v-card-title>
-      </div>
-      <div v-else>
-        <v-card-title> Send Node {{ nodeId }} to a Pipeline </v-card-title>
-      </div>
+  <v-card>
+    <v-card-title v-text="`Send ${dicom_obj_type} to Pipeline`"/>
+    <v-card-subtitle v-text="`ID: ${dicom_obj_id}`" class="pt-0"/>
+    <v-card-text>
       <v-select
-        v-model="selectedPipelineId"
-        :items="pipelines"
-        item-text="name"
-        item-value="id"
-        label="Choose a pipeline"
-        class="ma-8"
-      >
-      </v-select>
-      {{ select }}
-      <v-btn
-        class="mt-10"
-        @click="sendNode(nodeId, patientId, studyId, seriesId)"
-        :disabled="this.isDisabled"
-      >
+      v-model="pipeline_id"
+      :items="pipelines"
+      item-text="name"
+      item-value="id"
+      label="Choose a pipeline"
+      class="ma-8"
+    />
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn @click="submit" :disabled="this.isDisabled">
         Send to Pipeline
       </v-btn>
-    </v-row>
+    </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import axios from 'axios'
-import { mapState } from 'vuex'
+import {mapState} from 'vuex'
+import {generic_put} from '~/api'
 
 export default {
-  data: () => {
-    return {
-      selectedPipelineId: null
-    }
-  },
-  props: ['nodeId', 'patientId', 'studyId', 'seriesId'],
-  computed: {
-    ...mapState('pipelines', ['pipelines']),
-    isDisabled: function() {
-      return !this.selectedPipelineId
-    }
-  },
+  props: ['dicom_obj_type', 'dicom_obj_id'],
+  data: () => ({
+    pipeline_id: undefined
+  }),
   created() {
     this.$store.dispatch('pipelines/fetchPipelines')
   },
+  computed: {
+    ...mapState('pipelines', ['pipelines']),
+    isDisabled: ctx => !ctx.pipeline_id
+  },
   methods: {
-    async sendNode(nodeId, patientId, studyId, seriesId) {
-      if (!!seriesId) {
-        const res = await axios.put(
-          `http://localhost:5000/dicom/node/${nodeId}/${patientId}/${studyId}/${seriesId}`,
-          { pipeline_id: this.selectedPipelineId }
-        )
-        console.log(res.data)
-      } else if (!!studyId) {
-        const res = await axios.put(
-          `http://localhost:5000/dicom/node/${nodeId}/${patientId}/${studyId}`,
-          { pipeline_id: this.selectedPipelineId }
-        )
-        console.log(res.data)
-      } else if (!!patientId) {
-        const res = await axios.put(
-          `http://localhost:5000/dicom/node/${nodeId}/${patientId}`,
-          { pipeline_id: this.selectedPipelineId }
-        )
-        console.log(res.data)
-      } else {
-        const res = await axios.put(
-          `http://localhost:5000/dicom/node/${nodeId}`,
-          { pipeline_id: this.selectedPipelineId }
-        )
-        console.log(res.data)
+    async submit() {
+      if (this.pipeline_id && this.dicom_obj_type && this.dicom_obj_id) {
+          const URL = `/pipeline/${this.pipeline_id}`
+          const PAYLOAD = {'dicom_obj_type': this.dicom_obj_type, 'dicom_obj_id': this.dicom_obj_id}
+
+          try {
+            const data =  await generic_put(this, URL, PAYLOAD)
+            this.$toaster.toastSuccess(data)
+            this.$emit('submit')
+          } catch (e) {
+            this.$toaster.toastError(e)
+          }
       }
     }
   }

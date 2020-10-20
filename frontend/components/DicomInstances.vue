@@ -4,60 +4,35 @@
       Received DICOM Instances
     </v-card-title>
     <v-divider light />
+
+<!-- Nodes   -->
     <v-list-item v-for="dicomEvent in dicomEvents" :key="dicomEvent.id">
       <v-list-group :value="true" no-action :ripple="false">
-        <v-btn
-          color="blue"
-          small
-          :ripple="false"
-          @click="sendNode(dicomEvent.id)"
-        >
+        <v-btn color="blue" small :ripple="false" @click="send('node', dicomEvent.id)">
           Send DICOM Node {{ dicomEvent.id }} to a Pipeline
         </v-btn>
         <template v-slot:activator>
           <v-list-item-content>
-            <v-list-item-title
-              >{{ dicomEvent.id }}. Received from Host:
-              {{ dicomEvent.host }}</v-list-item-title
-            >
+            <v-list-item-title>{{ dicomEvent.id }}. Received from Host: {{ dicomEvent.host }}</v-list-item-title>
           </v-list-item-content>
         </template>
-        <v-list-item
-          v-for="dicomPatient in dicomEvent.dicom_patient"
-          :key="dicomPatient.id"
-        >
+
+<!-- Patients -->
+        <v-list-item v-for="dicomPatient in dicomEvent.patients" :key="dicomPatient.id">
           <v-list-group no-action sub-group :ripple="false">
-            <v-btn
-              color="blue"
-              small
-              :ripple="false"
-              class="ml-16"
-              @click="sendPatient(dicomEvent.id, dicomPatient.id)"
-            >
+            <v-btn color="blue" small :ripple="false" class="ml-16" @click="send('patient', dicomPatient.id)">
               Send Patient {{ dicomPatient.id }} to a Pipeline
             </v-btn>
             <template v-slot:activator>
               <v-list-item-content>
-                <v-list-item-title>
-                  {{ dicomPatient.id }}. Patient
-                  {{ dicomPatient.patient_id }}</v-list-item-title
-                >
+                <v-list-item-title>{{ dicomPatient.id }}. Patient {{ dicomPatient.patient_id }}</v-list-item-title>
               </v-list-item-content>
             </template>
-            <v-list-item
-              v-for="dicomStudy in dicomPatient.dicom_study"
-              :key="dicomStudy.id"
-            >
+
+<!-- Studies -->
+            <v-list-item v-for="dicomStudy in dicomPatient.studies" :key="dicomStudy.id">
               <v-list-group no-action sub-group :ripple="false">
-                <v-btn
-                  color="blue"
-                  small
-                  :ripple="false"
-                  class="ml-16"
-                  @click="
-                    sendStudy(dicomEvent.id, dicomPatient.id, dicomStudy.id)
-                  "
-                >
+                <v-btn color="blue" small :ripple="false" class="ml-16" @click="send('study', dicomStudy.id)">
                   Send Study {{ dicomStudy.id }} to a Pipeline
                 </v-btn>
                 <template v-slot:activator>
@@ -69,25 +44,10 @@
                   </v-list-item-content>
                 </template>
 
-                <v-list-item
-                  v-for="dicomSeries in dicomStudy.dicom_series"
-                  :key="dicomSeries.id"
-                >
+<!-- Series -->
+                <v-list-item v-for="dicomSeries in dicomStudy.series" :key="dicomSeries.id">
                   {{ dicomSeries.series_description }}
-                  <v-btn
-                    color="blue"
-                    small
-                    :ripple="false"
-                    class="ml-6"
-                    @click="
-                      sendSeries(
-                        dicomEvent.id,
-                        dicomPatient.id,
-                        dicomStudy.id,
-                        dicomSeries.id
-                      )
-                    "
-                  >
+                  <v-btn color="blue" small :ripple="false" class="ml-6" @click="send('series', dicomSeries.id)">
                     Send Series {{ dicomSeries.id }} to a Pipeline
                   </v-btn>
                 </v-list-item>
@@ -97,37 +57,25 @@
         </v-list-item>
       </v-list-group>
     </v-list-item>
+
     <v-dialog v-model="dialog" width="500px" height="600px">
-      <DicomForm
-        :nodeId="nodeId"
-        :patientId="patientId"
-        :studyId="studyId"
-        :seriesId="seriesId"
-      />
+      <DicomForm :dicom_obj_type="dicom_obj_type" :dicom_obj_id="dicom_obj_id" @submit="dialog = false" />
     </v-dialog>
   </v-card>
 </template>
 
 <script>
-import axios from 'axios'
 import { mapState } from 'vuex'
 import DicomForm from '../components/DicomForm'
 import ContainerForm from '../components/ContainerForm'
 
 export default {
-  components: {
-    ContainerForm,
-    DicomForm
-  },
-  data: function() {
-    return {
+  components: {ContainerForm, DicomForm},
+  data: () => ({
       dialog: false,
-      nodeId: '',
-      patientId: '',
-      studyId: '',
-      seriesId: ''
-    }
-  },
+      dicom_obj_type: undefined,
+      dicom_obj_id: undefined,
+  }),
   computed: {
     ...mapState('dicomEvents', ['dicomEvents'])
   },
@@ -135,51 +83,13 @@ export default {
     this.$store.dispatch('dicomEvents/fetchDicomEvents')
   },
   methods: {
-    async sendNode(nodeId) {
-      this.setInitialState()
+    send(type, id) {
+      this.dicom_obj_type = type
+      this.dicom_obj_id = id
       this.dialog = true
-      this.nodeId = nodeId
-      // const res = await axios.put(`http://localhost:5000/dicom/node/${nodeId}`)
-      // console.log(res.data)
     },
-    async sendPatient(nodeId, patientId) {
-      this.setInitialState()
-      this.dialog = true
-      this.nodeId = nodeId
-      this.patientId = patientId
-      // const res = await axios.put(
-      //   `http://localhost:5000/dicom/node/${nodeId}/${patientId}`
-      // )
-      // console.log(res.data)
-    },
-    async sendStudy(nodeId, patientId, studyId) {
-      this.setInitialState()
-      this.dialog = true
-      this.nodeId = nodeId
-      this.patientId = patientId
-      this.studyId = studyId
-      // const res = await axios.put(
-      //   `http://localhost:5000/dicom/node/${nodeId}/${patientId}/${studyId}`
-      // )
-      // console.log(res.data)
-    },
-    async sendSeries(nodeId, patientId, studyId, seriesId) {
-      this.setInitialState()
-      this.dialog = true
-      this.nodeId = nodeId
-      this.patientId = patientId
-      this.studyId = studyId
-      this.seriesId = seriesId
-      //   const res = await axios.put(
-      //     `http://localhost:5000/dicom/node/${nodeId}/${patientId}/${studyId}/${seriesId}`
-      //   )
-      //   console.log(res.data)
-    },
-    setInitialState() {
-      this.nodeId = ''
-      this.patientId = ''
-      this.studyId = ''
-      this.seriesId = ''
+    async submit() {
+      this.dialog = false
     }
   }
 }
