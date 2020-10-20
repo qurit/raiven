@@ -3,7 +3,6 @@ from typing import List
 import zipfile
 import io
 
-
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, File, Form
 
@@ -22,8 +21,12 @@ def get_all_containers(db: Session = Depends(session)):
 
 
 @router.post("/")
-async def create_container(file: bytes = File(...), name: str = Form(...), filename: str = Form(...), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
-    newContainerList = []
+async def create_container(
+        file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
+        description: str = Form(None), is_input_container: bool = Form(...),
+        is_output_container: bool = Form(...), db: session = Depends(session)):
+
+    new_container_list = []
 
     print(description)
     print(name)
@@ -46,7 +49,7 @@ async def create_container(file: bytes = File(...), name: str = Form(...), filen
             db_container1.get_path(), 'Dockerfile')
         db_container1.save(db)
         z.extractall(db_container1.get_abs_path())
-        newContainerList.append(db_container1)
+        new_container_list.append(db_container1)
     else:
         db_container = Container(
             user_id=1,
@@ -61,8 +64,8 @@ async def create_container(file: bytes = File(...), name: str = Form(...), filen
         db_container.dockerfile_path = os.path.join(
             db_container.get_path(), filename)
         db_container.save(db)
-        newContainerList.append(db_container)
-    return newContainerList
+        new_container_list.append(db_container)
+    return new_container_list
 
 
 @router.get("/{container_id}", response_model=container.Container)
@@ -71,8 +74,12 @@ def get_container(container_id: int, db: Session = Depends(session)):
 
 
 @router.put("/{container_id}")
-def update_container(container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(None), description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),  db: session = Depends(session)):
-    if (file != None):
+def update_container(
+        container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(None),
+        description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),
+        db: session = Depends(session)):
+
+    if file is not None:
         container = db.query(Container).get(container_id)
         # remove previous file
         os.remove(os.path.join(container.abs_path, container.filename))
