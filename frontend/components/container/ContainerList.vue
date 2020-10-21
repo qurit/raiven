@@ -42,6 +42,25 @@
         @closeDialog="closeDialog"
       />
     </v-dialog>
+    <v-dialog
+      v-model="confirmDeleteDialog"
+      persistent
+      max-width="525px"
+      min-height="600px"
+    >
+      <v-card class="overflow-x-hidden">
+        <v-card-title>
+          Deleting this container will clear all pipelines with this container.
+        </v-card-title>
+        <v-card-subtitle>
+          Are you sure you want to continue?
+        </v-card-subtitle>
+        <v-row justify="center" align="center">
+          <v-btn class="ma-2" @click="confirmDeleteContainer"> Yes </v-btn>
+          <v-btn @click="confirmDeleteDialog = false"> No </v-btn>
+        </v-row>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -55,7 +74,9 @@ export default {
   },
   data: function() {
     return {
+      deleteContainerId: null,
       dialog: false,
+      confirmDeleteDialog: false,
       container: {
         containerId: '',
         filename: '',
@@ -70,8 +91,16 @@ export default {
     closeDialog() {
       this.dialog = false
     },
-    async deleteContainer(containerId) {
-      await this.$store.dispatch('containers/deleteContainer', containerId)
+    deleteContainer(containerId) {
+      this.deleteContainerId = containerId
+      this.confirmDeleteDialog = true
+    },
+    async confirmDeleteContainer(containerId) {
+      await this.$store.dispatch(
+        'containers/deleteContainer',
+        this.deleteContainerId
+      )
+      this.confirmDeleteDialog = false
       this.$toaster.toastSuccess('Container deleted!')
     },
     editContainer(containerId) {
