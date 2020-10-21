@@ -68,7 +68,7 @@
         </template>
 
         <ContainerCard v-for="c in containers" :id="c.id" :container="c">
-          <v-icon-btn add @click="addNode(c)"/>
+          <v-icon-btn add @click="addNode(c)" color="white" />
         </ContainerCard>
 
       </v-navigation-drawer>
@@ -84,7 +84,7 @@
   import VIconBtn from '../../components/global/v-icon-btn'
   import ContainerForm from '~/components/container/ContainerForm'
   import OutputDestinationForm from '~/components/OutputDestinationForm'
-  import ContainerCard from "./ContainerCard";
+  import ContainerCard from "~/components/container/ContainerCard";
 
   export default {
   components: {

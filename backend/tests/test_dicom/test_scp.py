@@ -25,8 +25,8 @@ import os
 from pydicom import dcmread, uid
 
 if __name__ == '__main__':
-    INPUT_DIR = 'C:\\Users\\Adam\\Programming\\picom\\uploads\\dicom_nodes\\30\\31\\3\\659'
-    # INPUT_DIR = 'E:\\BCCRC\\dicom\\pyPET4RT'
+    # INPUT_DIR = 'C:\\Users\\Adam\\Programming\\picom\\uploads\\dicom_nodes\\30\\31\\3\\659'
+    INPUT_DIR = 'E:\\BCCRC\\dicom\\pyPET4RT'
     OUTPUT_DIR = 'C:\\Users\\Adam\\Programming\\picom\\test_out'
 
 
