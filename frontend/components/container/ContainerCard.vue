@@ -7,11 +7,12 @@
       style="transition: background-color 0.2s ease-out"
     >
         <v-card-title v-text="container.name"/>
-        <v-card-subtitle v-text="`ID: ${container.id}`" />
+        <v-card-subtitle v-text="`ID: ${container.id}`" class="pb-4" />
         <v-card-text>
             {{ container.description }}
         </v-card-text>
         <v-card-actions>
+          <v-chip small v-for="chip in chips" v-text="chip" class="mr-1" />
           <v-spacer />
           <!-- Slot to enable adding of custom actions -->
           <slot></slot>
@@ -38,11 +39,15 @@ export default {
   },
   computed: {
     containerColor: ctx => {
-      switch (ctx.container) {
-        case ctx.is_output_container: return ctx.colors.output
-        case ctx.is_input_container: return ctx.colors.input
-        default: return ctx.colors.default
-      }
+      if (ctx.container.is_output_container) return ctx.colors.output
+      else if (ctx.container.is_input_container) return ctx.colors.input
+      else return ctx.colors.default
+    },
+    chips: ctx => {
+      const chips = []
+      if (ctx.container.is_output_container) chips.push('Output')
+      if (ctx.container.is_input_container) chips.push('Input')
+      return chips
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <v-card class="overflow-x-hidden">
     <v-form v-model="form" class="ma-5">
-      <v-card-title> Add a destination source for your pipelines </v-card-title>
+      <v-card-title> Add a destination source for your pipelines</v-card-title>
       <v-row>
         <v-col cols="6">
           <v-text-field
@@ -36,13 +36,13 @@
 
 <script>
 import axios from 'axios'
+
 export default {
-  data() {
-    return {
-      host: '',
-      port: null
-    }
-  },
+  name: 'OutputDestinationForm',
+  data: () => ({
+    host: '',
+    port: null
+  }),
   methods: {
     async submit() {
       this.$store.dispatch('destination/addDestination', {
@@ -53,9 +53,9 @@ export default {
     }
   },
   computed: {
-    isDisabled: function() {
+    isDisabled: function () {
       return !(this.host && this.port)
     }
   }
-}
+  }
 </script>
