@@ -70,8 +70,9 @@ export default {
     closeDialog() {
       this.dialog = false
     },
-    deleteContainer(containerId) {
-      this.$store.dispatch('containers/deleteContainer', containerId)
+    async deleteContainer(containerId) {
+      await this.$store.dispatch('containers/deleteContainer', containerId)
+      this.$toaster.toastSuccess('Container deleted!')
     },
     editContainer(containerId) {
       const containers = this.$store.state.containers.containers

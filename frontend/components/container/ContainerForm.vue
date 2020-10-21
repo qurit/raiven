@@ -83,10 +83,9 @@ export default {
   },
   computed: {
     // disables button if no name or dockerfile for new container
-    // disbable button if no name for new container
     isDisabled: function() {
       return !!this.containerToEdit
-        ? !this.container.name
+        ? false
         : !(this.container.containerName && this.file)
     }
   },
@@ -131,18 +130,22 @@ export default {
         formData.append('description', this.container.containerDescription)
       }
       if (!!this.containerToEdit) {
-        this.$store.dispatch('containers/updateContainer', {
+        await this.$store.dispatch('containers/updateContainer', {
           id: this.container.containerId,
           data: formData
         })
+        console.log(this.container.name)
       } else {
-        this.$store.dispatch('containers/addContainer', formData).then(() => {
-          this.$refs.form.reset()
-          this.container.containerIsInput = false
-          this.container.containerIsOutput = false
-        })
+        await this.$store
+          .dispatch('containers/addContainer', formData)
+          .then(() => {
+            this.$refs.form.reset()
+            this.container.containerIsInput = false
+            this.container.containerIsOutput = false
+          })
       }
       this.$emit('closeDialog')
+      this.$toaster.toastSuccess('Container saved!')
     }
   }
 }
