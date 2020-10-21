@@ -7,7 +7,8 @@ LOCALHOST = '127.0.0.1'
 class BaseConfig:
     HOST = LOCALHOST
     PORT = 5000
-    UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+    UPLOAD_DIR = os.path.join(os.path.dirname(
+        os.path.dirname(__file__)), 'uploads')
 
     # LDAP CONFIG
     LDAP_HOST = '10.9.2.37'
@@ -22,9 +23,19 @@ class BaseConfig:
     POSTGRES_USER = 'postgres'
     POSTGRES_PW = 'password'
     POSTGRES_DB = 'picom'
+    SQLALCHEMY_DATABASE_URI = ''
 
     # Docker
     DOCKER_URI = 'tcp://127.0.0.1:2375'
+
+    # Pipeline
+    PICOM_INPUT_DIR = '/mnt/picom/input'
+    PICOM_OUTPUT_DIR = '/mnt/picom/output'
+
+    # DICOM SCP
+    SCP_AE_TITLE = 'PICOM_SCP'
+    SCP_HOST = ''
+    SCP_PORT = 11112
 
     def __init__(self):
         env_vars = [v for v in os.environ.keys() if (v in vars(BaseConfig)) and not v.startswith('__')]
@@ -32,6 +43,12 @@ class BaseConfig:
 
         if not os.path.exists(self.UPLOAD_DIR):
             os.mkdir(self.UPLOAD_DIR)
+
+        if not self.SQLALCHEMY_DATABASE_URI:
+            self.SQLALCHEMY_DATABASE_URI = f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
+
+        # if not hasattr(self, 'RABBITMQ_URI'):
+        #     self.RABBITMQ_URI = f'amqp://{self.RABBITMQ_HOST}'
 
     def apply_env_var(self, env_var) -> None:
         v = os.environ[env_var]
@@ -43,15 +60,9 @@ class BaseConfig:
             else:
                 v = type_(v)
         except (TypeError, ValueError):
-            print(f'[FAILED] TYPE CASTING ENV VARIABLE {env_var} TO TYPE {type(getattr(BaseConfig, env_var))}')
-            print(f'[FAILED] ENV VARIABLE {env_var} MAY PRODUCE AN UNEXPECTED ERROR')
+            print(
+                f'[FAILED] TYPE CASTING ENV VARIABLE {env_var} TO TYPE {type(getattr(BaseConfig, env_var))}')
+            print(
+                f'[FAILED] ENV VARIABLE {env_var} MAY PRODUCE AN UNEXPECTED ERROR')
         finally:
             setattr(self, env_var, v)
-
-    @property
-    def SQLALCHEMY_DATABASE_URI(self):
-        return f'postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PW}@{self.POSTGRES_HOST}/{self.POSTGRES_DB}'
-
-    @property
-    def RABBITMQ_URI(self):
-        return f'amqp://{self.RABBITMQ_HOST}'

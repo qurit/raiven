@@ -1,53 +1,106 @@
 <template>
-  <v-card>
-    *** FULFILLS: As a researcher, I would like to have a dashboard to view the
-    status of my pipelines *** *** View all pipelines but the status of running
-    ones is on the index dashboard landing page ***
-    <v-card-title>
-      Your pipelines
-    </v-card-title>
-    <v-flex v-for="pipeline in pipelines" :key="pipeline.id">
-      <b>Pipeline Title:</b>
-      {{ pipeline.title }}
-      <b>Containers in Pipeline:</b>
-      {{ pipeline.containerList }}
-      <b>Running status: </b>
-      {{ pipeline.status }}
-      <v-btn>
-        <!-- TODO: fix the routing stuff properly with Vue probably /pipleine/:id -->
-        <nuxt-link to="/pipeline/1">
-          View
-        </nuxt-link>
-      </v-btn>
-      <v-btn @click="removePipeline(pipeline)">
-        Remove
-      </v-btn>
-    </v-flex>
-    <v-btn>
-      <!-- TODO: maybe this routing should be to "/pipeline/:id/edit" or something instead of pipelinemaker (this is for new pipelines)-->
-      <nuxt-link to="/pipelinemaker">
-        Add
-      </nuxt-link>
-    </v-btn>
+  <!-- hardcode with but maybe put in columns and stuff if we figure out what to populate this page with... -->
+  <v-card
+    elevation="6"
+    width="900"
+    max-height="750"
+    class="overflow-y-auto overflow-x-hidden"
+    :class="'dark'"
+  >
+    <v-row align="center">
+      <v-col cols="8">
+        <v-card-title>
+          Your Pipelines
+        </v-card-title>
+      </v-col>
+      <v-col cols="1">
+        <v-btn color="green" @click="dialog = true">
+          Add Pipeline
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-divider light />
+    <v-card-text>
+      <v-row v-for="pipeline in pipelines" :key="pipeline.id">
+        <v-col cols="8">
+          <b>Pipeline Name:</b>
+          {{ pipeline.name }}
+        </v-col>
+        <v-col cols="1">
+          <v-btn small color="blue" @click="viewPipeline(pipeline.id)">
+            View
+          </v-btn>
+        </v-col>
+        <v-col cols="1">
+          <v-btn small color="red" @click="removePipeline(pipeline)">
+            Remove
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-card-text>
+    <v-dialog v-model="dialog" max-width="600px">
+      <v-card class="overflow-x-hidden">
+        <v-text-field
+          v-model="pipelineName"
+          label="Pipeline Name*"
+          required
+          :rules="[v => !!v || 'A Pipeline Name is required']"
+          class="pa-15"
+        />
+        <v-row justify="center" align="center">
+          <v-btn
+            @click="savePipeline"
+            :disabled="this.isDisabled"
+            class="ma-4"
+            color="green"
+          >
+            Save
+          </v-btn>
+        </v-row>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
-import { pipelines } from 'vuex'
+import axios from 'axios'
+import { mapState } from 'vuex'
 
 export default {
   data: function() {
     return {
-      // TODO:
-      // have to put containers in a store that persists with the user
-      // also save the user pipeline
-      pipelines: this.$store.state.pipelines.pipelines
+      dialog: false,
+      pipelineName: ''
     }
   },
   methods: {
+    viewPipeline(pipelineId) {
+      this.$router.push({ path: `/pipeline/${pipelineId}` })
+    },
     removePipeline(pipeline) {
-      this.$store.commit('pipelines/delete', pipeline)
+      this.$store.dispatch('pipelines/deletePipeline', pipeline.id)
+    },
+    async savePipeline() {
+      const payload = {
+        user_id: 1,
+        name: this.pipelineName
+      }
+      const { data } = await this.$store.dispatch(
+        'pipelines/addPipeline',
+        payload
+      )
+      this.$router.push({ path: `/pipeline/${data.id}` })
+      this.dialog = false
     }
+  },
+  computed: {
+    ...mapState('pipelines', ['pipelines']),
+    isDisabled: function() {
+      return !this.pipelineName
+    }
+  },
+  created() {
+    this.$store.dispatch('pipelines/fetchPipelines')
   }
 }
 </script>
