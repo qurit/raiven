@@ -4,7 +4,6 @@ export const state = () => ({
   destinations: []
 })
 
-// TODO: UPDATE CONTAINER WITH MODAL FORM
 export const mutations = {
   setDestinations: (state, destinations) => (state.destinations = destinations),
   addDestination: (state, destination) => state.destinations.push(destination)

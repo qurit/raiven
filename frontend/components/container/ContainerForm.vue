@@ -83,10 +83,10 @@ export default {
   },
   computed: {
     // disables button if no name or dockerfile for new container
-    // dont disable for edit container
+    // disbable button if no name for new container
     isDisabled: function() {
       return !!this.containerToEdit
-        ? false
+        ? !this.container.name
         : !(this.container.containerName && this.file)
     }
   },
