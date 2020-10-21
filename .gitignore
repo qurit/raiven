@@ -11,6 +11,10 @@ __pycache__
 sw.*
 .DS_Store
 .pyc
-
+.db
 
 /backend/migrations/
+/examples/input/
+/examples/output/
+/uploads/
+.zip

@@ -15,6 +15,8 @@ def get_application_entities(db: Session = Depends(session)):
 
 @router.post("/", response_model=schemas.ApplicationEntity)
 def create_application_entity(ae: schemas.ApplicationEntityCreate, db: Session = Depends(session)):
+    print(db)
+    print(type(db))
     return models.dicom.ApplicationEntity(title=ae.title).save(db)
 
 

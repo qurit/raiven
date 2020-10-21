@@ -39,7 +39,7 @@ export default {
 
   // Axios config
   axios: {
-    baseURL:  process.env.API_URL
+    baseURL:  process.env.API_URL || 'http://localhost:5000'
   },
 
    // Auth Config
