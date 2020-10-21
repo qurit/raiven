@@ -97,7 +97,7 @@
   data: () => ({
     containerList: true,
     containerDialog: false,
-    destinationDialog: false
+    destinationDialog: false,
     pipeline_id: '',
 
     scene: {
