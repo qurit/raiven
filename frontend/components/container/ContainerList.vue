@@ -95,25 +95,3 @@ export default {
   }
 }
 </script>
-
-<style>
-/* TODO: move this to a global CSS assest*/
-.dark::-webkit-scrollbar {
-  width: 15px;
-}
-
-.dark::-webkit-scrollbar-track {
-  background: #202020;
-  border-left: 1px solid #2c2c2c;
-}
-
-.dark::-webkit-scrollbar-thumb {
-  background: #3e3e3e;
-  border: solid 3px #252525;
-  border-radius: 7px;
-}
-
-.dark::-webkit-scrollbar-thumb:hover {
-  background: #808080;
-}
-</style>
