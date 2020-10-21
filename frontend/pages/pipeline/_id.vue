@@ -7,6 +7,12 @@
         no-gutters
         align="center"
       >
+        <v-icon-btn
+          large
+          color="#373740"
+          @click="savePipeline"
+          icon="mdi-content-save"
+        />
         <v-btn @click="containerList = !containerList" large icon>
           <v-icon
             large
@@ -14,146 +20,95 @@
             v-text="containerList ? 'mdi-minus' : 'mdi-plus'"
           />
         </v-btn>
-        <v-icon-btn
-          large
-          color="#373740"
-          @click="savePipeline"
-          icon="mdi-content-save"
-        />
       </v-row>
+
+<!-- Pipeline Builder -->
       <SimpleFlowchart
         :scene.sync="scene"
         :id="pipeline_id"
         ref="simpleFlowchart"
       />
+
+<!-- Dialogs -->
+      <v-dialog
+        v-model="containerDialog"
+        max-width="900px"
+        min-height="600px"
+      >
+        <ContainerForm
+          :isEditing="false"
+          @closeDialog="containerDialog = false"
+        />
+      </v-dialog>
+
+      <v-dialog
+        v-model="destinationDialog"
+        max-width="900px"
+        min-height="600px"
+      >
+        <OutputDestinationForm
+          :isEditing="false"
+          @closeDialog="destinationDialog = false"
+        />
+      </v-dialog>
+
+<!-- Container List -->
       <v-navigation-drawer v-model="containerList" absolute right>
         <template v-slot:prepend>
           <v-list-item two-line>
             <v-list-item-content>
-              <v-btn class="mt-2" @click="addContainer">
+              <v-btn class="mt-2" @click="containerDialog = true">
                 Add a Container
               </v-btn>
-              <v-dialog
-                v-model="containerDialog"
-                max-width="900px"
-                min-height="600px"
-              >
-                <ContainerForm
-                  :isEditing="false"
-                  @closeDialog="closeContainerDialog"
-                />
-              </v-dialog>
-              <v-btn class="mt-2" @click="addOutputDestination" small>
+              <v-btn class="mt-2" @click="destinationDialog = true" small>
                 Add a Destination
               </v-btn>
-              <v-dialog
-                v-model="outputDestinationDialog"
-                max-width="900px"
-                min-height="600px"
-              >
-                <OutputDestinationForm
-                  :isEditing="false"
-                  @closeDialog="closeOutputDestination"
-                />
-              </v-dialog>
             </v-list-item-content>
           </v-list-item>
         </template>
-        <v-divider />
 
-        <!-- Containers of different types can be colored differently -->
-        <v-hover
-          v-for="container in containers"
-          :key="container.id"
-          v-slot:default="{ hover }"
-        >
-          <div v-if="container.is_input_container">
-            <v-card class="ma-2 title" :color="hover ? 'green' : 'orange'">
-              <v-card-title v-text="container.name" />
-              <v-card-text>
-                {{ container.description }}
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer />
-                <v-icon-btn add @click="addNode(container)" />
-              </v-card-actions>
-            </v-card>
-          </div>
-          <div v-else-if="container.is_output_container">
-            <v-card class="ma-2 title" :color="hover ? 'green' : 'purple'">
-              <v-card-title v-text="container.name" />
-              <v-card-text>
-                {{ container.description }}
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer />
-                <v-icon-btn add @click="addNode(container)" />
-              </v-card-actions>
-            </v-card>
-          </div>
-          <div v-else>
-            <v-card class="ma-2 title" :color="hover ? 'green' : 'blue'">
-              <v-card-title v-text="container.name" />
-              <v-card-text>
-                {{ container.description }}
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer />
-                <v-icon-btn add @click="addNode(container)" />
-              </v-card-actions>
-            </v-card>
-          </div>
-        </v-hover>
+        <ContainerCard v-for="c in containers" :id="c.id" :container="c">
+          <v-icon-btn add @click="addNode(c)"/>
+        </ContainerCard>
+
       </v-navigation-drawer>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import axios from 'axios'
-import { mapState } from 'vuex'
-import { generic_get } from '~/api'
+  import {mapState} from 'vuex'
+  import {generic_get} from '~/api'
 
-import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
-import VIconBtn from '../../components/global/v-icon-btn'
-import ContainerForm from '~/components/container/ContainerForm'
-import OutputDestinationForm from '~/components/OutputDestinationForm'
+  import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
+  import VIconBtn from '../../components/global/v-icon-btn'
+  import ContainerForm from '~/components/container/ContainerForm'
+  import OutputDestinationForm from '~/components/OutputDestinationForm'
+  import ContainerCard from "./ContainerCard";
 
-export default {
+  export default {
   components: {
+    ContainerCard,
     VIconBtn,
     SimpleFlowchart,
     ContainerForm,
     OutputDestinationForm
   },
-  data() {
-    return {
-      containerList: true,
-      scene: {
-        centerX: 1024,
-        centerY: 140,
-        scale: 1,
-        nodes: [],
-        links: []
-      },
-      pipeline_id: '',
-      containerDialog: false,
-      outputDestinationDialog: false
-    }
-  },
+  data: () => ({
+    containerList: true,
+    containerDialog: false,
+    destinationDialog: false
+    pipeline_id: '',
+
+    scene: {
+      centerX: 1024,
+      centerY: 140,
+      scale: 1,
+      nodes: [],
+      links: []
+    },
+  }),
   methods: {
-    addContainer() {
-      this.containerDialog = true
-    },
-    addOutputDestination() {
-      this.outputDestinationDialog = true
-    },
-    closeContainerDialog() {
-      this.containerDialog = false
-    },
-    closeOutputDestination() {
-      this.outputDestinationDialog = false
-    },
     addNode(container) {
       let maxID = Math.max(0, ...this.scene.nodes.map(link => link.id))
       this.scene.nodes.push({
