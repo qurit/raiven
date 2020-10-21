@@ -5,103 +5,80 @@
       :style="nodeStyle"
       @mousedown="handleMousedown"
       v-bind:class="{ selected: options.selected === id }"
+      :color="nodeColor"
     >
-      <div v-if="container_is_input">
-        <v-sheet
-          class="pa-2 title text-center poll-name"
-          color="orange"
-          height="170"
-          width="200"
-        >
-          <v-expand-x-transition style="float: left">
-            <v-icon-btn
-              v-if="hover"
-              delete
-              color="red"
-              @click="$emit('deleteNode')"
-            />
-          </v-expand-x-transition>
-          {{ type }} <br />
-          INPUT CONTAINER
-        </v-sheet>
+<!-- Input Port -->
+      <FlowchartNodePort
+        v-if="!container_is_input"
+        class="node-port node-input"
+        @mouseup="$emit('linkingStop')"
+      />
+
+<!-- Node Data -->
+      <v-card-title v-text="type" />
+      <v-select
+        v-if="container_is_input"
+        :items="destinations"
+        item-text="full_name"
+        item-value="id"
+        label="Destination"
+        dense
+        solo
+        flat
+      >
+        <template v-slot:prepend-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>
+                Add A Destination
+              </v-list-item-title>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-icon-btn add @click="destinationDialog = true" />
+            </v-list-item-action>
+          </v-list-item>
+          <v-divider light/>
+        </template>
+      </v-select>
+      <v-card-actions style="position: absolute; bottom: 0; width: inherit">
+        <v-chip v-if="container_is_input" small v-text="'Input'" />
+        <v-chip v-if="container_is_output" small v-text="'Output'" />
+        <v-spacer />
+         <v-icon-btn
+            delete
+            color="red"
+            @click="$emit('deleteNode')"
+         />
+      </v-card-actions>
+
+<!-- Output Port -->
         <FlowchartNodePort
+          v-if="!container_is_output"
           class="node-port node-output"
           @mousedown="$emit('linkingStart')"
         />
-      </div>
-      <div v-else-if="container_is_output">
-        <v-sheet
-          class="pa-2 title text-center poll-name"
-          color="purple"
-          height="170"
-          width="200"
-        >
-          <v-expand-x-transition style="float: left">
-            <v-icon-btn
-              v-if="hover"
-              delete
-              color="red"
-              @click="$emit('deleteNode')"
-            />
-          </v-expand-x-transition>
-          {{ type }} <br />
-          Destination:
-          <v-select
-            dense
-            outlined
-            filled
-            class="mt-4"
-            :items="destinations"
-            item-text="full_name"
-            item-value="id"
-          >
-          </v-select>
-        </v-sheet>
-        <FlowchartNodePort
-          class="node-port node-input"
-          @mouseup="$emit('linkingStop')"
-        />
-      </div>
-      <div v-else>
-        <v-sheet
-          class="pa-2 title text-center poll-name"
-          color="blue"
-          height="170"
-          width="200"
-        >
-          <v-expand-x-transition style="float: left">
-            <v-icon-btn
-              v-if="hover"
-              delete
-              color="red"
-              @click="$emit('deleteNode')"
-            />
-          </v-expand-x-transition>
-          {{ type }}
-          <div v-if="container_is_input">
-            THIS IS AN INPUT CONTAINER
-          </div>
-        </v-sheet>
-        <FlowchartNodePort
-          class="node-port node-input"
-          @mouseup="$emit('linkingStop')"
-        />
-        <FlowchartNodePort
-          class="node-port node-output"
-          @mousedown="$emit('linkingStart')"
-        />
-      </div>
+<!-- Destination Dialogs -->
+      <v-dialog
+        v-model="destinationDialog"
+        max-width="900px"
+        min-height="600px"
+        @closeDialog="destinationDialog = false"
+      >
+        <OutputDestinationForm/>
+      </v-dialog>
+
     </v-card>
   </v-hover>
 </template>
 
 <script>
 import FlowchartNodePort from './FlowchartNodePort.vue'
+import OutputDestinationForm from '~/components/OutputDestinationForm'
 import { mapState } from 'vuex'
 
 export default {
   name: 'FlowchartNode',
-  components: { FlowchartNodePort },
+  components: { FlowchartNodePort, OutputDestinationForm },
   props: {
     id: undefined,
     x: 0,
@@ -118,14 +95,24 @@ export default {
           centerY: undefined
         }
       }
+    },
+    colors: {
+      type: Object,
+      default: () => ({
+        input: 'orange',
+        output: 'purple',
+        default: 'blue'
+      })
     }
   },
   data: () => ({
+    destinationDialog: false,
     show: {
       delete: false
     }
   }),
   computed: {
+    ...mapState('destination', ['destinations']),
     nodeStyle() {
       return {
         top: this.options.centerY + this.y * this.options.scale + 'px',
@@ -133,7 +120,11 @@ export default {
         transform: `scale(${this.options.scale})`
       }
     },
-    ...mapState('destination', ['destinations'])
+    nodeColor: ctx => {
+      if (ctx.container_is_output) return ctx.colors.output
+      else if (ctx.container_is_input) return ctx.colors.input
+      else return ctx.colors.default
+    }
   },
   methods: {
     handleMousedown(e) {
