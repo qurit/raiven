@@ -30,8 +30,9 @@ def get_patient_studies(dicom_node_id: int, patient_id: int, db: Session = Depen
     return db.query(DicomStudy).filter_by(dicom_patient_id=patient_id).all()
 
 
-@router.get("/nodes/{dicom_node_id}/patient/{patient_id}/study/{study_id}/series", response_model=List[dicom.DicomSeries])
-def get_study_series(dicom_node_id: int, patient_id: int, study_id: int, db: Session = Depends(session)):
+@router.get("/patient/{patient_id}/study/{study_id}/series", response_model=List[dicom.DicomSeries])
+# @router.get("/nodes/{dicom_node_id}/patient/{patient_id}/study/{study_id}/series", response_model=List[dicom.DicomSeries])
+def get_study_series(patient_id: int, study_id: int, db: Session = Depends(session)):
     print("GETTING SERIES")
     return db.query(DicomSeries).filter_by(dicom_study_id=study_id).all()
 

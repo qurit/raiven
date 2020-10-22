@@ -19,6 +19,7 @@ class DicomStudy(BaseORMModel):
 
 class DicomPatient(BaseORMModel):
     patient_id: str
+    dicom_node_id: int
     # studies: Optional[List[DicomStudy]]
 
 
