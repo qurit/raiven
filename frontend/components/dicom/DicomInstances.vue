@@ -6,118 +6,19 @@
     <v-divider light />
 
     <!-- Nodes   -->
-    <v-list-item v-for="dicomEvent in dicomEvents" :key="dicomEvent.id">
-      <v-list-group
-        :value="true"
-        no-action
-        :ripple="false"
-        @click="loadPatientContent(dicomEvent.id)"
-      >
-        <v-btn
-          color="blue"
-          small
-          :ripple="false"
-          @click="send('node', dicomEvent.id)"
-        >
-          Send DICOM Node {{ dicomEvent.id }} to a Pipeline
-        </v-btn>
-        <template v-slot:activator>
-          <v-list-item-content>
-            <v-list-item-title
-              >{{ dicomEvent.id }}. Received from Host:
-              {{ dicomEvent.host }}</v-list-item-title
-            >
-          </v-list-item-content>
-        </template>
-
-        <!-- Patients -->
-        <!-- NEED TO FIX THE THING.. SEEMS LIKE ITS BECAUSE ITS AUTO OPENED? OR SOMETHING? -->
-        <div v-if="dicomNodes[dicomEvent.id] !== undefined">
-          <v-list-item
-            v-for="dicomPatient in dicomNodes[dicomEvent.id].patients"
-            :key="dicomPatient.id"
-          >
-            <v-list-group
-              no-action
-              sub-group
-              :ripple="false"
-              @click="loadStudyContent(dicomEvent.id, dicomPatient.id)"
-            >
-              <v-btn
-                color="blue"
-                small
-                :ripple="false"
-                class="ml-16"
-                @click="send('patient', dicomPatient.id)"
-              >
-                Send Patient {{ dicomPatient.id }} to a Pipeline
-              </v-btn>
-              <template v-slot:activator>
-                <v-list-item-content>
-                  <v-list-item-title
-                    >{{ dicomPatient.id }} Patient
-                    {{ dicomPatient.patient_id }}</v-list-item-title
-                  >
-                </v-list-item-content>
-              </template>
-
-              <!-- Studies -->
-              <div v-if="dicomNodes[dicomEvent.id].patients[dicomPatient.id]">
-                <v-list-item
-                  v-for="dicomStudy in dicomNodes[dicomEvent.id].patients[
-                    dicomPatient.id
-                  ].studies"
-                  :key="dicomStudy.id"
-                >
-                  <v-list-group
-                    no-action
-                    sub-group
-                    :ripple="false"
-                    @click="loadSeriesContent"
-                  >
-                    <v-btn
-                      color="blue"
-                      small
-                      :ripple="false"
-                      class="ml-16"
-                      @click="send('study', dicomStudy.id)"
-                    >
-                      Send Study {{ dicomStudy.id }} to a Pipeline
-                    </v-btn>
-                    <template v-slot:activator>
-                      <v-list-item-content>
-                        <v-list-item-title>
-                          {{ dicomStudy.id }}. Study date:
-                          {{ dicomStudy.study_date }}
-                        </v-list-item-title>
-                      </v-list-item-content>
-                    </template>
-
-                    <!-- Series -->
-                    <!-- <v-list-item
-                    v-for="dicomSeries in dicomStudy.series"
-                    :key="dicomSeries.id"
-                  >
-                    {{ dicomSeries.series_description }}
-                    <v-btn
-                      color="blue"
-                      small
-                      :ripple="false"
-                      class="ml-6"
-                      @click="send('series', dicomSeries.id)"
-                    >
-                      Send Series {{ dicomSeries.id }} to a Pipeline
-                    </v-btn>
-                  </v-list-item> -->
-                  </v-list-group>
-                </v-list-item>
-              </div>
-            </v-list-group>
-          </v-list-item>
-        </div>
-      </v-list-group>
-    </v-list-item>
-
+    <v-treeview
+      dense
+      :items="test"
+      item-text="id"
+      activatable
+      :loadChildren="fetchTest"
+    >
+      <template slot="label" slot-scope="{ item }">
+        <a @click="click(item.id)">{{ item }}</a>
+      </template></v-treeview
+    >
+    <v-btn @click="tester"> test </v-btn>
+    <v-treeview dense :items="items"> </v-treeview>
     <v-dialog v-model="dialog" width="500px" height="600px">
       <DicomForm
         :dicom_obj_type="dicom_obj_type"
@@ -129,10 +30,12 @@
 </template>
 
 <script>
+import axios from 'axios'
 import { mapState } from 'vuex'
 import DicomForm from './DicomForm'
 import ContainerForm from '~/components/container/ContainerForm'
 import { generic_get } from '~/api'
+import dicomfilesVue from '../../pages/dicomfiles.vue'
 
 export default {
   components: { ContainerForm, DicomForm },
@@ -140,20 +43,91 @@ export default {
     dialog: false,
     dicom_obj_type: undefined,
     dicom_obj_id: undefined,
-    dicomNodes: {}
+    test: undefined,
+    items: [
+      {
+        id: 5,
+        name: 'Documents :',
+        children: [
+          {
+            id: 6,
+            name: 'vuetify :',
+            children: [
+              {
+                id: 7,
+                name: 'src :',
+                children: [
+                  { id: 8, name: 'index : ts' },
+                  { id: 9, name: 'bootstrap : ts' }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
   }),
   computed: {
-    ...mapState('dicomEvents', ['dicomEvents'])
+    // ...mapState('dicomEvents', ['dicomEvents']),
+    // testing: function() {
+    //   return (this.dicomEvents[0]['children'] = [1, 2])
+    // }
   },
   created() {
     this.$store.dispatch('dicomEvents/fetchDicomEvents')
   },
   methods: {
+    async fetchTest(item) {
+      console.log(item)
+      return axios
+        .get('http://localhost:5000/dicom/nodes')
+        .then(res => res.json())
+        .then(json => item.children.push(...json))
+        .catch(err => console.log(err))
+    },
+    click(nodeId) {
+      console.log(nodeId)
+    },
+    async tester() {
+      // this.tester = await this.$store
+      //   .dispatch('dicomEvents/fetchDicomEvents')
+      //   .then(x => {
+      //     this.test = x
+      //   })
+      const blah = await axios
+        .get('http://localhost:5000/dicom/nodes')
+        .then(x => {
+          this.test = x.data
+        })
+      console.log(blah)
+      console.log(this.test)
+      // console.log('Dicom Events')
+      // console.log(this.dicomEvents)
+      this.$set(this.test[0], 'item-children', [
+        {
+          id: 6,
+          name: 'vuetify :',
+          children: [
+            {
+              id: 7,
+              name: 'src :',
+              children: [
+                { id: 8, name: 'index : ts' },
+                { id: 9, name: 'bootstrap : ts' }
+              ]
+            }
+          ]
+        }
+      ])
+      // console.log(this.dicomEvents)
+      // console.log('items')
+      // console.log(this.items)
+    },
     async loadPatientContent(dicomNodeId) {
       const URL = `/dicom/nodes/${dicomNodeId}/patients`
       const res = await generic_get(this, URL)
       this.dicomNodes = { [dicomNodeId]: { patients: res } }
-      console.log(this.dicomNodes)
+      // console.log(this.dicomNodes)
     },
     async loadStudyContent(dicomNodeId, patientId) {
       const URL = `/dicom/nodes/${dicomNodeId}/patient/${patientId}/studies`
@@ -168,6 +142,7 @@ export default {
       // index because has empty spots and stuff
       // and if i do it the object key way it gets kinda weird..., overwrites the previous dicomNode with the patient data
       // console.log(this.dicomNodes[dicomNodeId].patients[patientId].studies)
+      console.log(this.dicomNodes[dicomNodeId].patients)
       console.log(this.dicomNodes[dicomNodeId].patients[0].studies)
     },
     loadSeriesContent() {
