@@ -2,7 +2,7 @@
   <v-hover v-slot:default="{ hover }">
     <v-card
       class="ma-2 title"
-      :color="hover ? 'blue' + ' lighten-1' : 'blue'"
+      :color="hover ? 'blue lighten-1' : 'blue'"
       :elevation="hover ? 12 : 0"
       style="transition: background-color 0.2s ease-out"
     >

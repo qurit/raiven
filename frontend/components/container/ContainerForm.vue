@@ -134,7 +134,6 @@ export default {
           id: this.container.containerId,
           data: formData
         })
-        console.log(this.container.name)
       } else {
         await this.$store
           .dispatch('containers/addContainer', formData)
