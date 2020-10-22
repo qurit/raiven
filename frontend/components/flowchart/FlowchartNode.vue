@@ -42,15 +42,8 @@
       </v-select>
       <v-card-actions style="position: absolute; bottom: 0; width: inherit">
         <v-chip
-          v-if="container_is_input"
           small
-          v-text="'Input'"
-          :color="nodeColor"
-        />
-        <v-chip
-          v-if="container_is_output"
-          small
-          v-text="'Output'"
+          v-text="container_is_input ? 'Input' : 'Output'"
           :color="nodeColor"
         />
         <v-spacer />
