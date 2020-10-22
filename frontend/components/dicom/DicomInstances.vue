@@ -78,12 +78,60 @@ export default {
   },
   methods: {
     async fetchTest(item) {
+      console.log(item.hasOwnProperty('host'))
+      console.log(item.hasOwnProperty('patient_id'))
       console.log(item)
-      return axios
-        .get('http://localhost:5000/dicom/nodes')
-        .then(res => res.json())
-        .then(json => item.children.push(...json))
-        .catch(err => console.log(err))
+      if (item.hasOwnProperty('host')) {
+        return axios
+          .get(`http://localhost:5000/dicom/nodes/${item.id}/patients`)
+          .then(res => {
+            res.data.forEach(x => {
+              x['children'] = []
+            })
+            return res.data
+          })
+          .then(x => {
+            console.log(x)
+            x.forEach(y => {
+              item.children.push(y)
+            })
+          })
+          .catch(err => console.log(err))
+      }
+      if (item.hasOwnProperty('patient_id')) {
+        console.log(item)
+        return axios
+          .get(
+            `http://localhost:5000/dicom/nodes/${item.dicom_node_id}/patient/${item.id}/studies`
+          )
+          .then(res => {
+            res.data.forEach(x => {
+              x['children'] = []
+            })
+            return res.data
+          })
+          .then(x => {
+            console.log(x)
+            x.forEach(y => {
+              item.children.push(y)
+            })
+          })
+          .catch(err => console.log(err))
+      }
+      if (item.hasOwnProperty('study_date')) {
+        console.log(item)
+        console.log(item.parent)
+        return axios
+          .get(
+            `http://localhost:5000/dicom/patient/${item.dicom_patient_id}/study/${item.id}/series`
+          )
+          .then(res => {
+            res.data.forEach(x => {
+              item.children.push(x)
+            })
+          })
+          .catch(err => console.log(err))
+      }
     },
     click(nodeId) {
       console.log(nodeId)
@@ -103,22 +151,7 @@ export default {
       console.log(this.test)
       // console.log('Dicom Events')
       // console.log(this.dicomEvents)
-      this.$set(this.test[0], 'item-children', [
-        {
-          id: 6,
-          name: 'vuetify :',
-          children: [
-            {
-              id: 7,
-              name: 'src :',
-              children: [
-                { id: 8, name: 'index : ts' },
-                { id: 9, name: 'bootstrap : ts' }
-              ]
-            }
-          ]
-        }
-      ])
+      this.$set(this.test[0], 'children', [])
       // console.log(this.dicomEvents)
       // console.log('items')
       // console.log(this.items)
