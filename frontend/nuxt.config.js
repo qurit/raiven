@@ -14,7 +14,8 @@ export default {
       {hid: 'description', name: 'description', content: process.env.npm_package_description || ''}
     ],
     link: [
-      {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}
+      {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
+      {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Monoton&display=swap'}
     ]
   },
   loading: {color: '#B15DFF'},
@@ -70,11 +71,13 @@ export default {
     customVariables: ['~/assets/variables.scss', '~/assets/overides.sass'],
     treeShake: true,
     theme: {
+      options: { customProperties: true },
       dark: true,
       themes: {
         dark: {
-          primary: '#1EB980',
-          secondary: '#045D56',
+          primary: '#fdbb16',
+          secondary: '#771c46',
+          accent: '#771c46',
           tertiary: '#FF6859',
           quaternary: '#FFCF44',
           quinary: '#B15DFF',
