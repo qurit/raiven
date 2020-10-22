@@ -32,63 +32,69 @@
 
         <!-- Patients -->
         <!-- NEED TO FIX THE THING.. SEEMS LIKE ITS BECAUSE ITS AUTO OPENED? OR SOMETHING? -->
-        <div v-if="!!dicomNodes[dicomEvent.id]">
+        <div v-if="dicomNodes[dicomEvent.id] !== undefined">
           <v-list-item
-            v-for="dicomPatient in Object.entries(dicomNodes[dicomEvent.id])"
-            :key="dicomPatient[0]"
+            v-for="dicomPatient in dicomNodes[dicomEvent.id].patients"
+            :key="dicomPatient.id"
           >
             <v-list-group
               no-action
               sub-group
               :ripple="false"
-              @click="loadStudyContent(dicomEvent.id, dicomPatient[0])"
+              @click="loadStudyContent(dicomEvent.id, dicomPatient.id)"
             >
               <v-btn
                 color="blue"
                 small
                 :ripple="false"
                 class="ml-16"
-                @click="send('patient', dicomPatient)"
+                @click="send('patient', dicomPatient.id)"
               >
-                Send Patient {{ dicomPatient[0] }} to a Pipeline
+                Send Patient {{ dicomPatient.id }} to a Pipeline
               </v-btn>
               <template v-slot:activator>
                 <v-list-item-content>
                   <v-list-item-title
-                    >{{ dicomPatient[0] }} Patient
-                    {{ dicomPatient[1] }}</v-list-item-title
+                    >{{ dicomPatient.id }} Patient
+                    {{ dicomPatient.patient_id }}</v-list-item-title
                   >
                 </v-list-item-content>
               </template>
 
               <!-- Studies -->
-              <v-list-item v-for="dicomStudy in [1, 2]" :key="dicomStudy.id">
-                <v-list-group
-                  no-action
-                  sub-group
-                  :ripple="false"
-                  @click="loadSeriesContent"
+              <div v-if="dicomNodes[dicomEvent.id].patients[dicomPatient.id]">
+                <v-list-item
+                  v-for="dicomStudy in dicomNodes[dicomEvent.id].patients[
+                    dicomPatient.id
+                  ].studies"
+                  :key="dicomStudy.id"
                 >
-                  <v-btn
-                    color="blue"
-                    small
+                  <v-list-group
+                    no-action
+                    sub-group
                     :ripple="false"
-                    class="ml-16"
-                    @click="send('study', dicomStudy.id)"
+                    @click="loadSeriesContent"
                   >
-                    Send Study {{ dicomStudy.id }} to a Pipeline
-                  </v-btn>
-                  <template v-slot:activator>
-                    <v-list-item-content>
-                      <v-list-item-title>
-                        {{ dicomStudy.id }}. Study date:
-                        {{ dicomStudy.study_date }}
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </template>
+                    <v-btn
+                      color="blue"
+                      small
+                      :ripple="false"
+                      class="ml-16"
+                      @click="send('study', dicomStudy.id)"
+                    >
+                      Send Study {{ dicomStudy.id }} to a Pipeline
+                    </v-btn>
+                    <template v-slot:activator>
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          {{ dicomStudy.id }}. Study date:
+                          {{ dicomStudy.study_date }}
+                        </v-list-item-title>
+                      </v-list-item-content>
+                    </template>
 
-                  <!-- Series -->
-                  <!-- <v-list-item
+                    <!-- Series -->
+                    <!-- <v-list-item
                     v-for="dicomSeries in dicomStudy.series"
                     :key="dicomSeries.id"
                   >
@@ -103,8 +109,9 @@
                       Send Series {{ dicomSeries.id }} to a Pipeline
                     </v-btn>
                   </v-list-item> -->
-                </v-list-group>
-              </v-list-item>
+                  </v-list-group>
+                </v-list-item>
+              </div>
             </v-list-group>
           </v-list-item>
         </div>
@@ -145,43 +152,23 @@ export default {
     async loadPatientContent(dicomNodeId) {
       const URL = `/dicom/nodes/${dicomNodeId}/patients`
       const res = await generic_get(this, URL)
-      console.log(res)
-      res.forEach(patient => {
-        this.dicomNodes = {
-          [dicomNodeId]: {
-            [patient.id]: patient.patient_id
-          }
-        }
-      })
+      this.dicomNodes = { [dicomNodeId]: { patients: res } }
       console.log(this.dicomNodes)
-      console.log(Object.entries(this.dicomNodes[dicomNodeId]))
     },
     async loadStudyContent(dicomNodeId, patientId) {
-      console.log(dicomNodeId)
-      console.log(patientId)
       const URL = `/dicom/nodes/${dicomNodeId}/patient/${patientId}/studies`
       const res = await generic_get(this, URL)
-
-      console.log(res)
-
-      res.forEach(study => {
-        this.dicomNodes = {
-          [dicomNodeId]: {
-            [patientId]: {
-              [study.id]: {
-                dicomPatientId: study.dicom_patient_id,
-                studyDate: study.study_date,
-                studyInstanceUid: study.study_instance_uid
-              }
-            }
-          }
+      this.dicomNodes[dicomNodeId].patients.forEach(patient => {
+        if (patient.id === patientId) {
+          patient['studies'] = res
         }
       })
       console.log(this.dicomNodes)
-      // console.log(res)
-      // const studies = { [patientId]: { studies: res } }
-      // this.dicomNodes
-      // console.log(this.dicomNodes)
+      // need to somehow associate the patientId to get it dynamically, but cant set it to the array
+      // index because has empty spots and stuff
+      // and if i do it the object key way it gets kinda weird..., overwrites the previous dicomNode with the patient data
+      // console.log(this.dicomNodes[dicomNodeId].patients[patientId].studies)
+      console.log(this.dicomNodes[dicomNodeId].patients[0].studies)
     },
     loadSeriesContent() {
       console.log('clicked study accordion')
