@@ -1,6 +1,6 @@
 <template>
   <v-app-bar app flat class="px-0" color="#27272f">
-    <v-img class="mr-5" src="logo.png" height="40" width="40" />
+    <v-img class="mr-5" src="raiven-logo.svg"  height="40" width="40" />
     <v-tabs>
       <v-tab v-for="link in links" :to="link.to" nuxt :ripple="false">
         <v-icon

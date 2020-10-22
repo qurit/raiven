@@ -1,7 +1,11 @@
 <template>
   <v-navigation-drawer :app="app" permanent width="125" bottom>
-    <v-img class="mx-auto mt-8" src="logo.png" height="100" width="100" />
-
+    <n-link to="/login" style="text-decoration: none">
+      <v-img class="mx-auto mt-8" src="raiven-logo.svg" height="100" width="100"/>
+      <div class="title text-center nav-title" style="font-family: 'Monoton', sans-serif !important; color: white">
+        R<span>A</span><span>I</span>VEN
+      </div>
+    </n-link>
     <v-list class="mt-16" flat>
       <v-list-item
         v-for="link in links"
@@ -16,7 +20,7 @@
               v-text="link.icon"
               large
               class="mx-auto"
-              :color="link.to === $route.path ? '#ffffff' : '#84848a'"
+              :color="link.to === $route.path ? 'white' : '#84848a'"
             />
             <v-expand-transition>
               <div
@@ -53,4 +57,7 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss">
+  .nav-title { color: white; text-decoration: none; }
+  .nav-title > span { color: var(--v-primary-base); }
+</style>
