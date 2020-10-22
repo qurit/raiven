@@ -14,8 +14,26 @@ router = APIRouter()
 
 @router.get("/nodes", response_model=List[dicom.DicomNode])
 def get_all_dicom_nodes(db: Session = Depends(session)):
-    print("Here")
+    print("GETTING NODES")
     return db.query(DicomNode).all()
+
+
+@router.get("/nodes/{dicom_node_id}/patients", response_model=List[dicom.DicomPatient])
+def get_node_patients(dicom_node_id: int, db: Session = Depends(session)):
+    print("GETTING PATIENTS")
+    return db.query(DicomPatient).filter_by(dicom_node_id=dicom_node_id).all()
+
+
+@router.get("/nodes/{dicom_node_id}/patient/{patient_id}/studies", response_model=List[dicom.DicomStudy])
+def get_patient_studies(dicom_node_id: int, patient_id: int, db: Session = Depends(session)):
+    print("GETTING STUDIES")
+    return db.query(DicomStudy).filter_by(dicom_patient_id=patient_id).all()
+
+
+@router.get("/nodes/{dicom_node_id}/patient/{patient_id}/study/{study_id}/series", response_model=List[dicom.DicomSeries])
+def get_study_series(dicom_node_id: int, patient_id: int, study_id: int, db: Session = Depends(session)):
+    print("GETTING SERIES")
+    return db.query(DicomSeries).filter_by(dicom_study_id=study_id).all()
 
 
 @router.put("/node/{dicom_node_id}")

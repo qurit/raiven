@@ -22,19 +22,15 @@
         </v-btn>
       </v-row>
 
-<!-- Pipeline Builder -->
+      <!-- Pipeline Builder -->
       <SimpleFlowchart
         :scene.sync="scene"
         :id="pipeline_id"
         ref="simpleFlowchart"
       />
 
-<!-- Dialogs -->
-      <v-dialog
-        v-model="containerDialog"
-        max-width="900px"
-        min-height="600px"
-      >
+      <!-- Dialogs -->
+      <v-dialog v-model="containerDialog" max-width="900px" min-height="600px">
         <ContainerForm
           :isEditing="false"
           @closeDialog="containerDialog = false"
@@ -52,7 +48,7 @@
         />
       </v-dialog>
 
-<!-- Container List -->
+      <!-- Container List -->
       <v-navigation-drawer v-model="containerList" absolute right>
         <template v-slot:prepend>
           <v-list-item two-line>
@@ -70,23 +66,22 @@
         <ContainerCard v-for="c in containers" :id="c.id" :container="c">
           <v-icon-btn add @click="addNode(c)" color="white" />
         </ContainerCard>
-
       </v-navigation-drawer>
     </v-col>
   </v-row>
 </template>
 
 <script>
-  import {mapState} from 'vuex'
-  import {generic_get} from '~/api'
+import { mapState } from 'vuex'
+import { generic_get } from '~/api'
 
-  import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
-  import VIconBtn from '../../components/global/v-icon-btn'
-  import ContainerForm from '~/components/container/ContainerForm'
-  import OutputDestinationForm from '~/components/OutputDestinationForm'
-  import ContainerCard from "~/components/container/ContainerCard";
+import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
+import VIconBtn from '../../components/global/v-icon-btn'
+import ContainerForm from '~/components/container/ContainerForm'
+import OutputDestinationForm from '~/components/OutputDestinationForm'
+import ContainerCard from '~/components/container/ContainerCard'
 
-  export default {
+export default {
   components: {
     ContainerCard,
     VIconBtn,
@@ -106,7 +101,7 @@
       scale: 1,
       nodes: [],
       links: []
-    },
+    }
   }),
   methods: {
     addNode(container) {
