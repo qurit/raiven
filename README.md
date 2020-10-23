@@ -1,5 +1,5 @@
-# PICOM
-Build using python, flask, and nuxt, PICOM is full-featured application for building and maintaining DICOM image processing pipelines.
+Raiven
+Build using python, flask, and nuxt, Raiven is full-featured application for building and maintaining DICOM image processing pipelines.  Raiven hopes to become the radiology room of the future.
 
 PICOM hopes to fulfill these [user stories](./stories.md).
 
