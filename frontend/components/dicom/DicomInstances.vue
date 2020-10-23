@@ -14,7 +14,24 @@
       :loadChildren="fetchTest"
     >
       <template slot="label" slot-scope="{ item }">
-        <a @click="click(item.id)">{{ item }}</a>
+        <a v-if="item.hasOwnProperty('host')" @click="send('Node', item.id)">
+          From Host: {{ item.host }}
+        </a>
+        <a
+          v-else-if="item.hasOwnProperty('patient_id')"
+          @click="send('Patient', item.id)"
+        >
+          {{ item.id }} Patient: {{ item.patient_id }}
+        </a>
+        <a
+          v-else-if="item.hasOwnProperty('study_instance_uid')"
+          @click="send('Study', item.id)"
+        >
+          Study Date: {{ item.study_date }}
+        </a>
+        <a v-else @click="send('Series', item.id)">
+          Series: {{ item.series_instance_uid }}
+        </a>
       </template></v-treeview
     >
     <v-btn @click="tester"> test </v-btn>
@@ -182,6 +199,7 @@ export default {
       console.log('clicked study accordion')
     },
     send(type, id) {
+      console.log(type)
       this.dicom_obj_type = type
       this.dicom_obj_id = id
       this.dialog = true
