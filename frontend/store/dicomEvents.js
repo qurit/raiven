@@ -15,6 +15,7 @@ export const actions = {
       const URL = '/dicom/nodes'
       const res = await generic_get(this, URL)
       commit('setDicomEvents', res)
+      return res
     } catch (err) {
       console.log(err)
     }
