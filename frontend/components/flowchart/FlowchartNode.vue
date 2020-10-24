@@ -5,7 +5,7 @@
       :style="nodeStyle"
       @mousedown="handleMousedown"
       v-bind:class="{ selected: options.selected === id }"
-      color="blue"
+      rounded
     >
       <!-- Input Port -->
       <FlowchartNodePort
