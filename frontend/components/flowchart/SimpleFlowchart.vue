@@ -19,6 +19,7 @@
         v-for="(node, index) in scene.nodes"
         :key="`node${index}`"
         :options="nodeOptions"
+        :colors="colors.container"
         @linkingStart="linkingStart(node.id)"
         @linkingStop="linkingStop(node.id)"
         @nodeSelected="nodeSelected(node.id, $event)"
@@ -30,7 +31,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import FlowchartLink from './FlowchartLink.vue'
 import FlowchartNode from './FlowchartNode.vue'
 import { getMousePosition } from './position'
@@ -57,6 +57,12 @@ export default {
     },
     id: {
       type: Number
+    },
+    colors: {
+      type: Object,
+      default: () => ({
+        container: undefined
+      })
     }
   },
   data: () => ({

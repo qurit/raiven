@@ -2,9 +2,9 @@
   <v-hover v-slot:default="{ hover }">
     <v-card
       class="ma-2 title"
-      :color="hover ? 'blue lighten-1' : 'blue'"
       :elevation="hover ? 12 : 0"
       style="transition: background-color 0.2s ease-out"
+      rounded
     >
       <v-card-title v-text="container.name" />
       <v-card-subtitle v-text="`ID: ${container.id}`" class="pb-4" />
@@ -13,7 +13,6 @@
       </v-card-text>
       <v-card-actions>
         <v-chip
-          small
           v-for="chip in chips"
           v-text="chip"
           class="mr-1"

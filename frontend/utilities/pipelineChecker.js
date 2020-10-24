@@ -35,13 +35,14 @@ function depthFirstSearch(startingVertex, sceneNodes) {
       }
     })
   }
+
   // DFS result must match pipeline nodes length to be connected
-  return sceneNodes.length === result.length ? true : false
+  return sceneNodes.length === result.length
 }
 
 export function pipelineChecker(nodes, links) {
   adjacencyList = {}
-  console.log('in pipelinechecker!')
+
   // inital nodes in graph to compare with result nodes after DFS
   const sceneNodes = nodes.map(node => {
     return node.id
