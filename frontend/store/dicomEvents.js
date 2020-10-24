@@ -4,7 +4,6 @@ export const state = () => ({
   dicomEvents: []
 })
 
-// TODO: UPDATE CONTAINER WITH MODAL FORM
 export const mutations = {
   setDicomEvents: (state, dicomEvents) => (state.dicomEvents = dicomEvents)
 }
