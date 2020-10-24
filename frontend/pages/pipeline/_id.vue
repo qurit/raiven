@@ -26,7 +26,9 @@
       <SimpleFlowchart
         :scene.sync="scene"
         :id="pipeline_id"
+        :colors="colors.container"
         ref="simpleFlowchart"
+
       />
 
 <!-- Dialogs -->
@@ -41,33 +43,20 @@
         />
       </v-dialog>
 
-      <v-dialog
-        v-model="destinationDialog"
-        max-width="900px"
-        min-height="600px"
-      >
-        <OutputDestinationForm
-          :isEditing="false"
-          @closeDialog="destinationDialog = false"
-        />
-      </v-dialog>
-
 <!-- Container List -->
       <v-navigation-drawer v-model="containerList" absolute right>
         <template v-slot:prepend>
           <v-list-item two-line>
             <v-list-item-content>
-              <v-btn class="mt-2" @click="containerDialog = true">
+              <v-btn class="mt-2 mx-auto" @click="containerDialog = true" color="primary" outlined rounded>
                 Add a Container
-              </v-btn>
-              <v-btn class="mt-2" @click="destinationDialog = true" small>
-                Add a Destination
+                <v-icon>mdi-plus</v-icon>
               </v-btn>
             </v-list-item-content>
           </v-list-item>
         </template>
 
-        <ContainerCard v-for="c in containers" :id="c.id" :container="c">
+        <ContainerCard v-for="c in containers" :id="c.id" :container="c" :colors="colors.container">
           <v-icon-btn add @click="addNode(c)" color="white" />
         </ContainerCard>
 
@@ -92,14 +81,18 @@
     VIconBtn,
     SimpleFlowchart,
     ContainerForm,
-    OutputDestinationForm
   },
   data: () => ({
     containerList: true,
     containerDialog: false,
-    destinationDialog: false,
     pipeline_id: '',
-
+    colors: {
+      container: {
+        input: 'orange',
+        output: 'purple',
+        default: 'blue'
+      }
+    },
     scene: {
       centerX: 1024,
       centerY: 140,
