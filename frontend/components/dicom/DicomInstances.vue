@@ -5,11 +5,10 @@
     </v-card-title>
     <v-divider light />
 
-    <!-- Nodes   -->
     <v-treeview dense :items="nodes" item-text="id" :loadChildren="fetchTest">
       <template slot="label" slot-scope="{ item }">
         <a v-if="item.hasOwnProperty('host')" @click="send('Node', item.id)">
-          From Host: {{ item.host }}
+          {{ item.id }} From Host: {{ item.host }}
         </a>
         <a
           v-else-if="item.hasOwnProperty('patient_id')"
@@ -21,20 +20,18 @@
           v-else-if="item.hasOwnProperty('study_instance_uid')"
           @click="send('Study', item.id)"
         >
-          Study Date: {{ item.study_date }}
+          {{ item.id }} Study Date: {{ item.study_date }}
         </a>
         <a v-else @click="send('Series', item.id)">
-          Series: {{ item.series_instance_uid }}
+          {{ item.id }} Series: {{ item.series_instance_uid }}
         </a>
       </template></v-treeview
     >
-    <v-btn @click="tester"> test </v-btn>
-    <v-treeview dense :items="items"> </v-treeview>
     <v-dialog v-model="dialog" width="500px" height="600px">
       <DicomForm
         :dicom_obj_type="dicom_obj_type"
         :dicom_obj_id="dicom_obj_id"
-        @submit="dialog = false"
+        @closeDialog="dialog = false"
       />
     </v-dialog>
   </v-card>
@@ -128,13 +125,10 @@ export default {
           })
         })
     },
-    send(type, id) {
-      this.dicom_obj_type = type
+    send(name, id) {
+      this.dicom_obj_type = name
       this.dicom_obj_id = id
       this.dialog = true
-    },
-    async submit() {
-      this.dialog = false
     }
   }
 }
