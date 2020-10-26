@@ -92,6 +92,7 @@ export default {
   },
   created() {
     this.$store.dispatch('dicomEvents/fetchDicomEvents')
+    this.tester()
   },
   methods: {
     async fetchTest(item) {
@@ -153,6 +154,9 @@ export default {
     click(nodeId) {
       console.log(nodeId)
     },
+    hello() {
+      console.log('hello')
+    },
     async tester() {
       // this.tester = await this.$store
       //   .dispatch('dicomEvents/fetchDicomEvents')
@@ -164,14 +168,12 @@ export default {
         .then(x => {
           this.test = x.data
         })
-      console.log(blah)
+      console.log('blah')
       console.log(this.test)
-      // console.log('Dicom Events')
-      // console.log(this.dicomEvents)
-      this.$set(this.test[0], 'children', [])
-      // console.log(this.dicomEvents)
-      // console.log('items')
-      // console.log(this.items)
+
+      this.test.forEach(x => {
+        this.$set(x, 'children', [])
+      })
     },
     async loadPatientContent(dicomNodeId) {
       const URL = `/dicom/nodes/${dicomNodeId}/patients`
