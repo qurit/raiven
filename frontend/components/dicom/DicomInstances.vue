@@ -8,7 +8,7 @@
     <!-- Nodes   -->
     <v-treeview
       dense
-      :items="test"
+      :items="nodes"
       item-text="id"
       activatable
       :loadChildren="fetchTest"
@@ -60,148 +60,83 @@ export default {
     dialog: false,
     dicom_obj_type: undefined,
     dicom_obj_id: undefined,
-    test: undefined,
-    items: [
-      {
-        id: 5,
-        name: 'Documents :',
-        children: [
-          {
-            id: 6,
-            name: 'vuetify :',
-            children: [
-              {
-                id: 7,
-                name: 'src :',
-                children: [
-                  { id: 8, name: 'index : ts' },
-                  { id: 9, name: 'bootstrap : ts' }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
+    nodes: undefined
   }),
-  computed: {
-    // ...mapState('dicomEvents', ['dicomEvents']),
-    // testing: function() {
-    //   return (this.dicomEvents[0]['children'] = [1, 2])
-    // }
-  },
   created() {
-    this.$store.dispatch('dicomEvents/fetchDicomEvents')
-    this.tester()
+    this.getNodes()
   },
   methods: {
     async fetchTest(item) {
-      console.log(item.hasOwnProperty('host'))
-      console.log(item.hasOwnProperty('patient_id'))
-      console.log(item)
+      // if opening the node accordion
       if (item.hasOwnProperty('host')) {
-        return axios
-          .get(`http://localhost:5000/dicom/nodes/${item.id}/patients`)
-          .then(res => {
-            res.data.forEach(x => {
-              x['children'] = []
+        return (
+          axios
+            .get(`http://localhost:5000/dicom/nodes/${item.id}/patients`)
+            // appending "children" to the patients so that they are openable
+            .then(res => {
+              res.data.forEach(patient => {
+                patient['children'] = []
+              })
+              return res.data
             })
-            return res.data
-          })
-          .then(x => {
-            console.log(x)
-            x.forEach(y => {
-              item.children.push(y)
+            // adding the patients as the node's children
+            .then(patients => {
+              patients.forEach(patient => {
+                item.children.push(patient)
+              })
             })
-          })
-          .catch(err => console.log(err))
+            .catch(err => console.log(err))
+        )
       }
+      // if opening the patient accordion
       if (item.hasOwnProperty('patient_id')) {
-        console.log(item)
-        return axios
-          .get(
-            `http://localhost:5000/dicom/nodes/${item.dicom_node_id}/patient/${item.id}/studies`
-          )
-          .then(res => {
-            res.data.forEach(x => {
-              x['children'] = []
+        return (
+          axios
+            .get(
+              `http://localhost:5000/dicom/nodes/${item.dicom_node_id}/patient/${item.id}/studies`
+            )
+            // append "children" to the studies so that they are openable
+            .then(res => {
+              res.data.forEach(study => {
+                study['children'] = []
+              })
+              return res.data
             })
-            return res.data
-          })
-          .then(x => {
-            console.log(x)
-            x.forEach(y => {
-              item.children.push(y)
+            // adding the studies as the patient's children
+            .then(studies => {
+              studies.forEach(study => {
+                item.children.push(study)
+              })
             })
-          })
-          .catch(err => console.log(err))
+            .catch(err => console.log(err))
+        )
       }
       if (item.hasOwnProperty('study_date')) {
-        console.log(item)
-        console.log(item.parent)
         return axios
           .get(
             `http://localhost:5000/dicom/patient/${item.dicom_patient_id}/study/${item.id}/series`
           )
           .then(res => {
-            res.data.forEach(x => {
-              item.children.push(x)
+            res.data.forEach(studies => {
+              // adding the studies to the series' children
+              item.children.push(studies)
             })
           })
           .catch(err => console.log(err))
       }
     },
-    click(nodeId) {
-      console.log(nodeId)
-    },
-    hello() {
-      console.log('hello')
-    },
-    async tester() {
-      // this.tester = await this.$store
-      //   .dispatch('dicomEvents/fetchDicomEvents')
-      //   .then(x => {
-      //     this.test = x
-      //   })
+    async getNodes() {
       const blah = await axios
         .get('http://localhost:5000/dicom/nodes')
-        .then(x => {
-          this.test = x.data
+        .then(res => {
+          this.nodes = res.data
         })
-      console.log('blah')
-      console.log(this.test)
-
-      this.test.forEach(x => {
-        this.$set(x, 'children', [])
+      // appending "children" to each node so its openable
+      this.nodes.forEach(node => {
+        this.$set(node, 'children', [])
       })
-    },
-    async loadPatientContent(dicomNodeId) {
-      const URL = `/dicom/nodes/${dicomNodeId}/patients`
-      const res = await generic_get(this, URL)
-      this.dicomNodes = { [dicomNodeId]: { patients: res } }
-      // console.log(this.dicomNodes)
-    },
-    async loadStudyContent(dicomNodeId, patientId) {
-      const URL = `/dicom/nodes/${dicomNodeId}/patient/${patientId}/studies`
-      const res = await generic_get(this, URL)
-      this.dicomNodes[dicomNodeId].patients.forEach(patient => {
-        if (patient.id === patientId) {
-          patient['studies'] = res
-        }
-      })
-      console.log(this.dicomNodes)
-      // need to somehow associate the patientId to get it dynamically, but cant set it to the array
-      // index because has empty spots and stuff
-      // and if i do it the object key way it gets kinda weird..., overwrites the previous dicomNode with the patient data
-      // console.log(this.dicomNodes[dicomNodeId].patients[patientId].studies)
-      console.log(this.dicomNodes[dicomNodeId].patients)
-      console.log(this.dicomNodes[dicomNodeId].patients[0].studies)
-    },
-    loadSeriesContent() {
-      console.log('clicked study accordion')
     },
     send(type, id) {
-      console.log(type)
       this.dicom_obj_type = type
       this.dicom_obj_id = id
       this.dialog = true
