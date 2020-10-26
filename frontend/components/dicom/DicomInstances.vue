@@ -6,13 +6,7 @@
     <v-divider light />
 
     <!-- Nodes   -->
-    <v-treeview
-      dense
-      :items="nodes"
-      item-text="id"
-      activatable
-      :loadChildren="fetchTest"
-    >
+    <v-treeview dense :items="nodes" item-text="id" :loadChildren="fetchTest">
       <template slot="label" slot-scope="{ item }">
         <a v-if="item.hasOwnProperty('host')" @click="send('Node', item.id)">
           From Host: {{ item.host }}
@@ -67,17 +61,17 @@ export default {
   },
   methods: {
     async fetchTest(item) {
-      // if opening the node accordion
+      // open node accordion / get patients
       if (item.hasOwnProperty('host')) {
+        const URL = `/dicom/nodes/${item.id}/patients`
         return (
-          axios
-            .get(`http://localhost:5000/dicom/nodes/${item.id}/patients`)
-            // appending "children" to the patients so that they are openable
-            .then(res => {
-              res.data.forEach(patient => {
+          generic_get(this, URL)
+            // append "children" to the patients so that they are openable
+            .then(data => {
+              data.forEach(patient => {
                 patient['children'] = []
               })
-              return res.data
+              return data
             })
             // adding the patients as the node's children
             .then(patients => {
@@ -88,19 +82,17 @@ export default {
             .catch(err => console.log(err))
         )
       }
-      // if opening the patient accordion
+      // open patient accordion / get studies
       if (item.hasOwnProperty('patient_id')) {
+        const URL = `/dicom/nodes/${item.dicom_node_id}/patient/${item.id}/studies`
         return (
-          axios
-            .get(
-              `http://localhost:5000/dicom/nodes/${item.dicom_node_id}/patient/${item.id}/studies`
-            )
+          generic_get(this, URL)
             // append "children" to the studies so that they are openable
-            .then(res => {
-              res.data.forEach(study => {
+            .then(data => {
+              data.forEach(study => {
                 study['children'] = []
               })
-              return res.data
+              return data
             })
             // adding the studies as the patient's children
             .then(studies => {
@@ -111,13 +103,12 @@ export default {
             .catch(err => console.log(err))
         )
       }
+      // open study accordion / get series
       if (item.hasOwnProperty('study_date')) {
-        return axios
-          .get(
-            `http://localhost:5000/dicom/patient/${item.dicom_patient_id}/study/${item.id}/series`
-          )
-          .then(res => {
-            res.data.forEach(studies => {
+        const URL = `/dicom/patient/${item.dicom_patient_id}/study/${item.id}/series`
+        return generic_get(this, URL)
+          .then(data => {
+            data.forEach(studies => {
               // adding the studies to the series' children
               item.children.push(studies)
             })
@@ -126,15 +117,16 @@ export default {
       }
     },
     async getNodes() {
-      const blah = await axios
-        .get('http://localhost:5000/dicom/nodes')
-        .then(res => {
-          this.nodes = res.data
+      const URL = '/dicom/nodes'
+      await generic_get(this, URL)
+        .then(data => {
+          this.nodes = data
         })
-      // appending "children" to each node so its openable
-      this.nodes.forEach(node => {
-        this.$set(node, 'children', [])
-      })
+        .then(() => {
+          this.nodes.forEach(node => {
+            this.$set(node, 'children', [])
+          })
+        })
     },
     send(type, id) {
       this.dicom_obj_type = type
