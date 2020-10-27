@@ -50,4 +50,12 @@ can be done by modifying the `.env` file.  Backend configuration can also be don
 the frontend configuration can be done by modifying `/frontend/nuxt.config.js`.  Configuration can also be done by 
 setting environment variables.  The environment variables which can be set are found in `/backend/config.py`.
 
+---
+<p align="center">
+  <em>Proudly Created by <a href="https://qurit.ca">Qurit</a></em>
+</p>
+<p align="center">
+  <img src="frontend/static/qurit-logo-text.png" alt="Qurit Logo" height="75" />
+</p>
+
   
