@@ -1,8 +1,16 @@
 <template>
   <v-navigation-drawer :app="app" permanent width="125" bottom>
     <n-link to="/login" style="text-decoration: none">
-      <v-img class="mx-auto mt-8" src="raiven-logo.svg" height="100" width="100"/>
-      <div class="title text-center nav-title" style="font-family: 'Monoton', sans-serif !important; color: white">
+      <v-img
+        class="mx-auto mt-8"
+        :src="require('../../static/raiven-logo.svg')"
+        height="100"
+        width="100"
+      />
+      <div
+        class="title text-center nav-title"
+        style="font-family: 'Monoton', sans-serif !important; color: white"
+      >
         R<span>A</span><span>I</span>VEN
       </div>
     </n-link>
@@ -58,6 +66,11 @@ export default {
 </script>
 
 <style lang="scss">
-  .nav-title { color: white; text-decoration: none; }
-  .nav-title > span { color: var(--v-primary-base); }
+.nav-title {
+  color: white;
+  text-decoration: none;
+}
+.nav-title > span {
+  color: var(--v-primary-base);
+}
 </style>
