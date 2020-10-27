@@ -77,8 +77,9 @@ export default {
     viewPipeline(pipelineId) {
       this.$router.push({ path: `/pipeline/${pipelineId}` })
     },
-    removePipeline(pipeline) {
-      this.$store.dispatch('pipelines/deletePipeline', pipeline.id)
+    async removePipeline(pipeline) {
+      await this.$store.dispatch('pipelines/deletePipeline', pipeline.id)
+      this.$toaster.toastSuccess('Pipeline removed!')
     },
     async savePipeline() {
       const payload = {
@@ -89,6 +90,7 @@ export default {
         'pipelines/addPipeline',
         payload
       )
+      this.$toaster.toastSuccess('Pipeline created!')
       this.$router.push({ path: `/pipeline/${data.id}` })
       this.dialog = false
     }
