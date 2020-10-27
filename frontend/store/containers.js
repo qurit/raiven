@@ -4,7 +4,6 @@ export const state = () => ({
   containers: []
 })
 
-// TODO: UPDATE CONTAINER WITH MODAL FORM
 export const mutations = {
   setContainers: (state, containers) => (state.containers = containers),
   addContainer: (state, container) =>

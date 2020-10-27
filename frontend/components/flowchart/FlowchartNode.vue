@@ -5,19 +5,19 @@
       :style="nodeStyle"
       @mousedown="handleMousedown"
       v-bind:class="{ selected: options.selected === id }"
-      :color="nodeColor"
+      rounded
     >
-<!-- Input Port -->
+      <!-- Input Port -->
       <FlowchartNodePort
         v-if="!container_is_input"
         class="node-port node-input"
         @mouseup="$emit('linkingStop')"
       />
 
-<!-- Node Data -->
+      <!-- Node Data -->
       <v-card-title v-text="type" />
       <v-select
-        v-if="container_is_input"
+        v-if="container_is_output"
         :items="destinations"
         item-text="full_name"
         item-value="id"
@@ -37,36 +37,34 @@
               <v-icon-btn add @click="destinationDialog = true" />
             </v-list-item-action>
           </v-list-item>
-          <v-divider light/>
+          <v-divider light />
         </template>
       </v-select>
       <v-card-actions style="position: absolute; bottom: 0; width: inherit">
-        <v-chip v-if="container_is_input" small v-text="'Input'" />
-        <v-chip v-if="container_is_output" small v-text="'Output'" />
+        <v-chip
+          small
+          v-text="container_is_input ? 'Input' : 'Output'"
+          :color="nodeColor"
+        />
         <v-spacer />
-         <v-icon-btn
-            delete
-            color="red"
-            @click="$emit('deleteNode')"
-         />
+        <v-icon-btn delete color="red" @click="$emit('deleteNode')" />
       </v-card-actions>
 
-<!-- Output Port -->
-        <FlowchartNodePort
-          v-if="!container_is_output"
-          class="node-port node-output"
-          @mousedown="$emit('linkingStart')"
-        />
-<!-- Destination Dialogs -->
+      <!-- Output Port -->
+      <FlowchartNodePort
+        v-if="!container_is_output"
+        class="node-port node-output"
+        @mousedown="$emit('linkingStart')"
+      />
+      <!-- Destination Dialogs -->
       <v-dialog
         v-model="destinationDialog"
         max-width="900px"
         min-height="600px"
         @closeDialog="destinationDialog = false"
       >
-        <OutputDestinationForm/>
+        <OutputDestinationForm />
       </v-dialog>
-
     </v-card>
   </v-hover>
 </template>
