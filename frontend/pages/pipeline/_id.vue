@@ -22,33 +22,39 @@
         </v-btn>
       </v-row>
 
-<!-- Pipeline Builder -->
+      <!-- Pipeline Builder -->
       <SimpleFlowchart
         :scene.sync="scene"
         :id="pipeline_id"
         :colors="colors.container"
         ref="simpleFlowchart"
-
       />
 
-<!-- Dialogs -->
-      <v-dialog
-        v-model="containerDialog"
-        max-width="900px"
-        min-height="600px"
-      >
+      <!-- Dialogs -->
+      <v-dialog v-model="containerDialog" max-width="900px" min-height="600px">
         <ContainerForm
           :isEditing="false"
           @closeDialog="containerDialog = false"
         />
       </v-dialog>
 
-<!-- Container List -->
-      <v-navigation-drawer v-model="containerList" absolute right>
+      <!-- Container List -->
+      <v-navigation-drawer
+        v-model="containerList"
+        absolute
+        right
+        style="z-index: 9999"
+      >
         <template v-slot:prepend>
           <v-list-item two-line>
             <v-list-item-content>
-              <v-btn class="mt-2 mx-auto" @click="containerDialog = true" color="primary" outlined rounded>
+              <v-btn
+                class="mt-2 mx-auto"
+                @click="containerDialog = true"
+                color="primary"
+                outlined
+                rounded
+              >
                 Add a Container
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
@@ -56,31 +62,35 @@
           </v-list-item>
         </template>
 
-        <ContainerCard v-for="c in containers" :id="c.id" :container="c" :colors="colors.container">
+        <ContainerCard
+          v-for="c in containers"
+          :id="c.id"
+          :container="c"
+          :colors="colors.container"
+        >
           <v-icon-btn add @click="addNode(c)" color="white" />
         </ContainerCard>
-
       </v-navigation-drawer>
     </v-col>
   </v-row>
 </template>
 
 <script>
-  import {mapState} from 'vuex'
-  import {generic_get} from '~/api'
+import { mapState } from 'vuex'
+import { generic_get } from '~/api'
 
-  import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
-  import VIconBtn from '../../components/global/v-icon-btn'
-  import ContainerForm from '~/components/container/ContainerForm'
-  import OutputDestinationForm from '~/components/OutputDestinationForm'
-  import ContainerCard from "~/components/container/ContainerCard";
+import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
+import VIconBtn from '../../components/global/v-icon-btn'
+import ContainerForm from '~/components/container/ContainerForm'
+import OutputDestinationForm from '~/components/OutputDestinationForm'
+import ContainerCard from '~/components/container/ContainerCard'
 
-  export default {
+export default {
   components: {
     ContainerCard,
     VIconBtn,
     SimpleFlowchart,
-    ContainerForm,
+    ContainerForm
   },
   data: () => ({
     containerList: true,
@@ -99,7 +109,7 @@
       scale: 1,
       nodes: [],
       links: []
-    },
+    }
   }),
   methods: {
     addNode(container) {
