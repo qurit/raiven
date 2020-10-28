@@ -1,8 +1,10 @@
 from typing import List
 from collections import Counter
 from itertools import chain
+from datetime import datetime, timedelta
 
 from sqlalchemy.orm import Session
+from sqlalchemy import asc
 from fastapi import APIRouter, Depends, BackgroundTasks
 
 from api import session
@@ -15,8 +17,11 @@ router = APIRouter()
 
 @router.get("/runs")
 def get_pipeline_runs(db: Session = Depends(session)):
-    pipeline_runs = db.query(PipelineRun.created_datetime).all()
+    pipeline_runs = db.query(PipelineRun.created_datetime).order_by(
+        asc(PipelineRun.created_datetime)).filter(PipelineRun.created_datetime > datetime.today() - timedelta(days=7)).all()
     pipeline_runs_to_count = list(chain(*pipeline_runs))
+    pipeline_runs_to_count = map(lambda x: x.date(), pipeline_runs_to_count)
+    pipeline_runs_to_count = list(pipeline_runs_to_count)
     return Counter(pipeline_runs_to_count)
 
 

@@ -1,9 +1,11 @@
 <template>
   <div class="small">
     <v-card color="white">
-      <bar-chart :chart-data="datacollection" :options="options"></bar-chart>
-      <button @click="fillData()">Randomize</button>
-      <v-btn @click="test"> test</v-btn>
+      <bar-chart
+        v-if="loaded"
+        :chart-data="datacollection"
+        :options="options"
+      ></bar-chart>
     </v-card>
   </div>
 </template>
@@ -21,21 +23,34 @@ export default {
       loaded: false,
       chartdata: null,
       datacollection: null,
+      maxYAxis: 0,
       options: {
+        layout: {
+          padding: {
+            top: 10
+          }
+        },
         scales: {
           yAxes: [
             {
+              gridLines: {
+                display: false
+              },
               scaleLabel: {
                 display: true,
                 labelString: 'Pipeline Runs'
               },
               ticks: {
-                beginAtZero: true
+                beginAtZero: true,
+                stepSize: 1
               }
             }
           ],
           xAxes: [
             {
+              gridLines: {
+                display: false
+              },
               scaleLabel: {
                 display: true,
                 labelString: 'Date'
@@ -47,35 +62,24 @@ export default {
     }
   },
   async mounted() {
-    this.fillData()
-    this.loaded = false
     const URL = '/pipeline/runs'
     try {
-      const test = await generic_get(this, URL)
-      this.chartdata = test
+      this.loaded = false
+      this.chartdata = await generic_get(this, URL)
+      this.fillData()
       this.loaded = true
     } catch (e) {
       console.log(e)
     }
   },
   methods: {
-    test() {
-      console.log(this.chartdata)
-    },
     fillData() {
       this.datacollection = {
-        labels: [
-          '2020-09-21',
-          '2020-09-22',
-          '2020-09-23',
-          '2020-09-24',
-          '2020-09-25',
-          '2020-09-26'
-        ],
+        labels: Object.keys(this.chartdata),
         datasets: [
           {
-            label: 'Pipeline Runs per Day',
-            data: [12, 19, 3, 5, 2, 3],
+            label: 'Pipeline Runs per Day (past 7-day view)',
+            data: Object.values(this.chartdata),
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
             borderColor: 'rgba(54, 162, 235, 1)',
             fillColor: 'rgba(54, 162, 235, 1)',
@@ -83,9 +87,6 @@ export default {
           }
         ]
       }
-    },
-    getRandomInt() {
-      return Math.floor(Math.random() * (50 - 5 + 1)) + 5
     }
   }
 }
