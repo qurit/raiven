@@ -1,4 +1,6 @@
 from typing import List
+from collections import Counter
+from itertools import chain
 
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, BackgroundTasks
@@ -13,32 +15,29 @@ router = APIRouter()
 
 @router.get("/runs")
 def get_pipeline_runs(db: Session = Depends(session)):
-    return db.query(PipelineRun).group_by(PipelineRun.pipeline_id).count()
-    # return db.query(PipelineRun).get(PipelineRun.created_datetime)
-    # new_dict = {}
-    # new_dict['date'] = ""
-    # new_dict['counts'] = ""
-    # return new_dict
+    pipeline_runs = db.query(PipelineRun.created_datetime).all()
+    pipeline_runs_to_count = list(chain(*pipeline_runs))
+    return Counter(pipeline_runs_to_count)
 
 
-@router.get("/", response_model=List[schemas.Pipeline])
+@ router.get("/", response_model=List[schemas.Pipeline])
 def get_all_pipelines(db: Session = Depends(session)):
     return db.query(Pipeline).all()
 
 
-@router.post("/", response_model=schemas.Pipeline)
+@ router.post("/", response_model=schemas.Pipeline)
 def create_pipeline(pipeline: schemas.PipelineCreate, db: Session = Depends(session)):
     print("got here")
     print(pipeline)
     return Pipeline(**pipeline.dict()).save(db)
 
 
-@router.get("/{pipeline_id}", response_model=schemas.PipelineFull)
+@ router.get("/{pipeline_id}", response_model=schemas.PipelineFull)
 def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
     return db.query(Pipeline).get(pipeline_id)
 
 
-@router.put("/{pipeline_id}", response_model=schemas.PipelineRun)
+@ router.put("/{pipeline_id}", response_model=schemas.PipelineRun)
 def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, background_tasks: BackgroundTasks, db: Session = Depends(session)):
     """ Runs A Pipeline. """
     run_options.pipeline_id = pipeline_id
@@ -52,17 +51,17 @@ def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, back
 
 # TODO: ask Adam why this didnt send the x and y coordinates... even tho they're defined in the model?
 # @router.get("/{pipeline_id}/nodes", response_model=List[schemas.PipelineNode])
-@router.get("/{pipeline_id}/nodes")
+@ router.get("/{pipeline_id}/nodes")
 def get_pipeline_nodes(pipeline_id: int, db: Session = Depends(session)):
     return db.query(PipelineNode).filter(PipelineNode.pipeline_id == pipeline_id).all()
 
 
-@router.get("/{pipeline_id}/links")
+@ router.get("/{pipeline_id}/links")
 def get_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
     return db.query(PipelineLink).filter(PipelineLink.pipeline_id == pipeline_id).delete()
 
 
-@router.post("/{pipeline_id}", response_model=schemas.Pipeline)
+@ router.post("/{pipeline_id}", response_model=schemas.Pipeline)
 def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, db: Session = Depends(session)):
     """ This Allows you to update / add pipeline containers and links """
     print("pipeline payload from frontend")
@@ -93,6 +92,6 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
     return db.query(Pipeline).get(pipeline_id)
 
 
-@router.delete("/{pipeline_id}", response_model=schemas.Pipeline)
+@ router.delete("/{pipeline_id}", response_model=schemas.Pipeline)
 def delete_pipeline(pipeline_id: int, db: Session = Depends(session)):
     return db.query(Pipeline).get(pipeline_id).delete(db)
