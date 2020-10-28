@@ -1,6 +1,6 @@
 <template>
   <div class="small">
-    <v-card color="white">
+    <v-card elevation="6">
       <bar-chart
         v-if="loaded"
         :chart-data="datacollection"
@@ -25,6 +25,11 @@ export default {
       datacollection: null,
       maxYAxis: 0,
       options: {
+        legend: {
+          labels: {
+            fontColor: 'white'
+          }
+        },
         layout: {
           padding: {
             top: 10
@@ -38,11 +43,13 @@ export default {
               },
               scaleLabel: {
                 display: true,
-                labelString: 'Pipeline Runs'
+                labelString: 'Pipeline Runs',
+                fontColor: 'white'
               },
               ticks: {
                 beginAtZero: true,
-                stepSize: 1
+                stepSize: 1,
+                fontColor: 'white'
               }
             }
           ],
@@ -53,7 +60,11 @@ export default {
               },
               scaleLabel: {
                 display: true,
-                labelString: 'Date'
+                labelString: 'Date',
+                fontColor: 'white'
+              },
+              ticks: {
+                fontColor: 'white'
               }
             }
           ]
@@ -78,7 +89,7 @@ export default {
         labels: Object.keys(this.chartdata),
         datasets: [
           {
-            label: 'Pipeline Runs per Day (past 7-day view)',
+            label: 'Pipeline Runs per Day (7-day view)',
             data: Object.values(this.chartdata),
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
             borderColor: 'rgba(54, 162, 235, 1)',
