@@ -1,5 +1,5 @@
 <template>
-  <div class="small">
+  <div>
     <v-card elevation="6">
       <line-chart
         v-if="loaded"

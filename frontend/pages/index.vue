@@ -30,7 +30,7 @@
       <v-col cols="6">
         <DicomTrendChart />
       </v-col>
-      <v-col cols="8">
+      <v-col cols="7">
         <DicomBreakdown />
       </v-col>
     </v-row>
