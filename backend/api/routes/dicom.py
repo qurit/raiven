@@ -25,6 +25,14 @@ def get_received_series(db: Session = Depends(session)):
     return Counter(dicom_series_to_count)
 
 
+@router.get("/series-breakdown")
+def get_series_breakdown(db: Session = Depends(session)):
+    dicom_series = db.query(DicomSeries.modality).order_by(
+        asc(DicomSeries.modality)).all()
+    dicom_series_to_count = list(chain(*dicom_series))
+    return Counter(dicom_series_to_count)
+
+
 @router.get("/nodes", response_model=List[dicom.DicomNode])
 def get_all_dicom_nodes(db: Session = Depends(session)):
     print("Here")
