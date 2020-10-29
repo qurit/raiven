@@ -1,5 +1,5 @@
 <template>
-  <div class="small">
+  <div>
     <v-card elevation="6">
       <horizontal-bar
         v-if="loaded"
@@ -20,6 +20,8 @@ export default {
   },
   data() {
     return {
+      // this looks kinda ridiculous
+      // modalities taken from: https://wiki.cancerimagingarchive.net/display/Public/DICOM+Modality+Abbreviations
       colors: {
         CR: '#7B241C',
         CT: '#943126',
@@ -82,7 +84,6 @@ export default {
       loaded: false,
       chartdata: null,
       datacollection: null,
-      modalityData: null,
       options: {
         legend: {
           labels: {
@@ -110,7 +111,7 @@ export default {
               },
               scaleLabel: {
                 display: true,
-                labelString: 'Percentage',
+                labelString: 'Percentage of all Modalities Received',
                 fontColor: 'white'
               },
               ticks: {
@@ -132,7 +133,6 @@ export default {
       this.loaded = false
       const modalityData = await generic_get(this, URL)
       this.makeDatasets(modalityData)
-      console.log(this.chartdata)
     } catch (e) {
       console.log(e)
     }
@@ -141,20 +141,23 @@ export default {
     makeDatasets(modalityData) {
       const modalityDatasets = []
       const entries = Object.entries(modalityData)
+      entries.sort((a, b) => {
+        return b[1] - a[1]
+      })
+      const modalitySum = Object.values(modalityData).reduce((a, b) => a + b, 0)
       entries.forEach(modality => {
         modalityDatasets.push({
           label: modality[0],
           backgroundColor: this.colors[modality[0]],
-          data: [modality[1]]
+          data: [(modality[1] / modalitySum) * 100]
         })
       })
-      this.modalityData = modalityDatasets
-      this.fillData()
+      this.fillData(modalityDatasets)
     },
-    fillData() {
+    fillData(modalityDatasets) {
       this.datacollection = {
         labels: ['Modalities'],
-        datasets: this.modalityData
+        datasets: modalityDatasets
       }
       this.loaded = true
     }

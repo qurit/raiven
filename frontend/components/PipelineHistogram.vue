@@ -1,5 +1,5 @@
 <template>
-  <div class="small">
+  <div>
     <v-card elevation="6">
       <bar-chart
         v-if="loaded"
