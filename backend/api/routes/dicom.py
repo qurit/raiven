@@ -1,15 +1,28 @@
 import os
+from collections import Counter
+from itertools import chain
 
 from sqlalchemy.orm import Session
+from sqlalchemy import asc
 from fastapi import APIRouter, Depends
 from typing import List
 
 from api import session
 from api.schemas import dicom, pipeline
-from api.models.dicom import DicomNode, DicomPatient, DicomSeries, DicomStudy
+from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
 
 
 router = APIRouter()
+
+
+@router.get("/received-series")
+def get_received_series(db: Session = Depends(session)):
+    dicom_series = db.query(DicomSeries.date_received).order_by(
+        asc(DicomSeries.date_received)).all()
+    dicom_series_to_count = list(chain(*dicom_series))
+    dicom_series_to_count = map(lambda x: x.date(), dicom_series_to_count)
+    dicom_series_to_count = list(dicom_series_to_count)
+    return Counter(dicom_series_to_count)
 
 
 @router.get("/nodes", response_model=List[dicom.DicomNode])

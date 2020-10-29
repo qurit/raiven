@@ -1,28 +1,28 @@
 <template>
   <div class="small">
     <v-card elevation="6">
-      <bar-chart
+      <line-chart
         v-if="loaded"
         :chart-data="datacollection"
         :options="options"
-      ></bar-chart>
+      ></line-chart>
     </v-card>
   </div>
 </template>
 
 <script>
-import BarChart from './BarChart.js'
+import LineChart from './LineChart.js'
 import { generic_get } from '~/api'
 
 export default {
   components: {
-    BarChart
+    LineChart
   },
   data() {
     return {
+      datacollection: null,
       loaded: false,
       chartdata: null,
-      datacollection: null,
       options: {
         legend: {
           labels: {
@@ -37,12 +37,9 @@ export default {
         scales: {
           yAxes: [
             {
-              gridLines: {
-                display: false
-              },
               scaleLabel: {
                 display: true,
-                labelString: 'Pipeline Runs',
+                labelString: 'DICOM Instances Received',
                 fontColor: 'white'
               },
               ticks: {
@@ -54,9 +51,6 @@ export default {
           ],
           xAxes: [
             {
-              gridLines: {
-                display: false
-              },
               scaleLabel: {
                 display: true,
                 labelString: 'Date',
@@ -72,7 +66,7 @@ export default {
     }
   },
   async mounted() {
-    const URL = '/pipeline/runs'
+    const URL = '/dicom/received-series'
     try {
       this.loaded = false
       this.chartdata = await generic_get(this, URL)
@@ -88,12 +82,18 @@ export default {
         labels: Object.keys(this.chartdata),
         datasets: [
           {
-            label: 'Pipeline Runs per Day (7-day view)',
-            data: Object.values(this.chartdata),
+            label: 'Dicom Instances',
+            // maybe fill? not sure
+            fill: false,
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            fillColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
+            borderColor: 'grey',
+            pointBackgroundColor: '#249EBF',
+            pointBorderColor: '#249EBF',
+            borderWidth: 1,
+            // not sure if this looks too "rigid", but default tension looked kinda weird
+            lineTension: 0,
+            borderWidth: 4,
+            data: Object.values(this.chartdata)
           }
         ]
       }
