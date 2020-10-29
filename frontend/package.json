@@ -21,6 +21,7 @@
     "papaparse": "^5.2.0",
     "vue-chartjs": "^3.5.0",
     "vue-cli-plugin-vuetify-preset-rally": "^1.0.4",
+    "vue-socket.io": "^3.0.10",
     "vue-typed-js": "^0.1.2",
     "vuelidate": "^0.7.5",
     "vuetify": "^2.3.1"
