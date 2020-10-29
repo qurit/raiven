@@ -8,6 +8,7 @@ class DicomSeries(BaseORMModel):
     series_instance_uid: str
     series_description: str
     modality: str
+    date_received: datetime
 
 
 class DicomStudy(BaseORMModel):

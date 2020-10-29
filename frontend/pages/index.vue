@@ -24,8 +24,11 @@
       <v-col cols="7">
         <DicomInstances />
       </v-col>
-      <v-col cols="5">
+      <v-col cols="6">
         <PipelineHistogram />
+      </v-col>
+      <v-col cols="6">
+        <DicomTrendChart />
       </v-col>
     </v-row>
   </div>
@@ -34,12 +37,18 @@
 <script>
 import PipelineStatus from '../components/PipelineStatus'
 import PipelineHistogram from '../components/PipelineHistogram'
+import DicomTrendChart from '../components/DicomTrendChart'
 import DicomInstances from '~/components/dicom/DicomInstances'
 import { mapState } from 'vuex'
 
 export default {
   name: 'App',
-  components: { PipelineStatus, PipelineHistogram, DicomInstances },
+  components: {
+    PipelineStatus,
+    PipelineHistogram,
+    DicomTrendChart,
+    DicomInstances
+  },
   computed: {
     ...mapState('pipelines', ['pipelines'])
   }

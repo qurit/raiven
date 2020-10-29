@@ -47,7 +47,8 @@ def handle_store(event):
 
         if not (study := db.query(DicomStudy).filter_by(dicom_patient_id=patient.id, study_instance_uid=ds.StudyInstanceUID).first()):
             raw_date_time = ds.StudyDate + ds.StudyTime
-            formatted_date_time = datetime.datetime.strptime(raw_date_time, '%Y%m%d%H%M%S')
+            formatted_date_time = datetime.datetime.strptime(
+                raw_date_time, '%Y%m%d%H%M%S')
             study = DicomStudy(
                 dicom_patient_id=patient.id,
                 study_instance_uid=ds.StudyInstanceUID,
@@ -62,13 +63,16 @@ def handle_store(event):
                 # TODO: Add a series description table
                 series_description=ds.SeriesDescription,
                 modality=ds.Modality,
+                date_received=datetime.datetime.today()
+
             )
             series.save(db)
 
         # Grab the save path so we can release the session connection
         save_path = series.get_abs_path()
 
-    ds.save_as(os.path.join(save_path, ds.SOPInstanceUID + '.dcm'), write_like_original=False)
+    ds.save_as(os.path.join(save_path, ds.SOPInstanceUID + '.dcm'),
+               write_like_original=False)
 
     return 0x0000
 
@@ -89,7 +93,8 @@ class SCP:
 
     def start_server(self, blocking=False):
         handlers = [(evt.EVT_C_STORE, handle_store)]
-        self._ae.start_server((self.host, self.port), block=blocking, evt_handlers=handlers)
+        self._ae.start_server((self.host, self.port),
+                              block=blocking, evt_handlers=handlers)
 
     def stop_server(self):
         self._ae.shutdown()
