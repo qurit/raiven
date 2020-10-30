@@ -39,9 +39,9 @@
 
 <script>
 import PipelineStatus from '../components/PipelineStatus'
-import PipelineHistogram from '../components/PipelineHistogram'
-import DicomBreakdown from '../components/DicomBreakdown'
-import DicomTrendChart from '../components/DicomTrendChart'
+import PipelineHistogram from '../components/graphs/PipelineHistogram'
+import DicomBreakdown from '../components/graphs/DicomBreakdown'
+import DicomTrendChart from '../components/graphs/DicomTrendChart'
 import DicomInstances from '~/components/dicom/DicomInstances'
 import { mapState } from 'vuex'
 

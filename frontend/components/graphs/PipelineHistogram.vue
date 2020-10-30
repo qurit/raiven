@@ -1,28 +1,29 @@
 <template>
   <div>
     <v-card elevation="6">
-      <line-chart
+      <bar-chart
         v-if="loaded"
-        :chart-data="datacollection"
+        :chart-data="dataCollection"
         :options="options"
-      ></line-chart>
+      ></bar-chart>
     </v-card>
   </div>
 </template>
 
 <script>
-import LineChart from './LineChart.js'
+import BarChart from './BarChart.js'
+import colours from './colours.js'
 import { generic_get } from '~/api'
 
 export default {
   components: {
-    LineChart
+    BarChart
   },
   data() {
     return {
-      datacollection: null,
       loaded: false,
-      chartdata: null,
+      chartData: null,
+      dataCollection: null,
       options: {
         legend: {
           labels: {
@@ -37,27 +38,33 @@ export default {
         scales: {
           yAxes: [
             {
+              gridLines: {
+                display: false
+              },
               scaleLabel: {
                 display: true,
-                labelString: 'DICOM Instances Received',
-                fontColor: 'white'
+                labelString: 'Pipeline Runs',
+                fontColor: colours.genericColours.labels
               },
               ticks: {
                 beginAtZero: true,
                 stepSize: 1,
-                fontColor: 'white'
+                fontColor: colours.genericColours.labels
               }
             }
           ],
           xAxes: [
             {
+              gridLines: {
+                display: false
+              },
               scaleLabel: {
                 display: true,
                 labelString: 'Date',
-                fontColor: 'white'
+                fontColor: colours.genericColours.labels
               },
               ticks: {
-                fontColor: 'white'
+                fontColor: colours.genericColours.labels
               }
             }
           ]
@@ -66,10 +73,10 @@ export default {
     }
   },
   async mounted() {
-    const URL = '/dicom/received-series'
+    const URL = '/pipeline/runs'
     try {
       this.loaded = false
-      this.chartdata = await generic_get(this, URL)
+      this.chartData = await generic_get(this, URL)
       this.fillData()
       this.loaded = true
     } catch (e) {
@@ -78,22 +85,15 @@ export default {
   },
   methods: {
     fillData() {
-      this.datacollection = {
-        labels: Object.keys(this.chartdata),
+      this.dataCollection = {
+        labels: Object.keys(this.chartData),
         datasets: [
           {
-            label: 'Dicom Instances',
-            // maybe fill? not sure
-            fill: false,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'grey',
-            pointBackgroundColor: '#249EBF',
-            pointBorderColor: '#249EBF',
-            borderWidth: 1,
-            // not sure if this looks too "rigid", but default tension looked kinda weird
-            lineTension: 0,
-            borderWidth: 4,
-            data: Object.values(this.chartdata)
+            label: 'Pipeline Runs per Day (7-day view)',
+            data: Object.values(this.chartData),
+            backgroundColor: colours.genericColours.transparentBlue,
+            borderColor: colours.genericColours.babyBlue,
+            borderWidth: 1
           }
         ]
       }
