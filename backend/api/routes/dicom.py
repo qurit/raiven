@@ -1,8 +1,10 @@
 import os
 
+from fastapi import FastAPI
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends
 from typing import List
+from fastapi.websockets import WebSocket
 
 from api import session
 from api.schemas import dicom, pipeline
@@ -10,6 +12,14 @@ from api.models.dicom import DicomNode, DicomPatient, DicomSeries, DicomStudy
 
 
 router = APIRouter()
+app = FastAPI()
+
+
+@app.websocket_route("/test")
+async def test(websocket: WebSocket):
+    await websocket.accept()
+    await websocket.send_json({"msg": "Hello WebSocket"})
+    await websocket.close()
 
 
 @router.get("/nodes", response_model=List[dicom.DicomNode])
