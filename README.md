@@ -5,7 +5,7 @@
   <em>The Radiology Enviroment of the Future</em>
 </p>
 <p align="center">
-<img alt="Docker API Image CI" src="https://github.com/qurit/raiven/workflows/Docker%20API%20Image%20CI/badge.svg?branch=master" />
+<!-- <img alt="Docker API Image CI" src="https://github.com/qurit/raiven/workflows/Docker%20API%20Image%20CI/badge.svg?branch=master" /> -->
 <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/fastapi" />
 <img alt="npm" src="https://img.shields.io/npm/v/npm" />
 
