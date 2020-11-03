@@ -15,16 +15,17 @@ class DicomStudy(BaseORMModel):
     dicom_patient_id: int
     study_instance_uid: str
     study_date: datetime
-    series: Optional[List[DicomSeries]]
+    # series: Optional[List[DicomSeries]]
 
 
 class DicomPatient(BaseORMModel):
     patient_id: str
-    studies: Optional[List[DicomStudy]]
+    dicom_node_id: int
+    # studies: Optional[List[DicomStudy]]
 
 
 class DicomNode(BaseORMModel):
     title: str
     host: str
     port: int
-    patients: Optional[List[DicomPatient]]
+    # patients: Optional[List[DicomPatient]]
