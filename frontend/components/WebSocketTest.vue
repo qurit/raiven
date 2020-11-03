@@ -4,6 +4,9 @@
     <v-btn @click="sendMessage(test)">
       Send Message
     </v-btn>
+    <v-btn @click="getMessage">
+      Get Message
+    </v-btn>
   </div>
 </template>
 
@@ -27,8 +30,9 @@ export default {
       this.connection.send(message)
     },
     getMessage() {
-      this.socket.emit('getMessage', { data: 'testing' }, res => {
+      this.socket.emit('getMessage', { id: 'abc123' }, res => {
         this.socketResponse = res
+        console.log(res)
       })
     }
   },
@@ -36,6 +40,7 @@ export default {
     // try with nuxt websocket package
     this.socket = this.$nuxtSocket({
       name: 'test',
+      // channel: '/index'
       channel: '/dicom/test'
     })
 

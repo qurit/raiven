@@ -37,6 +37,7 @@ export default {
     sockets: [
       {
         name: 'test',
+        // url: 'https://nuxt-socket-io.herokuapp.com'
         url: 'http://localhost:5000'
       }
     ]
