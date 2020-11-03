@@ -24,13 +24,13 @@
       <v-col cols="7">
         <DicomInstances />
       </v-col>
-      <v-col cols="6">
+      <v-col cols="4">
         <PipelineHistogram />
       </v-col>
-      <v-col cols="6">
+      <v-col cols="4">
         <DicomTrendChart />
       </v-col>
-      <v-col cols="7">
+      <v-col cols="4">
         <DicomBreakdown />
       </v-col>
     </v-row>
