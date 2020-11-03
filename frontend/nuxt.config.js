@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config()
 
 export default {
   mode: 'spa',
@@ -9,20 +9,24 @@ export default {
     titleTemplate: '%s - ' + process.env.npm_package_name,
     title: process.env.npm_package_name || '',
     meta: [
-      {charset: 'utf-8'},
-      {name: 'viewport', content: 'width=device-width, initial-scale=1'},
-      {hid: 'description', name: 'description', content: process.env.npm_package_description || ''}
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      {
+        hid: 'description',
+        name: 'description',
+        content: process.env.npm_package_description || ''
+      }
     ],
     link: [
-      {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
-      {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Monoton&display=swap'}
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Monoton&display=swap'
+      }
     ]
   },
-  loading: {color: '#B15DFF'},
-  buildModules: [
-    '@nuxtjs/vuetify',
-
-  ],
+  loading: { color: '#B15DFF' },
+  buildModules: ['@nuxtjs/vuetify'],
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/auth',
@@ -30,20 +34,26 @@ export default {
     'nuxt-socket-io'
   ],
   io: {
-    sockets: [{
-      url: 'http://127.0.0.1:5001/test'
-    }]
+    sockets: [
+      {
+        name: 'test',
+        url: 'http://localhost:5000'
+      }
+    ]
   },
 
-
-  plugins: ['~/plugins/GlobalComponents', "~/plugins/toaster", "~/plugins/validation"],
+  plugins: [
+    '~/plugins/GlobalComponents',
+    '~/plugins/toaster',
+    '~/plugins/validation'
+  ],
 
   // Axios config
   axios: {
-    baseURL:  process.env.API_URL || 'http://localhost:5000'
+    baseURL: process.env.API_URL || 'http://localhost:5000'
   },
 
-   // Auth Config
+  // Auth Config
   auth: {
     redirect: {
       login: '/login', // User will be redirected to this path if login is required.
@@ -85,9 +95,9 @@ export default {
           error: '#FF5252',
           info: '#2196F3',
           success: '#4CAF50',
-          warning: '#FFC107',
-        },
-      },
+          warning: '#FFC107'
+        }
+      }
     }
   }
 }
