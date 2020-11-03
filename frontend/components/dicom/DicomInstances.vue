@@ -4,6 +4,7 @@
       Received DICOM Instances
     </v-card-title>
     <v-divider light />
+    <DicomBreakdown />
 
     <!-- Nodes   -->
     <v-list-item v-for="dicomEvent in dicomEvents" :key="dicomEvent.id">
@@ -110,9 +111,10 @@
 import { mapState } from 'vuex'
 import DicomForm from './DicomForm'
 import ContainerForm from '~/components/container/ContainerForm'
+import DicomBreakdown from '~/components/graphs/DicomBreakdown'
 
 export default {
-  components: { ContainerForm, DicomForm },
+  components: { ContainerForm, DicomForm, DicomBreakdown },
   data: () => ({
     dialog: false,
     dicom_obj_type: undefined,

@@ -1,13 +1,13 @@
 <template>
-  <div>
-    <v-card elevation="6">
-      <horizontal-bar
-        v-if="loaded"
-        :chart-data="dataCollection"
-        :options="options"
-      ></horizontal-bar>
-    </v-card>
-  </div>
+  <horizontal-bar
+    v-if="loaded"
+    :chart-data="dataCollection"
+    :options="options"
+    :height="70"
+  ></horizontal-bar>
+  <!-- <v-list v-for="(data, index) in breakdownData" :key="index">
+      {{ data.modality }} {{ data.count }}
+    </v-list> -->
 </template>
 
 <script>
@@ -21,23 +21,35 @@ export default {
   },
   data() {
     return {
+      breakdownData: [],
       loaded: false,
       dataCollection: null,
       options: {
+        layout: {
+          padding: {
+            left: -20
+          }
+        },
+        maintainAspectRatio: false,
+        responsive: true,
         legend: {
           labels: {
             fontColor: colours.genericColours.labels
           }
         },
-        layout: {
-          padding: {
-            right: 20
-          }
+        tooltips: {
+          yAlign: 'center'
         },
         scales: {
           yAxes: [
             {
+              gridLines: {
+                display: false,
+                drawBorder: false
+              },
+              maxBarThickness: 10,
               ticks: {
+                display: false,
                 fontColor: colours.genericColours.labels
               },
               stacked: true
@@ -46,18 +58,17 @@ export default {
           xAxes: [
             {
               gridLines: {
-                display: false
+                display: false,
+                drawBorder: false
               },
               scaleLabel: {
-                display: true,
+                display: false,
                 labelString: 'Percentage of all Modalities Received',
                 fontColor: colours.genericColours.labels
               },
               ticks: {
-                fontColor: colours.genericColours.labels,
-                min: 0,
-                max: 100,
-                stepSize: 5
+                display: false,
+                fontColor: colours.genericColours.labels
               },
               stacked: true
             }
@@ -71,12 +82,25 @@ export default {
     try {
       this.loaded = false
       const modalityData = await generic_get(this, URL)
+      console.log(modalityData)
+      // this.breakdownData = modalityData
+      this.makeListData(modalityData)
       this.makeDatasets(modalityData)
     } catch (e) {
       console.log(e)
     }
   },
   methods: {
+    makeListData(modalityData) {
+      Object.entries(modalityData).forEach(data => {
+        const dicomSeries = {
+          modality: data[0],
+          count: data[1]
+        }
+        this.breakdownData.push(dicomSeries)
+      })
+      console.log(this.breakdownData)
+    },
     makeDatasets(modalityData) {
       const modalityDatasets = []
       const entries = Object.entries(modalityData)
@@ -88,7 +112,7 @@ export default {
         modalityDatasets.push({
           label: modality[0],
           backgroundColor: colours.dicomBreakdownColours[modality[0]],
-          data: [(modality[1] / modalitySum) * 100]
+          data: [Math.round((modality[1] / modalitySum) * 100)]
         })
       })
       this.fillData(modalityDatasets)
