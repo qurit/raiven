@@ -1,27 +1,28 @@
 from config import BaseConfig
 config = BaseConfig()
 
-
 from fastapi import FastAPI
-from fastapi import Depends, FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import session, worker_session, engine
-from . import models, schemas
+from . import models, schemas, sockets
 
 models.Base.metadata.create_all(bind=engine)
-app = FastAPI()
+app = FastAPI(
+    title='Raiven API',
+    docs_url='/'
+)
 
-# TODO: delete postman origin
-# adding postman here for testing purposes for now 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://web.postman.co"],
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount('/ws', sockets.sio_app)
+
 
 from . import routes
 
