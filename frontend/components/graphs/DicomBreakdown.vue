@@ -1,13 +1,13 @@
 <template>
-  <horizontal-bar
-    v-if="loaded"
-    :chart-data="dataCollection"
-    :options="options"
-    :height="70"
-  ></horizontal-bar>
-  <!-- <v-list v-for="(data, index) in breakdownData" :key="index">
-      {{ data.modality }} {{ data.count }}
-    </v-list> -->
+  <div>
+    <horizontal-bar
+      v-if="loaded"
+      :chart-data="dataCollection"
+      :options="options"
+      :height="70"
+    ></horizontal-bar>
+    {{ dicom_obj_type }}
+  </div>
 </template>
 
 <script>
@@ -16,6 +16,7 @@ import colours from './colours.js'
 import { generic_get } from '~/api'
 
 export default {
+  props: ['dicom_obj_type', 'dicom_obj_id'],
   components: {
     HorizontalBar
   },
@@ -77,13 +78,37 @@ export default {
       }
     }
   },
-  async mounted() {
-    const URL = '/dicom/series-breakdown'
+  watch: {
+    dicom_obj_id: {
+      handler: function() {
+        console.log('asfasdf')
+        this.getData()
+      }
+    }
+  },
+  // async updated() {
+  //   console.log(this.dicom_obj_id)
+  //   console.log(this.dicom_obj_type)
+  //   const URL = '/dicom/series-breakdown'
+  //   try {
+  //     this.loaded = false
+  //     // const modalityData = await generic_get(this, URL)
+  //     console.log(modalityData)
+  //     // this.breakdownData = modalityData
+  //     this.makeListData(modalityData)
+  //     this.makeDatasets(modalityData)
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // },
+  async created() {
+    console.log('sdfsdf')
+    const URL = `/dicom/series-breakdown/${this.dicom_obj_type}/${this.dicom_obj_id}`
     try {
       this.loaded = false
       const modalityData = await generic_get(this, URL)
       console.log(modalityData)
-      // this.breakdownData = modalityData
+      this.breakdownData = modalityData
       this.makeListData(modalityData)
       this.makeDatasets(modalityData)
     } catch (e) {
@@ -91,13 +116,17 @@ export default {
     }
   },
   methods: {
+    getData() {
+      console.log(this.dicom_obj_id)
+      console.log(this.dicom_obj_type)
+    },
     makeListData(modalityData) {
       Object.entries(modalityData).forEach(data => {
         const dicomSeries = {
           modality: data[0],
           count: data[1]
         }
-        this.breakdownData.push(dicomSeries)
+        // this.breakdownData.push(dicomSeries)
       })
       console.log(this.breakdownData)
     },

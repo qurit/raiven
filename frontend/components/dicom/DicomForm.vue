@@ -2,6 +2,10 @@
   <v-card class="overflow-x-hidden">
     <v-card-title v-text="`Send ${dicom_obj_type} to Pipeline`" />
     <v-card-subtitle v-text="`ID: ${dicom_obj_id}`" class="pt-0" />
+    <DicomBreakdown
+      :dicom_obj_type="dicom_obj_type"
+      :dicom_obj_id="dicom_obj_id"
+    />
     <v-card-text>
       <v-select
         v-model="pipeline_id"
@@ -29,9 +33,14 @@
 <script>
 import { mapState } from 'vuex'
 import { generic_put, generic_delete } from '~/api'
+import DicomBreakdown from '~/components/graphs/DicomBreakdown'
 
 export default {
   props: ['dicom_obj_type', 'dicom_obj_id'],
+
+  components: {
+    DicomBreakdown
+  },
   data: () => ({
     pipeline_id: undefined
   }),
@@ -43,6 +52,7 @@ export default {
     ...mapState('pipelines', ['pipelines']),
     isDisabled: ctx => !ctx.pipeline_id
   },
+
   methods: {
     async submit() {
       if (this.pipeline_id && this.dicom_obj_type && this.dicom_obj_id) {
