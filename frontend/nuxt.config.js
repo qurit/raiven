@@ -53,9 +53,9 @@ export default {
     strategies: {
       local: {
         endpoints: {
-          login: { url: '/login', method: 'post', propertyName: 'token' },
-          logout: { url: '/logout', method: 'post' },
-          user: { url: '/user', method: 'get', propertyName: 'user' }
+          login: { url: '/user/login', method: 'post', propertyName: 'token' },
+          logout: { url: '/user/logout', method: 'post' },
+          user: { url: '/user/me', method: 'get', propertyName: 'user' }
         },
 
         tokenRequired: true
@@ -64,7 +64,7 @@ export default {
   },
 
   router: {
-    // middleware: ['auth']
+    middleware: ['auth']
   },
 
   vuetify: {
