@@ -44,7 +44,7 @@ def create_local_user(user_schema: UserLocalCreate, db: Session = Depends(sessio
         return user
 
 
-@router.post("/me", response_model=UserSchema)
+@router.get("/me", response_model=UserSchema)
 def get_the_current_user(user: User = Depends(token_auth)):
     return user
 
