@@ -1,61 +1,37 @@
 <template>
   <div>
-    hello
-    <v-btn @click="sendMessage(test)">
+    <SocketStatus :status="socketStatus" />
+     <v-btn @click="sendMessage">
       Send Message
     </v-btn>
-    <v-btn @click="getMessage">
-      Get Message
-    </v-btn>
+    {{ messageRxd }}
   </div>
 </template>
 
 <script>
+  import SocketStatus from 'nuxt-socket-io/components/SocketStatus.vue'
 export default {
+  components: {
+    SocketStatus
+  },
   data() {
     return {
-      connection: null,
+      socket: null,
       test: 'hello world',
-      socketResponse: undefined
-    }
-  },
-  sockets: {
-    connect: function() {
-      console.log('socket connected')
+      socketStatus: {}, // simply define this, and it will be populated with the status
+      messageRxd: []
     }
   },
   methods: {
-    sendMessage(message) {
-      console.log(this.connection)
-      this.connection.send(message)
-    },
-    getMessage() {
-      this.socket.emit('getMessage', { id: 'abc123' }, res => {
-        this.socketResponse = res
-        console.log(res)
+    sendMessage() {
+      this.socket.emit('message', {data: 'hello from nuxt'}, (resp, data) => {
+        console.log(resp, data)
+        this.messageRxd.push(data)
       })
     }
   },
-  created() {
-    // try with nuxt websocket package
-    this.socket = this.$nuxtSocket({
-      name: 'test',
-      // channel: '/index'
-      channel: '/dicom/test'
-    })
-
-    // try with mdn websockets
-    // console.log('Starting Connection')
-    // // this.connection = new WebSocket('wss://echo.websocket.org')
-    // this.connection = new WebSocket('wss://localhost:5000/dicom/test')
-    // console.log(this.connection)
-    // console.log(this.connection.readyState)
-    // this.connection.onopen = function(event) {
-    //   console.log('connected!!!!')
-    // }
-    // this.connection.onmessage = function(event) {
-    //   console.log(event)
-    // }
+  mounted() {
+    this.socket = this.$nuxtSocket({path: '/ws/socket.io'})
   }
 }
 </script>

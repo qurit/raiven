@@ -7,8 +7,7 @@ LOCALHOST = '127.0.0.1'
 class BaseConfig:
     HOST = LOCALHOST
     PORT = 5000
-    UPLOAD_DIR = os.path.join(os.path.dirname(
-        os.path.dirname(__file__)), 'uploads')
+    UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
 
     # LDAP CONFIG
     LDAP_HOST = '10.9.2.37'
