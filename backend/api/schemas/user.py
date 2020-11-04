@@ -3,13 +3,17 @@ from typing import Optional
 from . import BaseORMModel, BaseModel
 
 
-class UserCreate(BaseModel):
+class UserLocalCreate(BaseModel):
     username: str
     name: str
-    title: Optional[str]
-    department: Optional[str]
-    company: Optional[str]
+    password: str
 
 
-class User(UserCreate, BaseORMModel):
+class User(BaseORMModel):
+    username: str
+    name: str
     is_admin: bool
+
+
+class Token(BaseModel):
+    token: str
