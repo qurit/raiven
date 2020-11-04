@@ -27,42 +27,67 @@ def get_received_series(db: Session = Depends(session)):
     return Counter(dicom_series_to_count)
 
 
-@router.get("/series-breakdown")
-def get_series_breakdown(db: Session = Depends(session)):
-    dicom_series = db.query(DicomSeries.modality).order_by(
-        asc(DicomSeries.modality)).all()
+@router.get("/series-breakdown/{dicom_type}/{dicom_id}")
+def get_series_breakdown(dicom_type: str, dicom_id: int, db: Session = Depends(session)):
+    print(dicom_type)
+    print(dicom_id)
+
+    # dicom_patient = db.query(DicomNode.id, DicomPatient.dicom_node_id, DicomStudy.dicom_patient_id,
+    #                          DicomSeries.dicom_study_id).join(DicomNode, DicomPatient, DicomStudy, DicomSeries).all()
+
+    # dicom_patient = db.query(DicomNode, DicomPatient, DicomStudy, DicomSeries).filter(DicomNode.id == DicomPatient.dicom_node_id).filter(
+    #     DicomPatient.id == DicomStudy.dicom_patient_id).filter(DicomStudy.id == DicomSeries.dicom_study_id).filter(DicomNode.id == 2).all()
+
+    dicom_series = db.query(DicomSeries.modality).filter(
+        DicomPatient.id == DicomStudy.dicom_patient_id).filter(DicomStudy.id == DicomSeries.dicom_study_id).filter(DicomPatient.id == 1).all()
+    # print(dicom_patient)
+
+    # dicom_series = db.query(DicomSeries.modality).order_by(
+    # asc(DicomSeries.modality)).all()
     dicom_series_to_count = list(chain(*dicom_series))
     return Counter(dicom_series_to_count)
+    # return dicom_patient
 
 
-@router.get("/nodes", response_model=List[dicom.DicomNode])
+@router.get("/stats")
+def get_dicom_stats(db: Session = Depends(session)):
+    stats = {
+        "dicom_node_counts": db.query(DicomNode).count(),
+        "dicom_patient_counts": db.query(DicomPatient).count(),
+        "dicom_study_counts": db.query(DicomStudy).count(),
+        "dicom_series_counts": db.query(DicomSeries).count()
+    }
+    return stats
+
+
+@ router.get("/nodes", response_model=List[dicom.DicomNode])
 def get_all_dicom_nodes(db: Session = Depends(session)):
     return db.query(DicomNode).all()
 
 
-@router.get("/nodes/{dicom_node_id}/patients", response_model=List[dicom.DicomPatient])
+@ router.get("/nodes/{dicom_node_id}/patients", response_model=List[dicom.DicomPatient])
 def get_node_patients(dicom_node_id: int, db: Session = Depends(session)):
     return db.query(DicomPatient).filter_by(dicom_node_id=dicom_node_id).all()
 
 
-@router.get("/nodes/{dicom_node_id}/patient/{patient_id}/studies", response_model=List[dicom.DicomStudy])
+@ router.get("/nodes/{dicom_node_id}/patient/{patient_id}/studies", response_model=List[dicom.DicomStudy])
 def get_patient_studies(dicom_node_id: int, patient_id: int, db: Session = Depends(session)):
     return db.query(DicomStudy).filter_by(dicom_patient_id=patient_id).all()
 
 
-@router.get("/patient/{patient_id}/study/{study_id}/series", response_model=List[dicom.DicomSeries])
+@ router.get("/patient/{patient_id}/study/{study_id}/series", response_model=List[dicom.DicomSeries])
 def get_study_series(patient_id: int, study_id: int, db: Session = Depends(session)):
     return db.query(DicomSeries).filter_by(dicom_study_id=study_id).all()
 
 # deleting nodes and substuff
 
 
-@router.delete("/node/{dicom_node_id}/", response_model=dicom.DicomNode)
+@ router.delete("/node/{dicom_node_id}/", response_model=dicom.DicomNode)
 def delete_node(dicom_node_id: int, db: Session = Depends(session)):
     return db.query(DicomNode).get(dicom_node_id).delete(db)
 
 
-@router.delete("/patient/{patient_id}/", response_model=dicom.DicomPatient)
+@ router.delete("/patient/{patient_id}/", response_model=dicom.DicomPatient)
 def delete_patient(patient_id: int, db: Session = Depends(session)):
     return db.query(DicomPatient).get(patient_id).delete(db)
 
