@@ -24,7 +24,7 @@ class User(Base):
         return s.dumps({'id': self.id})
 
     @staticmethod
-    def verify_token(token):
+    def verify_token(token, db):
         s = Serializer(config.SECRET_KEY)
 
         try:
@@ -34,8 +34,9 @@ class User(Base):
         except BadSignature:
             return None  # invalid token
 
-        user = User.query.get(data['id'])
-        user.update(last_seen=datetime.utcnow())
+        user = User.query(db).get(data['id'])
+        user.last_seen = datetime.utcnow()
+        user.save(db)
         return user
 
 

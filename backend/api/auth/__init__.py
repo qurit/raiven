@@ -1,36 +1,15 @@
-# from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
 
-from flask_httpauth import HTTPTokenAuth
-
-from api import config
-
-from .ldap import LDAPManager
-
-token_auth = HTTPTokenAuth()
-ldap = LDAPManager()
+from api import session
+from api.models.user import User
 
 
-@token_auth.verify_token
-def verify_token(token):
-    s = Serializer(config.SECRET_KEY)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/login")
 
-    try:
-        data = s.loads(token)
-    except SignatureExpired:
-        return None  # valid token, but expired
-    except BadSignature:
-        return None  # invalid token
+
+def token_auth(token: str = Depends(oauth2_scheme), db: type(session) = Depends(session)):
+    if not (user := User.verify_token(token, db)):
+        return HTTPException(401, "Invalid token")
     else:
-        return 'OK'
-
-
-def verify_password(username, password):
-    if username and username.endswith('@bccrc.ca'):
-        username = username.replace('@bccrc.ca', '')
-
-    if not config.AUTH_ENABLED:
-        user = {"name": 'test'}
-    else:
-        user = ldap.authenticate(username, password)
-
-    return user
+        return user
