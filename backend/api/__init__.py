@@ -1,3 +1,4 @@
+import passlib
 from config import BaseConfig
 config = BaseConfig()
 
@@ -24,6 +25,16 @@ app.add_middleware(
 )
 
 from . import routes
+
+
+from fastapi.security import OAuth2PasswordBearer
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+@app.get('/')
+def secure_route(token: str = Depends(oauth2_scheme)):
+    return {"token": token}
+
 
 # Start the Dicom Server
 from .dicom import SCP
