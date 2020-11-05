@@ -77,20 +77,16 @@ export default {
       }
     }
   },
+  computed: {
+    dicomNodeChange() {
+      return [this.dicom_obj_id, this.dicom_obj_type].join()
+    }
+  },
   watch: {
-    dicom_obj_type: function() {
-      this.getData()
-    },
-    dicom_obj_id: function() {
+    dicomNodeChange() {
       this.getData()
     }
   },
-  // computed: {
-  //   dicomNodeChange() {
-  //     console.log([this.dicom_obj_id, this.dicomSeries].join())
-  //     return [this.dicom_obj_id, this.dicom_obj_type].join()
-  //   }
-  // },
   created() {
     if (this.dicom_obj_type && this.dicom_obj_id) {
       this.getData()
