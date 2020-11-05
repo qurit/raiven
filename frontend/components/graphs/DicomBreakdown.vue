@@ -33,82 +33,73 @@ export default {
       options: {
         tooltips: {
           // Disable the on-canvas tooltip
-          enabled: false,
+          enabled: false
 
-          custom: function(tooltipModel) {
-            // Tooltip Element
-            var tooltipEl = document.getElementById('chartjs-tooltip')
+          // // custom tooltip bit looks terrible
+          // custom: function(tooltipModel) {
+          //   // Tooltip Element
+          //   var tooltipEl = document.getElementById('chartjs-tooltip')
 
-            // Create element on first render
-            if (!tooltipEl) {
-              tooltipEl = document.createElement('div')
-              tooltipEl.id = 'chartjs-tooltip'
-              tooltipEl.innerHTML = '<table></table>'
-              document.body.appendChild(tooltipEl)
-            }
+          //   // Create element on first render
+          //   if (!tooltipEl) {
+          //     tooltipEl = document.createElement('div')
+          //     tooltipEl.id = 'chartjs-tooltip'
+          //     tooltipEl.innerHTML = '<table></table>'
+          //     document.body.appendChild(tooltipEl)
+          //   }
 
-            // Hide if no tooltip
-            if (tooltipModel.opacity === 0) {
-              tooltipEl.style.opacity = 0
-              return
-            }
+          //   // Hide if no tooltip
+          //   if (tooltipModel.opacity === 0) {
+          //     tooltipEl.style.opacity = 0
+          //     return
+          //   }
 
-            // Set caret Position
-            tooltipEl.classList.remove('above', 'below', 'no-transform')
-            if (tooltipModel.yAlign) {
-              tooltipEl.classList.add(tooltipModel.yAlign)
-            } else {
-              tooltipEl.classList.add('no-transform')
-            }
+          //   function getBody(bodyItem) {
+          //     return bodyItem.lines
+          //   }
+          //   console.log(tooltipModel)
+          //   // Set Text
+          //   if (tooltipModel.body) {
+          //     var titleLines = tooltipModel.title || []
+          //     var bodyLines = tooltipModel.body.map(getBody)
 
-            function getBody(bodyItem) {
-              return bodyItem.lines
-            }
-            console.log(tooltipModel)
-            // Set Text
-            if (tooltipModel.body) {
-              var titleLines = tooltipModel.title || []
-              var bodyLines = tooltipModel.body.map(getBody)
+          //     var innerHtml = '<thead>'
 
-              var innerHtml = '<thead>'
+          //     titleLines.forEach(function(title) {
+          //       innerHtml += '<tr><th>' + title + '</th></tr>'
+          //     })
+          //     innerHtml += '</thead><tbody>'
 
-              titleLines.forEach(function(title) {
-                innerHtml += '<tr><th>' + title + '</th></tr>'
-              })
-              innerHtml += '</thead><tbody>'
+          //     bodyLines.forEach(function(body, i) {
+          //       var colors = 'white'
+          //       var style = 'background:' + 'white'
+          //       style += '; border-color:' + 'white'
+          //       style += '; border-width: 2px'
+          //       var span = '<span style="' + style + '"></span>'
+          //       innerHtml += '<tr><td>' + span + body + '</td></tr>'
+          //     })
+          //     innerHtml += '</tbody>'
 
-              bodyLines.forEach(function(body, i) {
-                var colors = 'white'
-                var style = 'background:' + 'white'
-                style += '; border-color:' + 'white'
-                style += '; border-width: 2px'
-                var span = '<span style="' + style + '"></span>'
-                innerHtml += '<tr><td>' + span + body + '</td></tr>'
-              })
-              innerHtml += '</tbody>'
+          //     var tableRoot = tooltipEl.querySelector('table')
+          //     tooltipEl.style.opacity = 1
+          //     tableRoot.innerHTML = innerHtml
+          //   }
 
-              var tableRoot = tooltipEl.querySelector('table')
-              tooltipEl.style.opacity = 1
-              console.log(tooltipEl)
-              tableRoot.innerHTML = innerHtml
-            }
+          //   // `this` will be the overall tooltip
+          //   let elem = document.getElementById('breakdownBar')
+          //   var position = elem.getBoundingClientRect()
 
-            // `this` will be the overall tooltip
-            let elem = document.getElementById('breakdownBar')
-            console.log(elem)
-            var position = elem.getBoundingClientRect()
-
-            // Display, position, and set styles for font
-            tooltipEl.style.opacity = 1
-            tooltipEl.style.position = 'absolute'
-            tooltipEl.style.left = position.left - 100 + 'px'
-            console.log(position)
-            tooltipEl.style.top = position.top + 'px'
-            tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily
-            tooltipEl.style.fontSize = '50px'
-            tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle
-            tooltipEl.style.pointerEvents = 'none'
-          }
+          //   // Display, position, and set styles for font
+          //   tooltipEl.style.opacity = 1
+          //   tooltipEl.style.position = 'absolute'
+          //   tooltipEl.style.left = position.left + 'px'
+          //   console.log(position)
+          //   tooltipEl.style.top = position.top + 'px'
+          //   tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily
+          //   tooltipEl.style.fontSize = '15px'
+          //   tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle
+          //   tooltipEl.style.pointerEvents = 'none'
+          // }
         },
         layout: {
           padding: {
@@ -193,22 +184,29 @@ export default {
     makeDatasets(modalityData) {
       const modalityDatasets = []
       const entries = Object.entries(modalityData)
+      // sort large to small
       entries.sort((a, b) => {
         return b[1] - a[1]
       })
+      // calculating percentage of breakdowns
       const modalitySum = Object.values(modalityData).reduce((a, b) => a + b, 0)
       entries.forEach(modality => {
         modalityDatasets.push({
-          label: modality[0],
+          label:
+            modality[0] +
+            ' (' +
+            Math.round((modality[1] / modalitySum) * 100) +
+            '%)',
           backgroundColor: colours.dicomBreakdownColours[modality[0]],
           data: [Math.round((modality[1] / modalitySum) * 100)]
         })
       })
       this.fillData(modalityDatasets)
     },
+    // filling in the data to be used by the chart
     fillData(modalityDatasets) {
       this.dataCollection = {
-        labels: ['Modalities'],
+        labels: ['Modality Breakdown (%)'],
         datasets: modalityDatasets
       }
       this.loaded = true
