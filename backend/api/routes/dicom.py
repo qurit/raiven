@@ -29,24 +29,23 @@ def get_received_series(db: Session = Depends(session)):
 
 @router.get("/series-breakdown/{dicom_type}/{dicom_id}")
 def get_series_breakdown(dicom_type: str, dicom_id: int, db: Session = Depends(session)):
-    print(dicom_type)
-    print(dicom_id)
 
-    # dicom_patient = db.query(DicomNode.id, DicomPatient.dicom_node_id, DicomStudy.dicom_patient_id,
-    #                          DicomSeries.dicom_study_id).join(DicomNode, DicomPatient, DicomStudy, DicomSeries).all()
+    dicom_modality = None
 
-    # dicom_patient = db.query(DicomNode, DicomPatient, DicomStudy, DicomSeries).filter(DicomNode.id == DicomPatient.dicom_node_id).filter(
-    #     DicomPatient.id == DicomStudy.dicom_patient_id).filter(DicomStudy.id == DicomSeries.dicom_study_id).filter(DicomNode.id == 2).all()
+    if (dicom_type == "Node"):
+        dicom_modality = db.query(DicomSeries.modality).filter(DicomNode.id == DicomPatient.dicom_node_id).filter(
+            DicomPatient.id == DicomStudy.dicom_patient_id).filter(DicomStudy.id == DicomSeries.dicom_study_id).filter(DicomNode.id == dicom_id).all()
 
-    dicom_series = db.query(DicomSeries.modality).filter(
-        DicomPatient.id == DicomStudy.dicom_patient_id).filter(DicomStudy.id == DicomSeries.dicom_study_id).filter(DicomPatient.id == 1).all()
-    # print(dicom_patient)
+    if (dicom_type == "Patient"):
+        dicom_modality = db.query(DicomSeries.modality).filter(
+            DicomPatient.id == DicomStudy.dicom_patient_id).filter(DicomStudy.id == DicomSeries.dicom_study_id).filter(DicomPatient.id == dicom_id).all()
 
-    # dicom_series = db.query(DicomSeries.modality).order_by(
-    # asc(DicomSeries.modality)).all()
-    dicom_series_to_count = list(chain(*dicom_series))
-    return Counter(dicom_series_to_count)
-    # return dicom_patient
+    if (dicom_type == "Study"):
+        dicom_modality = db.query(DicomSeries.modality).filter(
+            DicomStudy.id == DicomSeries.dicom_study_id).filter(DicomStudy.id == dicom_id).all()
+
+    dicom_modality_count = list(chain(*dicom_modality))
+    return Counter(dicom_modality_count)
 
 
 @router.get("/stats")

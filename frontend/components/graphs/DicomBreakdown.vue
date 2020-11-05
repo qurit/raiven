@@ -22,7 +22,6 @@ export default {
   },
   data() {
     return {
-      breakdownData: [],
       loaded: false,
       dataCollection: null,
       options: {
@@ -79,56 +78,36 @@ export default {
     }
   },
   watch: {
-    dicom_obj_id: {
-      handler: function() {
-        console.log('asfasdf')
-        this.getData()
-      }
+    dicom_obj_type: function() {
+      this.getData()
+    },
+    dicom_obj_id: function() {
+      this.getData()
     }
   },
-  // async updated() {
-  //   console.log(this.dicom_obj_id)
-  //   console.log(this.dicom_obj_type)
-  //   const URL = '/dicom/series-breakdown'
-  //   try {
-  //     this.loaded = false
-  //     // const modalityData = await generic_get(this, URL)
-  //     console.log(modalityData)
-  //     // this.breakdownData = modalityData
-  //     this.makeListData(modalityData)
-  //     this.makeDatasets(modalityData)
-  //   } catch (e) {
-  //     console.log(e)
+  // computed: {
+  //   dicomNodeChange() {
+  //     console.log([this.dicom_obj_id, this.dicomSeries].join())
+  //     return [this.dicom_obj_id, this.dicom_obj_type].join()
   //   }
   // },
-  async created() {
-    console.log('sdfsdf')
-    const URL = `/dicom/series-breakdown/${this.dicom_obj_type}/${this.dicom_obj_id}`
-    try {
-      this.loaded = false
-      const modalityData = await generic_get(this, URL)
-      console.log(modalityData)
-      this.breakdownData = modalityData
-      this.makeListData(modalityData)
-      this.makeDatasets(modalityData)
-    } catch (e) {
-      console.log(e)
+  created() {
+    if (this.dicom_obj_type && this.dicom_obj_id) {
+      this.getData()
     }
   },
   methods: {
-    getData() {
-      console.log(this.dicom_obj_id)
-      console.log(this.dicom_obj_type)
-    },
-    makeListData(modalityData) {
-      Object.entries(modalityData).forEach(data => {
-        const dicomSeries = {
-          modality: data[0],
-          count: data[1]
+    async getData() {
+      if (this.dicom_obj_type !== 'Series') {
+        const URL = `/dicom/series-breakdown/${this.dicom_obj_type}/${this.dicom_obj_id}`
+        try {
+          this.loaded = false
+          const modalityData = await generic_get(this, URL)
+          this.makeDatasets(modalityData)
+        } catch (e) {
+          console.log(e)
         }
-        // this.breakdownData.push(dicomSeries)
-      })
-      console.log(this.breakdownData)
+      }
     },
     makeDatasets(modalityData) {
       const modalityDatasets = []
