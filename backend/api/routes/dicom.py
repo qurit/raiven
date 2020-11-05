@@ -14,8 +14,6 @@ from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
 
 router = APIRouter()
 
-# getting treeview nodes at each level
-
 
 @router.get("/received-series")
 def get_received_series(db: Session = Depends(session)):
@@ -29,8 +27,6 @@ def get_received_series(db: Session = Depends(session)):
 
 @router.get("/series-breakdown/{dicom_type}/{dicom_id}")
 def get_series_breakdown(dicom_type: str, dicom_id: int, db: Session = Depends(session)):
-
-    dicom_modality = None
 
     if (dicom_type == "Node"):
         dicom_modality = db.query(DicomSeries.modality).filter(DicomNode.id == DicomPatient.dicom_node_id).filter(

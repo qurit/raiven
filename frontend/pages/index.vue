@@ -30,9 +30,9 @@
       <v-col cols="4">
         <DicomTrendChart />
       </v-col>
-      <v-col cols="4">
+      <!-- <v-col cols="4">
         <DicomBreakdown />
-      </v-col>
+      </v-col> -->
     </v-row>
   </div>
 </template>

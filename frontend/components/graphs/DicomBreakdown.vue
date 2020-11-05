@@ -1,12 +1,17 @@
 <template>
   <div>
     <horizontal-bar
+      id="breakdownBar"
       v-if="loaded"
       :chart-data="dataCollection"
       :options="options"
       :height="70"
     ></horizontal-bar>
     {{ dicom_obj_type }}
+
+    <div id="chartjs-tooltip" style="position: absolute; z-index: 99999;">
+      <table />
+    </div>
   </div>
 </template>
 
@@ -24,7 +29,87 @@ export default {
     return {
       loaded: false,
       dataCollection: null,
+
       options: {
+        tooltips: {
+          // Disable the on-canvas tooltip
+          enabled: false,
+
+          custom: function(tooltipModel) {
+            // Tooltip Element
+            var tooltipEl = document.getElementById('chartjs-tooltip')
+
+            // Create element on first render
+            if (!tooltipEl) {
+              tooltipEl = document.createElement('div')
+              tooltipEl.id = 'chartjs-tooltip'
+              tooltipEl.innerHTML = '<table></table>'
+              document.body.appendChild(tooltipEl)
+            }
+
+            // Hide if no tooltip
+            if (tooltipModel.opacity === 0) {
+              tooltipEl.style.opacity = 0
+              return
+            }
+
+            // Set caret Position
+            tooltipEl.classList.remove('above', 'below', 'no-transform')
+            if (tooltipModel.yAlign) {
+              tooltipEl.classList.add(tooltipModel.yAlign)
+            } else {
+              tooltipEl.classList.add('no-transform')
+            }
+
+            function getBody(bodyItem) {
+              return bodyItem.lines
+            }
+            console.log(tooltipModel)
+            // Set Text
+            if (tooltipModel.body) {
+              var titleLines = tooltipModel.title || []
+              var bodyLines = tooltipModel.body.map(getBody)
+
+              var innerHtml = '<thead>'
+
+              titleLines.forEach(function(title) {
+                innerHtml += '<tr><th>' + title + '</th></tr>'
+              })
+              innerHtml += '</thead><tbody>'
+
+              bodyLines.forEach(function(body, i) {
+                var colors = 'white'
+                var style = 'background:' + 'white'
+                style += '; border-color:' + 'white'
+                style += '; border-width: 2px'
+                var span = '<span style="' + style + '"></span>'
+                innerHtml += '<tr><td>' + span + body + '</td></tr>'
+              })
+              innerHtml += '</tbody>'
+
+              var tableRoot = tooltipEl.querySelector('table')
+              tooltipEl.style.opacity = 1
+              console.log(tooltipEl)
+              tableRoot.innerHTML = innerHtml
+            }
+
+            // `this` will be the overall tooltip
+            let elem = document.getElementById('breakdownBar')
+            console.log(elem)
+            var position = elem.getBoundingClientRect()
+
+            // Display, position, and set styles for font
+            tooltipEl.style.opacity = 1
+            tooltipEl.style.position = 'absolute'
+            tooltipEl.style.left = position.left - 100 + 'px'
+            console.log(position)
+            tooltipEl.style.top = position.top + 'px'
+            tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily
+            tooltipEl.style.fontSize = '50px'
+            tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle
+            tooltipEl.style.pointerEvents = 'none'
+          }
+        },
         layout: {
           padding: {
             left: -20
@@ -37,9 +122,9 @@ export default {
             fontColor: colours.genericColours.labels
           }
         },
-        tooltips: {
-          yAlign: 'center'
-        },
+        // tooltips: {
+        //   yAlign: 'center'
+        // },
         scales: {
           yAxes: [
             {
@@ -87,7 +172,7 @@ export default {
       this.getData()
     }
   },
-  created() {
+  async created() {
     if (this.dicom_obj_type && this.dicom_obj_id) {
       this.getData()
     }
