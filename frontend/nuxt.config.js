@@ -21,7 +21,6 @@ export default {
   loading: {color: '#B15DFF'},
   buildModules: [
     '@nuxtjs/vuetify',
-
   ],
   modules: [
     '@nuxtjs/axios',
@@ -53,9 +52,8 @@ export default {
     strategies: {
       local: {
         endpoints: {
-          login: { url: '/user/login', method: 'post', propertyName: 'token' },
-          logout: { url: '/user/logout', method: 'post' },
-          user: { url: '/user/me', method: 'get', propertyName: 'user' }
+          login: { url: '/auth/token', method: 'post', propertyName: 'access_token' },
+          user: { url: '/user/me', method: 'get', propertyName: '' }
         },
 
         tokenRequired: true
