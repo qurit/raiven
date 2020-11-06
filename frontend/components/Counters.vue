@@ -16,8 +16,6 @@
 </template>
 
 <script>
-var TWEEN = require('tween.js')
-
 export default {
   name: 'Counters',
   props: { number: { default: 0 }, name },
