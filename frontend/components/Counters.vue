@@ -31,8 +31,7 @@ export default {
   computed: {
     fontsize: ctx => {
       const length = ctx.displayNumber.toString().length
-      if (length <= 2) return 'display-4'
-      else if (length <= 4) return 'display-3'
+      if (length <= 3) return 'display-4'
       else if (length <= 5) return 'display-2'
       else if (length <= 7) return 'display-1'
       else return ''

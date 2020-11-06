@@ -40,6 +40,10 @@ def get_series_breakdown(dicom_type: str, dicom_id: int, db: Session = Depends(s
         dicom_modality = db.query(DicomSeries.modality).filter(
             DicomStudy.id == DicomSeries.dicom_study_id).filter(DicomStudy.id == dicom_id).all()
 
+    if (dicom_type == "Series"):
+        dicom_modality = db.query(DicomSeries.modality).filter(
+            DicomSeries.id == dicom_id).all()
+
     dicom_modality_count = list(chain(*dicom_modality))
     return Counter(dicom_modality_count)
 

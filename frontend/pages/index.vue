@@ -21,13 +21,13 @@
       <v-col cols="12">
         <CounterList />
       </v-col>
-      <v-col cols="5">
+      <v-col cols="4">
         <PipelineStatus :pipelines="pipelines" />
       </v-col>
-      <v-col cols="3.5">
+      <v-col cols="4">
         <PipelineHistogram />
       </v-col>
-      <v-col cols="3.5">
+      <v-col cols="4">
         <DicomTrendChart />
       </v-col>
       <v-col cols="7">
