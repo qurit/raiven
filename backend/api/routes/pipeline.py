@@ -15,6 +15,14 @@ from api.schemas import pipeline as schemas
 router = APIRouter()
 
 
+@router.get("/stats")
+def get_pipeline_stats(db: Session = Depends(session)):
+    stats = {
+        "pipeline_counts": db.query(Pipeline).count(),
+    }
+    return stats
+
+
 @router.get("/runs")
 def get_pipeline_runs(db: Session = Depends(session)):
     pipeline_runs = db.query(PipelineRun.created_datetime).order_by(

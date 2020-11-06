@@ -31,7 +31,7 @@
         <DicomTrendChart />
       </v-col>
       <v-col cols="4">
-        <Counters :number="100" />
+        <CounterList />
       </v-col>
     </v-row>
   </div>
@@ -43,7 +43,7 @@ import PipelineHistogram from '../components/graphs/PipelineHistogram'
 import DicomBreakdown from '../components/graphs/DicomBreakdown'
 import DicomTrendChart from '../components/graphs/DicomTrendChart'
 import DicomInstances from '~/components/dicom/DicomInstances'
-import Counters from '~/components/Counters'
+import CounterList from '~/components/CounterList'
 import { mapState } from 'vuex'
 
 export default {
@@ -54,7 +54,7 @@ export default {
     DicomTrendChart,
     DicomInstances,
     DicomBreakdown,
-    Counters
+    CounterList
   },
   computed: {
     ...mapState('pipelines', ['pipelines'])
