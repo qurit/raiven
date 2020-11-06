@@ -1,15 +1,33 @@
 from typing import Optional
+from datetime import datetime
 
 from . import BaseORMModel, BaseModel
 
 
-class UserCreate(BaseModel):
+class UserLocalCreate(BaseModel):
     username: str
     name: str
-    title: Optional[str]
-    department: Optional[str]
-    company: Optional[str]
+    password: str
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "username": "testuser",
+                "name": "Mr. Testing",
+                "password": "password"
+            }
+        }
 
 
-class User(UserCreate, BaseORMModel):
+class User(BaseORMModel):
+    username: str
+    name: str
     is_admin: bool
+    first_seen: datetime
+    last_seen: datetime
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = 'Bearer'
+

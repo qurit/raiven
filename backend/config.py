@@ -10,6 +10,10 @@ class BaseConfig:
     UPLOAD_DIR = os.path.join(os.path.dirname(
         os.path.dirname(__file__)), 'uploads')
 
+    # Auth
+    SECRET_KEY = 'ChangeMe'
+    TOKEN_TTL = 3600
+
     # LDAP CONFIG
     LDAP_HOST = '10.9.2.37'
     LDAP_PORT = 389
@@ -19,6 +23,7 @@ class BaseConfig:
     LDAP_TEST_USR = 'crcldapviewer'
     LDAP_TEST_PW = 'LD@P2020pw!'
 
+    # DB Config
     POSTGRES_HOST = LOCALHOST
     POSTGRES_USER = 'postgres'
     POSTGRES_PW = 'password'
@@ -36,6 +41,9 @@ class BaseConfig:
     SCP_AE_TITLE = 'PICOM_SCP'
     SCP_HOST = ''
     SCP_PORT = 11112
+
+
+
 
     def __init__(self):
         env_vars = [v for v in os.environ.keys() if (v in vars(BaseConfig)) and not v.startswith('__')]
