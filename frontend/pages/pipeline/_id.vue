@@ -39,7 +39,12 @@
       </v-dialog>
 
       <!-- Container List -->
-      <v-navigation-drawer v-model="containerList" absolute right>
+      <v-navigation-drawer
+        v-model="containerList"
+        absolute
+        right
+        style="z-index: 9999"
+      >
         <template v-slot:prepend>
           <v-list-item two-line>
             <v-list-item-content>
