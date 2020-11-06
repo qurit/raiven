@@ -3,7 +3,9 @@ export default {
     transparentBlue: 'rgba(54, 162, 235, 0.2)',
     babyBlue: '#249EBF',
     labels: 'white',
-    line: 'grey'
+    line: 'grey',
+    primary: '#fdbb16',
+    secondary: '#771c46'
   },
   // modalities taken from: https://wiki.cancerimagingarchive.net/display/Public/DICOM+Modality+Abbreviations
   dicomBreakdownColours: {

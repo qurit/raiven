@@ -85,12 +85,12 @@ export default {
           {
             label: 'Dicom Instances Received',
             fill: false,
-            borderColor: colours.genericColours.line,
-            pointBackgroundColor: colours.genericColours.babyBlue,
-            pointBorderColor: colours.genericColours.babyBlue,
+            borderColor: colours.genericColours.secondary,
+            pointBackgroundColor: colours.genericColours.secondary,
+            pointBorderColor: colours.genericColours.primary,
             borderWidth: 1,
             lineTension: 0,
-            borderWidth: 4,
+            borderWidth: 2,
             data: Object.values(this.chartData)
           }
         ]

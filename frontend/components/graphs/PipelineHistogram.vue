@@ -91,9 +91,9 @@ export default {
           {
             label: 'Pipeline Runs per Day (7-day view)',
             data: Object.values(this.chartData),
-            backgroundColor: colours.genericColours.transparentBlue,
-            borderColor: colours.genericColours.babyBlue,
-            borderWidth: 1
+            backgroundColor: colours.genericColours.secondary,
+            borderColor: colours.genericColours.primary,
+            borderWidth: 2
           }
         ]
       }
