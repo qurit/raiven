@@ -7,7 +7,6 @@
       :options="options"
       :height="70"
     ></horizontal-bar>
-    {{ dicom_obj_type }}
 
     <div id="chartjs-tooltip" style="position: absolute; z-index: 99999;">
       <table />
