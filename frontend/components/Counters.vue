@@ -1,17 +1,18 @@
 <template>
-  <v-sheet
-    :color="color"
-    class="pa-2 text-center"
-    height="150"
-    width="150"
-    dark
-  >
-    <div
-      :class="`${fontsize} display-4 font-weight-light white--text`"
-      v-text="displayNumber"
-    />
-    <div class="title white--text" v-text="name" />
-  </v-sheet>
+  <v-row class="d-flex justify-center">
+    <v-card
+      class="ma-1 text-center justify-center"
+      height="150"
+      width="175"
+      elevation="10"
+    >
+      <div
+        :class="`${fontsize} display-4 font-weight-light white--text`"
+        v-text="displayNumber"
+      />
+      <div class="title white--text" v-text="name" />
+    </v-card>
+  </v-row>
 </template>
 
 <script>
@@ -27,9 +28,6 @@ export default {
     }
   },
 
-  // ready: function() {
-  //   this.displayNumber = this.number ? this.number : 0
-  // },
   computed: {
     fontsize: ctx => {
       const length = ctx.displayNumber.toString().length
@@ -45,23 +43,20 @@ export default {
     number: function() {
       clearInterval(this.interval)
 
-      if (this.number == this.displayNumber) {
-        console.log('finished')
+      if (this.number === this.displayNumber) {
         return
       }
 
       this.interval = window.setInterval(
         function() {
-          if (this.displayNumber != this.number) {
-            console.log('not finished')
+          if (this.displayNumber !== this.number) {
             var change = (this.number - this.displayNumber) / 10
-
             change = change >= 0 ? Math.ceil(change) : Math.floor(change)
-
             this.displayNumber = this.displayNumber + change
           }
         }.bind(this),
-        20
+        // this sets how quickly we increment to reach the displayNumber (higher number means longer delay between each number update)
+        30
       )
     }
   }

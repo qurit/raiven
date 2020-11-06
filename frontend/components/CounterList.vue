@@ -1,14 +1,12 @@
 <template>
   <div>
-    {{ dicom_series_counts }}
     <v-row>
-      <Counters :number="this.patientCount" name="Patients" />
-
-      <Counters :number="this.studyCount" name="Studies" />
-
-      <Counters :number="this.seriesCount" name="Series" />
-      <Counters :number="this.pipelineCount" name="Pipelines" />
       <Counters :number="this.containerCount" name="Containers" />
+      <Counters :number="this.pipelineCount" name="Pipelines" />
+      <Counters :number="this.pipelineRunCount" name="Pipeline Runs" />
+      <Counters :number="this.patientCount" name="Patients" />
+      <Counters :number="this.studyCount" name="Studies" />
+      <Counters :number="this.seriesCount" name="Series" />
     </v-row>
   </div>
 </template>
@@ -24,6 +22,7 @@ export default {
   },
   data: () => ({
     pipelineCount: 0,
+    pipelineRunCount: 0,
     containerCount: 0,
     patientCount: 0,
     studyCount: 0,
@@ -48,9 +47,12 @@ export default {
     },
     async getPipelineStats() {
       const URL = '/pipeline/stats'
-      const { pipeline_counts } = await generic_get(this, URL)
-      console.log(pipeline_counts)
+      const { pipeline_counts, pipeline_run_counts } = await generic_get(
+        this,
+        URL
+      )
       this.pipelineCount = pipeline_counts
+      this.pipelineRunCount = pipeline_run_counts
     },
     async getContainerStats() {
       const URL = '/container/stats'

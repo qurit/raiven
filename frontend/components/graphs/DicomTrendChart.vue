@@ -83,7 +83,7 @@ export default {
         labels: Object.keys(this.chartData),
         datasets: [
           {
-            label: 'Dicom Instances',
+            label: 'Dicom Instances Received',
             fill: false,
             borderColor: colours.genericColours.line,
             pointBackgroundColor: colours.genericColours.babyBlue,

@@ -18,20 +18,20 @@
           >Click me for a purple toast</V-btn
         > -->
       <!-- </v-col> -->
+      <v-col cols="12">
+        <CounterList />
+      </v-col>
       <v-col cols="5">
         <PipelineStatus :pipelines="pipelines" />
       </v-col>
-      <v-col cols="7">
-        <DicomInstances />
-      </v-col>
-      <v-col cols="4">
+      <v-col cols="3.5">
         <PipelineHistogram />
       </v-col>
-      <v-col cols="4">
+      <v-col cols="3.5">
         <DicomTrendChart />
       </v-col>
-      <v-col cols="4">
-        <CounterList />
+      <v-col cols="7">
+        <DicomInstances />
       </v-col>
     </v-row>
   </div>

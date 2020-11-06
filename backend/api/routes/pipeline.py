@@ -19,6 +19,7 @@ router = APIRouter()
 def get_pipeline_stats(db: Session = Depends(session)):
     stats = {
         "pipeline_counts": db.query(Pipeline).count(),
+        "pipeline_run_counts": db.query(PipelineRun).count()
     }
     return stats
 
