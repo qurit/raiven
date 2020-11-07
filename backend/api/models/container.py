@@ -36,6 +36,10 @@ class ContainerBuild(TimestampMixin, Base):
 
     error = relationship('ContainerBuildError', uselist=False, backref='build')
 
+    @property
+    def is_success(self):
+        return self.exit_code == 0
+
 
 class ContainerBuildError(Base):
     container_id = Column(ForeignKey("container_build.id", ondelete="CASCADE"))
