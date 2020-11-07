@@ -1,3 +1,5 @@
+import os
+
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
@@ -16,6 +18,14 @@ class Container(PathMixin, Base):
     filename = Column(String)
 
     build = relationship('ContainerBuild', uselist=False)
+
+    @property
+    def dockerfile_abs_path(self):
+        return os.path.join(config.UPLOAD_DIR, self.dockerfile_path)
+
+    @property
+    def build_abs_path(self):
+        return os.path.dirname(self.dockerfile_abs_path)
 
 
 class ContainerBuild(TimestampMixin, Base):
