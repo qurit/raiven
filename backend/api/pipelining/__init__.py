@@ -104,8 +104,9 @@ def run_pipeline(pipeline_run_id: models.pipeline.PipelineRun):
         run.save(db)
         db.commit()
 
+        for node in starting_nodes:
+            if not (build := node.container.build) or not build.is_success():
+                # TODO: Build containers here if they haven't already been built
+                pass
+
         [run_node(run.id, n.id) for n in starting_nodes]
-
-
-if __name__ == '__main__':
-    build_container(2)
