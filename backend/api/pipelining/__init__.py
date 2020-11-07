@@ -92,7 +92,8 @@ def run_node(run_id: int, node_id: int, previous_job_id: int = None):
             next_nodes = job.node.get_next_nodes()
             [run_node(run_id, n.id, job.id) for n in next_nodes]
 
-    # TODO: remove containers
+    # Cleaning Up Container
+    container.remove()
 
 
 def run_pipeline(pipeline_run_id: models.pipeline.PipelineRun):
@@ -105,8 +106,9 @@ def run_pipeline(pipeline_run_id: models.pipeline.PipelineRun):
         db.commit()
 
         for node in starting_nodes:
-            if not (build := node.container.build) or not build.is_success():
+            if not (build := node.container.build) or not build.is_success:
                 # TODO: Build containers here if they haven't already been built
-                pass
+                print("TODO: some containers need to be built. Exiting")
+                return
 
         [run_node(run.id, n.id) for n in starting_nodes]
