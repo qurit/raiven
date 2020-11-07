@@ -3,12 +3,13 @@ import os
 import zipfile
 from typing import List
 
-from fastapi import APIRouter, Depends, File, Form
+from fastapi import APIRouter, Depends, File, Form, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from api import session, config
 from api.models.container import Container
 from api.schemas import container
+from api.pipelining import build_container
 
 router = APIRouter()
 
@@ -22,6 +23,7 @@ def get_all_containers(db: Session = Depends(session)):
 # TODO: Add response model
 @router.post("/")
 async def create_container(
+        background_tasks: BackgroundTasks,
         file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
         description: str = Form(None), is_input_container: bool = Form(...),
         is_output_container: bool = Form(...), db: session = Depends(session)):
@@ -62,6 +64,10 @@ async def create_container(
         db_container.dockerfile_path = os.path.join(
             db_container.get_path(), filename)
         db_container.save(db)
+
+    # Build Container In Background
+    db.commit()
+    background_tasks.add_task(build_container, db_container.id)
 
     # TODO: We shoulnt return a list
     return [db_container]

@@ -15,17 +15,15 @@ def build_container(container_id: int):
             container_id=container.id,
             status='building'
         )
+        build_path = container.build_abs_path
         container_build.save(db)
-        container_build.detach(db)
 
-    image, build_logs = client.images.build(path='C:\\Users\\Adam\\Programming\\picom\\uploads\\containers\\2', tag='mycontainer')
+    image, build_logs = client.images.build(path=build_path, tag='mycontainer')
     with worker_session() as db:
         container_build.status = 'exited'
         container_build.exit_code = 0
         container_build.tag = image.tags[0]
         container_build.save(db)
-
-    # client.build()
 
 
 def run_node(run_id: int, node_id: int, previous_job_id: int = None):
@@ -39,7 +37,8 @@ def run_node(run_id: int, node_id: int, previous_job_id: int = None):
 
         if not (build := job.node.container.build):
             # TODO: ABORT AND BUILD
-            pass
+            print('Cant run node because container is not built')
+            return
 
         image_tag = build.tag
         job.detach(db)
@@ -54,13 +53,12 @@ def run_node(run_id: int, node_id: int, previous_job_id: int = None):
         # TODO: Locking
 
         models.utils.copy_model_fs(prev, job, src_subdir=src_subdir)
-
         volumes = {
             job.get_abs_input_path(): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
             job.get_abs_output_path(): {'bind': config.PICOM_OUTPUT_DIR, 'mode': 'rw'}
         }
 
-    container: Container = client.containers.run(image_tag, detach=True, volumes=volumes)
+    container: Container = client.containers.run(image_tag, detach=True, volumes=volumes, labels=['Raiven'])
     with worker_session() as db:
         job.status = 'running'
         job.save(db)
