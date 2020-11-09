@@ -24,6 +24,7 @@ class Pipeline(Base):
 class PipelineNode(Base):
     pipeline_id = Column(ForeignKey("pipeline.id", ondelete="CASCADE"))
     container_id = Column(ForeignKey("container.id"))
+    destination_id = Column(ForeignKey("destination.id"))
     x_coord = Column(Integer)
     y_coord = Column(Integer)
     container_is_input = Column(Boolean)
@@ -33,7 +34,7 @@ class PipelineNode(Base):
     next_links = relationship('PipelineLink', foreign_keys='PipelineLink.from_node_id')
     previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.to_node_id')
     jobs = relationship('PipelineJob', backref='node')
-    dicom_output = relationship('PipelineDICOMOutput', backref='node', uselist=False)
+    destination = relationship('Destination', uselist=False)
 
     def is_root_node(self):
         return not len(self.previous_links)
@@ -46,13 +47,6 @@ class PipelineNode(Base):
 
     def __repr__(self, **kwargs) -> str:
         return super().__repr__(root=self.is_root_node(), leaf=self.is_leaf_node(), **kwargs)
-
-
-class PipelineDICOMOutput(Base):
-    pipeline_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
-    destination_id = Column(ForeignKey("destination.id", ondelete="CASCADE"))
-
-    destination = relationship('Destination', uselist=False)
 
 
 class PipelineLink(Base):
