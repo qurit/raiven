@@ -24,18 +24,22 @@
       <v-col cols="7">
         <DicomInstances />
       </v-col>
+      <v-col cols="6">
+        <PipelineResults />
+      </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
 import PipelineStatus from '../components/PipelineStatus'
+import PipelineResults from '~/components/PipelineResults'
 import DicomInstances from '~/components/dicom/DicomInstances'
 import { mapState } from 'vuex'
 
 export default {
   name: 'App',
-  components: { PipelineStatus, DicomInstances },
+  components: { PipelineStatus, DicomInstances, PipelineResults },
   computed: {
     ...mapState('pipelines', ['pipelines'])
   }

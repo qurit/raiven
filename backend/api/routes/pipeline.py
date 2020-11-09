@@ -4,11 +4,16 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, BackgroundTasks
 
 from api import session
-from api.models.pipeline import Pipeline, PipelineLink, PipelineNode
+from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun
 from api.controllers.pipeline import PipelineController
 from api.schemas import pipeline as schemas
 
 router = APIRouter()
+
+
+@router.get("/runs")
+def get_all_pipeline_runs(db: Session = Depends(session)):
+    return db.query(PipelineRun).all()
 
 
 @router.get("/", response_model=List[schemas.Pipeline])
