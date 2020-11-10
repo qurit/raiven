@@ -2,11 +2,14 @@
   <div>
     <v-card elevation="6">
       <v-data-table
+        id="ResultsTable"
         :headers="headers"
         :items="items"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
       >
+        <template v-slot:item.created_datetime="{item}">{{ formatDateTime(item.created_datetime) }}</template>
+        <template v-slot:item.finished_datetime="{item}">{{ formatDateTime(item.finished_datetime) }}</template>
         <template v-slot:item.actions="{ item }">
           <v-icon small class="mr-2" @click="download(item)">
             mdi-download
@@ -18,52 +21,55 @@
 </template>
 
 <script>
-const FileDownload = require('js-file-download')
+  const FileDownload = require('js-file-download')
 
-import { generic_get } from '~/api'
+  import {generic_get} from '~/api'
 
-export default {
-  data() {
-    return {
-      headers: [
-        {
-          text: 'Pipeline Run ID',
-          align: 'start',
-          value: 'id'
-        },
-        { text: 'From Pipeline', value: 'pipeline_id' },
-        { text: 'Started on:', value: 'created_datetime' },
-        { text: 'Finished on:', value: 'finished_datetime' },
-        { text: 'Results', value: 'actions', sortable: false, align: 'center' }
-      ],
-      items: [],
-      sortBy: 'finished_datetime',
-      sortDesc: true
-    }
-  },
-  created() {
-    this.getPipelineRuns()
-  },
-  methods: {
-    async getPipelineRuns() {
-      const URL = '/pipeline/runs'
-      const pipelineRuns = await generic_get(this, URL)
-      this.items = pipelineRuns
-    },
-    async download(pipelineRun) {
-      const URL = `/pipeline/download/${pipelineRun.id}`
-      try {
-        const results = await generic_get(this, URL, {
-          responseType: 'arraybuffer'
-        })
-        FileDownload(
-          results,
-          `pipeline_run_${pipelineRun.id}_${pipelineRun.finished_datetime}.zip`
-        )
-      } catch (e) {
-        this.$toaster.toastError('Could not download file')
+  export default {
+    data() {
+      return {
+        headers: [
+          {text: 'Run ID', align: 'start', value: 'id'},
+          {text: 'Pipeline', value: 'pipeline.name'},
+          {text: 'Status', value: 'status'},
+          {text: 'Started on:', value: 'created_datetime'},
+          {text: 'Finished on:', value: 'finished_datetime'},
+          {text: 'Results', value: 'actions', sortable: false, align: 'center'}
+        ],
+        items: [],
+        sortBy: 'finished_datetime',
+        sortDesc: true
       }
+    },
+    created() {
+      this.getPipelineRuns()
+    },
+    methods: {
+      formatDateTime: x => x ? new Date(x).toLocaleString() : 'Invalid Date',
+      async getPipelineRuns() {
+        const URL = '/pipeline/runs'
+        const pipelineRuns = await generic_get(this, URL)
+        this.items = pipelineRuns
+      },
+      async download(pipelineRun) {
+        const URL = `/pipeline/download/${pipelineRun.id}`
+        try {
+          const results = await generic_get(this, URL, {
+            responseType: 'arraybuffer'
+          })
+          FileDownload(
+            results,
+            `pipeline_run_${pipelineRun.id}_${pipelineRun.finished_datetime}.zip`
+          )
+        } catch (e) {
+          this.$toaster.toastError('Could not download file')
+        }
+      },
     }
   }
-}
 </script>
+<style>
+  #ResultsTable > div > table > tbody > tr > td {
+    text-transform: capitalize;
+  }
+</style>

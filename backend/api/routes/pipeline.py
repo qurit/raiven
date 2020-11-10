@@ -13,7 +13,7 @@ from fastapi.responses import StreamingResponse
 router = APIRouter()
 
 
-@router.get("/runs")
+@router.get("/runs", response_model=List[schemas.PipelineRun])
 def get_all_pipeline_runs(db: Session = Depends(session)):
     return db.query(PipelineRun).all()
 
