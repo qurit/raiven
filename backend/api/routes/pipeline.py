@@ -1,20 +1,15 @@
 import os
 import zipfile
+from typing import List
 
-from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, BackgroundTasks
+from fastapi.responses import StreamingResponse
+from sqlalchemy.orm import Session
 
 from api import session
-from api.models.pipeline import Pipeline, PipelineLink, PipelineNode
-from api.controllers.pipeline import PipelineController
-from api.schemas import pipeline as schemas
 from api.controllers.pipeline import PipelineController
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun
-from api import session
-from fastapi import APIRouter, Depends, BackgroundTasks
-from sqlalchemy.orm import Session
-from typing import List
-from fastapi.responses import StreamingResponse
+from api.schemas import pipeline as schemas
 
 router = APIRouter()
 
@@ -27,28 +22,30 @@ def get_all_pipeline_runs(db: Session = Depends(session)):
 @router.get("/download/{pipeline_run_id}")
 def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
 
-    pipeline_run = db.query(
-        PipelineRun).get(pipeline_run_id)
+    pipeline_run: PipelineRun = db.query(PipelineRun).get(pipeline_run_id)
+    result_path = pipeline_run.get_abs_output_path()
+    zip_path = os.path.join(pipeline_run.get_abs_path(), 'result.zip')
+    result_files = os.listdir(result_path)
 
-    result_path = os.path.join(
-        pipeline_run.get_abs_path(), "output")
+    # Creating a zip file if it doesn't exist'
+    if not os.path.exists(zip_path):
 
-    result_files = (os.listdir(os.path.join(
-        pipeline_run.get_abs_path(), "output")))
+        with zipfile.ZipFile(zip_path, mode="w") as zf:
+            for file_name in result_files:
+                zf.write(
+                    os.path.join(result_path, file_name),
+                    file_name,
+                    compress_type=zipfile.ZIP_DEFLATED
+                )
 
-    # downloading all the files in the output into a zip file
-    compression = zipfile.ZIP_DEFLATED
-    zf = zipfile.ZipFile("results.zip", mode="w")
-    for file_name in result_files:
-        zf.write(os.path.join(result_path, file_name),
-                 file_name, compress_type=compression)
-    zf.close()
-
-    # sending the zip file as response
+    # Sending the zip file as response
     zip_file = open("results.zip", 'rb')
     response = StreamingResponse(
-        zip_file, media_type="application/x-zip-compressed")
+        zip_file,
+        media_type="application/x-zip-compressed"
+    )
     response.headers["Content-Disposition"] = "attachment; filename=results.zip"
+
     return response
 
 

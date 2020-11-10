@@ -46,6 +46,7 @@
     },
     methods: {
       formatDateTime: x => x ? new Date(x).toLocaleString() : 'Invalid Date',
+      formatFileName: x => `${x.pipeline.name}_results_${x.finished_datetime}.zip`,
       async getPipelineRuns() {
         const URL = '/pipeline/runs'
         const pipelineRuns = await generic_get(this, URL)
@@ -57,10 +58,7 @@
           const results = await generic_get(this, URL, {
             responseType: 'arraybuffer'
           })
-          FileDownload(
-            results,
-            `pipeline_run_${pipelineRun.id}_${pipelineRun.finished_datetime}.zip`
-          )
+          FileDownload(results, this.formatFileName(pipelineRun))
         } catch (e) {
           this.$toaster.toastError('Could not download file')
         }
