@@ -5,31 +5,37 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import APIRouter, Depends, HTTPException
 
 from api import session, config
-from api.models.user import User
-from api.schemas.user import User as UserSchema, UserCreate as UserCreateSchema
+from api.models.user import User, UserLocal
+from api.schemas.user import User as UserSchema, UserLocalCreate
+from api.auth import token_auth
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[UserSchema])
+@router.get("/", response_model=List[UserSchema], dependencies=[Depends(token_auth)])
 def get_all_users(db: Session = Depends(session)):
-    users = db.query(User).all()
-    print(users)
-
-    return users
+    return db.query(User).all()
 
 
 @router.post("/", response_model=UserSchema)
-def create_user(user: UserCreateSchema, db: Session = Depends(session)):
+def create_local_user(user_schema: UserLocalCreate, db: Session = Depends(session)):
     """
-    Allows the creation of a user. This route should exist purely for testing purposes. User creation should be done by LDAP.
+    Allows the creation of a local user.
     """
-    print(config.SQLALCHEMY_DATABASE_URI)
 
     try:
-        user = User(**user.dict())
+        user = User(username=user_schema.username, name=user_schema.name)
         user.save(db)
+
+        UserLocal(id=user.id, password=user_schema.password).save(db)
+
     except IntegrityError:
         raise HTTPException(status_code=400, detail='User already exists')
     else:
         return user
+
+
+@router.get("/me", response_model=UserSchema)
+def get_the_current_user(user: User = Depends(token_auth)):
+    return user
+

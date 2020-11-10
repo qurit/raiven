@@ -1,3 +1,4 @@
+import passlib
 from config import BaseConfig
 config = BaseConfig()
 
