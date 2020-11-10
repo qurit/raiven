@@ -15,7 +15,8 @@ class DicomNode(PathMixin, Base):
 
 
 class DicomPatient(NestedPathMixin, Base):
-    dicom_node_id = Column(Integer, ForeignKey("dicom_node.id", ondelete="CASCADE"))
+    dicom_node_id = Column(Integer, ForeignKey(
+        "dicom_node.id", ondelete="CASCADE"))
     patient_id = Column(String)
 
     studies = relationship('DicomStudy', backref='patient')
@@ -25,7 +26,8 @@ class DicomPatient(NestedPathMixin, Base):
 
 
 class DicomStudy(NestedPathMixin, Base):
-    dicom_patient_id = Column(Integer, ForeignKey("dicom_patient.id", ondelete='CASCADE'))
+    dicom_patient_id = Column(Integer, ForeignKey(
+        "dicom_patient.id", ondelete='CASCADE'))
     study_instance_uid = Column(String)
     study_date = Column(DateTime)
 
@@ -36,10 +38,12 @@ class DicomStudy(NestedPathMixin, Base):
 
 
 class DicomSeries(NestedPathMixin, Base):
-    dicom_study_id = Column(Integer, ForeignKey("dicom_study.id", ondelete="CASCADE"))
+    dicom_study_id = Column(Integer, ForeignKey(
+        "dicom_study.id", ondelete="CASCADE"))
     series_instance_uid = Column(String)
     series_description = Column(String)
     modality = Column(String)
+    date_received = Column(DateTime)
 
     def get_path(self) -> str:
         return os.path.join(self.study.get_path(), str(self.id))
