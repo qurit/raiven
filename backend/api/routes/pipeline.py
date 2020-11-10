@@ -1,5 +1,5 @@
 import os
-import zipfile
+import shutil
 from typing import List
 
 from fastapi import APIRouter, Depends, BackgroundTasks
@@ -21,29 +21,17 @@ def get_all_pipeline_runs(db: Session = Depends(session)):
 
 @router.get("/download/{pipeline_run_id}")
 def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
-
     pipeline_run: PipelineRun = db.query(PipelineRun).get(pipeline_run_id)
     result_path = pipeline_run.get_abs_output_path()
-    zip_path = os.path.join(pipeline_run.get_abs_path(), 'result.zip')
-    result_files = os.listdir(result_path)
+    zip_path = os.path.join(pipeline_run.get_abs_path(), 'result')
 
     # Creating a zip file if it doesn't exist'
     if not os.path.exists(zip_path):
-
-        with zipfile.ZipFile(zip_path, mode="w") as zf:
-            for file_name in result_files:
-                zf.write(
-                    os.path.join(result_path, file_name),
-                    file_name,
-                    compress_type=zipfile.ZIP_DEFLATED
-                )
+        shutil.make_archive(zip_path, 'zip', result_path)
 
     # Sending the zip file as response
-    zip_file = open("results.zip", 'rb')
-    response = StreamingResponse(
-        zip_file,
-        media_type="application/x-zip-compressed"
-    )
+    zip_file = open(zip_path + '.zip', 'rb')
+    response = StreamingResponse(zip_file, media_type="application/x-zip-compressed")
     response.headers["Content-Disposition"] = "attachment; filename=results.zip"
 
     return response
