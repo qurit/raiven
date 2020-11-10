@@ -15,7 +15,9 @@
         ></FlowchartLink>
       </svg>
       <FlowchartNode
+        ref="child"
         v-bind.sync="node"
+        :scene.sync="scene"
         v-for="(node, index) in scene.nodes"
         :key="`node${index}`"
         :options="nodeOptions"
@@ -128,8 +130,12 @@ export default {
   mounted() {
     this.rootDivOffset.top = this.$el ? this.$el.offsetTop : 0
     this.rootDivOffset.left = this.$el ? this.$el.offsetLeft : 0
+    console.log()
   },
   methods: {
+    test() {
+      console.log(vm.$refs.child.selected)
+    },
     findNodeWithID(id) {
       return this.scene.nodes.find(item => id === item.id)
     },
@@ -274,6 +280,7 @@ export default {
     },
     async saveNodesAndLinks() {
       const nodes = this.scene.nodes
+      console.log(nodes)
       const links = this.scene.links
       var nodeArray = []
       var linkArray = []

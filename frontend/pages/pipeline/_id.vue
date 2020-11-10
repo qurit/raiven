@@ -121,7 +121,9 @@ export default {
         type: container.name,
         container_id: container.id,
         container_is_input: container.is_input_container,
-        container_is_output: container.is_output_container
+        container_is_output: container.is_output_container,
+        host: undefined,
+        port: undefined
       })
     },
     savePipeline() {
