@@ -17,12 +17,12 @@ router = APIRouter()
 
 @router.get("/received-series")
 def get_received_series(db: Session = Depends(session)):
-    dicom_series = db.query(DicomSeries.date_received).order_by(
-        asc(DicomSeries.date_received)).all()
-    dicom_series_to_count = list(chain(*dicom_series))
-    dicom_series_to_count = map(lambda x: x.date(), dicom_series_to_count)
-    dicom_series_to_count = list(dicom_series_to_count)
-    return Counter(dicom_series_to_count)
+    # TODO: Add index on date received and only query the last 7 days
+    date_series_count = db.query(func.DATE(DicomSeries.date_received), func.count(func.DATE(DicomSeries.date_received)))\
+            .group_by(func.DATE(DicomSeries.date_received))\
+            .order_by(asc(func.DATE(DicomSeries.date_received))).all()
+
+    return {date: count for date, count in date_series_count}
 
 
 @router.get("/series-breakdown/{dicom_type}/{dicom_id}")
