@@ -17,7 +17,7 @@
       <!-- Node Data -->
       <v-card-title v-text="type" />
       <v-select
-        v-if="container_is_output"
+        v-if="container_is_output || container_is_input"
         :items="destinations"
         item-text="full_name"
         item-value="id"
