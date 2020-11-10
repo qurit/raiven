@@ -22,7 +22,6 @@ def get_all_pipeline_runs(db: Session = Depends(session)):
 
 @router.get("/download/{pipeline_run_id}")
 def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
-    print(pipeline_run_id)
 
     pipeline_run = db.query(
         PipelineRun).get(pipeline_run_id)
@@ -33,22 +32,20 @@ def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
     result_files = (os.listdir(os.path.join(
         pipeline_run.get_abs_path(), "output")))
 
+    # downloading all the files in the output into a zip file
     compression = zipfile.ZIP_DEFLATED
-    zf = zipfile.ZipFile("RAWS.zip", mode="w")
+    zf = zipfile.ZipFile("results.zip", mode="w")
     for file_name in result_files:
         zf.write(os.path.join(result_path, file_name),
                  file_name, compress_type=compression)
-
     zf.close()
 
-    zip_file = open("RAWS.zip", 'rb')
+    # sending the zip file as response
+    zip_file = open("results.zip", 'rb')
     response = StreamingResponse(
         zip_file, media_type="application/x-zip-compressed")
-    response.headers["Content-Disposition"] = "attachment; filename=test.zip"
-    print(response)
+    response.headers["Content-Disposition"] = "attachment; filename=results.zip"
     return response
-
-# print(pipeline_run_result_path)
 
 
 @ router.get("/", response_model=List[schemas.Pipeline])
