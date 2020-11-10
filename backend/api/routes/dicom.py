@@ -1,16 +1,12 @@
-import os
-from collections import Counter
-from itertools import chain
-
-from sqlalchemy.orm import Session
-from sqlalchemy import asc, func
-from fastapi import APIRouter, Depends
 from typing import List
 
-from api import session, queries
-from api.schemas import dicom, pipeline
-from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
+from fastapi import APIRouter, Depends
+from sqlalchemy import func
+from sqlalchemy.orm import Session
 
+from api import session, queries
+from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
+from api.schemas import dicom, pipeline
 
 router = APIRouter()
 
