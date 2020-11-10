@@ -68,7 +68,8 @@ class PipelineId(BaseModel):
 
 
 class PipelineRunOptions(BaseModel):
-    _DICOM_TYPES = {'node': dicom.DicomNode, 'patient': dicom.DicomPatient, 'study': dicom.DicomStudy, 'series': dicom.DicomSeries}
+    _DICOM_TYPES = {'node': dicom.DicomNode, 'patient': dicom.DicomPatient,
+                    'study': dicom.DicomStudy, 'series': dicom.DicomSeries}
 
     pipeline_id: Optional[int]
     dicom_obj_type: str
@@ -85,7 +86,8 @@ class PipelineRunOptions(BaseModel):
     @validator('dicom_obj_type')
     def type_must_be(cls, v: str):
         if v.lower() not in cls._DICOM_TYPES.keys():
-            raise ValueError(f'{v} is not a valid type. Valid types are {cls.DICOM_TYPES.keys()}')
+            raise ValueError(
+                f'{v} is not a valid type. Valid types are {cls.DICOM_TYPES.keys()}')
         return v
 
     def get_cls_type(self) -> Base:
@@ -93,6 +95,9 @@ class PipelineRunOptions(BaseModel):
 
 
 class PipelineRun(BaseORMModel):
+    id: int
     status: str
     created_datetime: datetime
     finished_datetime: Optional[datetime]
+
+    pipeline: Pipeline

@@ -2,17 +2,18 @@
   <img src="frontend/static/raiven-logo-text.svg" alt="Raiven Logo" height="300" />
 </p>
 <p align="center">
-  <em>The Radiology Enviroment of the Future</em>
+  <em>The Radiology Environment of the Future</em></br>
+  <sub>Radiology + Environment + AI = Raiven</sub>
 </p>
 <p align="center">
-<img alt="Docker API Image CI" src="https://github.com/qurit/raiven/workflows/Docker%20API%20Image%20CI/badge.svg?branch=master" />
+<!-- <img alt="Docker API Image CI" src="https://github.com/qurit/raiven/workflows/Docker%20API%20Image%20CI/badge.svg?branch=master" /> -->
 <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/fastapi" />
 <img alt="npm" src="https://img.shields.io/npm/v/npm" />
 
 </p>
 
 ---
-Build using python, flask, and nuxt, Raiven is full-featured application for building and maintaining DICOM image processing pipelines.  Raiven hopes to become the radiology room of the future.
+Build using python, fastapi, and nuxt, Raiven is full-featured application for building and maintaining DICOM image processing pipelines.  Raiven hopes to become the radiology room of the future.
 
 Raiven aims to fulfill these [user stories](./stories.md).
 
