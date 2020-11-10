@@ -27,6 +27,7 @@
         :scene.sync="scene"
         :id="pipeline_id"
         :colors="colors.container"
+        @toggle-value="toggleValue"
         ref="simpleFlowchart"
       />
 
@@ -112,6 +113,10 @@ export default {
     }
   }),
   methods: {
+    toggleValue(a, b, c) {
+      console.log('in grandparent')
+      console.log(a)
+    },
     addNode(container) {
       let maxID = Math.max(0, ...this.scene.nodes.map(link => link.id))
       this.scene.nodes.push({

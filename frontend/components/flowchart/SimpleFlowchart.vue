@@ -15,13 +15,13 @@
         ></FlowchartLink>
       </svg>
       <FlowchartNode
-        ref="child"
         v-bind.sync="node"
         :scene.sync="scene"
         v-for="(node, index) in scene.nodes"
         :key="`node${index}`"
         :options="nodeOptions"
         :colors="colors.container"
+        v-on="$listeners"
         @linkingStart="linkingStart(node.id)"
         @linkingStop="linkingStop(node.id)"
         @nodeSelected="nodeSelected(node.id, $event)"
@@ -133,8 +133,9 @@ export default {
     console.log()
   },
   methods: {
-    test() {
-      console.log(vm.$refs.child.selected)
+    test(a) {
+      console.log('YEA BABY')
+      console.log(a)
     },
     findNodeWithID(id) {
       return this.scene.nodes.find(item => id === item.id)

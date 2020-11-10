@@ -149,12 +149,14 @@ export default {
   methods: {
     test(destination) {
       console.log('GIOT HERE')
-      console.log(this.selected)
+      const { host, port } = this.destinations[this.selected - 1]
       console.log(this.destinations[this.selected - 1])
-      this.scene.nodes[5].host = 'BLAHBA;AHSELFHJASDLIF'
-      console.log(this.scene.nodes[5])
-      console.log(this.scene)
-      this.$emit('host', this.host)
+      console.log(this.id)
+      this.$emit('toggle-value', {
+        pipelineNodeId: this.id,
+        host: host,
+        port: port
+      })
     },
     handleMousedown(e) {
       // This could be removed with click.stop maybe?
