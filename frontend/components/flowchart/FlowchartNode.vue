@@ -18,6 +18,7 @@
       <v-card-title v-text="type" />
       <v-select
         v-if="container_is_output"
+        v-model="selected"
         :items="destinations"
         item-text="full_name"
         item-value="id"
@@ -25,6 +26,7 @@
         dense
         solo
         flat
+        @change="test(selected)"
       >
         <template v-slot:prepend-item>
           <v-list-item>
@@ -91,6 +93,8 @@ export default {
     type: undefined,
     container_is_input: undefined,
     container_is_output: undefined,
+    host: undefined,
+    port: undefined,
     options: {
       type: Object,
       default() {
@@ -100,6 +104,16 @@ export default {
           centerY: undefined
         }
       }
+    },
+    scene: {
+      type: Object,
+      default: () => ({
+        centerX: 1024,
+        scale: 1,
+        centerY: 140,
+        nodes: [],
+        links: []
+      })
     },
     colors: {
       type: Object,
@@ -114,7 +128,8 @@ export default {
     destinationDialog: false,
     show: {
       delete: false
-    }
+    },
+    selected: undefined
   }),
   computed: {
     ...mapState('destination', ['destinations']),
@@ -132,6 +147,15 @@ export default {
     }
   },
   methods: {
+    test(destination) {
+      console.log('GIOT HERE')
+      console.log(this.selected)
+      console.log(this.destinations[this.selected - 1])
+      this.scene.nodes[5].host = 'BLAHBA;AHSELFHJASDLIF'
+      console.log(this.scene.nodes[5])
+      console.log(this.scene)
+      this.$emit('host', this.host)
+    },
     handleMousedown(e) {
       // This could be removed with click.stop maybe?
       if (
