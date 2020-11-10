@@ -14,6 +14,14 @@ from api.pipelining import build_container
 router = APIRouter()
 
 
+@router.get("/stats")
+def get_container_stats(db: Session = Depends(session)):
+    stats = {
+        "container_counts": db.query(Container).count(),
+    }
+    return stats
+
+
 @router.get("/", response_model=List[container.Container])
 def get_all_containers(db: Session = Depends(session)):
     """ Get a list of containers """
