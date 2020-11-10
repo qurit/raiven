@@ -3,7 +3,7 @@ from collections import Counter
 from itertools import chain
 
 from sqlalchemy.orm import Session
-from sqlalchemy import asc
+from sqlalchemy import asc, func
 from fastapi import APIRouter, Depends
 from typing import List
 
@@ -27,25 +27,16 @@ def get_received_series(db: Session = Depends(session)):
 
 @router.get("/series-breakdown/{dicom_type}/{dicom_id}")
 def get_series_breakdown(dicom_type: str, dicom_id: int, db: Session = Depends(session)):
+    q = db.query(DicomSeries.modality, func.count(DicomSeries.modality))
+    q, cls = {
+        'Node': (q.join(DicomStudy).join(DicomPatient).join(DicomNode), DicomNode),
+        'Patient': (q.join(DicomStudy).join(DicomPatient), DicomPatient),
+        'Study': (q.join(DicomStudy),  DicomStudy),
+        'Series': (q, DicomSeries)
+    }.get(dicom_type)
 
-    if (dicom_type == "Node"):
-        dicom_modality = db.query(DicomSeries.modality).filter(DicomNode.id == DicomPatient.dicom_node_id).filter(
-            DicomPatient.id == DicomStudy.dicom_patient_id).filter(DicomStudy.id == DicomSeries.dicom_study_id).filter(DicomNode.id == dicom_id).all()
-
-    if (dicom_type == "Patient"):
-        dicom_modality = db.query(DicomSeries.modality).filter(
-            DicomPatient.id == DicomStudy.dicom_patient_id).filter(DicomStudy.id == DicomSeries.dicom_study_id).filter(DicomPatient.id == dicom_id).all()
-
-    if (dicom_type == "Study"):
-        dicom_modality = db.query(DicomSeries.modality).filter(
-            DicomStudy.id == DicomSeries.dicom_study_id).filter(DicomStudy.id == dicom_id).all()
-
-    if (dicom_type == "Series"):
-        dicom_modality = db.query(DicomSeries.modality).filter(
-            DicomSeries.id == dicom_id).all()
-
-    dicom_modality_count = list(chain(*dicom_modality))
-    return Counter(dicom_modality_count)
+    dicom_modality_count = q.group_by(DicomSeries.modality).filter(cls.id == dicom_id).all()
+    return {modality: count for modality, count in dicom_modality_count}
 
 
 @router.get("/stats")
