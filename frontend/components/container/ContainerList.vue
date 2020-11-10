@@ -101,7 +101,7 @@ export default {
         this.deleteContainerId
       )
       this.confirmDeleteDialog = false
-      this.$toaster.toastSuccess('Container deleted!')
+
     },
     editContainer(containerId) {
       const containers = this.$store.state.containers.containers

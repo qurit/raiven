@@ -40,8 +40,9 @@ export const actions = {
       const URL = `/container/${id}`
       await generic_delete(this, URL)
       commit('deleteContainer', id)
+      this.$toaster.toastSuccess('Container Deleted Successfully')
     } catch (err) {
-      console.log(err)
+      this.$toaster.toastError('Container is Used in a Pipeline')
     }
   },
   async addContainer({ commit }, data) {
