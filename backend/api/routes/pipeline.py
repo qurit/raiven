@@ -1,17 +1,43 @@
+import os
+import shutil
 from typing import List
 
-from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, BackgroundTasks
+from fastapi.responses import StreamingResponse
+from sqlalchemy.orm import Session
 
 from api import session
-from api.models.pipeline import Pipeline, PipelineLink, PipelineNode
 from api.controllers.pipeline import PipelineController
+from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun
 from api.schemas import pipeline as schemas
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.Pipeline])
+@router.get("/runs", response_model=List[schemas.PipelineRun])
+def get_all_pipeline_runs(db: Session = Depends(session)):
+    return db.query(PipelineRun).all()
+
+
+@router.get("/download/{pipeline_run_id}")
+def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
+    pipeline_run: PipelineRun = db.query(PipelineRun).get(pipeline_run_id)
+    result_path = pipeline_run.get_abs_output_path()
+    zip_path = os.path.join(pipeline_run.get_abs_path(), 'result')
+
+    # Creating a zip file if it doesn't exist'
+    if not os.path.exists(zip_path):
+        shutil.make_archive(zip_path, 'zip', result_path)
+
+    # Sending the zip file as response
+    zip_file = open(zip_path + '.zip', 'rb')
+    response = StreamingResponse(zip_file, media_type="application/x-zip-compressed")
+    response.headers["Content-Disposition"] = "attachment; filename=results.zip"
+
+    return response
+
+
+@ router.get("/", response_model=List[schemas.Pipeline])
 def get_all_pipelines(db: Session = Depends(session)):
     return db.query(Pipeline).all()
 

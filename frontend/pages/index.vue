@@ -18,11 +18,23 @@
           >Click me for a purple toast</V-btn
         > -->
       <!-- </v-col> -->
-      <v-col cols="5">
+      <v-col cols="12">
+        <CounterList />
+      </v-col>
+      <v-col cols="4">
         <PipelineStatus :pipelines="pipelines" />
+      </v-col>
+      <v-col cols="4">
+        <PipelineHistogram />
+      </v-col>
+      <v-col cols="4">
+        <DicomTrendChart />
       </v-col>
       <v-col cols="7">
         <DicomInstances />
+      </v-col>
+      <v-col cols="6">
+        <PipelineResults />
       </v-col>
     </v-row>
   </div>
@@ -30,12 +42,25 @@
 
 <script>
 import PipelineStatus from '../components/PipelineStatus'
+import PipelineHistogram from '../components/graphs/PipelineHistogram'
+import DicomBreakdown from '../components/graphs/DicomBreakdown'
+import DicomTrendChart from '../components/graphs/DicomTrendChart'
+import PipelineResults from '~/components/PipelineResults'
 import DicomInstances from '~/components/dicom/DicomInstances'
+import CounterList from '~/components/CounterList'
 import { mapState } from 'vuex'
 
 export default {
   name: 'App',
-  components: { PipelineStatus, DicomInstances },
+  components: {
+    PipelineStatus,
+    PipelineHistogram,
+    DicomTrendChart,
+    DicomInstances,
+    DicomBreakdown,
+    CounterList,
+    PipelineResults
+  },
   computed: {
     ...mapState('pipelines', ['pipelines'])
   }

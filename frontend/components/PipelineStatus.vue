@@ -5,7 +5,8 @@
     </v-card-title>
     <v-divider light />
     <div v-if="pipelines.length > 0">
-      <v-flex v-for="pipeline in pipelines" :key="pipeline.id">
+      <!-- comment out for now because need to figure out how to do it properly with websockets and stuff -->
+      <!-- <v-flex v-for="pipeline in pipelines" :key="pipeline.id">
         <v-card>
           <v-card-subtitle>
             {{ pipeline.title }}
@@ -23,7 +24,7 @@
             </v-btn>
           </v-flex>
         </v-card>
-      </v-flex>
+      </v-flex> -->
     </div>
     <div v-else>
       <v-card>
