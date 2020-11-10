@@ -21,7 +21,6 @@
 const FileDownload = require('js-file-download')
 
 import { generic_get } from '~/api'
-import { saveAs } from 'file-saver'
 
 export default {
   data() {
