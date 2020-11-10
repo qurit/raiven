@@ -1,32 +1,34 @@
 <template>
   <v-card class="overflow-x-hidden">
     <v-card-title v-text="`Send ${dicom_obj_type} to Pipeline`" />
-    <v-card-subtitle v-text="`ID: ${dicom_obj_id}`" class="pt-0" />
+    <v-card-subtitle v-text="`ID: ${dicom_obj_id}`" class="py-0" />
     <DicomBreakdown
       :dicom_obj_type="dicom_obj_type"
       :dicom_obj_id="dicom_obj_id"
     />
-    <v-card-text>
+    <v-card-text class="pt-0">
+      All of the selected {{dicom_obj_type.toLowerCase()}}'s contents to be run in one of your pipelines
       <v-select
         v-model="pipeline_id"
         :items="pipelines"
         item-text="name"
         item-value="id"
         label="Choose a pipeline"
-        class="ma-8"
+        class="pt-2"
+        solo
+        flat
       />
     </v-card-text>
-    <v-row justify="center">
-      <v-btn @click="submit" :disabled="this.isDisabled" color="green">
+    <v-card-actions>
+      <v-btn @click="remove" color="red" text>
+        Delete {{ dicom_obj_type }}
+      </v-btn>
+      <v-spacer />
+     <v-btn @click="submit" :disabled="this.isDisabled" color="green" text>
         Send to Pipeline
       </v-btn>
-    </v-row>
-    <v-divider light class="my-4" />
-    <v-row justify="center">
-      <v-btn @click="remove" small color="red" class="mb-4">
-        Delete {{ dicom_obj_type }} (ID: {{ dicom_obj_id }})
-      </v-btn>
-    </v-row>
+
+    </v-card-actions>
   </v-card>
 </template>
 
