@@ -1,3 +1,6 @@
+import os
+import zipfile
+
 from api.schemas import pipeline as schemas
 from api.controllers.pipeline import PipelineController
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun
@@ -6,11 +9,6 @@ from fastapi import APIRouter, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List
 from fastapi.responses import StreamingResponse
-
-import os
-import zipfile
-import io
-
 
 router = APIRouter()
 
