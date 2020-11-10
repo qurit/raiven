@@ -56,7 +56,7 @@ def handle_store(event):
             )
             study.save(db)
 
-        if not (series := db.query(DicomSeries).filter_by(dicom_study_id=study.id, series_instance_uid=ds.StudyInstanceUID).first()):
+        if not (series := db.query(DicomSeries).filter_by(dicom_study_id=study.id, series_instance_uid=ds.SeriesInstanceUID).first()):
             series = DicomSeries(
                 dicom_study_id=study.id,
                 series_instance_uid=ds.SeriesInstanceUID,
