@@ -53,10 +53,28 @@ export default {
       const pipelineRuns = await generic_get(this, URL)
       this.items = pipelineRuns
     },
+    str2bytes(str) {
+      var bytes = new Uint8Array(str.length)
+      for (var i = 0; i < str.length; i++) {
+        bytes[i] = str.charCodeAt(i)
+      }
+      return bytes
+    },
     async test(pipelineRun) {
-      axios
-        .get(`/pipeline/download/${pipelineRun.id}`, { responseType: 'blob' })
-        .then(res => console.log(res))
+      const testing = await axios.get(`/pipeline/download/${pipelineRun.id}`, {
+        responseType: 'blob'
+      })
+
+      var blob = new Blob([this.str2bytes(testing.data)], {
+        type: 'application/zip'
+      })
+
+      saveAs(
+        blob,
+        `pipeline_run_${pipelineRun.id}_${pipelineRun.finished_datetime}.zip`
+      )
+
+      // .then(res => console.log(res))
       // .then(response => {
       //   FileDownload(
       //     response.data,
