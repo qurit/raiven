@@ -19,8 +19,11 @@
 
 <script>
 import { generic_get } from '~/api'
-var JSZip = require('jszip')
 import { saveAs } from 'file-saver'
+const axios = require('axios')
+var JSZip = require('jszip')
+const fs = require('fs')
+var FileDownload = require('js-file-download')
 
 export default {
   data() {
@@ -50,21 +53,51 @@ export default {
       const pipelineRuns = await generic_get(this, URL)
       this.items = pipelineRuns
     },
-    test(pipelineRun) {
-      try {
-        const outputPath = pipelineRun.output_path
-        var zip = new JSZip()
-        zip.file('Hello.txt', 'Hello World\n')
-        zip.file('Goodbye.txt', 'Goodbye, cruel world\n')
-        zip.generateAsync({ type: 'blob' }).then(function(blob) {
-          saveAs(
-            blob,
-            `pipeline_run_${pipelineRun.id}_${pipelineRun.finished_datetime}.zip`
-          )
-        })
-      } catch (e) {
-        console.log(e)
-      }
+    async test(pipelineRun) {
+      axios
+        .get(`/pipeline/download/${pipelineRun.id}`, { responseType: 'blob' })
+        .then(res => console.log(res))
+      // .then(response => {
+      //   FileDownload(
+      //     response.data,
+      //     `pipeline_run_${pipelineRun.id}_${pipelineRun.finished_datetime}.zip`
+      //   )
+      // })
+      // const URL = `/pipeline/download/${pipelineRun.id}`
+      // const blah = generic_get(this, URL)
+      //   .generateAsync({ type: 'blob' })
+      //   .then(function(blob) {
+      //     saveAs(
+      //       blob,
+      //       `pipeline_run_${pipelineRun.id}_${pipelineRun.finished_datetime}.zip`
+      //     )
+      //   })
+      // console.log(blah)
+
+      // try {
+      //   // const outputPath = pipelineRun.output_path
+
+      //   // fs.readdir(__dirname, (err, files) => {
+      //   //   if (err) console.log(err)
+      //   //   else {
+      //   //     console.log('\nCurrent directory filenames:')
+      //   //     files.forEach(file => {
+      //   //       console.log(file)
+      //   //     })
+      //   //   }
+      //   // })
+      //   // var zip = new JSZip()
+      //   // zip.file('Hello.txt', 'Hello World\n')
+      //   // zip.file('Goodbye.txt', 'Goodbye, cruel world\n')
+      //   // zip.generateAsync({ type: 'blob' }).then(function(blob) {
+      //   //   saveAs(
+      //   //     blob,
+      //   //     `pipeline_run_${pipelineRun.id}_${pipelineRun.finished_datetime}.zip`
+      //   //   )
+      //   // })
+      // } catch (e) {
+      //   console.log(e)
+      // }
     }
   }
 }

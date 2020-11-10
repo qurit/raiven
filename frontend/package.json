@@ -17,6 +17,7 @@
     "axios": "^0.20.0",
     "chart.js": "^2.9.3",
     "file-saver": "^2.0.2",
+    "js-file-download": "^0.4.12",
     "jszip": "^3.5.0",
     "nuxt": "^2.13.0",
     "nuxt-socket-io": "^1.1.2",
