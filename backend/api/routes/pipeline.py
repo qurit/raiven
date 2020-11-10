@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import asc
 from fastapi import APIRouter, Depends, BackgroundTasks
 
-from api import session
+from api import session, queries
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun
 from api.controllers.pipeline import PipelineController
 from api.schemas import pipeline as schemas
@@ -25,13 +25,12 @@ def get_pipeline_stats(db: Session = Depends(session)):
 
 
 @router.get("/runs")
-def get_pipeline_runs(db: Session = Depends(session)):
-    pipeline_runs = db.query(PipelineRun.created_datetime).order_by(
-        asc(PipelineRun.created_datetime)).filter(PipelineRun.created_datetime > datetime.today() - timedelta(days=7)).all()
-    pipeline_runs_to_count = list(chain(*pipeline_runs))
-    pipeline_runs_to_count = map(lambda x: x.date(), pipeline_runs_to_count)
-    pipeline_runs_to_count = list(pipeline_runs_to_count)
-    return Counter(pipeline_runs_to_count)
+def get_pipeline_runs(limit: int = 7, db: Session = Depends(session)):
+    """ Returns the number of pipeline runs over the past x amount of days """
+
+    # TODO: Add index on date received
+    return queries.group_by_date(db, PipelineRun.created_datetime, limit=limit)
+
 
 
 @ router.get("/", response_model=List[schemas.Pipeline])

@@ -7,7 +7,7 @@ from sqlalchemy import asc, func
 from fastapi import APIRouter, Depends
 from typing import List
 
-from api import session
+from api import session, queries
 from api.schemas import dicom, pipeline
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
 
@@ -18,11 +18,7 @@ router = APIRouter()
 @router.get("/received-series")
 def get_received_series(db: Session = Depends(session)):
     # TODO: Add index on date received and only query the last 7 days
-    date_series_count = db.query(func.DATE(DicomSeries.date_received), func.count(func.DATE(DicomSeries.date_received)))\
-            .group_by(func.DATE(DicomSeries.date_received))\
-            .order_by(asc(func.DATE(DicomSeries.date_received))).all()
-
-    return {date: count for date, count in date_series_count}
+    return queries.group_by_date(db, DicomSeries.date_received)
 
 
 @router.get("/series-breakdown/{dicom_type}/{dicom_id}")
