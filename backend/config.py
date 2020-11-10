@@ -36,6 +36,7 @@ class BaseConfig:
     # Pipeline
     PICOM_INPUT_DIR = '/mnt/picom/input'
     PICOM_OUTPUT_DIR = '/mnt/picom/output'
+    IMAGE_TAG_PREFIX = 'RAIVEN'
 
     # DICOM SCP
     SCP_AE_TITLE = 'PICOM_SCP'

@@ -17,7 +17,7 @@ class Container(PathMixin, Base):
     description = Column(String)
     filename = Column(String)
 
-    build = relationship('ContainerBuild', uselist=False)
+    build = relationship('ContainerBuild', backref='container', uselist=False)
 
     @property
     def dockerfile_abs_path(self):
@@ -39,6 +39,9 @@ class ContainerBuild(TimestampMixin, Base):
     @property
     def is_success(self):
         return self.exit_code == 0
+
+    def generate_tag(self) -> str:
+        return f'{config.IMAGE_TAG_PREFIX}.{self.container.name}.{self.container.id}'
 
 
 class ContainerBuildError(Base):

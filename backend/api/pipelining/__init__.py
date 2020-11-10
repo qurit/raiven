@@ -1,7 +1,9 @@
 import os
 import shutil
 import docker
+
 from api import config, worker_session, models
+from . import utils
 
 client = docker.from_env()
 
@@ -17,8 +19,9 @@ def build_container(container_id: int):
         )
         build_path = container.build_abs_path
         container_build.save(db)
+        tag = utils.validate_tag(container_build.generate_tag())
 
-    image, build_logs = client.images.build(path=build_path, tag='mycontainer')
+    image, build_logs = client.images.build(path=build_path, tag=tag)
     with worker_session() as db:
         container_build.status = 'exited'
         container_build.exit_code = 0
