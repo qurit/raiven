@@ -93,6 +93,9 @@ class PipelineRunOptions(BaseModel):
 
 
 class PipelineRun(BaseORMModel):
+    id: int
     status: str
     created_datetime: datetime
     finished_datetime: Optional[datetime]
+
+    pipeline: Pipeline
