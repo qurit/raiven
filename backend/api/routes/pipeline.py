@@ -57,9 +57,7 @@ def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, back
     return run
 
 
-# TODO: ask Adam why this didnt send the x and y coordinates... even tho they're defined in the model?
-# @router.get("/{pipeline_id}/nodes", response_model=List[schemas.PipelineNode])
-@ router.get("/{pipeline_id}/nodes")
+@ router.get("/{pipeline_id}/nodes", response_model=List[schemas.PipelineNode])
 def get_pipeline_nodes(pipeline_id: int, db: Session = Depends(session)):
     return db.query(PipelineNode).filter(PipelineNode.pipeline_id == pipeline_id).all()
 

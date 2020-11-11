@@ -30,6 +30,7 @@ class PipelineNode(Base):
     container_is_output = Column(Boolean)
     destination_id = Column(Integer, ForeignKey("destination.id"))
 
+    destination = relationship("Destination", uselist=False)
     container = relationship("Container", uselist=False)
     next_links = relationship(
         'PipelineLink', foreign_keys='PipelineLink.from_node_id')
