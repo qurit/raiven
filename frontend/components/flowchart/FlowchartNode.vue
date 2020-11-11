@@ -154,8 +154,7 @@ export default {
       console.log(this.id)
       this.$emit('toggle-value', {
         pipelineNodeId: this.id,
-        host: host,
-        port: port
+        destinationId: this.destinations[this.selected - 1].id
       })
     },
     handleMousedown(e) {
