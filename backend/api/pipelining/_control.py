@@ -2,7 +2,11 @@ from api.models import pipeline as models, utils
 from api.schemas import pipeline as schemas
 
 from api.models.pipeline import PipelineRun
-from ._tasks import build, run
+from ._tasks import build, run, test
+
+
+def run_test_task():
+    test.run_test_task.send()
 
 
 class ContainerController:

@@ -1,10 +1,12 @@
+from datetime import datetime
+
 from api import config, worker_session, models
 from . import docker, dramatiq, external_sio
 
 
 @dramatiq.actor
 def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
-    external_sio.emit('message', f"RUNNING NODE: {node_id}, RUN: {run_id}")
+    # external_sio.emit('message', f"RUNNING NODE: {node_id}, RUN: {run_id}")
     print('Got past the emit')
 
     # TODO: Check if all previous nodes have finished
@@ -63,7 +65,11 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
             run = db.query(models.pipeline.PipelineRun).get(run_id)
             models.utils.copy_model_fs(job, run, dst_subdir='output')
             run.status = 'complete'
+            run.finished_datetime = datetime.now()
             run.save(db)
+
+            print('emit pipeline finished')
+            # external_sio.emit('message', f"PIPELINE FINISHED NODE")
 
             # TODO: Clean up old jobs
         else:

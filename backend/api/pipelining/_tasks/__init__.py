@@ -7,5 +7,4 @@ from api import config
 
 docker = _docker.from_env()
 dramatiq.set_broker(RabbitmqBroker(host=config.RABBITMQ_HOST))
-
-external_sio = socketio.AsyncAioPikaManager()
+external_sio = socketio.AsyncAioPikaManager(write_only=True)

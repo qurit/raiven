@@ -3,9 +3,10 @@ from fastapi import Depends
 from api import app, session, schemas
 from api.auth import token_auth
 
-from . import application_entity, pipeline, container, user, dicom, destination, auth
+from . import application_entity, pipeline, container, user, dicom, destination, auth, test
 
 # Auth Routes
+app.include_router(test.router, tags=['Test'], prefix='/test')
 app.include_router(auth.router, tags=['Auth'], prefix='/auth')
 
 # All Secure Except for create_local_user
