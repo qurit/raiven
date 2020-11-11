@@ -1,7 +1,8 @@
 from api import config, worker_session, models
-from . import docker
+from . import docker, dramatiq
 
 
+@dramatiq.actor
 def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
     print(f"RUNNING NODE: {node_id}, RUN: {run_id}")
 
@@ -66,25 +67,7 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
             # TODO: Clean up old jobs
         else:
             next_nodes = job.node.get_next_nodes()
-            [run_node(run_id, n.id, job.id) for n in next_nodes]
+            [run_node_task.send_with_options(args=(run_id, n.id, job.id,), priority=priority) for n in next_nodes]
 
     # Cleaning Up Container
     container.remove()
-
-
-def run_pipeline(pipeline_run_id: models.pipeline.PipelineRun):
-    with worker_session() as db:
-        run = models.pipeline.PipelineRun.query(db).get(pipeline_run_id)
-        starting_nodes = run.pipeline.get_starting_nodes()
-
-        run.status = 'running'
-        run.save(db)
-        db.commit()
-
-        for node in starting_nodes:
-            if not (build := node.container.build) or not build.is_success:
-                # TODO: Build containers here if they haven't already been built
-                print("TODO: some containers need to be built. Exiting")
-                return
-
-        [run_node(run.id, n.id) for n in starting_nodes]

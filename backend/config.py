@@ -36,7 +36,7 @@ class BaseConfig:
     DOCKER_URI = 'tcp://127.0.0.1:2375'
 
     # RabbitMQ
-    RABBITMQ_HOST = LOCALHOST
+    RABBITMQ_HOST = '127.0.0.1'
 
     # Pipeline
     PICOM_INPUT_DIR = '/mnt/picom/input'
@@ -45,7 +45,7 @@ class BaseConfig:
 
     # DICOM
     SCP_AE_TITLE = 'RAIVEN'
-    SCP_HOST = ''
+    SCP_HOST = '127.0.0.1'
     SCP_PORT = 11112
 
     def __init__(self):

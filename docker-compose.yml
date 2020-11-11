@@ -28,7 +28,7 @@ services:
 
   worker:
     build: ./backend
-    command: dramatiq api
+    command: dramatiq api.pipelining._tasks
     env_file:
       - docker.env
       - worker.env
@@ -43,6 +43,7 @@ services:
     build: ./backend
     ports:
       - "5000:5000"
+      - "11112:11112"
     env_file:
       - docker.env
     depends_on:
