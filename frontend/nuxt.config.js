@@ -3,7 +3,8 @@ require('dotenv').config();
 export default {
   mode: 'spa',
   server: {
-    host: process.env.NUXT_HOST || 'localhost'
+    host: process.env.NUXT_HOST || 'localhost',
+    port: process.env.NUXT_PORT || 3000
   },
   head: {
     titleTemplate: '%s - ' + process.env.npm_package_name,
