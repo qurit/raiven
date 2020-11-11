@@ -17,7 +17,7 @@
       <!-- Node Data -->
       <v-card-title v-text="type" />
       <v-select
-        v-if="container_is_output"
+        v-if="container_is_output || container_is_input"
         v-model="selected"
         :items="destinations"
         item-text="full_name"
@@ -168,10 +168,12 @@ export default {
   created() {
     this.$store.dispatch('destination/fetchDestinations')
     this.selected = this.destination
-    this.$emit('toggle-value', {
-      pipelineNodeId: this.id,
-      destinationId: this.selected?.id
-    })
+    if (this.selected) {
+      this.$emit('toggle-value', {
+        pipelineNodeId: this.id,
+        destinationId: this.selected?.id
+      })
+    }
   }
 }
 </script>
