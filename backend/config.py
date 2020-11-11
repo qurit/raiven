@@ -11,6 +11,7 @@ class BaseConfig:
     API_PORT = 5000
     API_HOT_RELOAD = True
     UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+    UPLOAD_VOLUME_ABSPATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
 
     # Auth
     SECRET_KEY = 'ChangeMe'
