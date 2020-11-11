@@ -147,7 +147,8 @@ export default {
           type: node.container.name,
           label: node.container.description,
           container_is_input: node.container_is_input,
-          container_is_output: node.container_is_output
+          container_is_output: node.container_is_output,
+          destination: node.destination
         }
         this.scene.nodes.push(containerNode)
       })
@@ -167,6 +168,7 @@ export default {
       const URL = `pipeline/${this.pipeline_id}`
       try {
         const { nodes, links } = await generic_get(this, URL)
+        console.log(nodes)
         this.getPipelineNodes(nodes)
         this.getPipelineLinks(links)
       } catch (e) {

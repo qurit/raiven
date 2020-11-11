@@ -93,8 +93,7 @@ export default {
     type: undefined,
     container_is_input: undefined,
     container_is_output: undefined,
-    host: undefined,
-    port: undefined,
+    destination: undefined,
     options: {
       type: Object,
       default() {
@@ -148,10 +147,8 @@ export default {
   },
   methods: {
     test(destination) {
-      console.log('GIOT HERE')
+      console.log(destination)
       const { host, port } = this.destinations[this.selected - 1]
-      console.log(this.destinations[this.selected - 1])
-      console.log(this.id)
       this.$emit('toggle-value', {
         pipelineNodeId: this.id,
         destinationId: this.destinations[this.selected - 1].id
@@ -170,6 +167,11 @@ export default {
   },
   created() {
     this.$store.dispatch('destination/fetchDestinations')
+    this.selected = this.destination
+    this.$emit('toggle-value', {
+      pipelineNodeId: this.id,
+      destinationId: this.selected?.id
+    })
   }
 }
 </script>
