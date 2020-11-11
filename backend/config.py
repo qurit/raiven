@@ -5,10 +5,12 @@ LOCALHOST = '127.0.0.1'
 
 
 class BaseConfig:
-    HOST = LOCALHOST
-    PORT = 5000
-    UPLOAD_DIR = os.path.join(os.path.dirname(
-        os.path.dirname(__file__)), 'uploads')
+    RAIVEN_WORKER = False
+
+    APT_HOST = '127.0.0.1'
+    API_PORT = 5000
+    API_HOT_RELOAD = True
+    UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
 
     # Auth
     SECRET_KEY = 'ChangeMe'
@@ -24,7 +26,7 @@ class BaseConfig:
     LDAP_TEST_PW = 'LD@P2020pw!'
 
     # DB Config
-    POSTGRES_HOST = LOCALHOST
+    POSTGRES_HOST = '127.0.0.1'
     POSTGRES_USER = 'postgres'
     POSTGRES_PW = 'password'
     POSTGRES_DB = 'picom'
@@ -32,6 +34,9 @@ class BaseConfig:
 
     # Docker
     DOCKER_URI = 'tcp://127.0.0.1:2375'
+
+    # RabbitMQ
+    RABBITMQ_HOST = LOCALHOST
 
     # Pipeline
     PICOM_INPUT_DIR = '/mnt/picom/input'
@@ -71,4 +76,5 @@ class BaseConfig:
             print(
                 f'[FAILED] ENV VARIABLE {env_var} MAY PRODUCE AN UNEXPECTED ERROR')
         finally:
+            print('[config]', env_var, v)
             setattr(self, env_var, v)

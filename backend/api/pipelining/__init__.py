@@ -2,6 +2,11 @@ import os
 import shutil
 import docker
 
+# import dramatiq
+# from dramatiq.brokers.rabbitmq import RabbitmqBroker
+# broker = RabbitmqBroker(host=config.RABBITMQ_HOST)
+# dramatiq.set_broker(broker)
+
 from api import config, worker_session, models
 from . import utils
 
