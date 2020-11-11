@@ -26,10 +26,10 @@ class BaseConfig:
     LDAP_TEST_PW = 'LD@P2020pw!'
 
     # DB Config
-    POSTGRES_HOST = LOCALHOST
+    POSTGRES_HOST = '127.0.0.1'
     POSTGRES_USER = 'postgres'
     POSTGRES_PW = 'password'
-    POSTGRES_DB = 'picom'
+    POSTGRES_DB = 'raiven'
     SQLALCHEMY_DATABASE_URI = ''
 
     # Docker

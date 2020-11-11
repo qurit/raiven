@@ -1,10 +1,11 @@
 from api import config, worker_session, models
-from . import docker, dramatiq
+from . import docker, dramatiq, external_sio
 
 
 @dramatiq.actor
 def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
-    print(f"RUNNING NODE: {node_id}, RUN: {run_id}")
+    external_sio.emit('message', f"RUNNING NODE: {node_id}, RUN: {run_id}")
+    print('Got past the emit')
 
     # TODO: Check if all previous nodes have finished
 
@@ -28,7 +29,6 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
             prev = db.query(models.pipeline.PipelineJob).get(previous_job_id)
 
         # TODO: Locking
-
         models.utils.copy_model_fs(prev, job, src_subdir=src_subdir)
         volumes = {
             job.get_abs_input_path(): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
