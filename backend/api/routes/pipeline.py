@@ -55,12 +55,12 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
 
 
 @router.put("/{pipeline_id}", response_model=schemas.PipelineRun)
-def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, background_tasks: BackgroundTasks, db: Session = Depends(session)):
+def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, db: Session = Depends(session)):
     """ Runs A Pipeline. """
     run = PipelineController.pipeline_run_factory(db, run_options.get_cls_type(), run_options.dicom_obj_id, pipeline_id)
     db.commit()
 
-    PipelineController.run_pipeline_task(run.id)
+    PipelineController.run_pipeline_task(db, run)
     return run
 
 
