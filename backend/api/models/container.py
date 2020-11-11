@@ -41,7 +41,7 @@ class ContainerBuild(TimestampMixin, Base):
         return self.exit_code == 0
 
     def generate_tag(self) -> str:
-        return f'{config.IMAGE_TAG_PREFIX}.{self.container.name}.{self.container.id}'
+        return f'{config.IMAGE_TAG_PREFIX}.{self.container.name.strip()}.{self.container.id}'
 
 
 class ContainerBuildError(Base):
