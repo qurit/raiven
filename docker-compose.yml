@@ -13,15 +13,41 @@ services:
   #   volumes:
   #     - ./backend:/backend
   #     - /var/run/docker.sock:/var/run/docker.sock
+  queue:
+    image: rabbitmq
+    ports:
+      - 5672:5672
 
   db:
     image: postgres
     restart: always
     env_file:
-      - .env.dev
+      - docker.env
     ports:
-      - '5432:5432'
+      - 5432:5432
 
+  worker:
+    build: ./backend
+    command: dramatiq api
+    env_file:
+      - docker.env
+      - worker.env
+    depends_on:
+      - queue
+      - db
+    volumes:
+      - ./uploads:/app/uploads
+      - /var/run/docker.sock:/var/run/docker.sock
 
-
-
+  api:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - docker.env
+    depends_on:
+      - queue
+      - db
+    volumes:
+      - ./uploads:/app/uploads
+      - /var/run/docker.sock:/var/run/docker.sock
