@@ -22,6 +22,7 @@
         :options="nodeOptions"
         :colors="colors.container"
         v-on="$listeners"
+        @toggle-value="test"
         @linkingStart="linkingStart(node.id)"
         @linkingStop="linkingStop(node.id)"
         @nodeSelected="nodeSelected(node.id, $event)"
@@ -84,7 +85,8 @@ export default {
     rootDivOffset: {
       top: 0,
       left: 0
-    }
+    },
+    pipelineNodeDestinations: []
   }),
   computed: {
     nodeOptions: ctx => ({
@@ -136,6 +138,8 @@ export default {
     test(a) {
       console.log('YEA BABY')
       console.log(a)
+      this.pipelineNodeDestinations.push(a)
+      console.log(this.pipelineNodeDestinations)
     },
     findNodeWithID(id) {
       return this.scene.nodes.find(item => id === item.id)
@@ -294,6 +298,13 @@ export default {
           container_is_input: node.container_is_input,
           container_is_output: node.container_is_output
         }
+        // if there is a node with a destination, then save the destination as well
+        this.pipelineNodeDestinations.forEach(pipelineNodeDestination => {
+          if (pipelineNodeDestination.pipelineNodeId === node.id) {
+            newPipelineNode['destination_id'] =
+              pipelineNodeDestination.destinationId
+          }
+        })
         nodeArray.push(newPipelineNode)
       })
       links.forEach(link => {
@@ -313,7 +324,9 @@ export default {
         await generic_post(this, URL, PAYLOAD)
         this.$toaster.toastSuccess('Pipeline saved!')
       } catch (e) {
-        console(e)
+        this.$toaster.toastError(
+          'Something went wrong, please make sure your pipeline is properly formed'
+        )
       }
     },
     savePipeline() {

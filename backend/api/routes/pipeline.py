@@ -28,7 +28,6 @@ def get_pipeline_runs(limit: int = 7, db: Session = Depends(session)):
     return queries.group_by_date(db, PipelineRun.created_datetime, limit=limit)
 
 
-
 @ router.get("/", response_model=List[schemas.Pipeline])
 def get_all_pipelines(db: Session = Depends(session)):
     return db.query(Pipeline).all()
@@ -88,7 +87,8 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
         x_coord=node.x,
         y_coord=node.y,
         container_is_input=node.container_is_input,
-        container_is_output=node.container_is_output
+        container_is_output=node.container_is_output,
+        destination_id=node.destination_id
     ).save(db) for node in pipeline_update.nodes}
 
     for link in pipeline_update.links:

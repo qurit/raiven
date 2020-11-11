@@ -15,6 +15,7 @@ class PipelineNodeCreate(BaseModel):
     y: int
     container_is_input: bool
     container_is_output: bool
+    destination_id: Optional[int]
 
 
 class PipelineNode(BaseORMModel):
