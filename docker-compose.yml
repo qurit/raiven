@@ -15,6 +15,7 @@ services:
   #     - /var/run/docker.sock:/var/run/docker.sock
   queue:
     image: rabbitmq
+    container_name: picom_queue
     ports:
       - 5672:5672
 
