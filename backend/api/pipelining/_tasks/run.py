@@ -31,9 +31,10 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
         # TODO: Locking
         models.utils.copy_model_fs(prev, job, src_subdir=src_subdir)
         volumes = {
-            job.get_abs_input_path(): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
-            job.get_abs_output_path(): {'bind': config.PICOM_OUTPUT_DIR, 'mode': 'rw'}
+            job.get_volume_abs_input_path(): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
+            job.get_volume_abs_output_path(): {'bind': config.PICOM_OUTPUT_DIR, 'mode': 'rw'}
         }
+        print(volumes)
 
     container: Container = docker.containers.run(image_tag, detach=True, volumes=volumes, labels=['Raiven'])
     with worker_session() as db:
@@ -67,7 +68,7 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
             # TODO: Clean up old jobs
         else:
             next_nodes = job.node.get_next_nodes()
-            [run_node_task.send_with_options(args=(run_id, n.id, job.id,), priority=priority) for n in next_nodes]
+            [run_node_task.send_with_options(args=(run_id, n.id, job.id,)) for n in next_nodes]
 
     # Cleaning Up Container
     container.remove()
