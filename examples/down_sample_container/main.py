@@ -18,7 +18,8 @@ if __name__ == '__main__':
                 ds = dcmread(os.path.join(root, file))
 
                 data = ds.pixel_array
-                ds.PixelData = data[::8, ::8].tobytes()
-                ds.Rows, ds.Columns = data_downsampling.shape
+                down_sample = data[::8, ::8].tobytes()
+                ds.PixelData = down_sample.tobytes()
+                ds.Rows, ds.Columns = down_sample.shape
 
                 ds.save_as(os.path.join(OUTPUT_DIR, file))
