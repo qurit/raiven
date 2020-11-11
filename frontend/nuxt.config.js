@@ -30,9 +30,11 @@ export default {
     'nuxt-socket-io'
   ],
   io: {
-    sockets: [{
-      url: 'http://127.0.0.1:5001/test'
-    }]
+    sockets: [
+      {
+        url: 'http://localhost:5000',
+      }
+    ]
   },
 
 
