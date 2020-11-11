@@ -5,7 +5,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
 from api import config
-from . import Base, PathMixin, NestedPathMixin, TimestampMixin, IOPathMixin
+from . import Base, PathMixin, NestedPathMixin, TimestampMixin, IOPathMixin, utils
 
 
 class Pipeline(Base):

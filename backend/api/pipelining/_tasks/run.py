@@ -2,7 +2,7 @@ from api import config, worker_session, models
 from . import docker
 
 
-def run_node(run_id: int, node_id: int, previous_job_id: int = None):
+def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
     print(f"RUNNING NODE: {node_id}, RUN: {run_id}")
 
     # TODO: Check if all previous nodes have finished

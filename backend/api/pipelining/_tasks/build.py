@@ -1,8 +1,9 @@
 from api import worker_session, models
-from . import docker, utils
+from . import docker, utils, dramatiq
 
 
-def build_container(container_id: int):
+@dramatiq.actor
+def build_container_task(container_id: int):
     print(f"BUILDING CONTAINER: {container_id}")
 
     with worker_session() as db:

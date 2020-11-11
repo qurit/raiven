@@ -22,4 +22,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from . import routes
+from . import routes, pipelining
