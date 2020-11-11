@@ -1,6 +1,8 @@
 import socketio
 
-sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=[])
+mgr = socketio.AsyncAioPikaManager('amqp://')
+sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=[], client_manager=mgr)
 sio_app = socketio.ASGIApp(sio)
 
 from . import index
+
