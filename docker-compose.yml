@@ -51,3 +51,10 @@ services:
     volumes:
       - ./uploads:/app/uploads
       - /var/run/docker.sock:/var/run/docker.sock
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - docker.env
