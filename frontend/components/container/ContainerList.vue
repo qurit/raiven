@@ -28,11 +28,11 @@
           medium
           class="mr-2"
           @click="editContainer(item.id)"
-          color="blue"
+          color="info"
         >
           mdi-pencil
         </v-icon>
-        <v-icon medium @click="deleteContainer(item.id)" color="red">
+        <v-icon medium @click="deleteContainer(item.id)" color="cancel">
           mdi-delete
         </v-icon>
       </template>
@@ -47,7 +47,6 @@
     </v-dialog>
     <v-dialog
       v-model="confirmDeleteDialog"
-      persistent
       max-width="525px"
       min-height="600px"
     >
@@ -58,10 +57,14 @@
         <v-card-subtitle>
           Are you sure you want to continue?
         </v-card-subtitle>
-        <v-row justify="center" align="center">
-          <v-btn class="ma-2" @click="confirmDeleteContainer"> Yes </v-btn>
-          <v-btn @click="confirmDeleteDialog = false"> No </v-btn>
-        </v-row>
+        <v-card-actions class="justify-center">
+          <v-btn text color="confirm" @click="confirmDeleteContainer">
+            Yes
+          </v-btn>
+          <v-btn text color="cancel" @click="confirmDeleteDialog = false">
+            No
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </v-card>

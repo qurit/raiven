@@ -4,10 +4,10 @@
       Logout?
     </v-card-title>
     <v-card-actions class="justify-center">
-      <v-btn color="green" class="ma-4" text @click="$auth.logout('local')">
+      <v-btn color="confirm" class="ma-4" text @click="$auth.logout('local')">
         Yes
       </v-btn>
-      <v-btn color="red" class="ma-4" text @click="$emit('cancel')">
+      <v-btn color="cancel" class="ma-4" text @click="$emit('cancel')">
         No
       </v-btn>
     </v-card-actions>

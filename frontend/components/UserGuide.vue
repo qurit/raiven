@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row class="px-8">
     <v-col cols="4">
       <v-card elevation="10">
         <v-toolbar color="primary accent--text" flat>
