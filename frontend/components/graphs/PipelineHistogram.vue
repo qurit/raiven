@@ -85,7 +85,6 @@ export default {
   },
   methods: {
     fillData() {
-      console.log(this.chartData)
       this.dataCollection = {
         labels: Object.keys(this.chartData),
         datasets: [
