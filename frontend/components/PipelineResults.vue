@@ -21,6 +21,8 @@
         :search="search"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
+        :loading="fetching"
+        loading-text="Getting Results..."
       >
         <template v-slot:item.created_datetime="{ item }">{{
           formatDateTime(item.created_datetime)
@@ -57,7 +59,8 @@ export default {
       items: [],
       sortBy: 'finished_datetime',
       sortDesc: true,
-      search: ''
+      search: '',
+      fetching: true
     }
   },
   created() {
@@ -71,6 +74,7 @@ export default {
       const URL = '/pipeline/results'
       const pipelineRuns = await generic_get(this, URL)
       this.items = pipelineRuns
+      this.fetching = false
     },
     async download(pipelineRun) {
       const URL = `/pipeline/download/${pipelineRun.id}`

@@ -54,7 +54,7 @@
           :color="nodeColor"
         />
         <v-spacer />
-        <v-icon-btn delete color="red" @click="$emit('deleteNode')" />
+        <v-icon-btn delete color="cancel" @click="$emit('deleteNode')" />
       </v-card-actions>
 
       <!-- Output Port -->

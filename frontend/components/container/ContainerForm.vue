@@ -49,8 +49,9 @@
         <v-btn
           :disabled="this.isDisabled"
           @click="submit"
-          color="green"
+          color="confirm"
           class="ma-4"
+          text
         >
           {{ !!containerToEdit ? 'Save Edits' : 'Add Container' }}
         </v-btn>

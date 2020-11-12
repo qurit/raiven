@@ -49,7 +49,7 @@
       <v-col cols="12" class="text-center">
         <v-icon-btn
           large
-          color="red"
+          color="cancel"
           @click="dialog = true"
           icon="mdi-power-standby"
         />

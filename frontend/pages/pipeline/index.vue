@@ -30,17 +30,11 @@
       :headers="headers"
       :items="items"
       :search="search"
+      class="row-pointer"
+      @click:row="viewPipeline"
     >
       <template v-slot:item.actions="{ item }">
-        <v-icon
-          medium
-          class="mr-2"
-          @click="viewPipeline(item.id)"
-          color="white"
-        >
-          mdi-eye-outline
-        </v-icon>
-        <v-icon medium @click="removePipeline(item.id)" color="red">
+        <v-icon medium @click.stop="removePipeline(item)" color="cancel">
           mdi-delete
         </v-icon>
       </template>
@@ -59,7 +53,8 @@
             @click="savePipeline"
             :disabled="this.isDisabled"
             class="ma-4"
-            color="green"
+            color="confirm"
+            text
           >
             Save
           </v-btn>
@@ -81,7 +76,7 @@ export default {
       headers: [
         { text: 'Pipeline Name', value: 'name' },
         {
-          text: 'View or Delete',
+          text: 'Delete',
           value: 'actions',
           sortable: false,
           align: 'center'
@@ -91,10 +86,11 @@ export default {
     }
   },
   methods: {
-    viewPipeline(pipelineId) {
-      this.$router.push({ path: `/pipeline/${pipelineId}` })
+    viewPipeline(pipeline) {
+      this.$router.push({ path: `/pipeline/${pipeline.id}` })
     },
     async removePipeline(pipeline) {
+      console.log(pipeline)
       await this.$store.dispatch('pipelines/deletePipeline', pipeline.id)
       this.$toaster.toastSuccess('Pipeline removed!')
     },
@@ -126,3 +122,9 @@ export default {
   }
 }
 </script>
+
+<style lang="css" scoped>
+.row-pointer >>> tbody tr :hover {
+  cursor: pointer;
+}
+</style>
