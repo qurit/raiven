@@ -21,8 +21,7 @@
         :key="`node${index}`"
         :options="nodeOptions"
         :colors="colors.container"
-        v-on="$listeners"
-        @toggle-value="test"
+        @setDestination="setDestinations"
         @linkingStart="linkingStart(node.id)"
         @linkingStop="linkingStop(node.id)"
         @nodeSelected="nodeSelected(node.id, $event)"
@@ -135,11 +134,8 @@ export default {
     console.log()
   },
   methods: {
-    test(a) {
-      console.log('YEA BABY')
-      console.log(a)
-      this.pipelineNodeDestinations.push(a)
-      console.log(this.pipelineNodeDestinations)
+    setDestinations(destination) {
+      this.pipelineNodeDestinations.push(destination)
     },
     findNodeWithID(id) {
       return this.scene.nodes.find(item => id === item.id)
@@ -299,6 +295,7 @@ export default {
           container_is_output: node.container_is_output
         }
         // if there is a node with a destination, then save the destination as well
+        // sets the most recent destination to that port
         this.pipelineNodeDestinations.forEach(pipelineNodeDestination => {
           if (pipelineNodeDestination.pipelineNodeId === node.id) {
             newPipelineNode['destination_id'] =
