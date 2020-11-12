@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card elevation="10" width="800">
     <v-card-title>
       How-to Guide
     </v-card-title>

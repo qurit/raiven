@@ -22,19 +22,15 @@
         <CounterList />
       </v-col>
       <v-col cols="4">
-        <PipelineStatus :pipelines="pipelines" />
+        <v-card elevation="6" height="100%">
+          Another graph here
+        </v-card>
       </v-col>
       <v-col cols="4">
         <PipelineHistogram />
       </v-col>
       <v-col cols="4">
         <DicomTrendChart />
-      </v-col>
-      <v-col cols="7">
-        <DicomInstances />
-      </v-col>
-      <v-col cols="6">
-        <PipelineResults />
       </v-col>
     </v-row>
   </div>

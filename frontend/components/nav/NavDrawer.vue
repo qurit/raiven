@@ -52,14 +52,15 @@ export default {
   },
   data: () => ({
     links: [
-      { to: '/', label: 'Dashboard', icon: 'mdi-view-dashboard' },
+      { to: '/', label: 'Dashboard', icon: 'mdi-chart-box-outline' },
       { to: '/containers', label: 'Container', icon: 'mdi-toy-brick' },
       {
         to: '/pipeline',
         label: 'Pipelines',
         icon: 'mdi-transit-connection-variant'
       },
-      { to: '/settings', label: 'Account', icon: 'mdi-account' }
+      { to: '/runs', label: 'Runs', icon: 'mdi-cogs' },
+      { to: '/help', label: 'Help', icon: 'mdi-help' }
     ]
   })
 }
