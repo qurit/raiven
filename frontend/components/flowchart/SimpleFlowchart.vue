@@ -135,6 +135,13 @@ export default {
   },
   methods: {
     setDestinations(destination) {
+      const index = this.pipelineNodeDestinations.findIndex(
+        pipelineDestination =>
+          pipelineDestination.pipelineNodeId === destination.pipelineNodeId
+      )
+      if (index >= 0) {
+        this.pipelineNodeDestinations.splice(index, 1)
+      }
       this.pipelineNodeDestinations.push(destination)
     },
     findNodeWithID(id) {
@@ -295,7 +302,6 @@ export default {
           container_is_output: node.container_is_output
         }
         // if there is a node with a destination, then save the destination as well
-        // sets the most recent destination to that port
         this.pipelineNodeDestinations.forEach(pipelineNodeDestination => {
           if (pipelineNodeDestination.pipelineNodeId === node.id) {
             newPipelineNode['destination_id'] =
@@ -315,7 +321,6 @@ export default {
         nodes: nodeArray,
         links: linkArray
       }
-      // since there's no state change / only post in this component, didn't put it in the store
       const URL = `/pipeline/${this.id}`
       try {
         await generic_post(this, URL, PAYLOAD)
