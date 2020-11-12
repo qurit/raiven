@@ -5,9 +5,9 @@
     class="overflow-y-auto"
     :class="'dark'"
   >
-    <v-card-title>
-      Your Containers
-    </v-card-title>
+    <v-toolbar color="primary accent--text" flat>
+      <v-toolbar-title><b>Your Containers</b></v-toolbar-title>
+    </v-toolbar>
     <v-divider light />
     <v-card-text>
       <v-list-item v-for="container in containers" :key="container.id">

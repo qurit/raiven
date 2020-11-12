@@ -1,8 +1,8 @@
 <template>
   <v-card elevation="10" width="1000">
-    <v-card-title>
-      How-to Guide
-    </v-card-title>
+    <v-toolbar color="primary accent--text" flat>
+      <v-toolbar-title>Help Guide</v-toolbar-title>
+    </v-toolbar>
     <v-divider light />
     <v-card-subtitle>
       <b>Uploading a Container</b>
