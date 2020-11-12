@@ -90,9 +90,12 @@ export default {
       this.$router.push({ path: `/pipeline/${pipeline.id}` })
     },
     async removePipeline(pipeline) {
-      console.log(pipeline)
-      await this.$store.dispatch('pipelines/deletePipeline', pipeline.id)
-      this.$toaster.toastSuccess('Pipeline removed!')
+      try {
+        await this.$store.dispatch('pipelines/deletePipeline', pipeline.id)
+        this.$toaster.toastSuccess('Pipeline deleted!')
+      } catch (e) {
+        this.$toaster.toastError('Could not delete pipeline!')
+      }
     },
     async savePipeline() {
       const payload = {
