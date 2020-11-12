@@ -70,9 +70,8 @@
         v-model="destinationDialog"
         max-width="900px"
         min-height="600px"
-        @closeDialog="destinationDialog = false"
       >
-        <OutputDestinationForm />
+        <OutputDestinationForm @closeDialog="destinationDialog = false" />
       </v-dialog>
     </v-card>
   </v-hover>

@@ -28,7 +28,7 @@
         color="green"
         class="ma-4"
       >
-        Add container
+        Add destination
       </v-btn>
     </v-row>
   </v-card>
@@ -53,9 +53,9 @@ export default {
     }
   },
   computed: {
-    isDisabled: function () {
+    isDisabled: function() {
       return !(this.host && this.port)
     }
   }
-  }
+}
 </script>
