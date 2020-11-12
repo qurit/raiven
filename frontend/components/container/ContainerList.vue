@@ -9,31 +9,34 @@
       <v-toolbar-title><b>Your Containers</b></v-toolbar-title>
     </v-toolbar>
     <v-divider light />
-    <v-card-text>
-      <v-list-item v-for="container in containers" :key="container.id">
-        <v-col cols="8">
-          <v-list-item-title>
-            {{ container.name }}
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            {{ container.description }}
-          </v-list-item-subtitle>
-        </v-col>
-        <v-col cols="4">
-          <v-btn small color="blue" @click="editContainer(container.id)">
-            Edit
-          </v-btn>
-          <v-btn
-            small
-            color="red"
-            @click="deleteContainer(container.id)"
-            class="mx-2"
-          >
-            Delete
-          </v-btn>
-        </v-col>
-      </v-list-item>
-    </v-card-text>
+    <v-text-field
+      v-model="search"
+      append-icon="mdi-magnify"
+      label="Search by Name or File"
+      single-line
+      hide-details
+      class="px-4"
+    ></v-text-field>
+    <v-data-table
+      id="Containers"
+      :headers="headers"
+      :items="items"
+      :search="search"
+    >
+      <template v-slot:item.actions="{ item }">
+        <v-icon
+          medium
+          class="mr-2"
+          @click="editContainer(item.id)"
+          color="blue"
+        >
+          mdi-pencil
+        </v-icon>
+        <v-icon medium @click="deleteContainer(item.id)" color="red">
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-data-table>
     <v-dialog v-model="dialog" max-width="900px" min-height="600px">
       <ContainerForm
         :isEditing="true"
@@ -84,7 +87,25 @@ export default {
         containerDescription: '',
         containerIsInput: false,
         containerIsOutput: false
-      }
+      },
+      headers: [
+        { text: 'Name', value: 'name', width: '1%' },
+        {
+          text: 'Description',
+          value: 'description',
+          filterable: false,
+          width: '2%'
+        },
+        { text: 'File', value: 'filename', width: '1%' },
+        {
+          text: 'Edit or Delete',
+          value: 'actions',
+          sortable: false,
+          align: 'center',
+          width: '1%'
+        }
+      ],
+      search: ''
     }
   },
   methods: {
@@ -118,7 +139,10 @@ export default {
     }
   },
   computed: {
-    ...mapState('containers', ['containers'])
+    ...mapState('containers', ['containers']),
+    items() {
+      return this.$store.state.containers.containers
+    }
   },
   created() {
     this.$store.dispatch('containers/fetchContainers')

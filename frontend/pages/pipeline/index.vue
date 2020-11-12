@@ -17,24 +17,34 @@
       </v-btn>
     </v-toolbar>
     <v-divider light />
-    <v-card-text>
-      <v-row v-for="pipeline in pipelines" :key="pipeline.id">
-        <v-col cols="8">
-          <b>Pipeline Name:</b>
-          {{ pipeline.name }}
-        </v-col>
-        <v-col cols="1">
-          <v-btn small color="blue" @click="viewPipeline(pipeline.id)">
-            View
-          </v-btn>
-        </v-col>
-        <v-col cols="1">
-          <v-btn small color="red" @click="removePipeline(pipeline)">
-            Remove
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-card-text>
+    <v-text-field
+      v-model="search"
+      append-icon="mdi-magnify"
+      label="Search"
+      single-line
+      hide-details
+      class="px-4"
+    ></v-text-field>
+    <v-data-table
+      id="Pipelines"
+      :headers="headers"
+      :items="items"
+      :search="search"
+    >
+      <template v-slot:item.actions="{ item }">
+        <v-icon
+          medium
+          class="mr-2"
+          @click="viewPipeline(item.id)"
+          color="white"
+        >
+          mdi-eye-outline
+        </v-icon>
+        <v-icon medium @click="removePipeline(item.id)" color="red">
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-data-table>
     <v-dialog v-model="dialog" max-width="600px">
       <v-card class="overflow-x-hidden">
         <v-text-field
@@ -67,7 +77,17 @@ export default {
   data: function() {
     return {
       dialog: false,
-      pipelineName: ''
+      pipelineName: '',
+      headers: [
+        { text: 'Pipeline Name', value: 'name' },
+        {
+          text: 'View or Delete',
+          value: 'actions',
+          sortable: false,
+          align: 'center'
+        }
+      ],
+      search: ''
     }
   },
   methods: {
@@ -96,6 +116,9 @@ export default {
     ...mapState('pipelines', ['pipelines']),
     isDisabled: function() {
       return !this.pipelineName
+    },
+    items() {
+      return this.$store.state.pipelines.pipelines
     }
   },
   created() {

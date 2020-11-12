@@ -6,10 +6,19 @@
           <b>Pipeline Run Results </b>
         </v-toolbar-title>
       </v-toolbar>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search by Run ID or Pipeline"
+        single-line
+        hide-details
+        class="px-4"
+      ></v-text-field>
       <v-data-table
         id="ResultsTable"
         :headers="headers"
         :items="items"
+        :search="search"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
       >
@@ -41,13 +50,13 @@ export default {
         { text: 'Run ID', align: 'start', value: 'id' },
         { text: 'Pipeline', value: 'pipeline.name' },
         { text: 'Status', value: 'status' },
-        { text: 'Started on:', value: 'created_datetime' },
-        { text: 'Finished on:', value: 'finished_datetime' },
+        { text: 'Started on:', filterable: false, value: 'created_datetime' },
+        { text: 'Finished on:', filterable: false, value: 'finished_datetime' },
         { text: 'Results', value: 'actions', sortable: false, align: 'center' }
       ],
-      items: [],
       sortBy: 'finished_datetime',
-      sortDesc: true
+      sortDesc: true,
+      search: ''
     }
   },
   created() {

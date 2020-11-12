@@ -1,14 +1,14 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="12">
+      <v-col cols="5">
+        <PipelineStatus :pipelines="pipelines" />
+      </v-col>
+      <v-col cols="7">
         <PipelineResults />
       </v-col>
       <v-col cols="6">
         <DicomInstances />
-      </v-col>
-      <v-col cols="6">
-        <PipelineStatus :pipelines="pipelines" />
       </v-col>
     </v-row>
   </div>
