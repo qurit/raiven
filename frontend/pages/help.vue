@@ -2,10 +2,9 @@
   <v-row>
     {{ $auth.user }}
     <v-btn @click="$auth.logout('local')">Logout</v-btn>
-
-    <v-card elevation="6" width="800">
+    <v-row justify="center">
       <UserGuide />
-    </v-card>
+    </v-row>
   </v-row>
 </template>
 
