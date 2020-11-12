@@ -120,12 +120,16 @@ export default {
       this.confirmDeleteDialog = true
     },
     async confirmDeleteContainer(containerId) {
-      await this.$store.dispatch(
-        'containers/deleteContainer',
-        this.deleteContainerId
-      )
+      try {
+        await this.$store.dispatch(
+          'containers/deleteContainer',
+          this.deleteContainerId
+        )
+        this.$toaster.toastSuccess('Container deleted!')
+      } catch (e) {
+        this.$toaster.toastError('Could not delete container')
+      }
       this.confirmDeleteDialog = false
-      this.$toaster.toastSuccess('Container deleted!')
     },
     editContainer(containerId) {
       const containers = this.$store.state.containers.containers
