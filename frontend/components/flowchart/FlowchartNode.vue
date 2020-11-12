@@ -26,7 +26,7 @@
         dense
         solo
         flat
-        @change="test(selected)"
+        @change="changeDestination(selected)"
       >
         <template v-slot:prepend-item>
           <v-list-item>
@@ -145,10 +145,9 @@ export default {
     }
   },
   methods: {
-    test(destination) {
-      console.log(destination)
+    changeDestination(destination) {
       const { host, port } = this.destinations[this.selected - 1]
-      this.$emit('toggle-value', {
+      this.$emit('setDestination', {
         pipelineNodeId: this.id,
         destinationId: this.destinations[this.selected - 1].id
       })
@@ -168,7 +167,7 @@ export default {
     this.$store.dispatch('destination/fetchDestinations')
     this.selected = this.destination
     if (this.selected) {
-      this.$emit('toggle-value', {
+      this.$emit('setDestination', {
         pipelineNodeId: this.id,
         destinationId: this.selected?.id
       })
