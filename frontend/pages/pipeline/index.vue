@@ -7,18 +7,15 @@
     class="overflow-y-auto overflow-x-hidden"
     :class="'dark'"
   >
-    <v-row align="center">
-      <v-col cols="8">
-        <v-card-title>
-          Your Pipelines
-        </v-card-title>
-      </v-col>
-      <v-col cols="1">
-        <v-btn color="green" @click="dialog = true">
-          Add Pipeline
-        </v-btn>
-      </v-col>
-    </v-row>
+    <v-toolbar color="primary accent--text" flat>
+      <v-toolbar-title><b>Your Pipelines</b></v-toolbar-title>
+      <v-spacer />
+      <v-btn icon>
+        <v-icon @click="dialog = true" color="#373740" class="pr-8"
+          >mdi-pen-plus</v-icon
+        >
+      </v-btn>
+    </v-toolbar>
     <v-divider light />
     <v-card-text>
       <v-row v-for="pipeline in pipelines" :key="pipeline.id">

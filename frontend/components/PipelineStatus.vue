@@ -1,8 +1,8 @@
 <template>
 <v-card elevation="6">
-    <v-card-title>
-      Your pipelines in progress
-    </v-card-title>
+    <v-toolbar color="primary accent--text" flat>
+      <v-toolbar-title> <b>Pipelines in Progress</b></v-toolbar-title>
+    </v-toolbar>
     <v-divider light />
     <div v-if="pipelines.length > 0">
       <!-- comment out for now because need to figure out how to do it properly with websockets and stuff -->

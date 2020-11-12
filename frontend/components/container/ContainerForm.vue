@@ -1,8 +1,12 @@
 <template>
   <v-card elevation="6">
-    <v-card-title>
-      {{ !!containerToEdit ? 'Edit your Container' : 'Add a Container' }}
-    </v-card-title>
+    <v-toolbar color="primary accent--text" flat>
+      <v-toolbar-title>
+        <b
+          >{{ !!containerToEdit ? 'Edit your Container' : 'Add a Container' }}
+        </b></v-toolbar-title
+      >
+    </v-toolbar>
     <v-divider light />
     <v-form v-model="form" class="ma-5" ref="form">
       <v-col cols="12" md="12">

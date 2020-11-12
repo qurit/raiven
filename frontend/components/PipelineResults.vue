@@ -1,6 +1,11 @@
 <template>
   <div>
     <v-card elevation="6">
+      <v-toolbar color="primary accent--text" flat>
+        <v-toolbar-title>
+          <b>Pipeline Run Results </b>
+        </v-toolbar-title>
+      </v-toolbar>
       <v-data-table
         id="ResultsTable"
         :headers="headers"

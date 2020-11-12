@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto" elevation="6">
     <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title>Received DICOM Instances</v-toolbar-title>
+      <v-toolbar-title><b>DICOM Instances</b></v-toolbar-title>
     </v-toolbar>
     <DicomBreakdown />
 
