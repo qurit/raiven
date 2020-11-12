@@ -54,6 +54,7 @@ export default {
         { text: 'Finished on:', filterable: false, value: 'finished_datetime' },
         { text: 'Results', value: 'actions', sortable: false, align: 'center' }
       ],
+      items: [],
       sortBy: 'finished_datetime',
       sortDesc: true,
       search: ''
