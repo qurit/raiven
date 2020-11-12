@@ -131,7 +131,6 @@ export default {
   mounted() {
     this.rootDivOffset.top = this.$el ? this.$el.offsetTop : 0
     this.rootDivOffset.left = this.$el ? this.$el.offsetLeft : 0
-    console.log()
   },
   methods: {
     setDestinations(destination) {
@@ -288,7 +287,6 @@ export default {
     },
     async saveNodesAndLinks() {
       const nodes = this.scene.nodes
-      console.log(nodes)
       const links = this.scene.links
       var nodeArray = []
       var linkArray = []

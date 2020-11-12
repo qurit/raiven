@@ -7,7 +7,8 @@
       :dicom_obj_id="dicom_obj_id"
     />
     <v-card-text class="pt-0">
-      All of the selected {{dicom_obj_type.toLowerCase()}}'s contents to be run in one of your pipelines
+      All of the selected {{ dicom_obj_type.toLowerCase() }}'s contents to be
+      run in one of your pipelines
       <v-select
         v-model="pipeline_id"
         :items="pipelines"
@@ -24,10 +25,9 @@
         Delete {{ dicom_obj_type }}
       </v-btn>
       <v-spacer />
-     <v-btn @click="submit" :disabled="this.isDisabled" color="green" text>
+      <v-btn @click="submit" :disabled="this.isDisabled" color="green" text>
         Send to Pipeline
       </v-btn>
-
     </v-card-actions>
   </v-card>
 </template>
@@ -48,7 +48,6 @@ export default {
   }),
   created() {
     this.$store.dispatch('pipelines/fetchPipelines')
-    console.log(this.dicom_obj_type)
   },
   computed: {
     ...mapState('pipelines', ['pipelines']),

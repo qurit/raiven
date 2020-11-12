@@ -27,7 +27,6 @@
         :scene.sync="scene"
         :id="pipeline_id"
         :colors="colors.container"
-        @toggle-value="toggleValue"
         ref="simpleFlowchart"
       />
 
@@ -113,10 +112,6 @@ export default {
     }
   }),
   methods: {
-    toggleValue(a, b, c) {
-      console.log('in grandparent')
-      console.log(a)
-    },
     addNode(container) {
       let maxID = Math.max(0, ...this.scene.nodes.map(link => link.id))
       this.scene.nodes.push({
@@ -126,13 +121,12 @@ export default {
         type: container.name,
         container_id: container.id,
         container_is_input: container.is_input_container,
-        container_is_output: container.is_output_container,
-        host: undefined,
-        port: undefined
+        container_is_output: container.is_output_container
       })
     },
     savePipeline() {
       this.$refs.simpleFlowchart.savePipeline()
+      this.containerList = false
     },
     getContainers() {
       this.$store.dispatch('containers/fetchContainers')
@@ -164,11 +158,9 @@ export default {
       })
     },
     async getSavedPipeline() {
-      // since only getting the pipeline here, didn't put it in the store
       const URL = `pipeline/${this.pipeline_id}`
       try {
         const { nodes, links } = await generic_get(this, URL)
-        console.log(nodes)
         this.getPipelineNodes(nodes)
         this.getPipelineLinks(links)
       } catch (e) {

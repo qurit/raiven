@@ -12,5 +12,3 @@ class Destination(Base):
     host = Column(String)
     port = Column(Integer)
     full_name = Column(String)
-
-    pipeline = relationship("PipelineNode")
