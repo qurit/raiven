@@ -100,4 +100,7 @@ class PipelineRun(BaseORMModel):
     created_datetime: datetime
     finished_datetime: Optional[datetime]
 
-    pipeline: Pipeline
+    # optional for now becaues don't want to mess up the other pipeline run stuff
+    # but should save pipeline name with the pipeline run, because if pipeline gets
+    # deleted, then the PipelineRun will error since it has no associated Pipeline anymore
+    pipeline: Optional[Pipeline]
