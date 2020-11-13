@@ -3,7 +3,7 @@
     <v-col cols="12">
       <div
         class="text-center display-4 raiven"
-        style="font-family: 'Quicksand', cursive !important;"
+        style="font-family: 'Quicksand', sans-serif !important;"
         v-html="title"
       />
       <VueTypedJs
