@@ -15,7 +15,7 @@
       />
 
       <!-- Node Data -->
-      <v-card-title v-text="type" />
+      <v-card-title v-text="type" style="word-break: break-word" />
       <v-select
         v-if="container_is_output || container_is_input"
         v-model="selected"
