@@ -7,8 +7,8 @@
       :dicom_obj_id="dicom_obj_id"
     />
     <v-card-text class="pt-0">
-      All of the selected {{ dicom_obj_type.toLowerCase() }}'s contents to be
-      run in one of your pipelines
+      All of the selected {{ dicom_obj_type.toLowerCase() }}'s contents will be
+      run in the selected pipeline selected below.
       <v-select
         v-model="pipeline_id"
         :items="pipelines"
