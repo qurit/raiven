@@ -125,6 +125,7 @@ export default {
     },
     savePipeline() {
       this.$refs.simpleFlowchart.savePipeline()
+      this.containerList = false
     },
     getContainers() {
       this.$store.dispatch('containers/fetchContainers')
@@ -139,7 +140,8 @@ export default {
           type: node.container.name,
           label: node.container.description,
           container_is_input: node.container_is_input,
-          container_is_output: node.container_is_output
+          container_is_output: node.container_is_output,
+          destination: node.destination
         }
         this.scene.nodes.push(containerNode)
       })
@@ -155,7 +157,6 @@ export default {
       })
     },
     async getSavedPipeline() {
-      // since only getting the pipeline here, didn't put it in the store
       const URL = `pipeline/${this.pipeline_id}`
       try {
         const { nodes, links } = await generic_get(this, URL)

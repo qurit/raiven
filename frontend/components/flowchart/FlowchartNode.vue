@@ -18,6 +18,7 @@
       <v-card-title v-text="type" />
       <v-select
         v-if="container_is_output || container_is_input"
+        v-model="selected"
         :items="destinations"
         item-text="full_name"
         item-value="id"
@@ -25,6 +26,7 @@
         dense
         solo
         flat
+        @change="changeDestination(selected)"
       >
         <template v-slot:prepend-item>
           <v-list-item>
@@ -68,9 +70,8 @@
         v-model="destinationDialog"
         max-width="900px"
         min-height="600px"
-        @closeDialog="destinationDialog = false"
       >
-        <OutputDestinationForm />
+        <OutputDestinationForm @closeDialog="destinationDialog = false" />
       </v-dialog>
     </v-card>
   </v-hover>
@@ -91,6 +92,7 @@ export default {
     type: undefined,
     container_is_input: undefined,
     container_is_output: undefined,
+    destination: undefined,
     options: {
       type: Object,
       default() {
@@ -100,6 +102,16 @@ export default {
           centerY: undefined
         }
       }
+    },
+    scene: {
+      type: Object,
+      default: () => ({
+        centerX: 1024,
+        scale: 1,
+        centerY: 140,
+        nodes: [],
+        links: []
+      })
     },
     colors: {
       type: Object,
@@ -114,7 +126,8 @@ export default {
     destinationDialog: false,
     show: {
       delete: false
-    }
+    },
+    selected: undefined
   }),
   computed: {
     ...mapState('destination', ['destinations']),
@@ -132,6 +145,13 @@ export default {
     }
   },
   methods: {
+    changeDestination(destination) {
+      const { host, port } = this.destinations[this.selected - 1]
+      this.$emit('setDestination', {
+        pipelineNodeId: this.id,
+        destinationId: this.destinations[this.selected - 1].id
+      })
+    },
     handleMousedown(e) {
       // This could be removed with click.stop maybe?
       if (
@@ -145,6 +165,13 @@ export default {
   },
   created() {
     this.$store.dispatch('destination/fetchDestinations')
+    this.selected = this.destination
+    if (this.selected) {
+      this.$emit('setDestination', {
+        pipelineNodeId: this.id,
+        destinationId: this.selected?.id
+      })
+    }
   }
 }
 </script>

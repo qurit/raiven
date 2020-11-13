@@ -5,6 +5,7 @@ from pydantic import validator
 
 from . import BaseModel, BaseORMModel
 from .container import Container
+from .destination import Destination
 from api.models import dicom, Base
 
 
@@ -15,6 +16,7 @@ class PipelineNodeCreate(BaseModel):
     y: int
     container_is_input: bool
     container_is_output: bool
+    destination_id: Optional[int]
 
 
 class PipelineNode(BaseORMModel):
@@ -25,6 +27,7 @@ class PipelineNode(BaseORMModel):
     container_is_input: bool
     container_is_output: bool
     container: Container
+    destination: Optional[Destination]
 
 
 class PipelineLinkCreate(BaseModel):

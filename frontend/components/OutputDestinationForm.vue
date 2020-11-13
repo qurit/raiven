@@ -29,7 +29,7 @@
         class="ma-4"
         text
       >
-        Add container
+        Add destination
       </v-btn>
     </v-row>
   </v-card>
