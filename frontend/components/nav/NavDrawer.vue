@@ -19,8 +19,11 @@
       flat
       style="flex: 1"
     >
+
+<!-- Links -->
+<!-- Links can be changed in the default layout -->
       <v-list-item
-        v-for="link in links"
+        v-for="link in items"
         :to="link.to"
         nuxt
         class="py-2"
@@ -74,23 +77,11 @@
 export default {
   name: 'NavDrawer',
   props: {
-    app: Boolean
-  },
-  computed: {
-    links() {
-      return [
-        {to: '/', label: 'Dashboard', icon: 'mdi-chart-box-outline'},
-        {
-          to: '/containers', label: 'Container',
-          icon: this.$route.path === '/containers' ? 'mdi-package-variant' : 'mdi-package-variant-closed'
-        },
-        {
-          to: '/pipeline',
-          label: 'Pipelines',
-          icon: 'mdi-transit-connection-variant'
-        },
-        {to: '/runs', label: 'Runs', icon: 'mdi-air-filter'},
-        {to: '/help', label: 'Help', icon: 'mdi-help'}
+    app: Boolean,
+    items: {
+      type: Array,
+      default: () => [
+        {to: '/', label: 'Dashboard', icon: 'mdi-chart-box-outline'}
       ]
     }
   }

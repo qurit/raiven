@@ -2,12 +2,12 @@ import os
 import shutil
 from typing import List
 
-from fastapi import APIRouter, Depends, BackgroundTasks
+from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
-from api import session
-from api.controllers.pipeline import PipelineController
+from api import session, queries
+from api.pipelining import PipelineController
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun
 from api.schemas import pipeline as schemas
 
