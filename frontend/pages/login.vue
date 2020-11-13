@@ -3,11 +3,11 @@
     <v-col cols="12">
       <div
         class="text-center display-4 raiven"
-        style="font-family: 'Monoton', sans-serif !important;"
+        style="font-family: 'Quicksand', cursive !important;"
         v-html="title"
       />
       <VueTypedJs
-        :typeSpeed="20"
+        :typeSpeed="30"
         :showCursor="false"
         :strings="[subtitle]"
         @onComplete="complete = true"

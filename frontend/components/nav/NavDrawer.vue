@@ -9,19 +9,14 @@
       />
       <div
         class="title text-center nav-title"
-        style="font-family: 'Monoton', sans-serif !important; color: white"
+        style="font-family: 'Quicksand', cursive !important; color: white"
       >
         R<span>A</span><span>I</span>VEN
       </div>
     </n-link>
-    <v-list
-      class="mt-16"
-      flat
-      style="flex: 1"
-    >
-
-<!-- Links -->
-<!-- Links can be changed in the default layout -->
+    <v-list class="mt-16" flat style="flex: 1">
+      <!-- Links -->
+      <!-- Links can be changed in the default layout -->
       <v-list-item
         v-for="link in items"
         :to="link.to"
@@ -50,26 +45,25 @@
     </v-list>
 
     <template v-slot:append>
-        <v-col cols="12" class="text-center pb-0">
-          <v-tooltip top dark>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                color="primary"
-                dark
-                icon
-                v-bind="attrs"
-                v-on="on"
-                @click="$auth.logout('local')"
-              >
-                <v-icon>mdi-power-standby</v-icon>
-              </v-btn>
-            </template>
-            <span>Logout</span>
-          </v-tooltip>
-        </v-col>
+      <v-col cols="12" class="text-center pb-0">
+        <v-tooltip top dark>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="primary"
+              dark
+              icon
+              v-bind="attrs"
+              v-on="on"
+              @click="$auth.logout('local')"
+            >
+              <v-icon>mdi-power-standby</v-icon>
+            </v-btn>
+          </template>
+          <span>Logout</span>
+        </v-tooltip>
+      </v-col>
       <v-col cols="12" class="text-center">{{ $auth.user.name }}</v-col>
     </template>
-
   </v-navigation-drawer>
 </template>
 
@@ -81,7 +75,7 @@ export default {
     items: {
       type: Array,
       default: () => [
-        {to: '/', label: 'Dashboard', icon: 'mdi-chart-box-outline'}
+        { to: '/', label: 'Dashboard', icon: 'mdi-chart-box-outline' }
       ]
     }
   }

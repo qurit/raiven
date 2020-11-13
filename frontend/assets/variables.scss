@@ -2,14 +2,14 @@
 
 // Rally specific variables
 $rally-box-shadow: none;
-$rally-dialog-background-color: #1F1E1F;
+$rally-dialog-background-color: #1f1e1f;
 $rally-font-size: 16;
 $rally-tabs-slider-background: transparent;
-$rally-text-color: #FFFFFF;
+$rally-text-color: #ffffff;
 
 // Preset variables
-$body-font-family: 'Roboto Condensed', sans-serif;
-$heading-font-family: 'Eczar', sans-serif;
+$body-font-family: 'Quicksand', sans-serif;
+$heading-font-family: 'Quicksand', serif;
 $border-radius-root: 0;
 $btn-font-size: #{14 / $rally-font-size}rem;
 $btn-font-weight: 700;
@@ -19,73 +19,73 @@ $dialog-card-text-padding: 24px;
 $dialog-card-title-padding: 24px;
 $dialog-elevation: 0;
 $headings: (
-  'h1':(
+  'h1': (
     'font-family': $body-font-family,
     'letter-spacing': initial,
     'size': #{96 / $rally-font-size}rem,
     'weight': 300
   ),
-  'h2':(
+  'h2': (
     'font-family': $body-font-family,
     'letter-spacing': initial,
     'size': #{60 / $rally-font-size}rem,
     'weight': 300
   ),
-  'h3':(
+  'h3': (
     'font-family': $heading-font-family,
     'letter-spacing': initial,
     'size': #{48 / $rally-font-size}rem,
     'weight': 400
   ),
-  'h4':(
+  'h4': (
     'font-family': $body-font-family,
     'letter-spacing': initial,
     'size': #{34 / $rally-font-size}rem,
     'weight': 400
   ),
-  'h5':(
+  'h5': (
     'font-family': $body-font-family,
     'letter-spacing': initial,
     'size': #{24 / $rally-font-size}rem,
     'weight': 400
   ),
-  'h6':(
+  'h6': (
     'font-family': $body-font-family,
     'letter-spacing': initial,
     'size': #{20 / $rally-font-size}rem,
     'weight': 500
   ),
-  'subtitle-1':(
+  'subtitle-1': (
     'font-family': $body-font-family,
     'letter-spacing': initial,
     'size': #{16 / $rally-font-size}rem,
     'weight': 400
   ),
-  'subtitle-2':(
+  'subtitle-2': (
     'font-family': $body-font-family,
     'letter-spacing': initial,
     'size': #{14 / $rally-font-size}rem,
     'weight': 500
   ),
-  'body-1':(
+  'body-1': (
     'font-family': $heading-font-family,
     'letter-spacing': initial,
     'size': #{16 / $rally-font-size}rem,
     'weight': 400
   ),
-  'body-2':(
+  'body-2': (
     'font-family': $body-font-family,
     'letter-spacing': initial,
     'size': #{14 / $rally-font-size}rem,
     'weight': 300
   ),
-  'caption':(
+  'caption': (
     'font-family': $body-font-family,
     'letter-spacing': initial,
     'size': #{12 / $rally-font-size}rem,
     'weight': 400
   ),
-  'overline':(
+  'overline': (
     'font-family': $body-font-family,
     'letter-spacing': initial,
     'size': #{10 / $rally-font-size}rem,
@@ -99,14 +99,14 @@ $material-dark: (
   'background': #33333d,
   'cards': #373740,
   'dividers': #33333d,
-  'tabs': rgba(255, 255, 255, .3),
+  'tabs': rgba(255, 255, 255, 0.3),
   'input': #27272f
 );
 $material-light: (
-  'dividers': rgba(255, 255, 255, .12)
+  'dividers': rgba(255, 255, 255, 0.12)
 );
 $navigation-drawer-border-width: 0;
-$snackbar-background-color: rgba(39, 39, 47, .9);
+$snackbar-background-color: rgba(39, 39, 47, 0.9);
 $tab-font-size: 1.25rem;
 $tab-font-weight: 500;
 $tabs-item-min-width: 0;
