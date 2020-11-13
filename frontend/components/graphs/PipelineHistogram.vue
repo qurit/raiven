@@ -11,6 +11,8 @@
 </template>
 
 <script>
+Chart.defaults.global.defaultFontFamily = "'Quicksand', sans-serif"
+
 import BarChart from './BarChart.js'
 import colours from './colours.js'
 import { generic_get } from '~/api'

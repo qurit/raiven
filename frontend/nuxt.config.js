@@ -22,7 +22,7 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Monoton&display=swap'
+        href: 'https://fonts.googleapis.com/css2?family=Quicksand&display=swap'
       }
     ]
   },
@@ -37,7 +37,7 @@ export default {
   io: {
     sockets: [
       {
-        url: 'http://localhost:5000',
+        url: 'http://localhost:5000'
       }
     ]
   },

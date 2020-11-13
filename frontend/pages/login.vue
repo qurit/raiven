@@ -1,13 +1,19 @@
 <template>
   <v-row justify="center" align="center" style="height: inherit" no-gutters>
     <v-col cols="12">
+       <v-img
+        class="mx-auto"
+        :src="require('@/static/raiven-logo.svg')"
+        height="150"
+        width="150"
+      />
       <div
         class="text-center display-4 raiven"
-        style="font-family: 'Monoton', sans-serif !important;"
+        style="font-family: 'Quicksand', sans-serif !important;"
         v-html="title"
       />
       <VueTypedJs
-        :typeSpeed="20"
+        :typeSpeed="30"
         :showCursor="false"
         :strings="[subtitle]"
         @onComplete="complete = true"
