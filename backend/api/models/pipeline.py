@@ -5,7 +5,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
 from api import config
-from . import Base, PathMixin, NestedPathMixin, TimestampMixin, IOPathMixin
+from . import Base, PathMixin, NestedPathMixin, TimestampMixin, IOPathMixin, utils
 
 
 class Pipeline(Base):
@@ -24,6 +24,7 @@ class Pipeline(Base):
 class PipelineNode(Base):
     pipeline_id = Column(ForeignKey("pipeline.id", ondelete="CASCADE"))
     container_id = Column(ForeignKey("container.id"))
+    destination_id = Column(ForeignKey("destination.id"))
     x_coord = Column(Integer)
     y_coord = Column(Integer)
     container_is_input = Column(Boolean)
@@ -37,6 +38,7 @@ class PipelineNode(Base):
     previous_links = relationship(
         'PipelineLink', foreign_keys='PipelineLink.to_node_id')
     jobs = relationship('PipelineJob', backref='node')
+    destination = relationship('Destination', uselist=False)
 
     def is_root_node(self):
         return not len(self.previous_links)
@@ -85,6 +87,12 @@ class PipelineJob(IOPathMixin, TimestampMixin, Base):
     exit_code = Column(Integer)
 
     error = relationship('PipelineJobError', backref="job", uselist=False)
+
+    def get_volume_abs_input_path(self):
+        return os.path.join(config.UPLOAD_VOLUME_ABSPATH, self.input_path)
+
+    def get_volume_abs_output_path(self):
+        return os.path.join(config.UPLOAD_VOLUME_ABSPATH, self.output_path)
 
 
 class PipelineJobError(Base):

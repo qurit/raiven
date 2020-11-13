@@ -1,3 +1,5 @@
+import os
+
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
@@ -15,7 +17,15 @@ class Container(PathMixin, Base):
     description = Column(String)
     filename = Column(String)
 
-    build = relationship('ContainerBuild', uselist=False)
+    build = relationship('ContainerBuild', backref='container', uselist=False)
+
+    @property
+    def dockerfile_abs_path(self):
+        return os.path.join(config.UPLOAD_DIR, self.dockerfile_path)
+
+    @property
+    def build_abs_path(self):
+        return os.path.dirname(self.dockerfile_abs_path)
 
 
 class ContainerBuild(TimestampMixin, Base):
@@ -25,6 +35,13 @@ class ContainerBuild(TimestampMixin, Base):
     tag = Column(String)
 
     error = relationship('ContainerBuildError', uselist=False, backref='build')
+
+    @property
+    def is_success(self):
+        return self.exit_code == 0
+
+    def generate_tag(self) -> str:
+        return f'{config.IMAGE_TAG_PREFIX}.{self.container.name.strip()}.{self.container.id}'.replace(' ', '')
 
 
 class ContainerBuildError(Base):

@@ -1,14 +1,15 @@
-import os
-from typing import List
-import zipfile
 import io
+import os
+import zipfile
+from typing import List
 
-from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, File, Form
+from sqlalchemy.orm import Session
 
 from api import session, config
-from api.schemas import container
 from api.models.container import Container
+from api.schemas import container
+from api.pipelining import ContainerController
 
 router = APIRouter()
 
@@ -28,37 +29,36 @@ def get_all_containers(db: Session = Depends(session)):
     return db.query(Container).all()
 
 
+# TODO: Add response model
 @router.post("/")
 async def create_container(
         file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
         description: str = Form(None), is_input_container: bool = Form(...),
         is_output_container: bool = Form(...), db: session = Depends(session)):
 
-    new_container_list = []
-
-    print(description)
-    print(name)
-    print(is_input_container)
-    print(is_output_container)
-    print(filename)
-
-    # need to check why zipfile.is_zip(file) didn't work
     if ".zip" in filename:
         z = zipfile.ZipFile(io.BytesIO(file))
-        db_container1 = Container(
-            user_id=1,
+        db_container = Container(
+            user_id=1, # TODO: Add user
             name=name,
             description=description,
             is_input_container=is_input_container,
             is_output_container=is_output_container,
             filename='Dockerfile')
-        db_container1.save(db)
-        db_container1.dockerfile_path = os.path.join(
-            db_container1.get_path(), 'Dockerfile')
-        db_container1.save(db)
-        z.extractall(db_container1.get_abs_path())
-        new_container_list.append(db_container1)
+        db_container.save(db)
+
+        folder = db_container.get_abs_path()
+        z.extractall(folder)
+        print(folder)
+        for root, _, files in os.walk(folder):
+            print(root, _, files)
+            if 'Dockerfile' in files:
+                db_container.dockerfile_path = os.path.relpath(os.path.join(root, 'Dockerfile'), config.UPLOAD_DIR)
+                break
+
+        db_container.save(db)
     else:
+        # TODO: Review This Code.  Refactoring needed
         db_container = Container(
             user_id=1,
             name=name,
@@ -72,8 +72,13 @@ async def create_container(
         db_container.dockerfile_path = os.path.join(
             db_container.get_path(), filename)
         db_container.save(db)
-        new_container_list.append(db_container)
-    return new_container_list
+
+    # Build Container In Background
+    db.commit()
+    ContainerController.build_container(db_container.id)
+
+    # TODO: We shoulnt return a list
+    return [db_container]
 
 
 @router.get("/{container_id}", response_model=container.Container)

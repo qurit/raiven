@@ -5,10 +5,13 @@ LOCALHOST = '127.0.0.1'
 
 
 class BaseConfig:
-    HOST = LOCALHOST
-    PORT = 5000
-    UPLOAD_DIR = os.path.join(os.path.dirname(
-        os.path.dirname(__file__)), 'uploads')
+    RAIVEN_WORKER = False
+
+    APT_HOST = '127.0.0.1'
+    API_PORT = 5000
+    API_HOT_RELOAD = True
+    UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+    UPLOAD_VOLUME_ABSPATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
 
     # Auth
     SECRET_KEY = 'ChangeMe'
@@ -24,26 +27,27 @@ class BaseConfig:
     LDAP_TEST_PW = 'LD@P2020pw!'
 
     # DB Config
-    POSTGRES_HOST = LOCALHOST
+    POSTGRES_HOST = '127.0.0.1'
     POSTGRES_USER = 'postgres'
     POSTGRES_PW = 'password'
-    POSTGRES_DB = 'picom'
+    POSTGRES_DB = 'raiven'
     SQLALCHEMY_DATABASE_URI = ''
 
     # Docker
     DOCKER_URI = 'tcp://127.0.0.1:2375'
 
+    # RabbitMQ
+    RABBITMQ_HOST = '127.0.0.1'
+
     # Pipeline
     PICOM_INPUT_DIR = '/mnt/picom/input'
     PICOM_OUTPUT_DIR = '/mnt/picom/output'
+    IMAGE_TAG_PREFIX = 'RAIVEN'
 
-    # DICOM SCP
-    SCP_AE_TITLE = 'PICOM_SCP'
-    SCP_HOST = ''
+    # DICOM
+    SCP_AE_TITLE = 'RAIVEN'
+    SCP_HOST = '127.0.0.1'
     SCP_PORT = 11112
-
-
-
 
     def __init__(self):
         env_vars = [v for v in os.environ.keys() if (v in vars(BaseConfig)) and not v.startswith('__')]
@@ -73,4 +77,5 @@ class BaseConfig:
             print(
                 f'[FAILED] ENV VARIABLE {env_var} MAY PRODUCE AN UNEXPECTED ERROR')
         finally:
+            print('[config]', env_var, v)
             setattr(self, env_var, v)

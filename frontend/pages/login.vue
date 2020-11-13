@@ -44,7 +44,6 @@
           <v-row no-gutters>
             <v-spacer />
             <v-btn
-              :to="'/'"
               @click="login"
               rounded
               color="primary secondary--text"
