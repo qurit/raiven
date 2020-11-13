@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="ma-1 text-center"
+    class="my-1 px-2 text-center"
     height="150"
     width="175"
     elevation="10"

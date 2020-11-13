@@ -1,9 +1,5 @@
 <template>
-  <v-row>
-    <v-row justify="center">
-      <UserGuide />
-    </v-row>
-  </v-row>
+  <UserGuide />
 </template>
 
 <script>
