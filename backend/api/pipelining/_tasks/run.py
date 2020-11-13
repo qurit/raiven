@@ -2,6 +2,7 @@ from datetime import datetime
 
 from api import config, worker_session, models
 from api.models.pipeline import PipelineRun, PipelineJob, PipelineJobError
+from api.dicom import scu
 from . import docker, dramatiq, external_sio
 
 
@@ -10,9 +11,9 @@ def _run_next_nodes(job: PipelineJob, run_id: int):
 
         # TODO: Clean this up variable naming
         if node.container_is_output:
-            dicom_output_task.send_with_options(args=(run_id, n.id, job.id,))
+            dicom_output_task.send_with_options(args=(run_id, node.id, job.id,))
         else:
-            run_node_task.send_with_options(args=(run_id, n.id, job.id,))
+            run_node_task.send_with_options(args=(run_id, node.id, job.id,))
 
 
 @dramatiq.actor
@@ -32,7 +33,6 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
             return
 
         image_tag = build.tag
-        job.detach(db)
 
         if not previous_job_id:
             src_subdir = 'input'
@@ -53,6 +53,7 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
     with worker_session() as db:
         job.status = 'running'
         job.save(db)
+        db.commit()
 
     # Long running task
     print('Waiting for container')
@@ -84,7 +85,7 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
 
             # TODO: Clean up old jobs
         else:
-            _run_next_nodes(run_id, job)
+            _run_next_nodes(job, run_id)
 
     # Cleaning Up Container
     container.remove()
@@ -95,9 +96,13 @@ def dicom_output_task(run_id: int, node_id: int, previous_job_id: int):
     with worker_session() as db:
         job = PipelineJob(pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
         job.save(db)
-        job.detach(db)
 
-    # TODO: Send to dicom scp
+        if dest := job.node.destination:
+            prev: PipelineJob = PipelineJob.query(db).get(previous_job_id)
+            print(prev)
+
+            # Detach db first
+            scu.send_dicom_folder(dest, prev.get_abs_output_path())
 
     with worker_session() as db:
         job.status = 'exited'

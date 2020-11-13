@@ -14,7 +14,7 @@ if __name__ == '__main__':
     ae = AE(ae_title='BC158VIPT1')
     ae.requested_contexts = StoragePresentationContexts
 
-    assoc = ae.associate('localhost', 11112, ae_title='CT_QA')
+    assoc = ae.associate('localhost', 4242, ae_title='CT_QA')
     if assoc.is_established:
         print('ESTABLISHED')
 
