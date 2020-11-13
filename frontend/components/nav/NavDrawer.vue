@@ -9,7 +9,7 @@
       />
       <div
         class="title text-center nav-title"
-        style="font-family: 'Quicksand', cursive !important; color: white"
+        style="font-family: 'Quicksand', sans-serif !important; color: white"
       >
         R<span>A</span><span>I</span>VEN
       </div>
