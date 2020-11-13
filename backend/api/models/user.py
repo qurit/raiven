@@ -2,7 +2,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSign
 from passlib.hash import pbkdf2_sha256
 
 from sqlalchemy import *
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Session
 from datetime import datetime
 
 from . import Base
@@ -24,7 +24,7 @@ class User(Base):
         return s.dumps({'id': self.id})
 
     @staticmethod
-    def verify_token(token, db):
+    def verify_token(token, db: Session = None):
         s = Serializer(config.SECRET_KEY)
 
         try:
@@ -34,10 +34,13 @@ class User(Base):
         except BadSignature:
             return None  # invalid token
 
-        user = User.query(db).get(data['id'])
-        user.last_seen = datetime.utcnow()
-        user.save(db)
-        return user
+        if db:
+            user = User.query(db).get(data['id'])
+            user.last_seen = datetime.utcnow()
+            user.save(db)
+            return user
+        else:
+            return data['id']
 
 
 class UserLDAP(Base):

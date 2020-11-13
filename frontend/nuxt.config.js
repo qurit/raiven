@@ -3,7 +3,8 @@ require('dotenv').config()
 export default {
   mode: 'spa',
   server: {
-    host: process.env.NUXT_HOST || 'localhost'
+    host: process.env.NUXT_HOST || 'localhost',
+    port: process.env.NUXT_PORT || 3000
   },
   head: {
     titleTemplate: 'Raiven',
@@ -36,7 +37,7 @@ export default {
   io: {
     sockets: [
       {
-        url: 'http://127.0.0.1:5001/test'
+        url: 'http://localhost:5000',
       }
     ]
   },

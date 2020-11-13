@@ -12,5 +12,6 @@ dependencies:
   - uvicorn=0.11.3
   - pynetdicom=1.5.3
   - passlib
+  - dramatiq
   - pip:
     - psycopg2-binary==2.8.6

@@ -2,13 +2,12 @@ import os
 import shutil
 from typing import List
 
-from fastapi import APIRouter, Depends, BackgroundTasks
+from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
-from api import session
 from api import session, queries
-from api.controllers.pipeline import PipelineController
+from api.pipelining import PipelineController
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun
 from api.schemas import pipeline as schemas
 
@@ -71,14 +70,12 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
 
 
 @router.put("/{pipeline_id}", response_model=schemas.PipelineRun)
-def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, background_tasks: BackgroundTasks, db: Session = Depends(session)):
+def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, db: Session = Depends(session)):
     """ Runs A Pipeline. """
-    run_options.pipeline_id = pipeline_id
-    run = PipelineController(db).create_pipeline_run(run_options)
+    run = PipelineController.pipeline_run_factory(db, run_options.get_cls_type(), run_options.dicom_obj_id, pipeline_id)
     db.commit()
 
-    background_tasks.add_task(PipelineController.run_pipeline_task, run.id)
-
+    PipelineController.run_pipeline_task(db, run)
     return run
 
 

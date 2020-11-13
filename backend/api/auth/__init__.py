@@ -13,3 +13,7 @@ def token_auth(token: str = Depends(oauth2_scheme), db: type(session) = Depends(
         return HTTPException(401, "Invalid token")
     else:
         return user
+
+
+def socket_auth(token):
+    return User.verify_token(token)

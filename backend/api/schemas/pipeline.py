@@ -94,7 +94,7 @@ class PipelineRunOptions(BaseModel):
         return v
 
     def get_cls_type(self) -> Base:
-        return self._DICOM_TYPES[self.dicom_obj_type]
+        return self._DICOM_TYPES[self.dicom_obj_type.lower()]
 
 
 class PipelineRun(BaseORMModel):
