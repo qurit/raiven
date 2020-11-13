@@ -39,7 +39,7 @@ async def create_container(
     if ".zip" in filename:
         z = zipfile.ZipFile(io.BytesIO(file))
         db_container = Container(
-            user_id=1, # TODO: Add user
+            user_id=1,  # TODO: Add user
             name=name,
             description=description,
             is_input_container=is_input_container,
@@ -69,8 +69,7 @@ async def create_container(
         db_container.save(db)
         with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
             fp.write(file)
-        db_container.dockerfile_path = os.path.join(
-            db_container.get_path(), filename)
+        db_container.dockerfile_path = os.path.join(db_container.get_path(), filename)
         db_container.save(db)
 
     # Build Container In Background
