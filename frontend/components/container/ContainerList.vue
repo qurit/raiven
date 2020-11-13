@@ -7,16 +7,17 @@
   >
     <v-toolbar color="primary accent--text" flat>
       <v-toolbar-title><b>Your Containers</b></v-toolbar-title>
+      <v-spacer />
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search by Name or File"
+        hide-details
+        solo
+      />
     </v-toolbar>
     <v-divider light />
-    <v-text-field
-      v-model="search"
-      append-icon="mdi-magnify"
-      label="Search by Name or File"
-      single-line
-      hide-details
-      class="px-4"
-    ></v-text-field>
+
     <v-data-table
       id="Containers"
       :headers="headers"

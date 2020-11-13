@@ -10,21 +10,20 @@
     <v-toolbar color="primary accent--text" flat>
       <v-toolbar-title><b>Your Pipelines</b></v-toolbar-title>
       <v-spacer />
+            <v-spacer />
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          hide-details
+          solo
+        />
       <v-btn icon>
-        <v-icon @click="dialog = true" color="#373740" class="pr-8"
+        <v-icon @click="dialog = true" color="#373740"
           >mdi-pen-plus</v-icon
         >
       </v-btn>
     </v-toolbar>
-    <v-divider light />
-    <v-text-field
-      v-model="search"
-      append-icon="mdi-magnify"
-      label="Search"
-      single-line
-      hide-details
-      class="px-4"
-    ></v-text-field>
     <v-data-table
       id="Pipelines"
       :headers="headers"

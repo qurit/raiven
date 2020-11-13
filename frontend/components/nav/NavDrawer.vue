@@ -17,7 +17,7 @@
     <v-list
       class="mt-16"
       flat
-      style="flex: 1, flexDirection: 'column', justifyContent: 'space-between' "
+      style="flex: 1"
     >
       <v-list-item
         v-for="link in links"
@@ -32,7 +32,7 @@
               v-text="link.icon"
               large
               class="mx-auto"
-              :color="link.to === $route.path ? 'primary' : '#84848a'"
+              :color="link.to === $route.path ? '' : '#84848a'"
             />
             <v-expand-transition>
               <div
@@ -59,8 +59,7 @@
                 @click="$auth.logout('local')"
               >
                 <v-icon>mdi-power-standby</v-icon>
-              </v-btn
-                color="primary">
+              </v-btn>
             </template>
             <span>Logout</span>
           </v-tooltip>
@@ -77,19 +76,24 @@ export default {
   props: {
     app: Boolean
   },
-  data: () => ({
-    links: [
-      { to: '/', label: 'Dashboard', icon: 'mdi-chart-box-outline' },
-      { to: '/containers', label: 'Container', icon: 'mdi-toy-brick' },
-      {
-        to: '/pipeline',
-        label: 'Pipelines',
-        icon: 'mdi-transit-connection-variant'
-      },
-      { to: '/runs', label: 'Runs', icon: 'mdi-cogs' },
-      { to: '/help', label: 'Help', icon: 'mdi-help' }
-    ]
-  })
+  computed: {
+    links() {
+      return [
+        {to: '/', label: 'Dashboard', icon: 'mdi-chart-box-outline'},
+        {
+          to: '/containers', label: 'Container',
+          icon: this.$route.path === '/containers' ? 'mdi-package-variant' : 'mdi-package-variant-closed'
+        },
+        {
+          to: '/pipeline',
+          label: 'Pipelines',
+          icon: 'mdi-transit-connection-variant'
+        },
+        {to: '/runs', label: 'Runs', icon: 'mdi-air-filter'},
+        {to: '/help', label: 'Help', icon: 'mdi-help'}
+      ]
+    }
+  }
 }
 </script>
 

@@ -51,8 +51,7 @@
               <v-btn
                 class="mt-2 mx-auto"
                 @click="containerDialog = true"
-                color="primary"
-                outlined
+                color="primary accent--text"
                 rounded
               >
                 Add a Container

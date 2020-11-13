@@ -22,9 +22,7 @@
         <CounterList />
       </v-col>
       <v-col cols="4">
-        <v-card elevation="6" height="100%">
-          Another graph here
-        </v-card>
+        <PipelineStatus :pipelines="pipelines" />
       </v-col>
       <v-col cols="4">
         <PipelineHistogram />
