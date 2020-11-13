@@ -5,35 +5,39 @@
     class="overflow-y-auto"
     :class="'dark'"
   >
-    <v-card-title>
-      Your Containers
-    </v-card-title>
+    <v-toolbar color="primary accent--text" flat>
+      <v-toolbar-title><b>Your Containers</b></v-toolbar-title>
+      <v-spacer />
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search by Name or File"
+        hide-details
+        solo
+      />
+    </v-toolbar>
     <v-divider light />
-    <v-card-text>
-      <v-list-item v-for="container in containers" :key="container.id">
-        <v-col cols="8">
-          <v-list-item-title>
-            {{ container.name }}
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            {{ container.description }}
-          </v-list-item-subtitle>
-        </v-col>
-        <v-col cols="4">
-          <v-btn small color="blue" @click="editContainer(container.id)">
-            Edit
-          </v-btn>
-          <v-btn
-            small
-            color="red"
-            @click="deleteContainer(container.id)"
-            class="mx-2"
-          >
-            Delete
-          </v-btn>
-        </v-col>
-      </v-list-item>
-    </v-card-text>
+
+    <v-data-table
+      id="Containers"
+      :headers="headers"
+      :items="items"
+      :search="search"
+    >
+      <template v-slot:item.actions="{ item }">
+        <v-icon
+          medium
+          class="mr-2"
+          @click="editContainer(item.id)"
+          color="info"
+        >
+          mdi-pencil
+        </v-icon>
+        <v-icon medium @click="deleteContainer(item.id)" color="cancel">
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-data-table>
     <v-dialog v-model="dialog" max-width="900px" min-height="600px">
       <ContainerForm
         :isEditing="true"
@@ -44,7 +48,6 @@
     </v-dialog>
     <v-dialog
       v-model="confirmDeleteDialog"
-      persistent
       max-width="525px"
       min-height="600px"
     >
@@ -55,10 +58,14 @@
         <v-card-subtitle>
           Are you sure you want to continue?
         </v-card-subtitle>
-        <v-row justify="center" align="center">
-          <v-btn class="ma-2" @click="confirmDeleteContainer"> Yes </v-btn>
-          <v-btn @click="confirmDeleteDialog = false"> No </v-btn>
-        </v-row>
+        <v-card-actions class="justify-center">
+          <v-btn text color="confirm" @click="confirmDeleteContainer">
+            Yes
+          </v-btn>
+          <v-btn text color="cancel" @click="confirmDeleteDialog = false">
+            No
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </v-card>
@@ -84,7 +91,25 @@ export default {
         containerDescription: '',
         containerIsInput: false,
         containerIsOutput: false
-      }
+      },
+      headers: [
+        { text: 'Name', value: 'name', width: '1%' },
+        {
+          text: 'Description',
+          value: 'description',
+          filterable: false,
+          width: '2%'
+        },
+        { text: 'File', value: 'filename', width: '1%' },
+        {
+          text: 'Edit or Delete',
+          value: 'actions',
+          sortable: false,
+          align: 'center',
+          width: '1%'
+        }
+      ],
+      search: ''
     }
   },
   methods: {
@@ -96,12 +121,16 @@ export default {
       this.confirmDeleteDialog = true
     },
     async confirmDeleteContainer(containerId) {
-      await this.$store.dispatch(
-        'containers/deleteContainer',
-        this.deleteContainerId
-      )
+      try {
+        await this.$store.dispatch(
+          'containers/deleteContainer',
+          this.deleteContainerId
+        )
+        this.$toaster.toastSuccess('Container deleted!')
+      } catch (e) {
+        this.$toaster.toastError('Could not delete container')
+      }
       this.confirmDeleteDialog = false
-
     },
     editContainer(containerId) {
       const containers = this.$store.state.containers.containers
@@ -118,7 +147,10 @@ export default {
     }
   },
   computed: {
-    ...mapState('containers', ['containers'])
+    ...mapState('containers', ['containers']),
+    items() {
+      return this.$store.state.containers.containers
+    }
   },
   created() {
     this.$store.dispatch('containers/fetchContainers')

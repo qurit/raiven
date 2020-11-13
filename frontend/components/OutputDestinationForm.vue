@@ -25,10 +25,11 @@
       <v-btn
         :disabled="this.isDisabled"
         @click="submit"
-        color="green"
+        color="confirm"
         class="ma-4"
+        text
       >
-        Add container
+        Add destination
       </v-btn>
     </v-row>
   </v-card>
@@ -53,9 +54,9 @@ export default {
     }
   },
   computed: {
-    isDisabled: function () {
+    isDisabled: function() {
       return !(this.host && this.port)
     }
   }
-  }
+}
 </script>

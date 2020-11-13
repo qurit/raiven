@@ -7,37 +7,37 @@
     class="overflow-y-auto overflow-x-hidden"
     :class="'dark'"
   >
-    <v-row align="center">
-      <v-col cols="8">
-        <v-card-title>
-          Your Pipelines
-        </v-card-title>
-      </v-col>
-      <v-col cols="1">
-        <v-btn color="green" @click="dialog = true">
-          Add Pipeline
-        </v-btn>
-      </v-col>
-    </v-row>
-    <v-divider light />
-    <v-card-text>
-      <v-row v-for="pipeline in pipelines" :key="pipeline.id">
-        <v-col cols="8">
-          <b>Pipeline Name:</b>
-          {{ pipeline.name }}
-        </v-col>
-        <v-col cols="1">
-          <v-btn small color="blue" @click="viewPipeline(pipeline.id)">
-            View
-          </v-btn>
-        </v-col>
-        <v-col cols="1">
-          <v-btn small color="red" @click="removePipeline(pipeline)">
-            Remove
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-card-text>
+    <v-toolbar color="primary accent--text" flat>
+      <v-toolbar-title><b>Your Pipelines</b></v-toolbar-title>
+      <v-spacer />
+            <v-spacer />
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          hide-details
+          solo
+        />
+      <v-btn icon>
+        <v-icon @click="dialog = true" color="#373740"
+          >mdi-pen-plus</v-icon
+        >
+      </v-btn>
+    </v-toolbar>
+    <v-data-table
+      id="Pipelines"
+      :headers="headers"
+      :items="items"
+      :search="search"
+      class="row-pointer"
+      @click:row="viewPipeline"
+    >
+      <template v-slot:item.actions="{ item }">
+        <v-icon medium @click.stop="removePipeline(item)" color="cancel">
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-data-table>
     <v-dialog v-model="dialog" max-width="600px">
       <v-card class="overflow-x-hidden">
         <v-text-field
@@ -52,7 +52,8 @@
             @click="savePipeline"
             :disabled="this.isDisabled"
             class="ma-4"
-            color="green"
+            color="confirm"
+            text
           >
             Save
           </v-btn>
@@ -70,16 +71,30 @@ export default {
   data: function() {
     return {
       dialog: false,
-      pipelineName: ''
+      pipelineName: '',
+      headers: [
+        { text: 'Pipeline Name', value: 'name' },
+        {
+          text: 'Delete',
+          value: 'actions',
+          sortable: false,
+          align: 'center'
+        }
+      ],
+      search: ''
     }
   },
   methods: {
-    viewPipeline(pipelineId) {
-      this.$router.push({ path: `/pipeline/${pipelineId}` })
+    viewPipeline(pipeline) {
+      this.$router.push({ path: `/pipeline/${pipeline.id}` })
     },
     async removePipeline(pipeline) {
-      await this.$store.dispatch('pipelines/deletePipeline', pipeline.id)
-      this.$toaster.toastSuccess('Pipeline removed!')
+      try {
+        await this.$store.dispatch('pipelines/deletePipeline', pipeline.id)
+        this.$toaster.toastSuccess('Pipeline deleted!')
+      } catch (e) {
+        this.$toaster.toastError('Could not delete pipeline!')
+      }
     },
     async savePipeline() {
       const payload = {
@@ -99,6 +114,9 @@ export default {
     ...mapState('pipelines', ['pipelines']),
     isDisabled: function() {
       return !this.pipelineName
+    },
+    items() {
+      return this.$store.state.pipelines.pipelines
     }
   },
   created() {
@@ -106,3 +124,9 @@ export default {
   }
 }
 </script>
+
+<style lang="css" scoped>
+.row-pointer >>> tbody tr :hover {
+  cursor: pointer;
+}
+</style>

@@ -5,6 +5,7 @@ from pydantic import validator
 
 from . import BaseModel, BaseORMModel
 from .container import Container
+from .destination import Destination
 from api.models import dicom, Base
 
 
@@ -15,6 +16,7 @@ class PipelineNodeCreate(BaseModel):
     y: int
     container_is_input: bool
     container_is_output: bool
+    destination_id: Optional[int]
 
 
 class PipelineNode(BaseORMModel):
@@ -25,6 +27,7 @@ class PipelineNode(BaseORMModel):
     container_is_input: bool
     container_is_output: bool
     container: Container
+    destination: Optional[Destination]
 
 
 class PipelineLinkCreate(BaseModel):
@@ -100,4 +103,7 @@ class PipelineRun(BaseORMModel):
     created_datetime: datetime
     finished_datetime: Optional[datetime]
 
-    pipeline: Pipeline
+    # optional for now becaues don't want to mess up the other pipeline run stuff
+    # but should save pipeline name with the pipeline run, because if pipeline gets
+    # deleted, then the PipelineRun will error since it has no associated Pipeline anymore
+    pipeline: Optional[Pipeline]

@@ -1,50 +1,60 @@
 <template>
-<v-card elevation="6">
-    <v-card-title>
-      Your pipelines in progress
-    </v-card-title>
+<v-card elevation="6" height="460"
+    class="overflow-y-auto overflow-x-hidden" >
+    <v-toolbar color="primary accent--text" flat>
+      <v-toolbar-title> <b>Pipelines in Progress</b></v-toolbar-title>
+    </v-toolbar>
     <v-divider light />
-    <div v-if="pipelines.length > 0">
-      <!-- comment out for now because need to figure out how to do it properly with websockets and stuff -->
-      <!-- <v-flex v-for="pipeline in pipelines" :key="pipeline.id">
+      <v-flex v-for="run in this.pipelineRuns" :key="run.id">
         <v-card>
+          <v-row justify="left" align="center" class="px-4">
           <v-card-subtitle>
-            {{ pipeline.title }}
+           Run ID: {{ run.id }}
           </v-card-subtitle>
-          <v-flex>
+              <v-card-subtitle>
+           From Pipeline: {{ run.pipeline.name }}
+          </v-card-subtitle>
+          </v-row>
+          <v-row class="mt-n3 ma-2">
             <v-progress-linear
-              color="light-blue"
+            rounded
+              :color="run.status === 'complete' ? 'success' : 'info'"
               buffer-value="0"
-              :value="pipeline.status"
+              :value="status[run.status]"
               stream
             ></v-progress-linear>
-
-            <v-btn color="error" class="ma-2">
-              Stop
-            </v-btn>
-          </v-flex>
+          </v-row>
         </v-card>
-      </v-flex> -->
-    </div>
-    <div v-else>
-      <v-card>
-      <v-card-title>
-        You have no pipelines running.
-      </v-card-title>
-      <v-btn class="ma-2">
-          <nuxt-link to="/pipeline">
-            View Pipelines
-          </nuxt-link>
-      </v-btn>
+      </v-flex>
       </v-card>
-    </div>
-  </div>
   </v-card>
 </template>
 
 <script>
+import { generic_get } from '~/api'
+
 export default {
   name: 'PipelineStatus',
-  props: ['pipelines']
+  props: ['pipelines'],
+  data() {
+    return {
+      pipelineRuns: [],
+      // TODO: change these statuses
+      status: {
+        'created': 0,
+        'exited': 20,
+        'running': 40,
+        'complete': 100
+      }
+    }
+  },
+   async mounted() {
+    const URL = '/pipeline/results'
+    try {
+      this.pipelineRuns = await generic_get(this, URL)
+    } catch (e) {
+      console.log(e)
+    }
+  },
 }
 </script>
