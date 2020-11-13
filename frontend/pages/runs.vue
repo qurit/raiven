@@ -1,14 +1,15 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="5">
+      <v-col cols="3">
         <PipelineStatus :pipelines="pipelines" />
       </v-col>
-      <v-col cols="7">
-        <PipelineResults />
+
+      <v-col cols="3">
+        <DicomInstances />
       </v-col>
       <v-col cols="6">
-        <DicomInstances />
+        <PipelineResults />
       </v-col>
     </v-row>
   </div>
@@ -23,11 +24,7 @@ import DicomInstances from '~/components/dicom/DicomInstances'
 import { mapState } from 'vuex'
 export default {
   components: {
-    PipelineStatus,
-
-    DicomInstances,
-
-    PipelineResults
+    PipelineStatus, DicomInstances, PipelineResults
   },
   computed: {
     ...mapState('pipelines', ['pipelines'])

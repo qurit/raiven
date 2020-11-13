@@ -40,7 +40,7 @@ export default {
             {
               scaleLabel: {
                 display: true,
-                labelString: 'DICOM Instances Received',
+                labelString: 'DICOM Series Received',
                 fontColor: colours.genericColours.labels
               },
               ticks: {
@@ -90,7 +90,6 @@ export default {
             pointBorderColor: colours.genericColours.primary,
             borderWidth: 1,
             lineTension: 0,
-            borderWidth: 2,
             data: Object.values(this.chartData)
           }
         ]

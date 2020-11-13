@@ -5,15 +5,15 @@
         <v-toolbar-title>
           <b>Pipeline Run Results </b>
         </v-toolbar-title>
+        <v-spacer />
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search by Run ID or Pipeline"
+          hide-details
+          solo
+        />
       </v-toolbar>
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search by Run ID or Pipeline"
-        single-line
-        hide-details
-        class="px-4"
-      ></v-text-field>
       <v-data-table
         id="ResultsTable"
         :headers="headers"
