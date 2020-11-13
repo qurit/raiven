@@ -7,14 +7,28 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from api import session
-from api.pipelining import PipelineController
+from api.controllers.pipeline import PipelineController
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun
 from api.schemas import pipeline as schemas
 
 router = APIRouter()
 
 
-@router.get("/runs", response_model=List[schemas.PipelineRun])
+@router.get("/stats")
+def get_pipeline_stats(db: Session = Depends(session)):
+    stats = {
+        "pipeline_counts": db.query(Pipeline).count(),
+        "pipeline_run_counts": db.query(PipelineRun).count()
+    }
+    return stats
+
+
+@router.get("/runs")
+def get_all_pipeline_runs(limit: int = 7, db: Session = Depends(session)):
+    return queries.group_by_date(db, PipelineRun.created_datetime, limit=limit)
+
+
+@router.get("/results", response_model=List[schemas.PipelineRun])
 def get_all_pipeline_runs(db: Session = Depends(session)):
     return db.query(PipelineRun).all()
 
@@ -31,7 +45,8 @@ def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
 
     # Sending the zip file as response
     zip_file = open(zip_path + '.zip', 'rb')
-    response = StreamingResponse(zip_file, media_type="application/x-zip-compressed")
+    response = StreamingResponse(
+        zip_file, media_type="application/x-zip-compressed")
     response.headers["Content-Disposition"] = "attachment; filename=results.zip"
 
     return response
@@ -64,9 +79,7 @@ def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, db: 
     return run
 
 
-# TODO: ask Adam why this didnt send the x and y coordinates... even tho they're defined in the model?
-# @router.get("/{pipeline_id}/nodes", response_model=List[schemas.PipelineNode])
-@router.get("/{pipeline_id}/nodes")
+@ router.get("/{pipeline_id}/nodes", response_model=List[schemas.PipelineNode])
 def get_pipeline_nodes(pipeline_id: int, db: Session = Depends(session)):
     return db.query(PipelineNode).filter(PipelineNode.pipeline_id == pipeline_id).all()
 
@@ -94,7 +107,8 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
         x_coord=node.x,
         y_coord=node.y,
         container_is_input=node.container_is_input,
-        container_is_output=node.container_is_output
+        container_is_output=node.container_is_output,
+        destination_id=node.destination_id
     ).save(db) for node in pipeline_update.nodes}
 
     for link in pipeline_update.links:

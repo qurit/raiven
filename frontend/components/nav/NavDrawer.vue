@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer :app="app" permanent width="125" bottom>
-    <n-link to="/login" style="text-decoration: none">
+    <n-link to="/" style="text-decoration: none">
       <v-img
         class="mx-auto mt-8"
         :src="require('@/static/raiven-logo.svg')"
@@ -14,7 +14,11 @@
         R<span>A</span><span>I</span>VEN
       </div>
     </n-link>
-    <v-list class="mt-16" flat>
+    <v-list
+      class="mt-16"
+      flat
+      style="flex: 1"
+    >
       <v-list-item
         v-for="link in links"
         :to="link.to"
@@ -28,7 +32,7 @@
               v-text="link.icon"
               large
               class="mx-auto"
-              :color="link.to === $route.path ? 'white' : '#84848a'"
+              :color="link.to === $route.path ? '' : '#84848a'"
             />
             <v-expand-transition>
               <div
@@ -41,6 +45,28 @@
         </v-row>
       </v-list-item>
     </v-list>
+
+    <template v-slot:append>
+        <v-col cols="12" class="text-center pb-0">
+          <v-tooltip top dark>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="primary"
+                dark
+                icon
+                v-bind="attrs"
+                v-on="on"
+                @click="$auth.logout('local')"
+              >
+                <v-icon>mdi-power-standby</v-icon>
+              </v-btn>
+            </template>
+            <span>Logout</span>
+          </v-tooltip>
+        </v-col>
+      <v-col cols="12" class="text-center">{{ $auth.user.name }}</v-col>
+    </template>
+
   </v-navigation-drawer>
 </template>
 
@@ -50,18 +76,24 @@ export default {
   props: {
     app: Boolean
   },
-  data: () => ({
-    links: [
-      { to: '/', label: 'Dashboard', icon: 'mdi-view-dashboard' },
-      { to: '/containers', label: 'Container', icon: 'mdi-toy-brick' },
-      {
-        to: '/pipeline',
-        label: 'Pipelines',
-        icon: 'mdi-transit-connection-variant'
-      },
-      { to: '/settings', label: 'Account', icon: 'mdi-account' }
-    ]
-  })
+  computed: {
+    links() {
+      return [
+        {to: '/', label: 'Dashboard', icon: 'mdi-chart-box-outline'},
+        {
+          to: '/containers', label: 'Container',
+          icon: this.$route.path === '/containers' ? 'mdi-package-variant' : 'mdi-package-variant-closed'
+        },
+        {
+          to: '/pipeline',
+          label: 'Pipelines',
+          icon: 'mdi-transit-connection-variant'
+        },
+        {to: '/runs', label: 'Runs', icon: 'mdi-air-filter'},
+        {to: '/help', label: 'Help', icon: 'mdi-help'}
+      ]
+    }
+  }
 }
 </script>
 

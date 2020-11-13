@@ -16,10 +16,12 @@
       </svg>
       <FlowchartNode
         v-bind.sync="node"
+        :scene.sync="scene"
         v-for="(node, index) in scene.nodes"
         :key="`node${index}`"
         :options="nodeOptions"
         :colors="colors.container"
+        @setDestination="setDestinations"
         @linkingStart="linkingStart(node.id)"
         @linkingStop="linkingStop(node.id)"
         @nodeSelected="nodeSelected(node.id, $event)"
@@ -82,7 +84,8 @@ export default {
     rootDivOffset: {
       top: 0,
       left: 0
-    }
+    },
+    pipelineNodeDestinations: []
   }),
   computed: {
     nodeOptions: ctx => ({
@@ -130,6 +133,16 @@ export default {
     this.rootDivOffset.left = this.$el ? this.$el.offsetLeft : 0
   },
   methods: {
+    setDestinations(destination) {
+      const index = this.pipelineNodeDestinations.findIndex(
+        pipelineDestination =>
+          pipelineDestination.pipelineNodeId === destination.pipelineNodeId
+      )
+      if (index >= 0) {
+        this.pipelineNodeDestinations.splice(index, 1)
+      }
+      this.pipelineNodeDestinations.push(destination)
+    },
     findNodeWithID(id) {
       return this.scene.nodes.find(item => id === item.id)
     },
@@ -286,6 +299,13 @@ export default {
           container_is_input: node.container_is_input,
           container_is_output: node.container_is_output
         }
+        // if there is a node with a destination, then save the destination as well
+        this.pipelineNodeDestinations.forEach(pipelineNodeDestination => {
+          if (pipelineNodeDestination.pipelineNodeId === node.id) {
+            newPipelineNode['destination_id'] =
+              pipelineNodeDestination.destinationId
+          }
+        })
         nodeArray.push(newPipelineNode)
       })
       links.forEach(link => {
@@ -299,13 +319,14 @@ export default {
         nodes: nodeArray,
         links: linkArray
       }
-      // since there's no state change / only post in this component, didn't put it in the store
       const URL = `/pipeline/${this.id}`
       try {
         await generic_post(this, URL, PAYLOAD)
         this.$toaster.toastSuccess('Pipeline saved!')
       } catch (e) {
-        console(e)
+        this.$toaster.toastError(
+          'Something went wrong, please make sure your pipeline is properly formed'
+        )
       }
     },
     savePipeline() {
