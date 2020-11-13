@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-row>
+    <v-row justify="space-between" class="mx-2">
       <Counters :number="this.containerCount" name="Containers" />
       <Counters :number="this.pipelineCount" name="Pipelines" />
       <Counters :number="this.pipelineRunCount" name="Pipeline Runs" />
