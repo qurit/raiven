@@ -1,66 +1,67 @@
 <template>
-  <!-- hardcode with but maybe put in columns and stuff if we figure out what to populate this page with... -->
-  <v-card
-    elevation="6"
-    width="900"
-    max-height="750"
-    class="overflow-y-auto overflow-x-hidden"
-    :class="'dark'"
-  >
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Your Pipelines</b></v-toolbar-title>
-      <v-spacer />
-            <v-spacer />
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          hide-details
-          solo
-        />
-      <v-btn icon>
-        <v-icon @click="dialog = true" color="#373740"
-          >mdi-pen-plus</v-icon
-        >
-      </v-btn>
-    </v-toolbar>
-    <v-data-table
-      id="Pipelines"
-      :headers="headers"
-      :items="items"
-      :search="search"
-      class="row-pointer"
-      @click:row="viewPipeline"
-    >
-      <template v-slot:item.actions="{ item }">
-        <v-icon medium @click.stop="removePipeline(item)" color="cancel">
-          mdi-delete
-        </v-icon>
-      </template>
-    </v-data-table>
-    <v-dialog v-model="dialog" max-width="600px">
-      <v-card class="overflow-x-hidden">
-        <v-text-field
-          v-model="pipelineName"
-          label="Pipeline Name*"
-          required
-          :rules="[v => !!v || 'A Pipeline Name is required']"
-          class="pa-15"
-        />
-        <v-row justify="center" align="center">
-          <v-btn
-            @click="savePipeline"
-            :disabled="this.isDisabled"
-            class="ma-4"
-            color="confirm"
-            text
-          >
-            Save
+  <v-row>
+    <v-col cols="7">
+      <v-card
+        elevation="6"
+        width="900"
+        max-height="750"
+        class="overflow-y-auto overflow-x-hidden"
+        :class="'dark'"
+      >
+        <v-toolbar color="primary accent--text" flat>
+          <v-toolbar-title><b>Your Pipelines</b></v-toolbar-title>
+          <v-spacer />
+          <v-spacer />
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            hide-details
+            solo
+          />
+          <v-btn icon>
+            <v-icon @click="dialog = true" color="#373740">mdi-pen-plus</v-icon>
           </v-btn>
-        </v-row>
+        </v-toolbar>
+        <v-data-table
+          id="Pipelines"
+          :headers="headers"
+          :items="items"
+          :search="search"
+          class="row-pointer"
+          @click:row="viewPipeline"
+        >
+          <template v-slot:item.actions="{ item }">
+            <v-icon medium @click.stop="removePipeline(item)" color="cancel">
+              mdi-delete
+            </v-icon>
+          </template>
+        </v-data-table>
+        <v-dialog v-model="dialog" max-width="600px">
+          <v-card class="overflow-x-hidden">
+            <v-text-field
+              v-model="pipelineName"
+              label="Pipeline Name*"
+              required
+              :rules="[v => !!v || 'A Pipeline Name is required']"
+              class="pa-15"
+            />
+            <v-row justify="center" align="center">
+              <v-btn
+                @click="savePipeline"
+                :disabled="this.isDisabled"
+                class="ma-4"
+                color="confirm"
+                text
+              >
+                Save
+              </v-btn>
+            </v-row>
+          </v-card>
+        </v-dialog>
       </v-card>
-    </v-dialog>
-  </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
