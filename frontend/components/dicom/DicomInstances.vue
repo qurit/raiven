@@ -1,18 +1,27 @@
 <template>
   <v-card class="mx-auto" elevation="6">
     <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title>Received DICOM Instances</v-toolbar-title>
+      <v-toolbar-title><b>DICOM Instances</b></v-toolbar-title>
     </v-toolbar>
-    <DicomBreakdown/>
+    <DicomBreakdown />
 
-    <v-treeview dense :items="nodes" item-text="id" :loadChildren="fetchTest" hoverable>
+    <v-treeview
+      dense
+      :items="nodes"
+      item-text="id"
+      :loadChildren="fetchTest"
+      hoverable
+    >
       <template v-slot:prepend="{ item }">
-        <v-icon v-if="item.icon" v-text="item.icon" ></v-icon>
+        <v-icon v-if="item.icon" v-text="item.icon"></v-icon>
       </template>
 
       <template slot="label" slot-scope="{ item }">
         <a v-if="item.hasOwnProperty('host')" @click="send('Node', item.id)">
-          {{item.title}} <span class="text-caption">Host: {{ item.host }} Port: {{item.port}}</span>
+          {{ item.title }}
+          <span class="text-caption"
+            >Host: {{ item.host }} Port: {{ item.port }}</span
+          >
         </a>
         <a
           v-else-if="item.hasOwnProperty('patient_id')"
@@ -30,7 +39,6 @@
           {{ item.series_description }}
         </a>
       </template>
-
     </v-treeview>
     <v-dialog v-model="dialog" width="500px" height="600px">
       <DicomForm
@@ -43,101 +51,99 @@
 </template>
 
 <script>
-  import DicomForm from './DicomForm'
-  import ContainerForm from '~/components/container/ContainerForm'
-  import DicomBreakdown from '~/components/graphs/DicomBreakdown'
-  import {generic_get} from '~/api'
+import DicomForm from './DicomForm'
+import ContainerForm from '~/components/container/ContainerForm'
+import DicomBreakdown from '~/components/graphs/DicomBreakdown'
+import { generic_get } from '~/api'
 
-  export default {
-    components: {ContainerForm, DicomForm, DicomBreakdown},
-    data: () => ({
-      dialog: false,
-      dicom_obj_type: undefined,
-      dicom_obj_id: undefined,
-      nodes: undefined
-    }),
-    created() {
-      this.getNodes()
-    },
-    methods: {
-      async fetchTest(item) {
-        // open node accordion / get patients
-        if (item.hasOwnProperty('host')) {
-          const URL = `/dicom/nodes/${item.id}/patients`
-          return (
-            generic_get(this, URL)
-              // append "children" to the patients so that they are openable
-              .then(data => {
-                data.forEach(patient => {
-                  patient['children'] = []
-                  patient.icon = 'mdi-account'
-                })
-                return data
-              })
-              // adding the patients as the node's children
-              .then(patients => {
-                patients.forEach(patient => {
-                  item.children.push(patient)
-
-                })
-              })
-              .catch(err => console.log(err))
-          )
-        }
-        // open patient accordion / get studies
-        if (item.hasOwnProperty('patient_id')) {
-          const URL = `/dicom/nodes/${item.dicom_node_id}/patient/${item.id}/studies`
-          return (
-            generic_get(this, URL)
-              // append "children" to the studies so that they are openable
-              .then(data => {
-                data.forEach(study => {
-                  study['children'] = []
-                  study.icon = 'mdi-clipboard-list'
-                })
-                return data
-              })
-              // adding the studies as the patient's children
-              .then(studies => {
-                studies.forEach(study => {
-                  item.children.push(study)
-
-                })
-              })
-              .catch(err => console.log(err))
-          )
-        }
-        // open study accordion / get series
-        if (item.hasOwnProperty('study_date')) {
-          const URL = `/dicom/patient/${item.dicom_patient_id}/study/${item.id}/series`
-          return generic_get(this, URL)
+export default {
+  components: { ContainerForm, DicomForm, DicomBreakdown },
+  data: () => ({
+    dialog: false,
+    dicom_obj_type: undefined,
+    dicom_obj_id: undefined,
+    nodes: undefined
+  }),
+  created() {
+    this.getNodes()
+  },
+  methods: {
+    async fetchTest(item) {
+      // open node accordion / get patients
+      if (item.hasOwnProperty('host')) {
+        const URL = `/dicom/nodes/${item.id}/patients`
+        return (
+          generic_get(this, URL)
+            // append "children" to the patients so that they are openable
             .then(data => {
-              data.forEach(studies => {
-                // adding the studies to the series' children
-                item.children.push(studies)
+              data.forEach(patient => {
+                patient['children'] = []
+                patient.icon = 'mdi-account'
+              })
+              return data
+            })
+            // adding the patients as the node's children
+            .then(patients => {
+              patients.forEach(patient => {
+                item.children.push(patient)
               })
             })
             .catch(err => console.log(err))
-        }
-      },
-      async getNodes() {
-        const URL = '/dicom/nodes'
-        await generic_get(this, URL)
+        )
+      }
+      // open patient accordion / get studies
+      if (item.hasOwnProperty('patient_id')) {
+        const URL = `/dicom/nodes/${item.dicom_node_id}/patient/${item.id}/studies`
+        return (
+          generic_get(this, URL)
+            // append "children" to the studies so that they are openable
+            .then(data => {
+              data.forEach(study => {
+                study['children'] = []
+                study.icon = 'mdi-clipboard-list'
+              })
+              return data
+            })
+            // adding the studies as the patient's children
+            .then(studies => {
+              studies.forEach(study => {
+                item.children.push(study)
+              })
+            })
+            .catch(err => console.log(err))
+        )
+      }
+      // open study accordion / get series
+      if (item.hasOwnProperty('study_date')) {
+        const URL = `/dicom/patient/${item.dicom_patient_id}/study/${item.id}/series`
+        return generic_get(this, URL)
           .then(data => {
-            this.nodes = data
-          })
-          .then(() => {
-            this.nodes.forEach(node => {
-              this.$set(node, 'children', [])
-              this.$set(node, 'icon', 'mdi-folder-network')
+            data.forEach(studies => {
+              // adding the studies to the series' children
+              item.children.push(studies)
             })
           })
-      },
-      send(name, id) {
-        this.dicom_obj_type = name
-        this.dicom_obj_id = id
-        this.dialog = true
+          .catch(err => console.log(err))
       }
+    },
+    async getNodes() {
+      const URL = '/dicom/nodes'
+      await generic_get(this, URL)
+        .then(data => {
+          this.nodes = data
+        })
+        .then(() => {
+          this.nodes.forEach(node => {
+            this.$set(node, 'children', [])
+            this.$set(node, 'icon', 'mdi-folder-network')
+          })
+        })
+    },
+    send(name, id) {
+      this.dicom_obj_type = name
+      this.dicom_obj_id = id
+      this.dialog = true
     }
   }
+}
 </script>

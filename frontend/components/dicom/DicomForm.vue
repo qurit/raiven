@@ -21,11 +21,11 @@
       />
     </v-card-text>
     <v-card-actions>
-      <v-btn @click="remove" color="red" text>
+      <v-btn @click="remove" color="cancel" text>
         Delete {{ dicom_obj_type }}
       </v-btn>
       <v-spacer />
-      <v-btn @click="submit" :disabled="this.isDisabled" color="green" text>
+      <v-btn @click="submit" :disabled="this.isDisabled" color="confirm" text>
         Send to Pipeline
       </v-btn>
     </v-card-actions>

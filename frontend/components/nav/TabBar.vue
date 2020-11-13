@@ -1,6 +1,6 @@
 <template>
   <v-app-bar app flat class="px-0" color="#27272f">
-    <v-img class="mr-5" src="raiven-logo.svg"  height="40" width="40" />
+    <v-img class="mr-5" src="raiven-logo.svg" height="40" width="40" />
     <v-tabs>
       <v-tab v-for="link in links" :to="link.to" nuxt :ripple="false">
         <v-icon
@@ -26,14 +26,15 @@ export default {
   name: 'TabBar',
   data: () => ({
     links: [
-      { to: '/', label: 'Dashboard', icon: 'mdi-view-dashboard' },
+      { to: '/', label: 'Dashboard', icon: 'mdi-chart-box-outline' },
       { to: '/containers', label: 'Container', icon: 'mdi-toy-brick' },
       {
         to: '/pipeline',
         label: 'Pipelines',
         icon: 'mdi-transit-connection-variant'
       },
-      { to: '/settings', label: 'Account', icon: 'mdi-account' }
+      { to: '/runs', label: 'Runs', icon: 'mdi-cogs' },
+      { to: '/help', label: 'Help', icon: 'mdi-help' }
     ]
   })
 }
