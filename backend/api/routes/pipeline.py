@@ -7,6 +7,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from api import session
+from api import session, queries
 from api.controllers.pipeline import PipelineController
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun
 from api.schemas import pipeline as schemas
@@ -14,7 +15,21 @@ from api.schemas import pipeline as schemas
 router = APIRouter()
 
 
-@router.get("/runs", response_model=List[schemas.PipelineRun])
+@router.get("/stats")
+def get_pipeline_stats(db: Session = Depends(session)):
+    stats = {
+        "pipeline_counts": db.query(Pipeline).count(),
+        "pipeline_run_counts": db.query(PipelineRun).count()
+    }
+    return stats
+
+
+@router.get("/runs")
+def get_all_pipeline_runs(limit: int = 7, db: Session = Depends(session)):
+    return queries.group_by_date(db, PipelineRun.created_datetime, limit=limit)
+
+
+@router.get("/results", response_model=List[schemas.PipelineRun])
 def get_all_pipeline_runs(db: Session = Depends(session)):
     return db.query(PipelineRun).all()
 
