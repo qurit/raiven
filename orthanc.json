@@ -1,0 +1,11 @@
+{
+  "Name" : "Orthanc in Docker",
+  "RemoteAccessAllowed" : true,
+  "DicomServerEnabled": true,
+  "DicomPort": 4242,
+  "AuthenticationEnabled": false,
+
+  "DicomModalities" : {
+    "Raiven" : ["RAIVEN", "api", 11112]
+  }
+}
