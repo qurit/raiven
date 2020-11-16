@@ -13,17 +13,10 @@
         v-text="link.icon"
         large
         class="mx-auto"
-        :color="link.to === $route.path ? '#ffffff' : '#84848a'"
+        :color="link.to === $route.path ? 'icon' : '#84848a'"
       />
     </v-tab>
-    <v-btn
-      color="primary"
-      dark
-      icon
-      v-bind="attrs"
-      v-on="on"
-      @click="$auth.logout('local')"
-    >
+    <v-btn color="primary" dark icon @click="$auth.logout('local')">
       <v-icon>mdi-power-standby</v-icon>
     </v-btn>
   </v-app-bar>
