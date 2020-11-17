@@ -15,12 +15,6 @@ import {
 } from '~/components/help/'
 
 export default {
-  components: {
-    CreateContainerGuide,
-    AddContainerGuide,
-    CreatePipelineGuide,
-    RunPipelineGuide
-  },
   data: () => ({
     components: [CreateContainerGuide, AddContainerGuide, CreatePipelineGuide, RunPipelineGuide]
   })
