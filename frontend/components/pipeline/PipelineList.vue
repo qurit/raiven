@@ -42,8 +42,9 @@
           label="Pipeline Name*"
           required
           :rules="[v => !!v || 'A Pipeline Name is required']"
-          class="pa-15"
+          class="px-15 pt-10"
         />
+        <v-text-field v-model="aeTitle" label="AE Title" class="px-15" />
         <v-row justify="center" align="center">
           <v-btn
             @click="savePipeline"
@@ -68,6 +69,7 @@ export default {
     return {
       dialog: false,
       pipelineName: '',
+      aeTitle: '',
       headers: [
         { text: 'Pipeline Name', value: 'name' },
         {
@@ -95,7 +97,8 @@ export default {
     async savePipeline() {
       const payload = {
         user_id: 1,
-        name: this.pipelineName
+        name: this.pipelineName,
+        ae_title: this.aeTitle
       }
       const { data } = await this.$store.dispatch(
         'pipelines/addPipeline',
