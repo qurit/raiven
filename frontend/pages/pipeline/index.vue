@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import PipelineList from '~/components/PipelineList'
+import PipelineList from '~/components/pipeline/PipelineList'
 export default {
   components: {
     PipelineList

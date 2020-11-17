@@ -8,10 +8,12 @@
 </template>
 
 <script>
-import CreateContainerGuide from '~/components/help/CreateContainerGuide'
-import AddContainerGuide from '~/components/help/AddContainerGuide'
-import CreatePipelineGuide from '~/components/help/CreatePipelineGuide'
-import RunPipelineGuide from '~/components/help/RunPipelineGuide'
+import {
+  CreateContainerGuide,
+  AddContainerGuide,
+  CreatePipelineGuide,
+  RunPipelineGuide
+} from '~/components/help/'
 
 export default {
   components: {

@@ -15,11 +15,10 @@
 </template>
 
 <script>
-import PipelineStatus from '~/components/runs/PipelineStatus'
-import PipelineResults from '~/components/runs/PipelineResults'
-import DicomInstances from '~/components/runs/DicomInstances'
-
+import { PipelineResults, PipelineStatus } from '~/components/pipeline'
+import { DicomInstances } from '~/components/dicom'
 import { mapState } from 'vuex'
+
 export default {
   components: {
     PipelineStatus,

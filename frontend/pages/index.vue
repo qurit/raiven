@@ -18,17 +18,11 @@
 </template>
 
 <script>
-import PipelineStatus from '../components/runs/PipelineStatus'
-import PipelineResults from '~/components/runs/PipelineResults'
-import DicomInstances from '~/components/runs/DicomInstances'
-import CounterList from '~/components/CounterList'
-import { mapState } from 'vuex'
+import { PipelineStatus } from '~/components/pipeline'
+import { CounterList } from '~/components/counters'
+import { DicomTrendChart, PipelineHistogram } from '~/components/graphs'
 
-import {
-  DicomBreakdown,
-  DicomTrendChart,
-  PipelineHistogram
-} from '~/components/graphs'
+import { mapState } from 'vuex'
 
 export default {
   name: 'App',
@@ -36,10 +30,7 @@ export default {
     PipelineStatus,
     PipelineHistogram,
     DicomTrendChart,
-    DicomInstances,
-    DicomBreakdown,
-    CounterList,
-    PipelineResults
+    CounterList
   },
   computed: {
     ...mapState('pipelines', ['pipelines'])

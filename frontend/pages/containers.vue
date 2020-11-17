@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import ContainerList from '~/components/container/ContainerList'
-import ContainerForm from '~/components/container/ContainerForm'
+import { ContainerForm, ContainerList } from '~/components/container'
+
 export default {
   components: { ContainerList, ContainerForm }
 }
