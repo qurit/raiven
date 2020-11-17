@@ -59,8 +59,6 @@ def get_all_pipelines(db: Session = Depends(session)):
 
 @router.post("/", response_model=schemas.Pipeline)
 def create_pipeline(pipeline: schemas.PipelineCreate, db: Session = Depends(session)):
-    print("got here")
-    print(pipeline)
     return Pipeline(**pipeline.dict()).save(db)
 
 
@@ -72,7 +70,8 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
 @router.put("/{pipeline_id}", response_model=schemas.PipelineRun)
 def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, db: Session = Depends(session)):
     """ Runs A Pipeline. """
-    run = PipelineController.pipeline_run_factory(db, run_options.get_cls_type(), run_options.dicom_obj_id, pipeline_id)
+    run = PipelineController.pipeline_run_factory(
+        db, run_options.get_cls_type(), run_options.dicom_obj_id, pipeline_id)
     db.commit()
 
     PipelineController.run_pipeline_task(db, run)
