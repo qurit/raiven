@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import PipelineStatus from '~/components/PipelineStatus'
-import PipelineResults from '~/components/PipelineResults'
-import DicomInstances from '~/components/dicom/DicomInstances'
+import PipelineStatus from '~/components/runs/PipelineStatus'
+import PipelineResults from '~/components/runs/PipelineResults'
+import DicomInstances from '~/components/runs/DicomInstances'
 
 import { mapState } from 'vuex'
 export default {
