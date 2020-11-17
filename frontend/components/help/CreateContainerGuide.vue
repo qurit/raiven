@@ -1,9 +1,8 @@
 <template>
   <v-card elevation="10">
     <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Create Container Guide</b></v-toolbar-title>
+      <v-toolbar-title><b>Create a Container</b></v-toolbar-title>
     </v-toolbar>
-    <v-divider light />
     <v-card-subtitle>
       <b>Creating a Container</b>
     </v-card-subtitle>
