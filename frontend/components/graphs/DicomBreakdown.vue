@@ -20,7 +20,10 @@ import colours from './colours.js'
 import { generic_get } from '~/api'
 
 export default {
-  props: ['dicom_obj_type', 'dicom_obj_id'],
+  props: {
+    dicom_obj_type: { type: String },
+    dicom_obj_id: { type: Number }
+  },
   components: {
     HorizontalBar
   },
