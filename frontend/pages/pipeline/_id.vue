@@ -93,7 +93,7 @@ export default {
   data: () => ({
     containerList: true,
     containerDialog: false,
-    pipeline_id: '',
+    pipeline_id: undefined,
     colors: {
       container: {
         input: 'orange',
@@ -170,7 +170,7 @@ export default {
     ...mapState('containers', ['containers'])
   },
   created() {
-    this.pipeline_id = this.$router.history.current.params.id
+    this.pipeline_id = parseInt(this.$router.history.current.params.id)
     this.getContainers()
     this.getSavedPipeline(this.pipeline_id)
   }

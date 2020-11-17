@@ -1,4 +1,4 @@
-import SimpleFlowChart from './SimpleFlowChart'
+import SimpleFlowchart from './SimpleFlowchart'
 import OutputDestinationForm from './OutputDestinationForm'
 
-export { SimpleFlowChart, OutputDestinationForm }
+export { SimpleFlowchart, OutputDestinationForm }

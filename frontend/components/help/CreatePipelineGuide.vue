@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="10">
     <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Pipeline Build Guide</b></v-toolbar-title>
+      <v-toolbar-title><b>Build Pipeline Guide</b></v-toolbar-title>
     </v-toolbar>
     <v-card-subtitle>
       <b>Creating a Pipeline</b>
