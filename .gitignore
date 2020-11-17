@@ -13,8 +13,8 @@ sw.*
 .pyc
 .db
 
-/backend/migrations/
 /examples/input/
 /examples/output/
 /uploads/
 .zip
+/backend/migrations/versions/
