@@ -10,6 +10,8 @@ from api import session, queries
 from api.pipelining import PipelineController
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun
 from api.schemas import pipeline as schemas
+from api.models.user import User
+from api.auth import token_auth
 
 router = APIRouter()
 
@@ -53,15 +55,13 @@ def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
 
 
 @ router.get("/", response_model=List[schemas.Pipeline])
-def get_all_pipelines(db: Session = Depends(session)):
-    return db.query(Pipeline).all()
+def get_all_pipelines(request: Request, user: User = Depends(token_auth), db: Session = Depends(session)):
+    return db.query(Pipeline).filter(Pipeline.user_id == user.id).all()
 
 
 @router.post("/", response_model=schemas.Pipeline)
-def create_pipeline(pipeline: schemas.PipelineCreate, db: Session = Depends(session)):
-    print("got here")
-    print(pipeline)
-    return Pipeline(**pipeline.dict()).save(db)
+def create_pipeline(pipeline: schemas.PipelineCreate, user: User = Depends(token_auth), db: Session = Depends(session)):
+    return(Pipeline(name=pipeline.name, user_id=user.id)).save(db)
 
 
 @router.get("/{pipeline_id}", response_model=schemas.PipelineFull)
@@ -72,7 +72,8 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
 @router.put("/{pipeline_id}", response_model=schemas.PipelineRun)
 def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, db: Session = Depends(session)):
     """ Runs A Pipeline. """
-    run = PipelineController.pipeline_run_factory(db, run_options.get_cls_type(), run_options.dicom_obj_id, pipeline_id)
+    run = PipelineController.pipeline_run_factory(
+        db, run_options.get_cls_type(), run_options.dicom_obj_id, pipeline_id)
     db.commit()
 
     PipelineController.run_pipeline_task(db, run)

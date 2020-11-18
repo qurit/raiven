@@ -10,6 +10,8 @@ from api import session, config
 from api.models.container import Container
 from api.schemas import container
 from api.pipelining import ContainerController
+from api.models.user import User
+from api.auth import token_auth
 
 router = APIRouter()
 
@@ -23,10 +25,10 @@ def get_container_stats(db: Session = Depends(session)):
 
 
 @router.get("/", response_model=List[container.Container])
-def get_all_containers(db: Session = Depends(session)):
+def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Get a list of containers """
 
-    return db.query(Container).all()
+    return db.query(Container).filter(Container.user_id == user.id).all()
 
 
 # TODO: Add response model
@@ -34,12 +36,12 @@ def get_all_containers(db: Session = Depends(session)):
 async def create_container(
         file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
         description: str = Form(None), is_input_container: bool = Form(...),
-        is_output_container: bool = Form(...), db: session = Depends(session)):
+        is_output_container: bool = Form(...), user: User = Depends(token_auth), db: session = Depends(session)):
 
     if ".zip" in filename:
         z = zipfile.ZipFile(io.BytesIO(file))
         db_container = Container(
-            user_id=1, # TODO: Add user
+            user_id=user.id,
             name=name,
             description=description,
             is_input_container=is_input_container,
@@ -53,14 +55,15 @@ async def create_container(
         for root, _, files in os.walk(folder):
             print(root, _, files)
             if 'Dockerfile' in files:
-                db_container.dockerfile_path = os.path.relpath(os.path.join(root, 'Dockerfile'), config.UPLOAD_DIR)
+                db_container.dockerfile_path = os.path.relpath(
+                    os.path.join(root, 'Dockerfile'), config.UPLOAD_DIR)
                 break
 
         db_container.save(db)
     else:
         # TODO: Review This Code.  Refactoring needed
         db_container = Container(
-            user_id=1,
+            user_id=user.id,
             name=name,
             description=description,
             is_input_container=is_input_container,
