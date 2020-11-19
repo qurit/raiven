@@ -35,6 +35,7 @@ export default {
           icon: 'mdi-transit-connection-variant'
         },
         { to: '/runs', label: 'Runs', icon: 'mdi-air-filter' },
+        { to: '/settings', label: 'Settings', icon: 'mdi-account-cog-outline' },
         { to: '/help', label: 'Help', icon: 'mdi-help' }
       ]
     }
