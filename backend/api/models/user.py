@@ -70,3 +70,5 @@ class UserLocal(Base):
 class UserDestination(Base):
     user_id = Column(ForeignKey("user.id", ondelete="CASCADE"))
     destination_id = Column(ForeignKey("destination.id", ondelete="CASCADE"))
+
+    destination = relationship('Destination', uselist=False)
