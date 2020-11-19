@@ -39,3 +39,8 @@ def update_user_destination(destination_ids: user.UserDestination, user: User = 
         new_destination_user.save(db)
 
     return "ok"
+
+
+@router.get("/user-destination", response_model=List[destination.UserDestination])
+def get_user_destinations(user: User = Depends(token_auth), db: Session = Depends(session)):
+    return db.query(UserDestination).filter(UserDestination.user_id == user.id).all()

@@ -10,3 +10,7 @@ class Destination(BaseORMModel):
 class CreateDestination(BaseModel):
     host: str
     port: int
+
+
+class UserDestination(BaseORMModel):
+    destination: Destination
