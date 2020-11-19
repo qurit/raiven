@@ -23,11 +23,15 @@ class User(BaseORMModel):
     username: str
     name: str
     is_admin: bool
+    ae_title: str
     first_seen: datetime
     last_seen: datetime
+
+
+class UserEdit(BaseModel):
+    ae_title: str
 
 
 class Token(BaseModel):
     access_token: str
     token_type: str = 'Bearer'
-
