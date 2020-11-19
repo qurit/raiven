@@ -30,9 +30,12 @@ export default {
               : 'mdi-package-variant-closed'
         },
         {
-          to: '/pipeline',
+          to: '/pipelines',
           label: 'Pipelines',
-          icon: 'mdi-transit-connection-variant'
+          icon:
+            this.$route.path === '/pipelines'
+              ? 'mdi-transit-connection-variant'
+              : 'mdi-transit-connection-horizontal'
         },
         { to: '/runs', label: 'Runs', icon: 'mdi-air-filter' },
         { to: '/settings', label: 'Settings', icon: 'mdi-account-cog-outline' },
