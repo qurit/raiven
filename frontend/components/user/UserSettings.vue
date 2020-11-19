@@ -105,10 +105,19 @@ export default {
       }
       console.log(payload)
       await generic_put(this, URL, payload)
+    },
+    async getUserDestinations() {
+      const URL = '/destination/user-destination'
+      const userPermittedDestinations = await generic_get(this, URL)
+      console.log(userPermittedDestinations)
+      userPermittedDestinations.forEach(x => {
+        this.newAssociationEntities.push(x.destination)
+      })
     }
   },
   created() {
     this.getUserInfo()
+    this.getUserDestinations()
   }
 }
 </script>
