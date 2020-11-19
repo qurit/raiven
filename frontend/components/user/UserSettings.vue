@@ -8,29 +8,50 @@
         class="mx-2"
         v-model="aeTitle"
         :rules="[rules.validateLength, rules.validateASCII]"
+        :items="associationEntities"
         counter
         prefix="Your AE Title is: RVU-"
         prepend-icon="mdi-access-point"
       ></v-text-field>
     </v-form>
+    <v-select
+      multiple
+      class="mx-2"
+      hint="Choose which Association Entities can send to you"
+      persistent-hint
+      :items="destinations"
+      item-text="full_name"
+      item-value="id"
+      label="Allowed Association Entities"
+      v-model="newAssociationEntities"
+      chips
+      clearable
+    >
+    </v-select>
     <v-card-actions class="justify-center">
-      <v-btn
+      <v-btn @click="test">
+        click me
+      </v-btn>
+      <!-- <v-btn
         @click="submit"
         text
         color="confirm"
         :disabled="!(didEdit && isFormValid)"
         >Save Changes</v-btn
-      >
+      > -->
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { generic_get, generic_put } from '~/api'
 export default {
   data() {
     return {
       isFormValid: false,
+      associationEntities: [],
+      newAssociationEntities: [],
       aeTitle: '',
       currentAETitle: '',
       rules: {
@@ -49,11 +70,15 @@ export default {
     }
   },
   computed: {
+    ...mapState('destination', ['destinations']),
     didEdit() {
       return this.currentAETitle !== this.aeTitle
     }
   },
   methods: {
+    test() {
+      console.log(this.newAssociationEntities)
+    },
     async submit() {
       try {
         const URL = '/user/edit'
@@ -72,6 +97,14 @@ export default {
       const { ae_title } = await generic_get(this, URL)
       this.aeTitle = ae_title
       this.currentAETitle = ae_title
+    },
+    async test() {
+      const URL = '/destination/user-destination'
+      const payload = {
+        destination_ids: this.newAssociationEntities
+      }
+      console.log(payload)
+      await generic_put(this, URL, payload)
     }
   },
   created() {
