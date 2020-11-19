@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 from . import BaseORMModel, BaseModel
@@ -30,6 +30,10 @@ class User(BaseORMModel):
 
 class UserEdit(BaseModel):
     ae_title: str
+
+
+class UserDestination(BaseModel):
+    destination_ids: Optional[List[int]]
 
 
 class Token(BaseModel):
