@@ -55,17 +55,21 @@ export default {
   },
   methods: {
     async savePipeline() {
-      const payload = {
-        name: this.pipelineName,
-        ae_title:
-          this.aeTitle.trim().length > 0 ? 'RVP-' + this.aeTitle.trim() : null
+      try {
+        const payload = {
+          name: this.pipelineName,
+          ae_title:
+            this.aeTitle.trim().length > 0 ? 'RVP-' + this.aeTitle.trim() : null
+        }
+        const { data } = await this.$store.dispatch(
+          'pipelines/addPipeline',
+          payload
+        )
+        this.$toaster.toastSuccess('Pipeline created!')
+        this.$router.push({ path: `/pipelines/${data.id}` })
+      } catch (e) {
+        this.$toaster.toastError('Something went wrong')
       }
-      const { data } = await this.$store.dispatch(
-        'pipelines/addPipeline',
-        payload
-      )
-      this.$toaster.toastSuccess('Pipeline created!')
-      this.$router.push({ path: `/pipelines/${data.id}` })
       this.$emit('closeDialog')
     }
   }

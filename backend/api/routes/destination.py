@@ -35,9 +35,7 @@ def update_user_destination(destinations: user.UserDestination, user: User = Dep
     for dest in user_destinations:
         new_destination_user = UserDestination(user_id=user.id,
                                                destination_id=dest.id)
-        print(new_destination_user)
         new_destination_user.save(db)
-
     return "ok"
 
 

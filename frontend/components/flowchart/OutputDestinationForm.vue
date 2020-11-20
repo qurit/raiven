@@ -42,7 +42,6 @@ export default {
     isFormValid: false,
     rules: {
       validateNumber(value) {
-        console.log(Number.isInteger(value))
         return Number.isInteger(value) || 'Port must be a number'
       }
     },
