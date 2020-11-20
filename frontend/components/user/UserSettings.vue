@@ -13,6 +13,7 @@
         prepend-icon="mdi-access-point"
       ></v-text-field>
     </v-form>
+    <v-divider class="my-3" light />
     <v-select
       multiple
       class="mx-2"
@@ -25,8 +26,14 @@
       v-model="permittedAETitles"
       chips
       clearable
+      @change="didChangeAE = true"
     >
     </v-select>
+    <v-row justify="center" align="center">
+      Add A Destination
+      <v-icon-btn add @click="destinationDialog = true" />
+    </v-row>
+    <v-divider class="my-3" light />
     <v-card-actions class="justify-center">
       <v-btn
         @click="submit"
@@ -36,17 +43,25 @@
         >Save Changes</v-btn
       >
     </v-card-actions>
+    <v-dialog v-model="destinationDialog" max-width="900px" min-height="600px">
+      <OutputDestinationForm @closeDialog="destinationDialog = false" />
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { generic_get, generic_put } from '~/api'
+import { OutputDestinationForm } from '~/components/flowchart'
 export default {
+  components: {
+    OutputDestinationForm
+  },
   data() {
     return {
+      destinationDialog: false,
       isFormValid: false,
-      associationEntities: [],
+      didChangeAE: false,
       permittedAETitles: [],
       aeTitle: '',
       currentAETitle: '',
@@ -68,7 +83,7 @@ export default {
   computed: {
     ...mapState('destination', ['destinations']),
     didEdit() {
-      return this.currentAETitle !== this.aeTitle
+      return this.currentAETitle !== this.aeTitle || this.didChangeAE
     }
   },
   methods: {
@@ -84,7 +99,6 @@ export default {
       userPermittedDestinations.forEach(permitted => {
         this.permittedAETitles.push(permitted.destination)
       })
-      console.log(this.permittedAETitles)
     },
     async saveUserAETitle() {
       const URL = '/user/edit'
@@ -99,11 +113,9 @@ export default {
       const payload = {
         destinations: this.permittedAETitles
       }
-      console.log(payload)
       await generic_put(this, URL, payload)
     },
     async submit() {
-      console.log(this.destinations)
       try {
         await this.saveUserAETitle()
         await this.savePermittedAETitles()
