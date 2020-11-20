@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="6">
+  <v-card elevation="6" v-if="this.$auth.user.is_admin">
     <v-toolbar color="primary accent--text" flat>
       <v-toolbar-title><b>Your Containers</b></v-toolbar-title>
       <v-spacer />
@@ -31,9 +31,9 @@
               label="Edit"
               single-line
               :rules="[
-                rules.validateLength,
+                rules.validateUserPrefix,
                 rules.validateASCII,
-                rules.validateUserPrefix
+                rules.validateLength
               ]"
             ></v-text-field>
           </template>
@@ -120,7 +120,9 @@ export default {
     }
   },
   created() {
-    this.getUsers()
+    this.$auth.user.is_admin
+      ? this.getUsers()
+      : this.$router.push({ path: '/' })
   }
 }
 </script>
