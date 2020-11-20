@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="6" v-if="this.$auth.user.is_admin">
     <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Your Containers</b></v-toolbar-title>
+      <v-toolbar-title><b>Users</b></v-toolbar-title>
       <v-spacer />
       <v-text-field
         v-model="search"
