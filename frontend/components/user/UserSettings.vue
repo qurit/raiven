@@ -23,14 +23,15 @@
       item-text="full_name"
       return-object
       label="Allowed Association Entities"
-      v-model="permittedAETitles"
+      v-model="permittedAEs"
       chips
       clearable
+      prepend-icon="mdi-access-point-check"
       @change="didChangeAE = true"
     >
     </v-select>
     <v-row justify="center" align="center">
-      Add A Destination
+      Add an Association Entity
       <v-icon-btn add @click="destinationDialog = true" />
     </v-row>
     <v-divider class="my-3" light />
@@ -62,7 +63,7 @@ export default {
       destinationDialog: false,
       isFormValid: false,
       didChangeAE: false,
-      permittedAETitles: [],
+      permittedAEs: [],
       aeTitle: '',
       currentAETitle: '',
       rules: {
@@ -93,11 +94,11 @@ export default {
       this.aeTitle = ae_title
       this.currentAETitle = ae_title
     },
-    async getUserDestinations() {
+    async getUserPermittedAEs() {
       const URL = '/destination/user-destination'
       const userPermittedDestinations = await generic_get(this, URL)
       userPermittedDestinations.forEach(permitted => {
-        this.permittedAETitles.push(permitted.destination)
+        this.permittedAEs.push(permitted.destination)
       })
     },
     async saveUserAETitle() {
@@ -111,7 +112,7 @@ export default {
     async savePermittedAETitles() {
       const URL = '/destination/user-destination'
       const payload = {
-        destinations: this.permittedAETitles
+        destinations: this.permittedAEs
       }
       await generic_put(this, URL, payload)
     },
@@ -128,7 +129,7 @@ export default {
   created() {
     this.$store.dispatch('destination/fetchDestinations')
     this.getUserInfo()
-    this.getUserDestinations()
+    this.getUserPermittedAEs()
   }
 }
 </script>
