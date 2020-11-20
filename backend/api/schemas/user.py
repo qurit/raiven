@@ -28,6 +28,10 @@ class User(BaseORMModel):
     last_seen: datetime
 
 
+class UserEdit(BaseModel):
+    ae_title: str
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str = 'Bearer'
