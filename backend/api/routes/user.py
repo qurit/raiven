@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from api import session, config
 from api.models.user import User, UserLocal
-from api.schemas.user import User as UserSchema, UserLocalCreate
+from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit
 from api.auth import token_auth
 
 router = APIRouter()
@@ -39,3 +39,9 @@ def create_local_user(user_schema: UserLocalCreate, db: Session = Depends(sessio
 def get_the_current_user(user: User = Depends(token_auth)):
     return user
 
+
+@router.put("/{user_id}/update-ae-title")
+def update_ae_title(ae_title: UserEdit, user_id: int, db: Session = Depends(session)):
+    user_to_edit = db.query(User).get(user_id)
+    user_to_edit.ae_title = ae_title.ae_title
+    return user_to_edit
