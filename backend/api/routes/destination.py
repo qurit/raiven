@@ -28,14 +28,14 @@ def create_destination(destination: destination.CreateDestination, db: Session =
 
 
 @router.put("/user-destination")
-def update_user_destination(destination_ids: user.UserDestination, user: User = Depends(token_auth), db: Session = Depends(session)):
-    print(destination_ids.destination_ids)
-    print(user.id)
+def update_user_destination(destinations: user.UserDestination, user: User = Depends(token_auth), db: Session = Depends(session)):
     db.query(UserDestination).filter(
         UserDestination.user_id == user.id).delete()
-    for destination_id in destination_ids.destination_ids:
+    user_destinations = destinations.destinations
+    for dest in user_destinations:
         new_destination_user = UserDestination(user_id=user.id,
-                                               destination_id=destination_id)
+                                               destination_id=dest.id)
+        print(new_destination_user)
         new_destination_user.save(db)
 
     return "ok"

@@ -8,7 +8,6 @@
         class="mx-2"
         v-model="aeTitle"
         :rules="[rules.validateLength, rules.validateASCII]"
-        :items="associationEntities"
         counter
         prefix="Your AE Title is: RVU-"
         prepend-icon="mdi-access-point"
@@ -21,24 +20,21 @@
       persistent-hint
       :items="destinations"
       item-text="full_name"
-      item-value="id"
+      return-object
       label="Allowed Association Entities"
-      v-model="newAssociationEntities"
+      v-model="permittedAETitles"
       chips
       clearable
     >
     </v-select>
     <v-card-actions class="justify-center">
-      <v-btn @click="test">
-        click me
-      </v-btn>
-      <!-- <v-btn
+      <v-btn
         @click="submit"
         text
         color="confirm"
         :disabled="!(didEdit && isFormValid)"
         >Save Changes</v-btn
-      > -->
+      >
     </v-card-actions>
   </v-card>
 </template>
@@ -51,7 +47,7 @@ export default {
     return {
       isFormValid: false,
       associationEntities: [],
-      newAssociationEntities: [],
+      permittedAETitles: [],
       aeTitle: '',
       currentAETitle: '',
       rules: {
@@ -76,46 +72,49 @@ export default {
     }
   },
   methods: {
-    test() {
-      console.log(this.newAssociationEntities)
-    },
-    async submit() {
-      try {
-        const URL = '/user/edit'
-        const payload = {
-          ae_title: this.aeTitle
-        }
-        const newAETitle = await generic_put(this, URL, payload)
-        this.ae_title = newAETitle
-        this.$toaster.toastSuccess('Changes saved!')
-      } catch (e) {
-        this.$toaster.toastError('Could not save changes')
-      }
-    },
     async getUserInfo() {
       const URL = '/user/me'
       const { ae_title } = await generic_get(this, URL)
       this.aeTitle = ae_title
       this.currentAETitle = ae_title
     },
-    async test() {
+    async getUserDestinations() {
+      const URL = '/destination/user-destination'
+      const userPermittedDestinations = await generic_get(this, URL)
+      userPermittedDestinations.forEach(permitted => {
+        this.permittedAETitles.push(permitted.destination)
+      })
+      console.log(this.permittedAETitles)
+    },
+    async saveUserAETitle() {
+      const URL = '/user/edit'
+      const payload = {
+        ae_title: this.aeTitle
+      }
+      const newAETitle = await generic_put(this, URL, payload)
+      this.ae_title = newAETitle
+    },
+    async savePermittedAETitles() {
       const URL = '/destination/user-destination'
       const payload = {
-        destination_ids: this.newAssociationEntities
+        destinations: this.permittedAETitles
       }
       console.log(payload)
       await generic_put(this, URL, payload)
     },
-    async getUserDestinations() {
-      const URL = '/destination/user-destination'
-      const userPermittedDestinations = await generic_get(this, URL)
-      console.log(userPermittedDestinations)
-      userPermittedDestinations.forEach(x => {
-        this.newAssociationEntities.push(x.destination)
-      })
+    async submit() {
+      console.log(this.destinations)
+      try {
+        await this.saveUserAETitle()
+        await this.savePermittedAETitles()
+        this.$toaster.toastSuccess('Changes saved!')
+      } catch (e) {
+        this.$toaster.toastError('Could not save changes')
+      }
     }
   },
   created() {
+    this.$store.dispatch('destination/fetchDestinations')
     this.getUserInfo()
     this.getUserDestinations()
   }
