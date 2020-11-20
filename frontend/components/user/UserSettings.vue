@@ -116,10 +116,10 @@ export default {
       }
       await generic_put(this, URL, payload)
     },
-    async submit() {
+    submit() {
       try {
-        await this.saveUserAETitle()
-        await this.savePermittedAETitles()
+        this.saveUserAETitle()
+        this.savePermittedAETitles()
         this.$toaster.toastSuccess('Changes saved!')
       } catch (e) {
         this.$toaster.toastError('Could not save changes')
