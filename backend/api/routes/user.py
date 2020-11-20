@@ -40,7 +40,7 @@ def get_the_current_user(user: User = Depends(token_auth)):
     return user
 
 
-@router.put("/{user_id}/update-ae-title")
+@router.put("/{user_id}/update-ae-title",  response_model=UserSchema)
 def update_ae_title(ae_title: UserEdit, user_id: int, db: Session = Depends(session)):
     user_to_edit = db.query(User).get(user_id)
     user_to_edit.ae_title = ae_title.ae_title

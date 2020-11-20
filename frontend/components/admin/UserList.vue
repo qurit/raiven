@@ -16,8 +16,8 @@
       :items="users"
       :headers="headers"
       :search="search"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
+      sort-by="name"
+      :sort-desc="false"
     >
       <template v-slot:item.ae_title="{ item }">
         <v-edit-dialog
@@ -27,9 +27,11 @@
           {{ item.ae_title }}
           <template v-slot:input>
             <v-text-field
+              class="my-2"
               v-model="item.ae_title"
               label="Edit"
               single-line
+              hint="Press Enter to save"
               :rules="[
                 rules.validateUserPrefix,
                 rules.validateASCII,
@@ -96,13 +98,11 @@ export default {
         { text: 'First Seen', value: 'first_seen' },
         { text: 'Last Seen', value: 'last_seen' }
       ],
-      sortBy: 'name',
-      sortDesc: false,
       rules: {
         validateLength(value) {
           return (
-            value.trim().length <= 12 ||
-            'AE Title is too long, 12 characters max'
+            value.trim().length <= 16 ||
+            'AE Title is too long, 16 characters max'
           )
         },
         validateASCII(value) {
