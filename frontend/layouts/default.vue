@@ -43,7 +43,6 @@ export default {
     }
   },
   created() {
-    console.log(this.$auth.user)
     console.log(this.$vuetify.breakpoint)
   }
 }
