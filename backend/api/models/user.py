@@ -1,4 +1,5 @@
-from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
+from itsdangerous import (
+    TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 from passlib.hash import pbkdf2_sha256
 
 from sqlalchemy import *
@@ -12,6 +13,7 @@ from api import config
 class User(Base):
     username = Column(String, index=True, unique=True)
     name = Column(String)
+    ae_title = Column(String)
     is_admin = Column(Boolean, default=False)
     first_seen = Column(DateTime, default=datetime.utcnow)
     last_seen = Column(DateTime, default=datetime.utcnow)
@@ -63,10 +65,3 @@ class UserLocal(Base):
     def save(self, *args, **kwargs):
         self.password = pbkdf2_sha256.hash(self.password)
         return super().save(*args, **kwargs)
-
-
-
-
-
-
-
