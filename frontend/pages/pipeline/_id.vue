@@ -59,10 +59,15 @@
               </v-btn>
             </v-list-item-content>
           </v-list-item>
+          <v-text-field
+            class="mx-3"
+            v-model="search"
+            placeholder="Search container"
+          />
         </template>
 
         <ContainerCard
-          v-for="c in containers"
+          v-for="c in filteredList"
           :id="c.id"
           :container="c"
           :colors="colors.container"
@@ -92,6 +97,7 @@ export default {
     ContainerForm
   },
   data: () => ({
+    search: '',
     containerList: true,
     containerDialog: false,
     pipeline_id: '',
@@ -168,7 +174,12 @@ export default {
     }
   },
   computed: {
-    ...mapState('containers', ['containers'])
+    ...mapState('containers', ['containers']),
+    filteredList() {
+      return this.containers.filter(container => {
+        return container.name.toLowerCase().includes(this.search.toLowerCase())
+      })
+    }
   },
   created() {
     this.pipeline_id = this.$router.history.current.params.id
