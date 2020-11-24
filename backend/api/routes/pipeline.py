@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from api import session, queries
 from api.pipelining import PipelineController
-from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun
+from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun, PipelineJob, PipelineJobError
 from api.schemas import pipeline as schemas
 
 router = APIRouter()
@@ -36,6 +36,16 @@ def get_all_pipeline_runs(db: Session = Depends(session)):
 @router.get("/{pipeline_id}/results", response_model=List[schemas.PipelineRun])
 def get_pipeline_results(pipeline_id: int, db: Session = Depends(session)):
     return db.query(PipelineRun).filter(pipeline_id == PipelineRun.pipeline_id).all()
+
+
+@router.get("/run/{pipeline_run_id}/jobs")
+def get_pipeline_jobs(pipeline_run_id: int, db: Session = Depends(session)):
+    return db.query(PipelineJob).filter(PipelineJob.pipeline_run_id == pipeline_run_id).all()
+
+
+@router.get("/job/{pipeline_job_id}/errors")
+def get_pipeline_errors(pipeline_job_id: int, db: Session = Depends(session)):
+    return db.query(PipelineJobError).filter(PipelineJobError.pipeline_job_id == pipeline_job_id).all()
 
 
 @ router.get("/download/{pipeline_run_id}")

@@ -17,11 +17,17 @@
           :disabled="!editState"
           v-model="pipelineName"
         ></v-text-field>
+
         <!-- AE title:<v-text-field solo v-model="this.aeTitle"></v-text-field> -->
       </v-col>
-      <v-col cols="12">
+
+      <!-- <v-col cols="12">
         Results from this Pipeline
         <PipelineResults :pipelineId="this.pipelineId" />
+      </v-col> -->
+      <v-col cols="12">
+        More Info
+        <PipelineFullInfo :pipelineId="this.pipelineId" />
       </v-col>
     </v-row>
   </v-card>
@@ -30,9 +36,10 @@
 <script>
 import { generic_get, generic_put } from '~/api'
 import vIconBtn from './global/v-icon-btn.vue'
+import PipelineFullInfo from './PipelineFullInfo'
 import PipelineResults from './PipelineResults'
 export default {
-  components: { vIconBtn, PipelineResults },
+  components: { vIconBtn, PipelineResults, PipelineFullInfo },
   props: {
     pipelineId: {
       type: String

@@ -10,7 +10,7 @@
         <v-icon-btn
           color="#373740"
           @click="pipelineDialog = true"
-          icon="mdi-information"
+          icon="mdi-rename-box"
         />
         <v-icon-btn
           color="#373740"
