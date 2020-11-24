@@ -19,6 +19,10 @@
         ></v-text-field>
         <!-- AE title:<v-text-field solo v-model="this.aeTitle"></v-text-field> -->
       </v-col>
+      <v-col cols="12">
+        Results from this Pipeline
+        <PipelineResults :pipelineId="this.pipelineId" />
+      </v-col>
     </v-row>
   </v-card>
 </template>
@@ -26,8 +30,9 @@
 <script>
 import { generic_get, generic_put } from '~/api'
 import vIconBtn from './global/v-icon-btn.vue'
+import PipelineResults from './PipelineResults'
 export default {
-  components: { vIconBtn },
+  components: { vIconBtn, PipelineResults },
   props: {
     pipelineId: {
       type: String
@@ -58,12 +63,22 @@ export default {
     makeEditable() {
       this.editState = true
     },
-    async getPipelineInfo() {
+    getPipelineInfo() {
+      this.getPipelineName()
+      this.getPipelineErrors()
+    },
+    async getPipelineName() {
+      // get Pipeline Name and AE Title
       const URL = `/pipeline/${this.pipelineId}`
       // TODO: wait for other PRs to be approved
       // const {name, aeTitle }= await generic_get(this, URL)
       const { name } = await generic_get(this, URL)
       this.pipelineName = name
+      console.log(this.pipelineName)
+    },
+    async getPipelineErrors() {
+      // get Pipeline Errors
+      console.log('in errors')
     }
   },
   created() {
