@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card elevation="6">
-      <v-toolbar color="primary accent--text" flat>
+      <v-toolbar color="primary accent--text" flat v-if="!this.pipelineId">
         <v-toolbar-title>
           <b>Pipeline Run Results </b>
         </v-toolbar-title>
@@ -14,6 +14,15 @@
           solo
         />
       </v-toolbar>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search by Run ID or Pipeline"
+        hide-details
+        v-if="!!this.pipelineId"
+        class="mx-4"
+      />
+
       <v-data-table
         id="ResultsTable"
         :headers="headers"
@@ -46,6 +55,11 @@ const FileDownload = require('js-file-download')
 import { generic_get } from '~/api'
 
 export default {
+  props: {
+    pipelineId: {
+      type: Number
+    }
+  },
   data() {
     return {
       headers: [
@@ -71,7 +85,10 @@ export default {
     formatFileName: x =>
       `${x.pipeline.name}_results_${x.finished_datetime}.zip`,
     async getPipelineRuns() {
-      const URL = '/pipeline/results'
+      console.log('GOT HERE')
+      const URL = this.pipelineId
+        ? `/pipeline/${this.pipelineId}/results`
+        : '/pipeline/results'
       const pipelineRuns = await generic_get(this, URL)
       this.items = pipelineRuns
       this.fetching = false
