@@ -17,7 +17,11 @@
       <v-text-field
         v-model="search"
         append-icon="mdi-magnify"
-        label="Search by Run ID or Pipeline"
+        :label="
+          !!this.pipelineId
+            ? 'Search by Run ID'
+            : 'Search by Run ID or Pipeline'
+        "
         hide-details
         v-if="!!this.pipelineId"
         class="mx-4"
@@ -31,6 +35,7 @@
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
         :loading="fetching"
+        :items-per-page="5"
         loading-text="Getting Results..."
       >
         <template v-slot:item.created_datetime="{ item }">{{
@@ -64,7 +69,6 @@ export default {
     return {
       headers: [
         { text: 'Run ID', align: 'start', value: 'id' },
-        { text: 'Pipeline', value: 'pipeline.name' },
         { text: 'Status', value: 'status' },
         { text: 'Started on:', filterable: false, value: 'created_datetime' },
         { text: 'Finished on:', filterable: false, value: 'finished_datetime' },
@@ -79,13 +83,14 @@ export default {
   },
   created() {
     this.getPipelineRuns()
+    if (!this.pipelineId)
+      this.headers.splice(1, 0, { text: 'Pipeline', value: 'pipeline.name' })
   },
   methods: {
     formatDateTime: x => (x ? new Date(x).toLocaleString() : 'Invalid Date'),
     formatFileName: x =>
       `${x.pipeline.name}_results_${x.finished_datetime}.zip`,
     async getPipelineRuns() {
-      console.log('GOT HERE')
       const URL = this.pipelineId
         ? `/pipeline/${this.pipelineId}/results`
         : '/pipeline/results'

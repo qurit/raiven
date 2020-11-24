@@ -7,13 +7,19 @@
   >
     <template slot="label" slot-scope="{ item }">
       <!-- Pipeline Run -->
-      <a v-if="item.hasOwnProperty('pipeline')"> Run: {{ item.id }} </a>
+      <div v-if="item.hasOwnProperty('pipeline')">Run: {{ item.id }}</div>
       <!-- Pipeline Job  -->
-      <a v-if="item.hasOwnProperty('pipeline_node_id')"> Job: {{ item }} </a>
+      <div v-if="item.hasOwnProperty('pipeline_node_id')">
+        Job: {{ item.id }}
+      </div>
       <!-- Pipeline Job Error -->
-      <a v-if="item.hasOwnProperty('pipeline_job_id')"> Errors: {{ item }} </a>
+      <div v-if="item.hasOwnProperty('pipeline_job_id')">
+        Error: {{ item.stderr }}
+      </div>
       <!-- Pipeline Node that was run for that job -->
-      <a v-else> Node: {{ item }} </a>
+      <div v-if="item.hasOwnProperty('container_id')" @click="test(item)">
+        From Container: {{ item.container.name }}
+      </div>
     </template>
   </v-treeview>
 </template>
@@ -33,7 +39,6 @@ export default {
   },
   methods: {
     async getInfo() {
-      console.log('yes')
       const URL = `/pipeline/${this.pipelineId}/results`
       await generic_get(this, URL)
         .then(data => {
@@ -46,7 +51,6 @@ export default {
         })
     },
     loadChildren(item) {
-      console.log(item)
       if (item.hasOwnProperty('pipeline')) {
         const URL = `/pipeline/run/${item.id}/jobs`
         return generic_get(this, URL)
