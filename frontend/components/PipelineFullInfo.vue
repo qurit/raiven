@@ -12,6 +12,8 @@
       <a v-if="item.hasOwnProperty('pipeline_node_id')"> Job: {{ item }} </a>
       <!-- Pipeline Job Error -->
       <a v-if="item.hasOwnProperty('pipeline_job_id')"> Errors: {{ item }} </a>
+      <!-- Pipeline Node that was run for that job -->
+      <a v-else> Node: {{ item }} </a>
     </template>
   </v-treeview>
 </template>
@@ -43,7 +45,7 @@ export default {
           })
         })
     },
-    async loadChildren(item) {
+    loadChildren(item) {
       console.log(item)
       if (item.hasOwnProperty('pipeline')) {
         const URL = `/pipeline/run/${item.id}/jobs`
@@ -62,15 +64,29 @@ export default {
           .catch(err => console.log(err))
       }
       if (item.hasOwnProperty('pipeline_node_id')) {
-        const URL = `pipeline/job/${item.id}/errors`
-        return generic_get(this, URL)
-          .then(data => {
-            data.forEach(studies => {
-              item.children.push(studies)
-            })
-          })
-          .catch(err => console.log(err))
+        this.getJobErrors(item)
+        this.getJobNode(item)
       }
+    },
+    getJobErrors(job) {
+      const URL = `pipeline/job/${job.id}/errors`
+      return generic_get(this, URL)
+        .then(data => {
+          data.forEach(studies => {
+            job.children.push(studies)
+          })
+        })
+        .catch(err => console.log(err))
+    },
+    getJobNode(job) {
+      const URL = `pipeline/job/node/${job.pipeline_node_id}`
+      return generic_get(this, URL)
+        .then(data => {
+          data.forEach(studies => {
+            job.children.push(studies)
+          })
+        })
+        .catch(err => console.log(err))
     }
   },
   created() {

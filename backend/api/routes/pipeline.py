@@ -48,6 +48,11 @@ def get_pipeline_errors(pipeline_job_id: int, db: Session = Depends(session)):
     return db.query(PipelineJobError).filter(PipelineJobError.pipeline_job_id == pipeline_job_id).all()
 
 
+@router.get("/job/node/{pipeline_node_id}")
+def get_pipeline_errors(pipeline_node_id, db: Session = Depends(session)):
+    return db.query(PipelineNode).filter(PipelineNode.id == pipeline_node_id).all()
+
+
 @ router.get("/download/{pipeline_run_id}")
 def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
     pipeline_run: PipelineRun = db.query(PipelineRun).get(pipeline_run_id)
