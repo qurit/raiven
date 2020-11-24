@@ -8,18 +8,20 @@
         align="center"
       >
         <v-icon-btn
-          large
+          color="#373740"
+          @click="pipelineDialog = true"
+          icon="mdi-information"
+        />
+        <v-icon-btn
           color="#373740"
           @click="savePipeline"
           icon="mdi-content-save"
         />
-        <v-btn @click="containerList = !containerList" large icon>
-          <v-icon
-            large
-            color="#373740"
-            v-text="containerList ? 'mdi-minus' : 'mdi-plus'"
-          />
-        </v-btn>
+        <v-icon-btn
+          color="#373740"
+          @click="containerList = !containerList"
+          :icon="containerList ? 'mdi-minus' : 'mdi-plus'"
+        />
       </v-row>
 
       <!-- Pipeline Builder -->
@@ -36,6 +38,9 @@
           :isEditing="false"
           @closeDialog="containerDialog = false"
         />
+      </v-dialog>
+      <v-dialog v-model="pipelineDialog" max-width="900px" min-height="600px">
+        <PipelineInfo :pipelineId="this.pipeline_id" />
       </v-dialog>
 
       <!-- Container List -->
@@ -83,17 +88,20 @@ import VIconBtn from '../../components/global/v-icon-btn'
 import ContainerForm from '~/components/container/ContainerForm'
 import OutputDestinationForm from '~/components/OutputDestinationForm'
 import ContainerCard from '~/components/container/ContainerCard'
+import PipelineInfo from '~/components/PipelineInfo'
 
 export default {
   components: {
     ContainerCard,
     VIconBtn,
     SimpleFlowchart,
-    ContainerForm
+    ContainerForm,
+    PipelineInfo
   },
   data: () => ({
     containerList: true,
     containerDialog: false,
+    pipelineDialog: false,
     pipeline_id: '',
     colors: {
       container: {
