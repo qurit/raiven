@@ -69,10 +69,19 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
     return db.query(Pipeline).get(pipeline_id)
 
 
+@router.put("/{pipeline_id}/edit", response_model=schemas.Pipeline)
+def edit_pipeline(pipeline_id: int, pipeline: schemas.PipelineCreate, db: Session = Depends(session)):
+    pipeline_to_edit = db.query(Pipeline).get(pipeline_id)
+    pipeline_to_edit.name = pipeline.name
+    # pipeline_to_edit.ae_title = pipeline.ae_title
+    return pipeline_to_edit
+
+
 @router.put("/{pipeline_id}", response_model=schemas.PipelineRun)
 def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, db: Session = Depends(session)):
     """ Runs A Pipeline. """
-    run = PipelineController.pipeline_run_factory(db, run_options.get_cls_type(), run_options.dicom_obj_id, pipeline_id)
+    run = PipelineController.pipeline_run_factory(
+        db, run_options.get_cls_type(), run_options.dicom_obj_id, pipeline_id)
     db.commit()
 
     PipelineController.run_pipeline_task(db, run)

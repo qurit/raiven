@@ -15,7 +15,7 @@
         Pipeline Name:<v-text-field
           solo
           :disabled="!editState"
-          v-model="this.pipelineName"
+          v-model="pipelineName"
         ></v-text-field>
         <!-- AE title:<v-text-field solo v-model="this.aeTitle"></v-text-field> -->
       </v-col>
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { generic_get } from '~/api'
+import { generic_get, generic_put } from '~/api'
 import vIconBtn from './global/v-icon-btn.vue'
 export default {
   components: { vIconBtn },
@@ -41,22 +41,32 @@ export default {
     }
   },
   methods: {
-    saveChanges() {
-      console.log('ok')
-      this.editState = false
+    async saveChanges() {
+      try {
+        const URL = `/pipeline/${this.pipelineId}/edit`
+        const payload = {
+          name: this.pipelineName
+          // aeTitle: this.pipelineAETitle
+        }
+        await generic_put(this, URL, payload)
+        this.editState = false
+        this.$toaster.toastSuccess('Changes saved!')
+      } catch (e) {
+        this.$toaster.toastError('Could not save changes')
+      }
     },
     makeEditable() {
       this.editState = true
     },
     async getPipelineInfo() {
-      const URL = `/pipeline/${parseInt(this.pipelineId)}`
+      const URL = `/pipeline/${this.pipelineId}`
       // TODO: wait for other PRs to be approved
       // const {name, aeTitle }= await generic_get(this, URL)
       const { name } = await generic_get(this, URL)
       this.pipelineName = name
     }
   },
-  mounted() {
+  created() {
     console.log('in created')
     this.getPipelineInfo()
   }
