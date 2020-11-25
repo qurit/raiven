@@ -9,7 +9,10 @@
       >
         <v-icon-btn
           color="#373740"
-          @click="pipelineDialog = true"
+          @click="
+            pipelineDialog = true
+            containerList = false
+          "
           icon="mdi-information"
         />
         <v-icon-btn
@@ -20,7 +23,9 @@
         <v-icon-btn
           color="#373740"
           @click="containerList = !containerList"
-          :icon="containerList ? 'mdi-minus' : 'mdi-plus'"
+          :icon="
+            containerList ? 'mdi-arrow-collapse-right' : 'mdi-arrow-expand-left'
+          "
         />
       </v-row>
 
@@ -33,13 +38,14 @@
       />
 
       <!-- Dialogs -->
+
       <v-dialog v-model="containerDialog" max-width="900px" min-height="600px">
         <ContainerForm
           :isEditing="false"
           @closeDialog="containerDialog = false"
         />
       </v-dialog>
-      <v-dialog v-model="pipelineDialog" max-width="900px" min-height="600px">
+      <v-dialog v-model="pipelineDialog" max-width="1150px" min-height="600px">
         <PipelineInfo :pipelineId="this.pipeline_id" />
       </v-dialog>
 
