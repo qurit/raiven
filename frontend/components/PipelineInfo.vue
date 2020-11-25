@@ -24,11 +24,11 @@
           v-model="this.aeTitle"
         ></v-text-field>
       </v-col>
-      <v-col cols="7">
+      <v-col cols="6">
         Results from this Pipeline
         <PipelineResults :pipelineId="this.pipelineId" />
       </v-col>
-      <v-col cols="5">
+      <v-col cols="6">
         More Info
         <PipelineTreeviewInfo :pipelineId="this.pipelineId" />
       </v-col>
