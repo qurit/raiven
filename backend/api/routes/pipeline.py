@@ -55,7 +55,7 @@ def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
 
 
 @ router.get("/", response_model=List[schemas.Pipeline])
-def get_all_pipelines(request: Request, user: User = Depends(token_auth), db: Session = Depends(session)):
+def get_all_pipelines(user: User = Depends(token_auth), db: Session = Depends(session)):
     return db.query(Pipeline).filter(Pipeline.user_id == user.id).all()
 
 

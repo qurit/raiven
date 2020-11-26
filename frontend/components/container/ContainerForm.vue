@@ -38,6 +38,13 @@
           true-value="true"
           class="mx-10"
         />
+        <v-checkbox
+          v-model="container.containerIsShared"
+          label="Shared"
+          false-value="false"
+          true-value="true"
+          class="mx-10"
+        />
       </v-row>
       <v-file-input
         v-model="file"
@@ -79,7 +86,8 @@ export default {
         containerName: '',
         containerDescription: '',
         containerIsInput: false,
-        containerIsOutput: false
+        containerIsOutput: false,
+        containerIsShared: false
       }
     }
   },
@@ -98,6 +106,7 @@ export default {
     populate() {
       if (!!this.containerToEdit) {
         // getting the values for the existing container
+        console.log(this.containerToEdit)
         this.container = JSON.parse(JSON.stringify(this.containerToEdit))
       } else {
         // default values for adding a new container
@@ -107,6 +116,7 @@ export default {
         this.container.containerDescription = ''
         this.container.containerIsInput = false
         this.container.containerIsOutput = false
+        this.container.containerIsShared = false
       }
     },
     readFile(file) {
@@ -126,6 +136,7 @@ export default {
       formData.append('name', this.container?.containerName)
       formData.append('is_input_container', this.container.containerIsInput)
       formData.append('is_output_container', this.container.containerIsOutput)
+      formData.append('is_shared', this.container.containerIsShared)
       if (this.file) {
         const f = await this.readFile(this.file)
         formData.append('file', new Blob([f]))
@@ -146,6 +157,7 @@ export default {
             this.$refs.form.reset()
             this.container.containerIsInput = false
             this.container.containerIsOutput = false
+            this.container.containerIsShared = false
           })
       }
       this.$emit('closeDialog')

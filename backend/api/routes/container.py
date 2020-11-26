@@ -36,7 +36,7 @@ def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(s
 async def create_container(
         file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
         description: str = Form(None), is_input_container: bool = Form(...),
-        is_output_container: bool = Form(...), user: User = Depends(token_auth), db: session = Depends(session)):
+        is_output_container: bool = Form(...), is_shared: bool = Form(...), user: User = Depends(token_auth), db: session = Depends(session)):
 
     if ".zip" in filename:
         z = zipfile.ZipFile(io.BytesIO(file))
@@ -46,6 +46,7 @@ async def create_container(
             description=description,
             is_input_container=is_input_container,
             is_output_container=is_output_container,
+            is_shared=is_shared,
             filename='Dockerfile')
         db_container.save(db)
 
@@ -68,6 +69,7 @@ async def create_container(
             description=description,
             is_input_container=is_input_container,
             is_output_container=is_output_container,
+            is_shared=is_shared,
             filename=filename)
         db_container.save(db)
         with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
@@ -92,7 +94,7 @@ def get_container(container_id: int, db: Session = Depends(session)):
 @router.put("/{container_id}")
 def update_container(
         container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(None),
-        description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),
+        description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...), is_shared: bool = Form(...),
         db: session = Depends(session)):
 
     if file is not None:
@@ -107,6 +109,7 @@ def update_container(
             "description": description,
             "is_input_container": is_input_container,
             "is_output_container": is_output_container,
+            "is_shared": is_shared,
             "dockerfile_path": os.path.join(container.get_path(), filename),
             "filename": filename
         })
@@ -116,7 +119,8 @@ def update_container(
             "name": name,
             "description": description,
             "is_input_container": is_input_container,
-            "is_output_container": is_output_container
+            "is_output_container": is_output_container,
+            "is_shared": is_shared
         })
         return db.query(Container).get(container_id)
 
