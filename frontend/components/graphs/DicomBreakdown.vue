@@ -19,11 +19,11 @@ import HorizontalBar from './HorizontalBar.js'
 import colours from './colours.js'
 import { generic_get } from '~/api'
 
-// this makes the legend into circles
-// Chart.defaults.global.legend.labels.usePointStyle = true
-
 export default {
-  props: ['dicom_obj_type', 'dicom_obj_id'],
+  props: {
+    dicom_obj_type: { type: String },
+    dicom_obj_id: { type: Number }
+  },
   components: {
     HorizontalBar
   },

@@ -1,24 +1,24 @@
 <template>
   <div>
     <v-row justify="space-between" no-gutters>
-      <Counters :number="this.containerCount" name="Containers" />
-      <Counters :number="this.pipelineCount" name="Pipelines" />
-      <Counters :number="this.pipelineRunCount" name="Pipeline Runs" />
-      <Counters :number="this.patientCount" name="Patients" />
-      <Counters :number="this.studyCount" name="Studies" />
-      <Counters :number="this.seriesCount" name="Series" />
+      <CounterCard :number="this.containerCount" name="Containers" />
+      <CounterCard :number="this.pipelineCount" name="Pipelines" />
+      <CounterCard :number="this.pipelineRunCount" name="Pipeline Runs" />
+      <CounterCard :number="this.patientCount" name="Patients" />
+      <CounterCard :number="this.studyCount" name="Studies" />
+      <CounterCard :number="this.seriesCount" name="Series" />
     </v-row>
   </div>
 </template>
 
 <script>
-import Counters from './Counters'
+import CounterCard from './CounterCard'
 import { generic_get } from '~/api'
 
 export default {
   name: 'App',
   components: {
-    Counters
+    CounterCard
   },
   data: () => ({
     pipelineCount: 0,
