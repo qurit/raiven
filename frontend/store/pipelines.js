@@ -1,5 +1,4 @@
 import { generic_get, generic_delete, full_data_post } from '~/api'
-import axios from 'axios'
 
 export const state = () => ({
   pipelines: []
