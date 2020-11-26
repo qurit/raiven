@@ -36,40 +36,22 @@
       </template>
     </v-data-table>
     <v-dialog v-model="dialog" max-width="600px">
-      <v-card class="overflow-x-hidden">
-        <v-text-field
-          v-model="pipelineName"
-          label="Pipeline Name*"
-          required
-          :rules="[v => !!v || 'A Pipeline Name is required']"
-          class="px-15 pt-10"
-        />
-        <v-text-field v-model="aeTitle" label="AE Title" class="px-15" />
-        <v-row justify="center" align="center">
-          <v-btn
-            @click="savePipeline"
-            :disabled="this.isDisabled"
-            class="ma-4"
-            color="confirm"
-            text
-          >
-            Save
-          </v-btn>
-        </v-row>
-      </v-card>
+      <AddPipelineForm @closeDialog="dialog = false" />
     </v-dialog>
   </v-card>
 </template>
 
 <script>
+import { AddPipelineForm } from '~/components/pipeline'
 import { mapState } from 'vuex'
 
 export default {
+  components: {
+    AddPipelineForm
+  },
   data: function() {
     return {
       dialog: false,
-      pipelineName: '',
-      aeTitle: '',
       headers: [
         { text: 'Pipeline Name', value: 'name' },
         {
@@ -93,20 +75,6 @@ export default {
       } catch (e) {
         this.$toaster.toastError('Could not delete pipeline!')
       }
-    },
-    async savePipeline() {
-      const payload = {
-        user_id: 1,
-        name: this.pipelineName,
-        ae_title: this.aeTitle
-      }
-      const { data } = await this.$store.dispatch(
-        'pipelines/addPipeline',
-        payload
-      )
-      this.$toaster.toastSuccess('Pipeline created!')
-      this.$router.push({ path: `/pipeline/${data.id}` })
-      this.dialog = false
     }
   },
   computed: {
