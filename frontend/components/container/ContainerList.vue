@@ -24,6 +24,9 @@
       :items="items"
       :search="search"
     >
+      <template v-slot:item.is_shared="{ item }">
+        <v-simple-checkbox :value="item.is_shared" disabled />
+      </template>
       <template v-slot:item.actions="{ item }">
         <v-icon
           medium
@@ -100,6 +103,7 @@ export default {
           filterable: false,
           width: '2%'
         },
+        { text: 'Shared', value: 'is_shared', width: '1%' },
         { text: 'File', value: 'filename', width: '1%' },
         {
           text: 'Edit or Delete',
