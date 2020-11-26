@@ -1,5 +1,6 @@
 from . import BaseModel, BaseORMModel
 from typing import Optional
+from .user import User
 
 
 class ContainerCreate(BaseModel):
@@ -15,3 +16,4 @@ class ContainerCreate(BaseModel):
 
 class Container(ContainerCreate, BaseORMModel):
     user_id: int
+    user: User

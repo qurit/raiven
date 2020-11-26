@@ -19,6 +19,7 @@ class Container(PathMixin, Base):
     filename = Column(String)
 
     build = relationship('ContainerBuild', backref='container', uselist=False)
+    user = relationship('User', backref='container', uselist=False)
 
     @property
     def dockerfile_abs_path(self):

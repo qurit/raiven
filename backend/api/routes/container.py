@@ -28,7 +28,7 @@ def get_container_stats(db: Session = Depends(session)):
 def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Get a list of containers """
 
-    return db.query(Container).filter(Container.user_id == user.id).all()
+    return db.query(Container).filter((Container.user_id == user.id) | (Container.is_shared == 1)).all()
 
 
 # TODO: Add response model

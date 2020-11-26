@@ -11,6 +11,9 @@
       <v-card-text>
         {{ container.description }}
       </v-card-text>
+      <v-row justify="center" v-if="container.user_id !== $auth.user.id">
+        <v-chip v-text="'From: ' + container.user.name" color="info" />
+      </v-row>
       <v-card-actions>
         <v-chip
           v-for="chip in chips"
