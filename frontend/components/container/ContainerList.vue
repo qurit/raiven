@@ -142,6 +142,7 @@ export default {
       this.container.containerDescription = containerToUpdate.description
       this.container.containerIsInput = containerToUpdate.is_input_container?.toString()
       this.container.containerIsOutput = containerToUpdate.is_output_container?.toString()
+      this.container.containerIsShared = containerToUpdate.is_shared?.toString()
       this.container.filename = containerToUpdate.filename
       this.dialog = true
     }
