@@ -8,9 +8,20 @@
     </v-card-subtitle>
     <v-card-text>
       <ol type="1">
+<!-- TODO: Add text here -->
         <li>
-          Some stuff explaning what type of file stuff the user/researcher
-          should be uploading
+          When creating a container you must...
+        </li>
+      </ol>
+    </v-card-text>
+    <v-card-subtitle>
+      <b>Uploading a Container</b>
+    </v-card-subtitle>
+    <v-card-text>
+      <ol type="1">
+<!-- TODO: Add text here       -->
+        <li>
+          When creating a container you must ...
         </li>
       </ol>
     </v-card-text>
