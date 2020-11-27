@@ -35,13 +35,10 @@
 <script>
 import { mapState } from 'vuex'
 import { generic_put, generic_delete } from '~/api'
-import { DicomBreakdown } from '~/components/graphs/'
+import DicomBreakdown from '~/components/graphs/DicomBreakdown'
 
 export default {
-  props: {
-    dicom_obj_type: { type: String },
-    dicom_obj_id: { type: Number }
-  },
+  props: ['dicom_obj_type', 'dicom_obj_id'],
 
   components: {
     DicomBreakdown

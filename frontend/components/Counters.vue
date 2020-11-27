@@ -1,27 +1,32 @@
 <template>
-  <v-card class="my-1 px-2 text-center" height="150" width="175" elevation="10">
+  <v-card
+    class="my-1 px-2 text-center"
+    height="150"
+    width="175"
+    elevation="10"
+  >
     <v-row align="center">
       <v-col>
-        <div :class="`${fontsize} font-weight-light`" v-text="displayNumber" />
         <div
-          class="title white--text"
-          v-text="name"
-          style="position: relative; bottom: 0;"
+          :class="`${fontsize} font-weight-light`"
+          v-text="displayNumber"
         />
+        <div class="title white--text" v-text="name" style="position: relative; bottom: 0;"/>
       </v-col>
     </v-row>
   </v-card>
+
 </template>
 
 <script>
 export default {
-  name: 'CounterCard',
+  name: 'Counters',
   props: {
-    number: { type: Number, default: 0 },
-    name: { type: String, default: '' },
-    speed: { type: Number, default: 30 }
+    number: {type: Number, default: 0},
+    name: {type: String, default: ''},
+    speed: {type: Number, default: 30}
   },
-  data: function() {
+  data: function () {
     return {
       displayNumber: 0,
       interval: false
@@ -60,6 +65,6 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.interval)
-  }
+  },
 }
 </script>

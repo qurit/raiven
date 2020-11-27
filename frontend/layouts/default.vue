@@ -12,9 +12,9 @@
   </v-app>
 </template>
 <script>
-import { NavDrawer, TabBar } from '~/components/nav'
-import Toast from '~/components/generic/Toast'
-
+import NavDrawer from '../components/nav/NavDrawer'
+import Toast from '../components/generic/Toast'
+import TabBar from '../components/nav/TabBar'
 export default {
   components: { TabBar, Toast, NavDrawer },
   computed: {
@@ -35,7 +35,10 @@ export default {
           icon: 'mdi-transit-connection-variant'
         },
         { to: '/runs', label: 'Runs', icon: 'mdi-air-filter' },
-        { to: '/help', label: 'Help', icon: 'mdi-help' }
+        { to: '/help', label: 'Help', icon: 'mdi-help' },
+        ...(this.$auth.user.is_admin
+          ? [{ to: '/admin', label: 'Admin', icon: 'mdi-head-cog-outline' }]
+          : [])
       ]
     }
   },
