@@ -79,7 +79,7 @@
 
 <script>
 import FlowchartNodePort from './FlowchartNodePort.vue'
-import OutputDestinationForm from '~/components/OutputDestinationForm'
+import { OutputDestinationForm } from '~/components/pipeline'
 import { mapState } from 'vuex'
 
 export default {

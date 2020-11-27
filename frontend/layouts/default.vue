@@ -12,9 +12,9 @@
   </v-app>
 </template>
 <script>
-import NavDrawer from '../components/nav/NavDrawer'
-import Toast from '../components/generic/Toast'
-import TabBar from '../components/nav/TabBar'
+import { NavDrawer, TabBar } from '~/components/nav'
+import Toast from '~/components/generic/Toast'
+
 export default {
   components: { TabBar, Toast, NavDrawer },
   computed: {
