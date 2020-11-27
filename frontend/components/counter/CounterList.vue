@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import CounterCard from './CounterCard'
+import { CounterCard } from '~/components/counter'
 import { generic_get } from '~/api'
 
 export default {

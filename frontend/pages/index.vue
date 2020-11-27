@@ -18,13 +18,14 @@
 </template>
 
 <script>
-import PipelineStatus from '~/components/pipeline/PipelineStatus'
-import PipelineHistogram from '../components/graphs/PipelineHistogram'
-import DicomBreakdown from '../components/graphs/DicomBreakdown'
-import DicomTrendChart from '../components/graphs/DicomTrendChart'
-import PipelineResults from '~/components/pipeline/PipelineResults'
-import DicomInstances from '~/components/dicom/DicomInstances'
-import CounterList from '~/components/CounterList'
+import { PipelineStatus, PipelineResults } from '~/components/pipeline'
+import {
+  DicomBreakdown,
+  DicomTrendChart,
+  PipelineHistogram
+} from '~/components/graphs/'
+import { DicomInstances } from '~/components/dicom'
+import { CounterList } from '~/components/counter'
 import { mapState } from 'vuex'
 
 export default {

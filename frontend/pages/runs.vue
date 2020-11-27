@@ -4,7 +4,6 @@
       <v-col cols="3">
         <PipelineStatus :pipelines="pipelines" />
       </v-col>
-
       <v-col cols="3">
         <DicomInstances />
       </v-col>
@@ -16,11 +15,8 @@
 </template>
 
 <script>
-import PipelineStatus from '~/components/pipeline/PipelineStatus'
-
-import PipelineResults from '~/components/pipeline/PipelineResults'
-import DicomInstances from '~/components/dicom/DicomInstances'
-
+import { PipelineResults, PipelineStatus } from '~/components/pipeline'
+import { DicomInstances } from '~/components/dicom'
 import { mapState } from 'vuex'
 export default {
   components: {
