@@ -44,12 +44,23 @@ cd frontend
 npm run build
 ``` 
 
+### Database migrations
+Database migrations can using alembic be done with the following commands:
+
+```bash
+alembic revision --autogenerate -m <message>  # Create a revision
+alembic upgrade head # Upgrade to latest revision
+```
+
 
 ## Config
 Configuration of Raiven can be done in multiple places. If you are using docker, configuration
 can be done by modifying the `.env` file.  Backend configuration can also be done by modifying `/backend/config.py` whilst
 the frontend configuration can be done by modifying `/frontend/nuxt.config.js`.  Configuration can also be done by 
 setting environment variables.  The environment variables which can be set are found in `/backend/config.py`.
+
+
+
 
 ---
 <p align="center">

@@ -79,20 +79,22 @@
 
 <script>
 import FlowchartNodePort from './FlowchartNodePort.vue'
-import OutputDestinationForm from '~/components/OutputDestinationForm'
+import OutputDestinationForm from '~/components/flowchart/OutputDestinationForm'
 import { mapState } from 'vuex'
 
 export default {
   name: 'FlowchartNode',
   components: { FlowchartNodePort, OutputDestinationForm },
+
   props: {
-    id: undefined,
-    x: 0,
-    y: 0,
-    type: undefined,
-    container_is_input: undefined,
-    container_is_output: undefined,
-    destination: undefined,
+    id: { type: Number },
+    x: { type: Number },
+    y: { type: Number },
+    x: { type: Number },
+    type: { type: String },
+    container_is_input: { type: Boolean },
+    container_is_output: { type: Boolean },
+    destination: { type: Object },
     options: {
       type: Object,
       default() {

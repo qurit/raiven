@@ -41,31 +41,46 @@
       <!-- Container List -->
       <v-navigation-drawer
         v-model="containerList"
-        absolute
+        class="pt-3"
+        app
         right
         style="z-index: 9999"
       >
         <template v-slot:prepend>
-          <v-list-item two-line>
-            <v-list-item-content>
-              <v-btn
-                class="mt-2 mx-auto"
-                @click="containerDialog = true"
-                color="primary accent--text"
-                rounded
-              >
-                Add a Container
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </v-list-item-content>
-          </v-list-item>
+          <v-row no-gutters justify="center" class="px-2">
+            <v-btn
+              @click="containerDialog = true"
+              color="primary accent--text"
+              style="width: available"
+              class="mx-auto"
+              rounded
+              block
+          >
+            Add a Container
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+          </v-row>
+          <v-row no-gutters class="pt-2 px-2">
+            <v-text-field
+            v-model="search"
+            placeholder="Search container"
+            append-icon="mdi-magnify"
+            solo
+            flat
+            rounded
+            block
+            color="primary"
+            single-line
+            hide-details
+          />
+          </v-row>
         </template>
-
         <ContainerCard
-          v-for="c in containers"
+          v-for="c in filteredList"
           :id="c.id"
           :container="c"
           :colors="colors.container"
+          class="ma-2"
         >
           <v-icon-btn add @click="addNode(c)" color="white" />
         </ContainerCard>
@@ -78,11 +93,10 @@
 import { mapState } from 'vuex'
 import { generic_get } from '~/api'
 
-import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
-import VIconBtn from '../../components/global/v-icon-btn'
-import ContainerForm from '~/components/container/ContainerForm'
-import OutputDestinationForm from '~/components/OutputDestinationForm'
-import ContainerCard from '~/components/container/ContainerCard'
+import { ContainerForm, ContainerCard } from '~/components/container/'
+import { SimpleFlowchart, OutputDestinationForm } from '~/components/flowchart'
+
+import VIconBtn from '~/components/global/v-icon-btn'
 
 export default {
   components: {
@@ -92,9 +106,10 @@ export default {
     ContainerForm
   },
   data: () => ({
+    search: '',
     containerList: true,
     containerDialog: false,
-    pipeline_id: '',
+    pipeline_id: undefined,
     colors: {
       container: {
         input: 'orange',
@@ -168,10 +183,15 @@ export default {
     }
   },
   computed: {
-    ...mapState('containers', ['containers'])
+    ...mapState('containers', ['containers']),
+    filteredList() {
+      return this.containers.filter(container => {
+        return container.name.toLowerCase().includes(this.search.toLowerCase())
+      })
+    }
   },
   created() {
-    this.pipeline_id = this.$router.history.current.params.id
+    this.pipeline_id = parseInt(this.$router.history.current.params.id)
     this.getContainers()
     this.getSavedPipeline(this.pipeline_id)
   }
