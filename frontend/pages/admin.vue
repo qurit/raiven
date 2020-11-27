@@ -11,6 +11,7 @@
 <script>
 import { UserList } from '~/components/admin'
 export default {
+  middleware: 'admin',
   components: { UserList }
 }
 </script>

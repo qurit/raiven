@@ -37,7 +37,7 @@ export default {
         { to: '/runs', label: 'Runs', icon: 'mdi-air-filter' },
         { to: '/help', label: 'Help', icon: 'mdi-help' },
         ...(this.$auth.user.is_admin
-          ? [{ to: '/admin', label: 'Admin', icon: 'mdi-brain' }]
+          ? [{ to: '/admin', label: 'Admin', icon: 'mdi-head-cog-outline' }]
           : [])
       ]
     }

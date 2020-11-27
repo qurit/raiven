@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="6" v-if="this.$auth.user.is_admin">
+  <v-card elevation="6" v-if="this.$auth.user.is_admin" flat>
     <v-toolbar color="primary accent--text" flat>
       <v-toolbar-title><b>Users</b></v-toolbar-title>
       <v-spacer />
@@ -11,7 +11,6 @@
         solo
       />
     </v-toolbar>
-    <v-divider light />
     <v-data-table
       :items="users"
       :headers="headers"
@@ -58,34 +57,6 @@
 import { generic_get, generic_put } from '~/api'
 
 export default {
-  methods: {
-    formatDateTime(datetime) {
-      return datetime ? new Date(datetime).toLocaleString() : 'Invalid Date'
-    },
-    async saveAETitle(user) {
-      const { ae_title } = user
-      if (
-        this.rules.validateLength(ae_title) === true &&
-        this.rules.validateASCII(ae_title) === true &&
-        this.rules.validateUserPrefix(ae_title) === true
-      ) {
-        const URL = `/user/${user.id}/update-ae-title`
-        const payload = {
-          ae_title: ae_title
-        }
-        await generic_put(this, URL, payload)
-        this.$toaster.toastSuccess('AE Title updated!')
-      } else {
-        this.$toaster.toastError(
-          'Could not save, make sure you have properly formed the AE title'
-        )
-      }
-    },
-    async getUsers() {
-      const URL = '/user'
-      this.users = await generic_get(this, URL)
-    }
-  },
   data() {
     return {
       search: '',
@@ -120,9 +91,35 @@ export default {
     }
   },
   created() {
-    this.$auth.user.is_admin
-      ? this.getUsers()
-      : this.$router.push({ path: '/' })
-  }
+    this.getUsers()
+  },
+    methods: {
+    formatDateTime(datetime) {
+      return datetime ? new Date(datetime).toLocaleString() : 'Invalid Date'
+    },
+    async saveAETitle(user) {
+      const { ae_title } = user
+      if (
+        this.rules.validateLength(ae_title) === true &&
+        this.rules.validateASCII(ae_title) === true &&
+        this.rules.validateUserPrefix(ae_title) === true
+      ) {
+        const URL = `/user/${user.id}/update-ae-title`
+        const payload = {
+          ae_title: ae_title
+        }
+        await generic_put(this, URL, payload)
+        this.$toaster.toastSuccess('AE Title updated!')
+      } else {
+        this.$toaster.toastError(
+          'Could not save, make sure you have properly formed the AE title'
+        )
+      }
+    },
+    async getUsers() {
+      const URL = '/user'
+      this.users = await generic_get(this, URL)
+    }
+  },
 }
 </script>
