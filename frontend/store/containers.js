@@ -4,6 +4,14 @@ export const state = () => ({
   containers: []
 })
 
+export const getters = {
+  userContainers: (state, getters, rootState) => {
+    return state.containers.filter(
+      container => container.user_id === rootState.auth.user.id
+    )
+  }
+}
+
 export const mutations = {
   setContainers: (state, containers) => (state.containers = containers),
   addContainer: (state, container) =>

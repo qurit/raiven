@@ -154,7 +154,7 @@ export default {
   computed: {
     ...mapState('containers', ['containers']),
     items() {
-      return this.$store.state.containers.containers
+      return this.$store.getters['containers/userContainers']
     }
   },
   created() {
