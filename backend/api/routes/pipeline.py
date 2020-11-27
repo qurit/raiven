@@ -56,12 +56,12 @@ def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
 
 @ router.get("/", response_model=List[schemas.Pipeline])
 def get_all_pipelines(user: User = Depends(token_auth), db: Session = Depends(session)):
-    return db.query(Pipeline).all()
+    return db.query(Pipeline).filter(Pipeline.user_id == user.id).all()
 
 
 @router.post("/", response_model=schemas.Pipeline)
 def create_pipeline(pipeline: schemas.PipelineCreate, user: User = Depends(token_auth), db: Session = Depends(session)):
-    return(Pipeline(name=pipeline.name, user_id=user.id)).save(db)
+    return(Pipeline(name=pipeline.name, ae_title=pipeline.ae_title, is_shared=pipeline.is_shared, user_id=user.id)).save(db)
 
 
 @router.get("/{pipeline_id}", response_model=schemas.PipelineFull)
