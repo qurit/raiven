@@ -8,7 +8,7 @@
       >
     </v-toolbar>
     <v-divider light />
-    <v-form v-model="form" class="ma-5" ref="form">
+    <v-form class="ma-5" ref="form">
       <v-col cols="12" md="12">
         <v-text-field
           v-model="container.containerName"
