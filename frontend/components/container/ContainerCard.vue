@@ -1,13 +1,13 @@
 <template>
   <v-hover v-slot:default="{ hover }">
     <v-card
-      class="title"
-      :elevation="hover ? 8 : 2"
+      class="ma-2 title"
+      :elevation="hover ? 12 : 0"
       style="transition: background-color 0.2s ease-out"
       rounded
     >
       <v-card-title v-text="container.name" />
-      <v-card-subtitle>
+      <v-card-subtitle v-text="`ID: ${container.id}`" class="pb-4" />
         {{ container.description }}
       </v-card-subtitle>
       <v-row justify="center" v-if="container.user_id !== $auth.user.id">
@@ -22,7 +22,7 @@
         />
         <v-spacer />
         <!-- Slot to enable adding of custom actions -->
-        <slot />
+        <slot></slot>
       </v-card-actions>
     </v-card>
   </v-hover>

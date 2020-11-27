@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col sm="12" md="7">
+    <v-col sm="12" md="5">
       <PipelineList />
     </v-col>
     <v-col sm="12" md="5">
@@ -18,3 +18,9 @@ export default {
   }
 }
 </script>
+
+<style lang="css" scoped>
+.row-pointer >>> tbody tr :hover {
+  cursor: pointer;
+}
+</style>
