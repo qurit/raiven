@@ -14,7 +14,7 @@
         R<span>A</span><span>I</span>VEN
       </div>
     </n-link>
-    <v-list class="mt-10" flat style="flex: 1">
+    <v-list class="mt-16" flat style="flex: 1">
       <!-- Links -->
       <!-- Links can be changed in the default layout -->
       <v-list-item

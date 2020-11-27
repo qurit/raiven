@@ -51,9 +51,9 @@
 </template>
 
 <script>
-import { DicomForm } from '~/components/dicom'
-import { ContainerForm } from '~/components/container'
-import { DicomBreakdown } from '~/components/graphs'
+import DicomForm from './DicomForm'
+import ContainerForm from '~/components/container/ContainerForm'
+import DicomBreakdown from '~/components/graphs/DicomBreakdown'
 import { generic_get } from '~/api'
 
 export default {

@@ -13,4 +13,3 @@ python-multipart
 pika
 python-socketio
 aio_pika
-alembic
