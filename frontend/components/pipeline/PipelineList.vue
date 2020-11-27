@@ -88,7 +88,7 @@ export default {
       return !this.pipelineName
     },
     items() {
-      return this.$store.state.pipelines.pipelines
+      return this.$store.getters['pipelines/userPipelines']
     }
   },
   created() {

@@ -4,6 +4,21 @@ export const state = () => ({
   pipelines: []
 })
 
+export const getters = {
+  userPipelines: (state, getters, rootState) => {
+    return state.pipelines.filter(
+      pipeline => pipeline.user_id === rootState.auth.user.id
+    )
+  },
+  sharedPipelines: (state, getters, rootState) => {
+    return state.pipelines.filter(
+      pipeline =>
+        pipeline.user_id !== rootState.auth.user.id &&
+        pipeline.is_shared === true
+    )
+  }
+}
+
 export const mutations = {
   setPipelines: (state, pipelines) => (state.pipelines = pipelines),
   addPipeline: (state, pipeline) => state.pipelines.push(pipeline),

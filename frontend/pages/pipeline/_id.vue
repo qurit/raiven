@@ -7,19 +7,21 @@
         no-gutters
         align="center"
       >
-        <v-icon-btn
-          large
-          color="#373740"
-          @click="savePipeline"
-          icon="mdi-content-save"
-        />
-        <v-btn @click="containerList = !containerList" large icon>
-          <v-icon
+        <div v-if="canEdit">
+          <v-icon-btn
             large
             color="#373740"
-            v-text="containerList ? 'mdi-minus' : 'mdi-plus'"
+            @click="savePipeline"
+            icon="mdi-content-save"
           />
-        </v-btn>
+          <v-btn @click="containerList = !containerList" large icon>
+            <v-icon
+              large
+              color="#373740"
+              v-text="containerList ? 'mdi-minus' : 'mdi-plus'"
+            />
+          </v-btn>
+        </div>
       </v-row>
 
       <!-- Pipeline Builder -->
@@ -55,24 +57,24 @@
               class="mx-auto"
               rounded
               block
-          >
-            Add a Container
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
+            >
+              Add a Container
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
           </v-row>
           <v-row no-gutters class="pt-2 px-2">
             <v-text-field
-            v-model="search"
-            placeholder="Search container"
-            append-icon="mdi-magnify"
-            solo
-            flat
-            rounded
-            block
-            color="primary"
-            single-line
-            hide-details
-          />
+              v-model="search"
+              placeholder="Search container"
+              append-icon="mdi-magnify"
+              solo
+              flat
+              rounded
+              block
+              color="primary"
+              single-line
+              hide-details
+            />
           </v-row>
         </template>
         <ContainerCard
@@ -107,7 +109,8 @@ export default {
   },
   data: () => ({
     search: '',
-    containerList: true,
+    userId: '',
+    containerList: false,
     containerDialog: false,
     pipeline_id: undefined,
     colors: {
@@ -174,9 +177,13 @@ export default {
     async getSavedPipeline() {
       const URL = `pipeline/${this.pipeline_id}`
       try {
-        const { nodes, links } = await generic_get(this, URL)
+        const { nodes, links, user_id } = await generic_get(this, URL)
         this.getPipelineNodes(nodes)
         this.getPipelineLinks(links)
+        this.userId = user_id
+        if (this.canEdit) {
+          this.containerList = true
+        }
       } catch (e) {
         console.log(e)
       }
@@ -185,9 +192,12 @@ export default {
   computed: {
     ...mapState('containers', ['containers']),
     filteredList() {
-      return this.containers.filter(container => {
-        return container.name.toLowerCase().includes(this.search.toLowerCase())
-      })
+      return this.containers.filter(container =>
+        container.name.toLowerCase().includes(this.search.toLowerCase())
+      )
+    },
+    canEdit() {
+      return this.userId === this.$auth.user.id
     }
   },
   created() {

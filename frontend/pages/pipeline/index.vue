@@ -3,9 +3,9 @@
     <v-col sm="12" md="7">
       <PipelineList />
     </v-col>
-    <!-- <v-col sm="12" md="7">
+    <v-col sm="12" md="5">
       <SharedPipelineList />
-    </v-col> -->
+    </v-col>
   </v-row>
 </template>
 
