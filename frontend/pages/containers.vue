@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="6">
+      <v-col sm="12" md="5">
         <ContainerForm />
       </v-col>
-      <v-col cols="6">
+      <v-col sm="12" md="5">
         <ContainerList />
       </v-col>
     </v-row>

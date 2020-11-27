@@ -1,8 +1,8 @@
 <template>
   <v-hover v-slot:default="{ hover }">
     <v-card
-      class="ma-2 title"
-      :elevation="hover ? 12 : 0"
+      class="title"
+      :elevation="hover ? 12 : 4"
       style="transition: background-color 0.2s ease-out"
       rounded
     >
