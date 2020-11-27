@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import UserGuide from '../components/UserGuide'
+import { UserGuide } from '~/components/help'
 export default {
   components: { UserGuide }
 }

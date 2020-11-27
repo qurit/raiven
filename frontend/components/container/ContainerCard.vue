@@ -1,20 +1,19 @@
 <template>
   <v-hover v-slot:default="{ hover }">
     <v-card
-      class="ma-2 title"
-      :elevation="hover ? 12 : 0"
+      class="title"
+      :elevation="hover ? 8 : 2"
       style="transition: background-color 0.2s ease-out"
       rounded
     >
       <v-card-title v-text="container.name" />
-      <v-card-subtitle v-text="`ID: ${container.id}`" class="pb-4" />
-      <v-card-text>
+      <v-card-subtitle>
         {{ container.description }}
-      </v-card-text>
+      </v-card-subtitle>
       <v-row justify="center" v-if="container.user_id !== $auth.user.id">
         <v-chip v-text="'From: ' + container.user.name" color="info" />
       </v-row>
-      <v-card-actions>
+      <v-card-actions class="mt-n5">
         <v-chip
           v-for="chip in chips"
           v-text="chip"
@@ -23,7 +22,7 @@
         />
         <v-spacer />
         <!-- Slot to enable adding of custom actions -->
-        <slot></slot>
+        <slot />
       </v-card-actions>
     </v-card>
   </v-hover>

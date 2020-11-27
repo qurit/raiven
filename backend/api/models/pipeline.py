@@ -11,6 +11,7 @@ from . import Base, PathMixin, NestedPathMixin, TimestampMixin, IOPathMixin, uti
 class Pipeline(Base):
     user_id = Column(ForeignKey("user.id", ondelete="CASCADE"))
     name = Column(String)
+    ae_title = Column(String)
 
     runs = relationship("PipelineRun", backref="pipeline")
     nodes = relationship("PipelineNode", backref="pipeline")

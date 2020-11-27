@@ -100,7 +100,8 @@ export default {
           success: '#4CAF50',
           warning: '#FFC107',
           confirm: '#8BC34',
-          cancel: '#F44336'
+          cancel: '#F44336',
+          icon: '#ffffff'
         }
       }
     }
