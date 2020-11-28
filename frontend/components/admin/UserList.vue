@@ -71,10 +71,12 @@ export default {
       ],
       rules: {
         validateLength(value) {
-          return (
-            value.trim().length <= 16 ||
-            'AE Title is too long, 16 characters max'
-          )
+          if (!!value) {
+            return (
+              value.trim().length <= 16 ||
+              'AE Title is too long, 16 characters max'
+            )
+          }
         },
         validateASCII(value) {
           if (!!value) {
@@ -82,10 +84,12 @@ export default {
           }
         },
         validateUserPrefix(value) {
-          return (
-            value.substring(0, 4) === 'RVU-' ||
-            "User AE Titles should have an 'RVU-' prefix"
-          )
+          if (!!value) {
+            return (
+              value.substring(0, 4) === 'RVU-' ||
+              "User AE Titles should have an 'RVU-' prefix"
+            )
+          }
         }
       }
     }
@@ -93,7 +97,7 @@ export default {
   created() {
     this.getUsers()
   },
-    methods: {
+  methods: {
     formatDateTime(datetime) {
       return datetime ? new Date(datetime).toLocaleString() : 'Invalid Date'
     },
@@ -120,6 +124,6 @@ export default {
       const URL = '/user'
       this.users = await generic_get(this, URL)
     }
-  },
+  }
 }
 </script>

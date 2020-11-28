@@ -27,6 +27,7 @@ export const mutations = {
     container.description = res.description
     container.is_input_container = res.is_input_container
     container.is_output_container = res.is_output_container
+    container.is_shared = res.is_shared
     container.filename = res?.filename
     container.file = res?.file
   }

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from api import config, worker_session, models
-from . import docker, dramatiq, external_sio
+from . import dramatiq, external_sio
 
 
 @dramatiq.actor
@@ -12,7 +12,8 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
     # TODO: Check if all previous nodes have finished
 
     with worker_session() as db:
-        job = models.pipeline.PipelineJob(pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
+        job = models.pipeline.PipelineJob(
+            pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
         job.save(db)
 
         if not (build := job.node.container.build):
@@ -38,7 +39,8 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
         }
         print(volumes)
 
-    container: Container = docker.containers.run(image_tag, detach=True, volumes=volumes, labels=['Raiven'])
+    container: Container = docker.containers.run(
+        image_tag, detach=True, volumes=volumes, labels=['Raiven'])
     with worker_session() as db:
         job.status = 'running'
         job.save(db)
@@ -56,7 +58,8 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
         if exit_code != 0:
             container.reload()
             stderr = container.logs(stdout=False, stderr=True).decode("utf-8")
-            job_error = models.pipeline.PipelineJobError(pipeline_job_id=job.id, stderr=stderr)
+            job_error = models.pipeline.PipelineJobError(
+                pipeline_job_id=job.id, stderr=stderr)
             job_error.save(db)
         elif job.node.is_leaf_node():
             # TODO: Handle multiple lead nodes
@@ -74,7 +77,8 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
             # TODO: Clean up old jobs
         else:
             next_nodes = job.node.get_next_nodes()
-            [run_node_task.send_with_options(args=(run_id, n.id, job.id,)) for n in next_nodes]
+            [run_node_task.send_with_options(
+                args=(run_id, n.id, job.id,)) for n in next_nodes]
 
     # Cleaning Up Container
     container.remove()
