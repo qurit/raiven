@@ -44,8 +44,8 @@
       <!-- Container List -->
       <v-navigation-drawer
         v-model="containerList"
-        absolute
         class="pt-3"
+        app
         right
         style="z-index: 9999"
       >
@@ -63,7 +63,7 @@
               <v-icon>mdi-plus</v-icon>
             </v-btn>
           </v-row>
-          <v-row no-gutters class="py-2 px-2">
+          <v-row no-gutters class="pt-2 px-2">
             <v-text-field
               v-model="search"
               placeholder="Search container"
@@ -78,12 +78,12 @@
             />
           </v-row>
         </template>
-
         <ContainerCard
           v-for="c in filteredList"
           :id="c.id"
           :container="c"
           :colors="colors.container"
+          class="ma-2"
         >
           <v-icon-btn add @click="addNode(c)" color="white" />
         </ContainerCard>
