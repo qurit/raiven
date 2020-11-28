@@ -2,18 +2,18 @@
   <v-hover v-slot:default="{ hover }">
     <v-card
       class="title"
-      :elevation="hover ? 12 : 4"
+      :elevation="hover ? 12 : 2"
       style="transition: background-color 0.2s ease-out"
       rounded
     >
       <v-card-title v-text="container.name" />
-      <v-card-subtitle v-text="`ID: ${container.id}`" class="pb-4" />
+      <v-card-subtitle>
         {{ container.description }}
       </v-card-subtitle>
       <v-row justify="center" v-if="container.user_id !== $auth.user.id">
         <v-chip v-text="'From: ' + container.user.name" color="info" />
       </v-row>
-      <v-card-actions class="mt-n5">
+      <v-card-actions class="mt-n2">
         <v-chip
           v-for="chip in chips"
           v-text="chip"

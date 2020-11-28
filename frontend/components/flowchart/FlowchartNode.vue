@@ -56,7 +56,12 @@
           :color="nodeColor"
         />
         <v-spacer />
-        <v-icon-btn delete color="cancel" @click="$emit('deleteNode')" />
+        <v-icon-btn
+          v-if="canEdit"
+          delete
+          color="cancel"
+          @click="$emit('deleteNode')"
+        />
       </v-card-actions>
 
       <!-- Output Port -->
@@ -86,6 +91,7 @@ export default {
   name: 'FlowchartNode',
   components: { FlowchartNodePort, OutputDestinationForm },
   props: {
+    canEdit: { type: Boolean },
     id: { type: Number },
     x: { type: Number },
     y: { type: Number },

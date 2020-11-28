@@ -29,6 +29,7 @@
         :scene.sync="scene"
         :id="pipeline_id"
         :colors="colors.container"
+        :canEdit="canEdit"
         ref="simpleFlowchart"
       />
 
@@ -62,7 +63,7 @@
               <v-icon>mdi-plus</v-icon>
             </v-btn>
           </v-row>
-          <v-row no-gutters class="pt-2 px-2">
+          <v-row no-gutters class="py-2 px-2">
             <v-text-field
               v-model="search"
               placeholder="Search container"
