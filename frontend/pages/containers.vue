@@ -4,7 +4,7 @@
       <v-col sm="12" md="5">
         <ContainerForm />
       </v-col>
-      <v-col sm="12" md="5">
+      <v-col sm="12" md="7">
         <ContainerList />
       </v-col>
     </v-row>
