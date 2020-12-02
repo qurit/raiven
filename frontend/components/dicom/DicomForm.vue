@@ -93,23 +93,49 @@ export default {
           this.nodes.forEach(node => {
             if (node.id === dicomNodeId) {
               node.children = this.patients
-              console.log(this.nodes)
+            }
+          })
+          this.$emit('test', this.nodes)
+        case 'Study':
+          let patientId
+          console.log(this.studies)
+          this.studies.forEach(study => {
+            if (study.id === this.dicom_obj_id) {
+              patientId = study.dicom_patient_id
+            }
+          })
+          this.studies = this.studies.filter(
+            study => study.id !== this.dicom_obj_id
+          )
+          console.log(patientId)
+          this.patients.forEach(patient => {
+            let dicomNodeId
+            if (patient.id === patientId) {
+              patient.children = this.studies
+              dicomNodeId = patient.dicom_node_id
+              console.log(dicomNodeId)
+            }
+          })
+          this.nodes.forEach(node => {
+            if (node.id === dicomNodeId) {
+              node.children = this.patients
             }
           })
           this.$emit('test', this.nodes)
       }
-      try {
-        const URL = `/dicom/${this.dicom_obj_type.toLowerCase()}/${
-          this.dicom_obj_id
-        }/`
-        await generic_delete(this, URL)
-        this.$toaster.toastSuccess(
-          this.dicom_obj_type + this.dicom_obj_id.toString() + ' deleted!'
-        )
-        this.$emit('closeDialog')
-      } catch (e) {
-        this.$toaster.toastError(e)
-      }
+
+      // try {
+      //   const URL = `/dicom/${this.dicom_obj_type.toLowerCase()}/${
+      //     this.dicom_obj_id
+      //   }/`
+      //   await generic_delete(this, URL)
+      //   this.$toaster.toastSuccess(
+      //     this.dicom_obj_type + this.dicom_obj_id.toString() + ' deleted!'
+      //   )
+      //   this.$emit('closeDialog')
+      // } catch (e) {
+      //   this.$toaster.toastError(e)
+      // }
     }
   }
 }
