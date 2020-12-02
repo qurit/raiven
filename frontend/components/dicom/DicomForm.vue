@@ -79,97 +79,117 @@ export default {
       }
     },
     async remove() {
-      switch (this.dicom_obj_type) {
-        case 'Node':
-          this.nodes = this.nodes.filter(node => node.id !== this.dicom_obj_id)
-          this.$emit('test', this.nodes)
-        case 'Patient':
-          let dicomNodeId
-          this.patients.forEach(patient => {
-            if (patient.id === this.dicom_obj_id) {
-              dicomNodeId = patient.dicom_node_id
-            }
-          })
-          this.patients = this.patients.filter(
-            patient => patient.id !== this.dicom_obj_id
-          )
-          this.nodes.forEach(node => {
-            if (node.id === dicomNodeId) {
-              node.children = this.patients
-            }
-          })
-          this.$emit('test', this.nodes)
-        case 'Study':
-          let patientId
-          console.log(this.studies)
-          this.studies.forEach(study => {
-            if (study.id === this.dicom_obj_id) {
-              patientId = study.dicom_patient_id
-            }
-          })
-          this.studies = this.studies.filter(
-            study => study.id !== this.dicom_obj_id
-          )
-          console.log(patientId)
-          this.patients.forEach(patient => {
-            let dicomNodeId
-            if (patient.id === patientId) {
-              patient.children = this.studies
-              dicomNodeId = patient.dicom_node_id
-              console.log(dicomNodeId)
-            }
-          })
-          this.nodes.forEach(node => {
-            if (node.id === dicomNodeId) {
-              node.children = this.patients
-            }
-          })
-          this.$emit('test', this.nodes)
-        case 'Series':
-          let studyId
-          this.series.forEach(s => {
-            if (s.id === this.dicom_obj_id) {
-              studyId = s.dicom_study_id
-            }
-          })
-          this.series = this.series.filter(
-            series => series.id !== this.dicom_obj_id
-          )
-          this.studies.forEach(study => {
-            let patientId
-            if (study.id === studyId) {
-              console.log('in here')
-              study.children = this.series
-              patientId = study.dicom_patient_id
-            }
-          })
-          this.patients.forEach(patient => {
-            let dicomNodeId
-            if (patient.id === patientId) {
-              patient.children = this.studies
-              dicomNodeId = patient.dicom_node_id
-            }
-          })
-          this.nodes.forEach(node => {
-            if (node.id === dicomNodeId) {
-              node.children = this.patients
-            }
-          })
-          this.$emit('test', this.nodes)
-      }
+      try {
+        // api delete
+        const URL = `/dicom/${this.dicom_obj_type.toLowerCase()}/${
+          this.dicom_obj_id
+        }/`
+        await generic_delete(this, URL)
 
-      // try {
-      //   const URL = `/dicom/${this.dicom_obj_type.toLowerCase()}/${
-      //     this.dicom_obj_id
-      //   }/`
-      //   await generic_delete(this, URL)
-      //   this.$toaster.toastSuccess(
-      //     this.dicom_obj_type + this.dicom_obj_id.toString() + ' deleted!'
-      //   )
-      //   this.$emit('closeDialog')
-      // } catch (e) {
-      //   this.$toaster.toastError(e)
-      // }
+        // update treeview in frontend
+        // had to "rebuild" the treeview somewhat and instead of looping through the whole treeview
+        // thought it would be easier to split them up and search for the deleted node/patient/study/series
+        // and then rebuild it from there to update
+        let updatedNodes = true
+        switch (this.dicom_obj_type) {
+          case 'Node':
+            this.nodes = this.nodes.filter(
+              node => node.id !== this.dicom_obj_id
+            )
+            break
+          case 'Patient':
+            let dicomNodeId
+            // find which node this patient came from
+            this.patients.forEach(patient => {
+              if (patient.id === this.dicom_obj_id) {
+                dicomNodeId = patient.dicom_node_id
+              }
+            })
+            // delete the patient from the patient-tree
+            this.patients = this.patients.filter(
+              patient => patient.id !== this.dicom_obj_id
+            )
+            // update that node's children to have the updated patient tree
+            this.nodes.forEach(node => {
+              if (node.id === dicomNodeId) {
+                node.children = this.patients
+              }
+            })
+            break
+          case 'Study':
+            let patientId
+            this.studies.forEach(study => {
+              if (study.id === this.dicom_obj_id) {
+                patientId = study.dicom_patient_id
+              }
+            })
+            this.studies = this.studies.filter(
+              study => study.id !== this.dicom_obj_id
+            )
+            this.patients.forEach(patient => {
+              let dicomNodeId
+              if (patient.id === patientId) {
+                patient.children = this.studies
+                dicomNodeId = patient.dicom_node_id
+              }
+            })
+            this.nodes.forEach(node => {
+              if (node.id === dicomNodeId) {
+                node.children = this.patients
+              }
+            })
+            break
+          case 'Series':
+            let studyId
+            this.series.forEach(s => {
+              if (s.id === this.dicom_obj_id) {
+                studyId = s.dicom_study_id
+              }
+            })
+            this.series = this.series.filter(
+              series => series.id !== this.dicom_obj_id
+            )
+            this.studies.forEach(study => {
+              let patientId
+              if (study.id === studyId) {
+                study.children = this.series
+                patientId = study.dicom_patient_id
+              }
+            })
+            this.patients.forEach(patient => {
+              let dicomNodeId
+              if (patient.id === patientId) {
+                patient.children = this.studies
+                dicomNodeId = patient.dicom_node_id
+              }
+            })
+            this.nodes.forEach(node => {
+              if (node.id === dicomNodeId) {
+                node.children = this.patients
+              }
+            })
+            break
+          default:
+            // if something fell through, then could not get updated correctly
+            updatedNodes = false
+        }
+        if (!!updatedNodes) {
+          {
+            this.$emit('test', this.nodes)
+            this.$toaster.toastSuccess(
+              this.dicom_obj_type +
+                ' ' +
+                this.dicom_obj_id.toString() +
+                ' deleted!'
+            )
+            this.$emit('closeDialog')
+          }
+        } else {
+          this.$toaster.toastError('Something went wrong')
+        }
+      } catch (e) {
+        this.$toaster.toastError(e)
+      }
     }
   }
 }
