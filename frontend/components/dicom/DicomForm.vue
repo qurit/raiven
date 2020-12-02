@@ -80,6 +80,9 @@ export default {
     },
     async remove() {
       switch (this.dicom_obj_type) {
+        case 'Node':
+          this.nodes = this.nodes.filter(node => node.id !== this.dicom_obj_id)
+          this.$emit('test', this.nodes)
         case 'Patient':
           let dicomNodeId
           this.patients.forEach(patient => {
@@ -114,6 +117,37 @@ export default {
               patient.children = this.studies
               dicomNodeId = patient.dicom_node_id
               console.log(dicomNodeId)
+            }
+          })
+          this.nodes.forEach(node => {
+            if (node.id === dicomNodeId) {
+              node.children = this.patients
+            }
+          })
+          this.$emit('test', this.nodes)
+        case 'Series':
+          let studyId
+          this.series.forEach(s => {
+            if (s.id === this.dicom_obj_id) {
+              studyId = s.dicom_study_id
+            }
+          })
+          this.series = this.series.filter(
+            series => series.id !== this.dicom_obj_id
+          )
+          this.studies.forEach(study => {
+            let patientId
+            if (study.id === studyId) {
+              console.log('in here')
+              study.children = this.series
+              patientId = study.dicom_patient_id
+            }
+          })
+          this.patients.forEach(patient => {
+            let dicomNodeId
+            if (patient.id === patientId) {
+              patient.children = this.studies
+              dicomNodeId = patient.dicom_node_id
             }
           })
           this.nodes.forEach(node => {
