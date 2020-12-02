@@ -124,11 +124,8 @@ export default {
         const URL = `/dicom/patient/${item.dicom_patient_id}/study/${item.id}/series`
         return generic_get(this, URL)
           .then(data => {
-            data.forEach(series => {
-              // adding the studies to the series' children
-              item.children.push(series)
-              this.series = series
-            })
+            item.children = data
+            this.series = data
           })
           .catch(err => console.log(err))
       }
