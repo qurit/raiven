@@ -38,7 +38,14 @@ import { generic_put, generic_delete } from '~/api'
 import DicomBreakdown from '~/components/graphs/DicomBreakdown'
 
 export default {
-  props: ['dicom_obj_type', 'dicom_obj_id'],
+  props: [
+    'dicom_obj_type',
+    'dicom_obj_id',
+    'nodes',
+    'patients',
+    'studies',
+    'series'
+  ],
 
   components: {
     DicomBreakdown
@@ -72,6 +79,25 @@ export default {
       }
     },
     async remove() {
+      switch (this.dicom_obj_type) {
+        case 'Patient':
+          let dicomNodeId
+          this.patients.forEach(patient => {
+            if (patient.id === this.dicom_obj_id) {
+              dicomNodeId = patient.dicom_node_id
+            }
+          })
+          this.patients = this.patients.filter(
+            patient => patient.id !== this.dicom_obj_id
+          )
+          this.nodes.forEach(node => {
+            if (node.id === dicomNodeId) {
+              node.children = this.patients
+              console.log(this.nodes)
+            }
+          })
+          this.$emit('test', this.nodes)
+      }
       try {
         const URL = `/dicom/${this.dicom_obj_type.toLowerCase()}/${
           this.dicom_obj_id
