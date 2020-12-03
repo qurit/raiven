@@ -32,19 +32,20 @@ def get_all_containers(db: Session = Depends(session)):
 # TODO: Add response model
 @router.post("/")
 async def create_container(
-        file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
+        file: bytes = File(None), name: str = Form(...), filename: str = Form(None),
         description: str = Form(None), is_input_container: bool = Form(...),
         is_output_container: bool = Form(...), db: session = Depends(session)):
 
-    if ".zip" in filename:
-        z = zipfile.ZipFile(io.BytesIO(file))
-        db_container = Container(
-            user_id=1, # TODO: Add user
-            name=name,
-            description=description,
-            is_input_container=is_input_container,
-            is_output_container=is_output_container,
-            filename='Dockerfile')
+    if file:
+        if ".zip" in filename:
+            z = zipfile.ZipFile(io.BytesIO(file))
+            db_container = Container(
+                user_id=1,  # TODO: Add user
+                name=name,
+                description=description,
+                is_input_container=is_input_container,
+                is_output_container=is_output_container,
+                filename='Dockerfile')
         db_container.save(db)
 
         folder = db_container.get_abs_path()
@@ -53,7 +54,8 @@ async def create_container(
         for root, _, files in os.walk(folder):
             print(root, _, files)
             if 'Dockerfile' in files:
-                db_container.dockerfile_path = os.path.relpath(os.path.join(root, 'Dockerfile'), config.UPLOAD_DIR)
+                db_container.dockerfile_path = os.path.relpath(
+                    os.path.join(root, 'Dockerfile'), config.UPLOAD_DIR)
                 break
 
         db_container.save(db)
@@ -67,10 +69,11 @@ async def create_container(
             is_output_container=is_output_container,
             filename=filename)
         db_container.save(db)
-        with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
-            fp.write(file)
-        db_container.dockerfile_path = os.path.join(
-            db_container.get_path(), filename)
+        if file:
+            with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
+                fp.write(file)
+            db_container.dockerfile_path = os.path.join(
+                db_container.get_path(), filename)
         db_container.save(db)
 
     # Build Container In Background

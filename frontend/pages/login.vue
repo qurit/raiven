@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center" align="center" style="height: inherit" no-gutters>
     <v-col cols="12">
-       <v-img
+      <v-img
         class="mx-auto"
         :src="require('@/static/raiven-logo.svg')"
         height="150"
@@ -77,6 +77,7 @@
 
 <script>
 import { VueTypedJs } from 'vue-typed-js'
+import { generic_post } from '~/api'
 export default {
   name: 'login',
   layout: 'fullHeight',
@@ -92,11 +93,37 @@ export default {
   methods: {
     async login() {
       const form = new FormData()
+      const URL = '/container'
       form.append('username', this.username)
       form.append('password', this.password)
-
       try {
         await this.$auth.loginWith('local', { data: form })
+        const containers = this.$store.state.containers.containers
+        if (containers.length === 0) {
+          // create default input container
+          const inputContainerForm = new FormData()
+          inputContainerForm.append('name', 'Default Input')
+          inputContainerForm.append('description', 'A default input container')
+          inputContainerForm.append('is_input_container', true)
+          inputContainerForm.append('is_output_container', false)
+          await this.$store.dispatch(
+            'containers/addContainer',
+            inputContainerForm
+          )
+          // create default output container
+          const outputContainerForm = new FormData()
+          outputContainerForm.append('name', 'Default Output')
+          outputContainerForm.append(
+            'description',
+            'A default output container'
+          )
+          outputContainerForm.append('is_input_container', false)
+          outputContainerForm.append('is_output_container', true)
+          await this.$store.dispatch(
+            'containers/addContainer',
+            outputContainerForm
+          )
+        }
       } catch (e) {
         this.error = true
       }

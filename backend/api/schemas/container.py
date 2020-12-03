@@ -9,7 +9,7 @@ class ContainerCreate(BaseModel):
     dockerfile_path: Optional[str] = None
     is_input_container: bool
     is_output_container: bool
-    filename: str
+    filename: Optional[str]
 
 
 class Container(ContainerCreate, BaseORMModel):
