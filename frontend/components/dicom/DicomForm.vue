@@ -175,7 +175,7 @@ export default {
         }
         if (!!updatedNodes) {
           {
-            this.$emit('test', this.nodes)
+            this.$emit('onDelete', this.nodes)
             this.$toaster.toastSuccess(
               this.dicom_obj_type +
                 ' ' +

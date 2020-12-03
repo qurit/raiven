@@ -49,7 +49,7 @@
         :studies="studies"
         :series="series"
         @closeDialog="dialog = false"
-        @test="test"
+        @onDelete="updateTreeview"
       />
     </v-dialog>
   </v-card>
@@ -144,16 +144,12 @@ export default {
         })
     },
     send(name, id) {
-      console.log(this.nodes)
       this.dicom_obj_type = name
       this.dicom_obj_id = id
       this.dialog = true
     },
-    test(nodes) {
-      console.log('in ehre')
+    updateTreeview(nodes) {
       this.nodes = nodes
-      console.log(nodes)
-      console.log(this.nodes)
     }
   }
 }
