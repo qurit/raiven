@@ -49,7 +49,6 @@ export const actions = {
     try {
       const URL = '/container'
       const res = await generic_post(this, URL, data)
-      console.log('in here')
       commit('addContainer', res)
     } catch (err) {
       console.log(err)

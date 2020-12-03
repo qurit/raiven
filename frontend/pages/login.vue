@@ -77,7 +77,6 @@
 
 <script>
 import { VueTypedJs } from 'vue-typed-js'
-import { generic_post } from '~/api'
 export default {
   name: 'login',
   layout: 'fullHeight',
@@ -99,7 +98,6 @@ export default {
       try {
         await this.$auth.loginWith('local', { data: form })
         const containers = this.$store.state.containers.containers
-        console.log(containers)
         if (containers.length === 0) {
           // create default input container
           const inputContainerForm = new FormData()
