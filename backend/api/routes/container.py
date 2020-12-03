@@ -36,16 +36,15 @@ async def create_container(
         description: str = Form(None), is_input_container: bool = Form(...),
         is_output_container: bool = Form(...), db: session = Depends(session)):
 
-    if file:
-        if ".zip" in filename:
-            z = zipfile.ZipFile(io.BytesIO(file))
-            db_container = Container(
-                user_id=1,  # TODO: Add user
-                name=name,
-                description=description,
-                is_input_container=is_input_container,
-                is_output_container=is_output_container,
-                filename='Dockerfile')
+    if file and ".zip" in filename:
+        z = zipfile.ZipFile(io.BytesIO(file))
+        db_container = Container(
+            user_id=1,  # TODO: Add user
+            name=name,
+            description=description,
+            is_input_container=is_input_container,
+            is_output_container=is_output_container,
+            filename='Dockerfile')
         db_container.save(db)
 
         folder = db_container.get_abs_path()

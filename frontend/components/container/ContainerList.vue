@@ -25,17 +25,21 @@
       :search="search"
     >
       <template v-slot:item.actions="{ item }">
-        <v-icon
-          medium
-          class="mr-2"
-          @click="editContainer(item.id)"
-          color="info"
+        <div
+          v-if="item.name !== 'Default Input' && item.name !== 'Default Output'"
         >
-          mdi-pencil
-        </v-icon>
-        <v-icon medium @click="deleteContainer(item.id)" color="cancel">
-          mdi-delete
-        </v-icon>
+          <v-icon
+            medium
+            class="mr-2"
+            @click="editContainer(item.id)"
+            color="info"
+          >
+            mdi-pencil
+          </v-icon>
+          <v-icon medium @click="deleteContainer(item.id)" color="cancel">
+            mdi-delete
+          </v-icon>
+        </div>
       </template>
     </v-data-table>
     <v-dialog v-model="dialog" max-width="900px" min-height="600px">
