@@ -3,7 +3,7 @@
 </p>
 <p align="center">
   <em>The Radiology Environment of the Future</em></br>
-  <sub>Radiology + Environment + AI = Raiven</sub>
+  <sub>Radiology + AI + Environment  = Raiven</sub>
 </p>
 <p align="center">
 <!-- <img alt="Docker API Image CI" src="https://github.com/qurit/raiven/workflows/Docker%20API%20Image%20CI/badge.svg?branch=master" /> -->
@@ -23,7 +23,7 @@ using [nuxt.js](https://nuxtjs.org) (a vuejs framework) and the [vuetify](https:
 All the requirements to run raiven can be installed with conda.
 
 ```
-conda create env
+conda env create
 ```
 **Note:** Raiven requires docker to be installed for the pipelining functionality.
 
