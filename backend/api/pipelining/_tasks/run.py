@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from api import config, worker_session, models
-from . import dramatiq, external_sio
+from . import docker, dramatiq, external_sio
 
 
 @dramatiq.actor
