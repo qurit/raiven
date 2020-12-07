@@ -127,6 +127,9 @@ export default {
         this.error = true
       }
     }
+  },
+  created() {
+    this.$store.dispatch('containers/fetchContainers')
   }
 }
 </script>
