@@ -27,6 +27,9 @@
             :icon="containerList ? 'mdi-minus' : 'mdi-plus'"
           />
         </div>
+        <div v-if="h">
+          No containers!
+        </div>
       </v-row>
 
       <!-- Pipeline Builder -->
@@ -36,7 +39,20 @@
         :colors="colors.container"
         :canEdit="canEdit"
         ref="simpleFlowchart"
-      />
+      >
+        <!-- This overlay is shown if the pipeline is empty and it is the shared user viewing it -->
+        <v-overlay v-if="!canEdit && !scene.nodes.length" absolute color="primary" class="display-3 accent--text" opacity="100">
+          <v-row no-gutters justify="center">
+              This Pipeline has no nodes yet.
+          </v-row>
+          <v-row no-gutters justify="center" class="pt-8">
+            <v-btn class="mx-auto" to="/pipeline" text outline color="accent" rounded>
+              <v-icon>mdi-arrow-left</v-icon>
+             Take me back
+            </v-btn>
+          </v-row>
+        </v-overlay>
+      </SimpleFlowchart>
 
       <!-- Dialogs -->
       <v-dialog v-model="containerDialog" max-width="900px" min-height="600px">
