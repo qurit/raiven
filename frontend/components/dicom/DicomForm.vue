@@ -38,17 +38,14 @@ import { generic_put, generic_delete } from '~/api'
 import DicomBreakdown from '~/components/graphs/DicomBreakdown'
 
 export default {
-  props: [
-    'dicom_obj_type',
-    'dicom_obj_id',
-    'nodes',
-    'patients',
-    'studies',
-    'series'
-  ],
-
-  components: {
-    DicomBreakdown
+  components: { DicomBreakdown },
+  props: {
+    'dicom_obj_type': String,
+    'dicom_obj_id': String,
+    'nodes': String,
+    'patients': String,
+    'studies': String,
+    'series': String,
   },
   data: () => ({
     pipeline_id: undefined
@@ -83,7 +80,7 @@ export default {
         // api delete
         const URL = `/dicom/${this.dicom_obj_type.toLowerCase()}/${
           this.dicom_obj_id
-        }/`
+        }`
         await generic_delete(this, URL)
 
         // update treeview in frontend
