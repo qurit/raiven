@@ -1,14 +1,13 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="3">
+      <v-col sm="12" md="3">
         <PipelineStatus :pipelines="pipelines" />
       </v-col>
-
-      <v-col cols="3">
+      <v-col sm="12" md="3">
         <DicomInstances />
       </v-col>
-      <v-col cols="6">
+      <v-col sm="12" md="6">
         <PipelineResults />
       </v-col>
     </v-row>
@@ -16,15 +15,14 @@
 </template>
 
 <script>
-import PipelineStatus from '~/components/PipelineStatus'
-
-import PipelineResults from '~/components/PipelineResults'
-import DicomInstances from '~/components/dicom/DicomInstances'
-
+import { PipelineResults, PipelineStatus } from '~/components/pipeline'
+import { DicomInstances } from '~/components/dicom'
 import { mapState } from 'vuex'
 export default {
   components: {
-    PipelineStatus, DicomInstances, PipelineResults
+    PipelineStatus,
+    DicomInstances,
+    PipelineResults
   },
   computed: {
     ...mapState('pipelines', ['pipelines'])

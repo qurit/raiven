@@ -24,6 +24,9 @@
       :items="items"
       :search="search"
     >
+      <template v-slot:item.is_shared="{ item }">
+        <v-simple-checkbox :value="item.is_shared" disabled />
+      </template>
       <template v-slot:item.actions="{ item }">
         <v-icon
           medium
@@ -73,7 +76,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import ContainerForm from '~/components/container/ContainerForm'
+import { ContainerForm } from '~/components/container'
 
 export default {
   components: {
@@ -100,6 +103,7 @@ export default {
           filterable: false,
           width: '2%'
         },
+        { text: 'Shared', value: 'is_shared', width: '1%' },
         { text: 'File', value: 'filename', width: '1%' },
         {
           text: 'Edit or Delete',
@@ -142,6 +146,7 @@ export default {
       this.container.containerDescription = containerToUpdate.description
       this.container.containerIsInput = containerToUpdate.is_input_container?.toString()
       this.container.containerIsOutput = containerToUpdate.is_output_container?.toString()
+      this.container.containerIsShared = containerToUpdate.is_shared?.toString()
       this.container.filename = containerToUpdate.filename
       this.dialog = true
     }
@@ -149,7 +154,7 @@ export default {
   computed: {
     ...mapState('containers', ['containers']),
     items() {
-      return this.$store.state.containers.containers
+      return this.$store.getters['containers/userContainers']
     }
   },
   created() {
