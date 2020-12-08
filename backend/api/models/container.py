@@ -14,7 +14,7 @@ class Container(PathMixin, Base):
     dockerfile_path = Column(String)
     is_input_container = Column(Boolean)
     is_output_container = Column(Boolean)
-    is_shared = Column(Boolean)
+    is_shared = Column(Boolean, default=False, nullable=False)
     description = Column(String)
     filename = Column(String)
 

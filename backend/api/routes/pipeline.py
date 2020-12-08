@@ -57,7 +57,7 @@ def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
 
 @ router.get("/", response_model=List[schemas.Pipeline])
 def get_all_pipelines(user: User = Depends(token_auth), db: Session = Depends(session)):
-    return db.query(Pipeline).filter((Pipeline.user_id == user.id) | (Pipeline.is_shared == 1)).all()
+    return db.query(Pipeline).filter((Pipeline.user_id == user.id) | Pipeline.is_shared).all()
 
 
 @router.post("/", response_model=schemas.Pipeline)

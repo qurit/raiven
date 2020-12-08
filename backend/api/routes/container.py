@@ -26,9 +26,9 @@ def get_container_stats(db: Session = Depends(session)):
 
 @router.get("/", response_model=List[container.Container])
 def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(session)):
-    """ Get a list of containers """
+    """ Get a list of containers. Returns a list of all containers created by the user OR shared with the user"""
 
-    return db.query(Container).filter((Container.user_id == user.id) | (Container.is_shared == 1)).all()
+    return db.query(Container).filter((Container.user_id == user.id) | Container.is_shared).all()
 
 
 # TODO: Add response model
