@@ -32,8 +32,7 @@ def get_all_pipeline_runs(limit: int = 7, db: Session = Depends(session)):
 
 @router.get("/results", response_model=List[schemas.PipelineRun])
 def get_all_pipeline_runs(user: User = Depends(token_auth), db: Session = Depends(session)):
-    return db.query(PipelineRun).filter(
-        PipelineRun.pipeline_id == Pipeline.id).filter(Pipeline.user_id == user.id).all()
+    return db.query(PipelineRun).join(Pipeline).filter(Pipeline.user_id == user.id).all()
 
 
 @router.get("/download/{pipeline_run_id}")
