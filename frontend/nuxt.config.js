@@ -99,8 +99,9 @@ export default {
           info: '#2196F3',
           success: '#4CAF50',
           warning: '#FFC107',
-          confirm: '#8BC34',
-          cancel: '#F44336'
+          confirm: '#3BB143',
+          cancel: '#F44336',
+          icon: '#ffffff'
         }
       }
     }

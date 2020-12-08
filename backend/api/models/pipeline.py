@@ -11,6 +11,8 @@ from . import Base, PathMixin, NestedPathMixin, TimestampMixin, IOPathMixin, uti
 class Pipeline(Base):
     user_id = Column(ForeignKey("user.id", ondelete="CASCADE"))
     name = Column(String)
+    ae_title = Column(String)
+    is_shared = Column(Boolean, default=False)
 
     runs = relationship("PipelineRun", backref="pipeline")
     nodes = relationship("PipelineNode", backref="pipeline")
@@ -29,7 +31,6 @@ class PipelineNode(Base):
     y_coord = Column(Integer)
     container_is_input = Column(Boolean)
     container_is_output = Column(Boolean)
-    destination_id = Column(Integer, ForeignKey("destination.id"))
 
     destination = relationship("Destination", uselist=False)
     container = relationship("Container", uselist=False)
@@ -38,7 +39,6 @@ class PipelineNode(Base):
     previous_links = relationship(
         'PipelineLink', foreign_keys='PipelineLink.to_node_id')
     jobs = relationship('PipelineJob', backref='node')
-    destination = relationship('Destination', uselist=False)
 
     def is_root_node(self):
         return not len(self.previous_links)

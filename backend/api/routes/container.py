@@ -10,6 +10,8 @@ from api import session, config
 from api.models.container import Container
 from api.schemas import container
 from api.pipelining import ContainerController
+from api.models.user import User
+from api.auth import token_auth
 
 router = APIRouter()
 
@@ -23,10 +25,10 @@ def get_container_stats(db: Session = Depends(session)):
 
 
 @router.get("/", response_model=List[container.Container])
-def get_all_containers(db: Session = Depends(session)):
-    """ Get a list of containers """
+def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(session)):
+    """ Get a list of containers. Returns a list of all containers created by the user OR shared with the user"""
 
-    return db.query(Container).all()
+    return db.query(Container).filter((Container.user_id == user.id) | Container.is_shared).all()
 
 
 # TODO: Add response model
@@ -34,16 +36,17 @@ def get_all_containers(db: Session = Depends(session)):
 async def create_container(
         file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
         description: str = Form(None), is_input_container: bool = Form(...),
-        is_output_container: bool = Form(...), db: session = Depends(session)):
+        is_output_container: bool = Form(...), is_shared: bool = Form(...), user: User = Depends(token_auth), db: session = Depends(session)):
 
     if ".zip" in filename:
         z = zipfile.ZipFile(io.BytesIO(file))
         db_container = Container(
-            user_id=1, # TODO: Add user
+            user_id=user.id,
             name=name,
             description=description,
             is_input_container=is_input_container,
             is_output_container=is_output_container,
+            is_shared=is_shared,
             filename='Dockerfile')
         db_container.save(db)
 
@@ -53,18 +56,20 @@ async def create_container(
         for root, _, files in os.walk(folder):
             print(root, _, files)
             if 'Dockerfile' in files:
-                db_container.dockerfile_path = os.path.relpath(os.path.join(root, 'Dockerfile'), config.UPLOAD_DIR)
+                db_container.dockerfile_path = os.path.relpath(
+                    os.path.join(root, 'Dockerfile'), config.UPLOAD_DIR)
                 break
 
         db_container.save(db)
     else:
         # TODO: Review This Code.  Refactoring needed
         db_container = Container(
-            user_id=1,
+            user_id=user.id,
             name=name,
             description=description,
             is_input_container=is_input_container,
             is_output_container=is_output_container,
+            is_shared=is_shared,
             filename=filename)
         db_container.save(db)
         with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
@@ -89,7 +94,7 @@ def get_container(container_id: int, db: Session = Depends(session)):
 @router.put("/{container_id}")
 def update_container(
         container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(None),
-        description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...),
+        description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...), is_shared: bool = Form(...),
         db: session = Depends(session)):
 
     if file is not None:
@@ -104,6 +109,7 @@ def update_container(
             "description": description,
             "is_input_container": is_input_container,
             "is_output_container": is_output_container,
+            "is_shared": is_shared,
             "dockerfile_path": os.path.join(container.get_path(), filename),
             "filename": filename
         })
@@ -113,7 +119,8 @@ def update_container(
             "name": name,
             "description": description,
             "is_input_container": is_input_container,
-            "is_output_container": is_output_container
+            "is_output_container": is_output_container,
+            "is_shared": is_shared
         })
         return db.query(Container).get(container_id)
 
