@@ -14,6 +14,7 @@
           @deleteLink="linkDelete(link.id)"
         ></FlowchartLink>
       </svg>
+      <slot />
       <FlowchartNode
         v-bind.sync="node"
         :scene.sync="scene"
@@ -21,6 +22,7 @@
         :key="`node${index}`"
         :options="nodeOptions"
         :colors="colors.container"
+        :canEdit="canEdit"
         @setDestination="setDestinations"
         @linkingStart="linkingStart(node.id)"
         @linkingStop="linkingStop(node.id)"
@@ -65,6 +67,9 @@ export default {
       default: () => ({
         container: undefined
       })
+    },
+    canEdit: {
+      type: Boolean
     }
   },
   data: () => ({

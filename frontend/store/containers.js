@@ -4,6 +4,14 @@ export const state = () => ({
   containers: []
 })
 
+export const getters = {
+  userContainers: (state, getters, rootState) => {
+    return state.containers.filter(
+      container => container.user_id === rootState.auth.user.id
+    )
+  }
+}
+
 export const mutations = {
   setContainers: (state, containers) => (state.containers = containers),
   addContainer: (state, container) =>
@@ -19,6 +27,7 @@ export const mutations = {
     container.description = res.description
     container.is_input_container = res.is_input_container
     container.is_output_container = res.is_output_container
+    container.is_shared = res.is_shared
     container.filename = res?.filename
     container.file = res?.file
   }

@@ -1,9 +1,23 @@
 import { generic_get, generic_delete, full_data_post } from '~/api'
-import axios from 'axios'
 
 export const state = () => ({
   pipelines: []
 })
+
+export const getters = {
+  userPipelines: (state, getters, rootState) => {
+    return state.pipelines.filter(
+      pipeline => pipeline.user_id === rootState.auth.user.id
+    )
+  },
+  sharedPipelines: (state, getters, rootState) => {
+    return state.pipelines.filter(
+      pipeline =>
+        pipeline.user_id !== rootState.auth.user.id &&
+        pipeline.is_shared === true
+    )
+  }
+}
 
 export const mutations = {
   setPipelines: (state, pipelines) => (state.pipelines = pipelines),
