@@ -7,20 +7,25 @@
         no-gutters
         align="center"
       >
+        <v-icon-btn
+          back
+          color="#373740"
+          to="/pipeline"
+        >
+        </v-icon-btn>
         <div v-if="canEdit">
           <v-icon-btn
-            large
+            save
             color="#373740"
             @click="savePipeline"
-            icon="mdi-content-save"
+
           />
-          <v-btn @click="containerList = !containerList" large icon>
-            <v-icon
-              large
-              color="#373740"
-              v-text="containerList ? 'mdi-minus' : 'mdi-plus'"
-            />
-          </v-btn>
+          <v-icon-btn
+            large
+            @click="containerList = !containerList"
+            color="#373740"
+            :icon="containerList ? 'mdi-minus' : 'mdi-plus'"
+          />
         </div>
       </v-row>
 
