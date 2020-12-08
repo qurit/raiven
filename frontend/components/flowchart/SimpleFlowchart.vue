@@ -14,6 +14,7 @@
           @deleteLink="linkDelete(link.id)"
         ></FlowchartLink>
       </svg>
+      <slot />
       <FlowchartNode
         v-bind.sync="node"
         :scene.sync="scene"
