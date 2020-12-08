@@ -1,6 +1,6 @@
 <template>
-  <v-btn :color="color" icon @click="$emit('click')">
-    <v-icon v-text="iconToShow" />
+  <v-btn :color="color" icon @click="$emit('click')" :to="to">
+    <v-icon v-text="iconToShow" :large="large" />
   </v-btn>
 </template>
 
@@ -12,6 +12,10 @@ export default {
       type: String,
       default: 'primary'
     },
+    to: {
+      type: String,
+      default: ''
+    },
     icon: {
       type: String,
       default: 'mdi-plus'
@@ -20,8 +24,11 @@ export default {
       type: Function,
       default: () => undefined
     },
+    large: Boolean,
     plus: Boolean,
     minus: Boolean,
+    back: Boolean,
+    save: Boolean,
     delete: Boolean,
     edit: Boolean,
     refresh: Boolean,
@@ -32,7 +39,9 @@ export default {
       if ( ctx.minus ) return 'mdi-minus'
       if ( ctx.delete ) return 'mdi-delete'
       if ( ctx.edit ) return 'mdi-edit'
+      if ( ctx.save ) return 'mdi-content-save'
       if ( ctx.refresh ) return 'mdi-refresh'
+      if ( ctx.back ) return 'mdi-arrow-left'
       return ctx.icon
     }
   }

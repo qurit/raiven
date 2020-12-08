@@ -48,6 +48,8 @@ class PipelineLink(BaseORMModel):
 
 class PipelineCreate(BaseModel):
     name: str
+    ae_title: Optional[str]
+    is_shared: bool
 
 
 class PipelineUpdate(BaseModel):
