@@ -53,9 +53,8 @@ def create_container(
 
         folder = db_container.get_abs_path()
         z.extractall(folder)
-        print(folder)
+
         for root, _, files in os.walk(folder):
-            print(root, _, files)
             if 'Dockerfile' in files:
                 db_container.dockerfile_path = os.path.relpath(
                     os.path.join(root, 'Dockerfile'), config.UPLOAD_DIR)
