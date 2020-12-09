@@ -1,11 +1,14 @@
 import { generic_get } from '~/api'
 
 export const state = () => ({
-    config: {}
+    config: {
+      PIPELINE_AE_PREFIX: 'RVP-',
+      USER_AE_PREFIX: 'RVU-'
+    }
 })
 
 export const mutations = {
-    setConfig: (state, config) => state.settings = config,
+    setConfig: (state, config) => state.config = config
 }
 
 export const actions = {

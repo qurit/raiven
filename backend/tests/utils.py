@@ -1,6 +1,6 @@
 from api.schemas.user import User as UserSchema
 
-from .test_user import test_add_user, test_get_users
+from tests.test_routes.test_user import test_add_user, test_get_users
 
 
 def get_test_user() -> UserSchema:

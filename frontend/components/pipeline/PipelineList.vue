@@ -84,9 +84,6 @@ export default {
   },
   computed: {
     ...mapState('pipelines', ['pipelines']),
-    isDisabled: function() {
-      return !this.pipelineName
-    },
     items() {
       return this.$store.getters['pipelines/userPipelines']
     }

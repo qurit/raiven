@@ -11,7 +11,7 @@
         {{ container.description }}
       </v-card-subtitle>
       <v-row justify="center" v-if="container.user_id !== $auth.user.id">
-        <v-chip v-text="'From: ' + container.user.name" color="info" />
+        <v-chip class="mb-1" v-text="'From: ' + container.user.name" color="info" />
       </v-row>
       <v-card-actions class="mt-n2">
         <v-chip
