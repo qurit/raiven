@@ -34,7 +34,6 @@ def test_add_user(user: UserLocalCreate = DEFAULT_USER) -> dict:
         assert data['name'] == user.name
 
         all_users = test_get_users()
-        assert len([u for u in all_users if u.id == data['id']]) == 1, "Newly created user is not in the list of all users"
 
     return data
 
