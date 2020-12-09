@@ -12,6 +12,19 @@ class BaseConfig:
     API_HOT_RELOAD = True
     UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
     UPLOAD_VOLUME_ABSPATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+    INTERNAL_USERNAME = 'RAIVEN_INTERNAL'
+    DEFAULT_CONTAINERS = [
+        {
+            'name': 'Dicom Input',
+            'description': 'Receive input from a DICOM node',
+            'is_input_container': True
+        },
+        {
+            'name': 'Dicom Output',
+            'description': 'Send DICOM output from a DICOM node',
+            'is_output_container': True
+        }
+    ]
 
     # Auth
     SECRET_KEY = 'ChangeMe'
