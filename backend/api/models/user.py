@@ -65,3 +65,10 @@ class UserLocal(Base):
     def save(self, *args, **kwargs):
         self.password = pbkdf2_sha256.hash(self.password)
         return super().save(*args, **kwargs)
+
+
+class UserDestination(Base):
+    user_id = Column(ForeignKey("user.id", ondelete="CASCADE"))
+    destination_id = Column(ForeignKey("destination.id", ondelete="CASCADE"))
+
+    destination = relationship('Destination', uselist=False)
