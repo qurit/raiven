@@ -13,6 +13,7 @@ from api import config
 class User(Base):
     username = Column(String, index=True, unique=True)
     name = Column(String)
+    ae_title = Column(String)
     is_admin = Column(Boolean, default=False)
     ae_title = Column(String, default='')
     first_seen = Column(DateTime, default=datetime.utcnow)

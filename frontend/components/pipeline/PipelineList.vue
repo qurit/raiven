@@ -29,6 +29,9 @@
       class="row-pointer"
       @click:row="viewPipeline"
     >
+      <template v-slot:item.is_shared="{ item }">
+        <v-simple-checkbox :value="item.is_shared" disabled />
+      </template>
       <template v-slot:item.actions="{ item }">
         <v-icon medium @click.stop="removePipeline(item)" color="cancel">
           mdi-delete
@@ -54,6 +57,8 @@ export default {
       dialog: false,
       headers: [
         { text: 'Pipeline Name', value: 'name' },
+        { text: 'AE Title', value: 'ae_title' },
+        { text: 'Shared', value: 'is_shared', align: 'center' },
         {
           text: 'Delete',
           value: 'actions',
@@ -80,7 +85,7 @@ export default {
   computed: {
     ...mapState('pipelines', ['pipelines']),
     items() {
-      return this.$store.state.pipelines.pipelines
+      return this.$store.getters['pipelines/userPipelines']
     }
   },
   created() {

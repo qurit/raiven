@@ -39,7 +39,10 @@ export default {
         },
         { to: '/runs', label: 'Runs', icon: 'mdi-air-filter' },
         { to: '/settings', label: 'Settings', icon: 'mdi-account-cog-outline' },
-        { to: '/help', label: 'Help', icon: 'mdi-help' }
+        { to: '/help', label: 'Help', icon: 'mdi-help' },
+        ...(this.$auth.user.is_admin
+          ? [{ to: '/admin', label: 'Admin', icon: 'mdi-head-cog-outline' }]
+          : [])
       ]
     }
   },
