@@ -3,15 +3,19 @@
     <v-toolbar color="primary accent--text" flat>
       <v-toolbar-title> <b> About this Pipeline</b></v-toolbar-title>
     </v-toolbar>
+          <v-form v-model="isFormValid"> 
     <v-row class="ma-4">
       <v-col cols="11"> Pipeline ID: {{ pipelineId }} </v-col>
       <v-icon-btn
-        color="icon"
+        :color="isFormValid ? 'icon' : 'error'"
         @click="editState ? saveChanges() : makeEditable()"
         :icon="editState ? 'mdi-content-save' : 'mdi-pencil'"
+        :disabled="editState && !isFormValid"
       ></v-icon-btn>
       <v-col cols="5">
-        Pipeline Name:<v-text-field
+        Pipeline Name:
+  
+          <v-text-field
           solo
           :disabled="!editState"
           v-model="pipelineName"
@@ -22,6 +26,9 @@
           solo
           :disabled="!editState"
           v-model="pipelineAETitle"
+              :rules="[rules.validateLength, rules.validateASCII]"
+      counter
+          :prefix="`${$store.state.config.PIPELINE_AE_PREFIX}`"
         ></v-text-field>
       </v-col>
       <v-col cols="2">
@@ -31,7 +38,9 @@
           :false-value="false"
           :true-value="true"
           :disabled="!editState"
+          class="pt-4"
         />
+    
       </v-col>
       <v-col cols="6">
         Results from this Pipeline
@@ -42,6 +51,7 @@
         <PipelineTreeviewInfo :pipelineId="this.pipelineId" />
       </v-col>
     </v-row>
+          </v-form>
   </v-card>
 </template>
 
@@ -62,7 +72,21 @@ export default {
       pipelineName: '',
       pipelineAETitle: '',
       pipelineIsShared: '',
-      editState: false
+      isFormValid: false,
+      editState: false,
+       rules: {
+        validateLength(value) {
+          return (
+            value.trim().length <= 16 ||
+            'AE Title is too long, 16 characters max'
+          )
+        },
+        validateASCII(value) {
+          if (!!value) {
+            return /^[\x00-\x7F]*$/.test(value) || 'ASCII Characters only'
+          }
+        }
+      },
     }
   },
   methods: {
