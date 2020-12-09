@@ -33,10 +33,11 @@ def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(s
 
 # TODO: Add response model
 @router.post("/")
-async def create_container(
+def create_container(
+        auto_build: bool = True,
         file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
         description: str = Form(None), is_input_container: bool = Form(...),
-        is_output_container: bool = Form(...), is_shared: bool = Form(...), user: User = Depends(token_auth), db: session = Depends(session)):
+        is_output_container: bool = Form(...), is_shared: bool = Form(...), user: User = Depends(token_auth), db: Session = Depends(session)):
 
     if ".zip" in filename:
         z = zipfile.ZipFile(io.BytesIO(file))
@@ -80,7 +81,9 @@ async def create_container(
 
     # Build Container In Background
     db.commit()
-    ContainerController.build_container(db_container.id)
+
+    if auto_build:
+        ContainerController.build_container(db_container.id)
 
     # TODO: We shoulnt return a list
     return [db_container]

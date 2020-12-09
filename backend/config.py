@@ -5,6 +5,7 @@ LOCALHOST = '127.0.0.1'
 
 
 class BaseConfig:
+    UNIT_TESTING = False
     RAIVEN_WORKER = False
 
     APT_HOST = '127.0.0.1'

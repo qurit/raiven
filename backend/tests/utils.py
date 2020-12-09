@@ -1,10 +1,7 @@
-from api.schemas.user import User as UserSchema
-
-from tests.test_routes.test_user import test_add_user, test_get_users
+from tests import models, config
 
 
-def get_test_user() -> UserSchema:
-    if len(users := test_get_users()):
-        return UserSchema(**users[0])
-    else:
-        return UserSchema(**test_add_user())
+def get_test_user(db) -> models.user.User:
+    assert (user := db.query(models.user.User).filter_by(username=config.INTERNAL_USERNAME).first())
+
+    return user

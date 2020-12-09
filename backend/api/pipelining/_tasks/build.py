@@ -2,7 +2,7 @@ from api import worker_session, models
 from . import docker, utils, dramatiq
 
 
-@dramatiq.actor
+@dramatiq.actor(max_retries=0)
 def build_container_task(container_id: int):
     print(f"BUILDING CONTAINER: {container_id}")
 
