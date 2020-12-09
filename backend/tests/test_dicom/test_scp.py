@@ -9,7 +9,6 @@ def test_scp_class() -> SCP:
 
     assert scp.ae_title == ae_title
     assert scp.port == port
-    assert scp.get_ae().ae_title == scp.ae_title
 
     return scp
 
@@ -18,7 +17,7 @@ def test_scp_sever_startup_and_shutdown():
     scp = test_scp_class()
 
     scp.start_server()
-    scp.shutdown()
+    scp.stop_server()
 
 
 import os
