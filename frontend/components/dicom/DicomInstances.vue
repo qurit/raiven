@@ -44,7 +44,12 @@
       <DicomForm
         :dicom_obj_type="dicom_obj_type"
         :dicom_obj_id="dicom_obj_id"
+        :nodes="nodes"
+        :patients="patients"
+        :studies="studies"
+        :series="series"
         @closeDialog="dialog = false"
+        @onDelete="updateTreeview"
       />
     </v-dialog>
   </v-card>
@@ -62,7 +67,10 @@ export default {
     dialog: false,
     dicom_obj_type: undefined,
     dicom_obj_id: undefined,
-    nodes: undefined
+    nodes: undefined,
+    patients: [],
+    studies: [],
+    series: []
   }),
   created() {
     this.getNodes()
@@ -84,9 +92,8 @@ export default {
             })
             // adding the patients as the node's children
             .then(patients => {
-              patients.forEach(patient => {
-                item.children.push(patient)
-              })
+              item.children = patients
+              this.patients = patients
             })
             .catch(err => console.log(err))
         )
@@ -106,9 +113,8 @@ export default {
             })
             // adding the studies as the patient's children
             .then(studies => {
-              studies.forEach(study => {
-                item.children.push(study)
-              })
+              item.children = studies
+              this.studies = studies
             })
             .catch(err => console.log(err))
         )
@@ -118,10 +124,8 @@ export default {
         const URL = `/dicom/patient/${item.dicom_patient_id}/study/${item.id}/series`
         return generic_get(this, URL)
           .then(data => {
-            data.forEach(studies => {
-              // adding the studies to the series' children
-              item.children.push(studies)
-            })
+            item.children = data
+            this.series = data
           })
           .catch(err => console.log(err))
       }
@@ -143,6 +147,9 @@ export default {
       this.dicom_obj_type = name
       this.dicom_obj_id = id
       this.dialog = true
+    },
+    updateTreeview(nodes) {
+      this.nodes = nodes
     }
   }
 }
