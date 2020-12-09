@@ -93,7 +93,8 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
 def edit_pipeline(pipeline_id: int, pipeline: schemas.PipelineCreate, db: Session = Depends(session)):
     pipeline_to_edit = db.query(Pipeline).get(pipeline_id)
     pipeline_to_edit.name = pipeline.name
-    # pipeline_to_edit.ae_title = pipeline.ae_title
+    pipeline_to_edit.ae_title = pipeline.ae_title
+    pipeline_to_edit.is_shared = pipeline.is_shared
     return pipeline_to_edit
 
 

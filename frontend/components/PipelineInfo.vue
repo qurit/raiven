@@ -10,19 +10,28 @@
         @click="editState ? saveChanges() : makeEditable()"
         :icon="editState ? 'mdi-content-save' : 'mdi-pencil'"
       ></v-icon-btn>
-      <v-col cols="6">
+      <v-col cols="5">
         Pipeline Name:<v-text-field
           solo
           :disabled="!editState"
           v-model="pipelineName"
         ></v-text-field>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="5">
         AE title:<v-text-field
           solo
           :disabled="!editState"
-          v-model="this.aeTitle"
+          v-model="pipelineAETitle"
         ></v-text-field>
+      </v-col>
+      <v-col cols="2">
+        <v-checkbox 
+          v-model="pipelineIsShared"
+          label="Shared"
+          :false-value="false"
+          :true-value="true"
+          :disabled="!editState"
+        />
       </v-col>
       <v-col cols="6">
         Results from this Pipeline
@@ -40,7 +49,7 @@
 import { generic_get, generic_put } from '~/api'
 import vIconBtn from './global/v-icon-btn.vue'
 import PipelineTreeviewInfo from './PipelineTreeviewInfo'
-import PipelineResults from './PipelineResults'
+import PipelineResults from '~/components/pipeline/PipelineResults'
 export default {
   components: { vIconBtn, PipelineResults, PipelineTreeviewInfo },
   props: {
@@ -52,6 +61,7 @@ export default {
     return {
       pipelineName: '',
       pipelineAETitle: '',
+      pipelineIsShared: '',
       editState: false
     }
   },
@@ -60,9 +70,11 @@ export default {
       try {
         const URL = `/pipeline/${this.pipelineId}/edit`
         const payload = {
-          name: this.pipelineName
-          // aeTitle: this.pipelineAETitle
+          name: this.pipelineName,
+          ae_title: this.pipelineAETitle,
+          is_shared: this.pipelineIsShared
         }
+        console.log(payload)
         await generic_put(this, URL, payload)
         this.editState = false
         this.$toaster.toastSuccess('Changes saved!')
@@ -79,10 +91,12 @@ export default {
     async getPipelineName() {
       // get Pipeline Name and AE Title
       const URL = `/pipeline/${this.pipelineId}`
-      // TODO: wait for other PRs to be approved
-      // const {name, aeTitle }= await generic_get(this, URL)
-      const { name } = await generic_get(this, URL)
+      const {name, ae_title, is_shared} = await generic_get(this, URL)
       this.pipelineName = name
+      this.pipelineAETitle = ae_title
+      this.pipelineIsShared = is_shared
+      console.log(is_shared)
+      console.log(this.pipelineIsShared)
     }
   },
   created() {
