@@ -10,6 +10,8 @@ from api import session, queries
 from api.pipelining import PipelineController
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun, PipelineJob, PipelineJobError
 from api.schemas import pipeline as schemas
+from api.models.user import User
+from api.auth import token_auth
 
 router = APIRouter()
 
@@ -29,8 +31,8 @@ def get_all_pipeline_runs(limit: int = 7, db: Session = Depends(session)):
 
 
 @router.get("/results", response_model=List[schemas.PipelineRun])
-def get_all_pipeline_runs(db: Session = Depends(session)):
-    return db.query(PipelineRun).all()
+def get_all_pipeline_runs(user: User = Depends(token_auth), db: Session = Depends(session)):
+    return db.query(PipelineRun).join(Pipeline).filter(Pipeline.user_id == user.id).all()
 
 
 @router.get("/{pipeline_id}/results", response_model=List[schemas.PipelineRun])
@@ -73,15 +75,13 @@ def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
 
 
 @ router.get("/", response_model=List[schemas.Pipeline])
-def get_all_pipelines(db: Session = Depends(session)):
-    return db.query(Pipeline).all()
+def get_all_pipelines(user: User = Depends(token_auth), db: Session = Depends(session)):
+    return db.query(Pipeline).filter((Pipeline.user_id == user.id) | Pipeline.is_shared).all()
 
 
-@ router.post("/", response_model=schemas.Pipeline)
-def create_pipeline(pipeline: schemas.PipelineCreate, db: Session = Depends(session)):
-    print("got here")
-    print(pipeline)
-    return Pipeline(**pipeline.dict()).save(db)
+@router.post("/", response_model=schemas.Pipeline)
+def create_pipeline(pipeline: schemas.PipelineCreate, user: User = Depends(token_auth), db: Session = Depends(session)):
+    return(Pipeline(name=pipeline.name, ae_title=pipeline.ae_title, is_shared=pipeline.is_shared, user_id=user.id)).save(db)
 
 
 @ router.get("/{pipeline_id}", response_model=schemas.PipelineFull)

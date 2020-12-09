@@ -64,17 +64,17 @@ def get_study_series(patient_id: int, study_id: int, db: Session = Depends(sessi
 # deleting nodes and substuff
 
 
-@ router.delete("/node/{dicom_node_id}/", response_model=dicom.DicomNode)
+@ router.delete("/node/{dicom_node_id}", response_model=dicom.DicomNode)
 def delete_node(dicom_node_id: int, db: Session = Depends(session)):
     return db.query(DicomNode).get(dicom_node_id).delete(db)
 
 
-@ router.delete("/patient/{patient_id}/", response_model=dicom.DicomPatient)
+@ router.delete("/patient/{patient_id}", response_model=dicom.DicomPatient)
 def delete_patient(patient_id: int, db: Session = Depends(session)):
     return db.query(DicomPatient).get(patient_id).delete(db)
 
 
-@ router.delete("/study/{study_id}/", response_model=dicom.DicomStudy)
+@ router.delete("/study/{study_id}", response_model=dicom.DicomStudy)
 def delete_study(study_id: int, db: Session = Depends(session)):
     return db.query(DicomStudy).get(study_id).delete(db)
 
