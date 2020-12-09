@@ -66,7 +66,7 @@ export default {
       try {
           const payload = {
         name: this.pipelineName,
-        ae_title: this.aeTitle.trim().length > 0 ? 'RVP-' + this.aeTitle.trim() : null,
+        ae_title: this.aeTitle.trim().length > 0 ? this.aeTitle.trim() : null,
         is_shared: this.isShared
       }
       console.log(payload)
