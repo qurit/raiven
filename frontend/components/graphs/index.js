@@ -1,5 +1,5 @@
-import PipelineHistogram from './PipelineHistogram'
 import DicomBreakdown from './DicomBreakdown'
 import DicomTrendChart from './DicomTrendChart'
+import PipelineHistogram from './PipelineHistogram'
 
-export { PipelineHistogram, DicomBreakdown, DicomTrendChart }
+export { DicomBreakdown, DicomTrendChart, PipelineHistogram }

@@ -2,10 +2,10 @@
   <div>
     <v-row>
       <v-col sm="12" md="3">
-        <DicomInstances />
+        <PipelineStatus :pipelines="pipelines" />
       </v-col>
       <v-col sm="12" md="3">
-        <PipelineStatus :pipelines="pipelines" />
+        <DicomInstances />
       </v-col>
       <v-col sm="12" md="6">
         <PipelineResults />
@@ -18,7 +18,6 @@
 import { PipelineResults, PipelineStatus } from '~/components/pipeline'
 import { DicomInstances } from '~/components/dicom'
 import { mapState } from 'vuex'
-
 export default {
   components: {
     PipelineStatus,

@@ -1,7 +1,7 @@
 <template>
   <div>
     <SocketStatus :status="socketStatus" />
-    <v-btn @click="sendMessage">
+     <v-btn @click="sendMessage">
       Send Message
     </v-btn>
     {{ messageRxd }}
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import SocketStatus from 'nuxt-socket-io/components/SocketStatus.vue'
+  import SocketStatus from 'nuxt-socket-io/components/SocketStatus.vue'
 export default {
   components: {
     SocketStatus
@@ -24,14 +24,14 @@ export default {
   },
   methods: {
     sendMessage() {
-      this.socket.emit('message', { data: 'hello from nuxt' }, (resp, data) => {
+      this.socket.emit('message', {data: 'hello from nuxt'}, (resp, data) => {
         console.log(resp, data)
         this.messageRxd.push(data)
       })
     }
   },
   mounted() {
-    this.socket = this.$nuxtSocket({ path: '/ws/socket.io' })
+    this.socket = this.$nuxtSocket({path: '/ws/socket.io'})
   }
 }
 </script>

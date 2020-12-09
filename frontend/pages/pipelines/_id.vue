@@ -8,18 +8,28 @@
         align="center"
       >
         <v-icon-btn
-          large
+          back
           color="#373740"
-          @click="savePipeline"
-          icon="mdi-content-save"
-        />
-        <v-btn @click="containerList = !containerList" large icon>
-          <v-icon
-            large
+          to="/pipeline"
+        >
+        </v-icon-btn>
+        <div v-if="canEdit">
+          <v-icon-btn
+            save
             color="#373740"
-            v-text="containerList ? 'mdi-minus' : 'mdi-plus'"
+            @click="savePipeline"
+
           />
-        </v-btn>
+          <v-icon-btn
+            large
+            @click="containerList = !containerList"
+            color="#373740"
+            :icon="containerList ? 'mdi-minus' : 'mdi-plus'"
+          />
+        </div>
+        <div v-if="h">
+          No containers!
+        </div>
       </v-row>
 
       <!-- Pipeline Builder -->
@@ -27,8 +37,22 @@
         :scene.sync="scene"
         :id="pipeline_id"
         :colors="colors.container"
+        :canEdit="canEdit"
         ref="simpleFlowchart"
-      />
+      >
+        <!-- This overlay is shown if the pipeline is empty and it is the shared user viewing it -->
+        <v-overlay v-if="!canEdit && !scene.nodes.length" absolute color="primary" class="display-3 accent--text" opacity="100">
+          <v-row no-gutters justify="center">
+              This Pipeline has no nodes yet.
+          </v-row>
+          <v-row no-gutters justify="center" class="pt-8">
+            <v-btn class="mx-auto" to="/pipeline" text outline color="accent" rounded>
+              <v-icon>mdi-arrow-left</v-icon>
+             Take me back
+            </v-btn>
+          </v-row>
+        </v-overlay>
+      </SimpleFlowchart>
 
       <!-- Dialogs -->
       <v-dialog v-model="containerDialog" max-width="900px" min-height="600px">
@@ -41,31 +65,46 @@
       <!-- Container List -->
       <v-navigation-drawer
         v-model="containerList"
-        absolute
+        class="pt-3"
+        app
         right
         style="z-index: 9999"
       >
         <template v-slot:prepend>
-          <v-list-item two-line>
-            <v-list-item-content>
-              <v-btn
-                class="mt-2 mx-auto"
-                @click="containerDialog = true"
-                color="primary accent--text"
-                rounded
-              >
-                Add a Container
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </v-list-item-content>
-          </v-list-item>
+          <v-row no-gutters justify="center" class="px-2">
+            <v-btn
+              @click="containerDialog = true"
+              color="primary accent--text"
+              style="width: available"
+              class="mx-auto"
+              rounded
+              block
+            >
+              Add a Container
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+          </v-row>
+          <v-row no-gutters class="pt-2 px-2">
+            <v-text-field
+              v-model="search"
+              placeholder="Search container"
+              append-icon="mdi-magnify"
+              solo
+              flat
+              rounded
+              block
+              color="primary"
+              single-line
+              hide-details
+            />
+          </v-row>
         </template>
-
         <ContainerCard
-          v-for="c in containers"
+          v-for="c in filteredList"
           :id="c.id"
           :container="c"
           :colors="colors.container"
+          class="ma-2"
         >
           <v-icon-btn add @click="addNode(c)" color="white" />
         </ContainerCard>
@@ -78,9 +117,9 @@
 import { mapState } from 'vuex'
 import { generic_get } from '~/api'
 
-import { ContainerForm, ContainerCard } from '~/components/container/'
-import { SimpleFlowchart, OutputDestinationForm } from '~/components/flowchart'
-
+import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
+import { ContainerForm, ContainerCard } from '~/components/container'
+import { OutputDestinationForm } from '~/components/pipeline'
 import VIconBtn from '~/components/global/v-icon-btn'
 
 export default {
@@ -91,9 +130,11 @@ export default {
     ContainerForm
   },
   data: () => ({
-    containerList: true,
+    search: '',
+    userId: '',
+    containerList: false,
     containerDialog: false,
-    pipeline_id: undefined,
+    pipeline_id: '',
     colors: {
       container: {
         input: 'orange',
@@ -158,16 +199,28 @@ export default {
     async getSavedPipeline() {
       const URL = `pipeline/${this.pipeline_id}`
       try {
-        const { nodes, links } = await generic_get(this, URL)
+        const { nodes, links, user_id } = await generic_get(this, URL)
         this.getPipelineNodes(nodes)
         this.getPipelineLinks(links)
+        this.userId = user_id
+        if (this.canEdit) {
+          this.containerList = true
+        }
       } catch (e) {
         console.log(e)
       }
     }
   },
   computed: {
-    ...mapState('containers', ['containers'])
+    ...mapState('containers', ['containers']),
+    filteredList() {
+      return this.containers.filter(container =>
+        container.name.toLowerCase().includes(this.search.toLowerCase())
+      )
+    },
+    canEdit() {
+      return this.userId === this.$auth.user.id
+    }
   },
   created() {
     this.pipeline_id = parseInt(this.$router.history.current.params.id)
