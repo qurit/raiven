@@ -100,7 +100,7 @@ export default {
       const { ae_title } = user
       try {
         if (!this.rules.validateLength(ae_title) || !this.rules.validateASCII(ae_title)) throw 'Validation Error'
-        const URL = `/user/${user.id}/update-ae-title`
+        const URL = `/user/${user.id}`
         const payload = {ae_title: ae_title}
         await generic_put(this, URL, payload)
         this.$toaster.toastSuccess('AE Title updated!')

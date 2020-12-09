@@ -11,7 +11,7 @@
         counter
         :prefix="`Your AE Title is: ${$store.state.config.USER_AE_PREFIX}`"
         prepend-icon="mdi-access-point"
-      ></v-text-field>
+      />
     </v-form>
     <v-divider class="my-3" light />
     <v-select
@@ -84,6 +84,7 @@ export default {
   },
   computed: {
     ...mapState('destination', ['destinations']),
+    ...mapState('auth', ['user']),
     didEdit() {
       return this.currentAETitle !== this.aeTitle || this.didChangeAE
     }
@@ -103,12 +104,10 @@ export default {
       })
     },
     async saveUserAETitle() {
-      const URL = '/user/edit'
-      const payload = {
-        ae_title: this.aeTitle
-      }
-      const newAETitle = await generic_put(this, URL, payload)
-      this.ae_title = newAETitle
+      console.log('HEER')
+      const URL = `/user/${this.user.id}`
+      const payload = {ae_title: this.aeTitle}
+      this.ae_title = await generic_put(this, URL, payload)
     },
     async savePermittedAETitles() {
       const URL = '/destination/user-destination'
@@ -119,7 +118,10 @@ export default {
     },
     submit() {
       try {
-        this.saveUserAETitle()
+        if (this.user.ae_title !== this.ae_title) {
+            this.saveUserAETitle()
+        }
+
         this.savePermittedAETitles()
         this.$toaster.toastSuccess('Changes saved!')
       } catch (e) {
