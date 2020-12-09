@@ -29,8 +29,3 @@ def test_default_containers():
 
         for container in containers:
             assert container.is_shared
-
-
-if __name__ == '__main__':
-    test_default_containers()
-    test_default_user()
