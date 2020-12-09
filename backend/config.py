@@ -56,11 +56,15 @@ class BaseConfig:
     PICOM_INPUT_DIR = '/mnt/picom/input'
     PICOM_OUTPUT_DIR = '/mnt/picom/output'
     IMAGE_TAG_PREFIX = 'RAIVEN'
+    PIPELINE_AE_PREFIX = 'RVP-'
+    USER_AE_PREFIX = 'RVU-'
 
     # DICOM
     SCP_AE_TITLE = 'RAIVEN'
     SCP_HOST = '127.0.0.1'
     SCP_PORT = 11112
+
+    SHAREABLE_SETTINGS = ['PIPELINE_AE_PREFIX', 'USER_AE_PREFIX']
 
     def __init__(self):
         env_vars = [v for v in os.environ.keys() if (v in vars(BaseConfig)) and not v.startswith('__')]
@@ -92,3 +96,14 @@ class BaseConfig:
         finally:
             print('[config]', env_var, v)
             setattr(self, env_var, v)
+
+    def _all_settings_to_json(self) -> dict:
+        """ Should not be used due to security concerns """
+
+        settings = {k: v for k in dir(self) if not k.startswith('_') and not callable(v := getattr(self, k))}
+        settings.update(vars(self))
+
+        return settings
+
+    def to_json(self) -> dict:
+        return {k: getattr(self, k) for k in self.SHAREABLE_SETTINGS}
