@@ -1,7 +1,8 @@
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 from . import BaseORMModel, BaseModel
+from .destination import Destination
 
 
 class UserLocalCreate(BaseModel):
@@ -30,6 +31,10 @@ class User(BaseORMModel):
 
 class UserEdit(BaseModel):
     ae_title: str
+
+
+class UserDestination(BaseModel):
+    destinations: Optional[List[Destination]]
 
 
 class Token(BaseModel):
