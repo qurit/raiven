@@ -30,7 +30,7 @@ export default {
               : 'mdi-package-variant-closed'
         },
         {
-          to: '/pipelines',
+          to: '/pipeline',
           label: 'Pipelines',
           icon:
             this.$route.path === '/pipelines'
