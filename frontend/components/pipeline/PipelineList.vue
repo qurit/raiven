@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     viewPipeline(pipeline) {
-      this.$router.push({ path: `/pipelines/${pipeline.id}` })
+      this.$router.push({ path: `/pipeline/${pipeline.id}` })
     },
     async removePipeline(pipeline) {
       try {
