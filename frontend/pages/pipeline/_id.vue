@@ -49,7 +49,7 @@
         ref="simpleFlowchart"
       >
         <!-- This overlay is shown if the pipeline is empty and it is the shared user viewing it -->
-        <v-overlay v-if="!canEdit && !scene.nodes.length" absolute color="primary" class="display-3 accent--text" opacity="100">
+        <v-overlay v-if="!isFetching && !canEdit && !scene.nodes.length" absolute color="primary" class="display-3 accent--text" opacity="100">
           <v-row no-gutters justify="center">
               This Pipeline has no nodes yet.
           </v-row>
@@ -145,6 +145,7 @@ export default {
     PipelineInfo
   },
   data: () => ({
+    isFetching: true,
     search: '',
     userId: '',
     containerList: false,
@@ -201,6 +202,7 @@ export default {
         }
         this.scene.nodes.push(containerNode)
       })
+      this.isFetching = false
     },
     getPipelineLinks(links) {
       links.forEach(link => {
