@@ -91,6 +91,9 @@ class PathMixin(NestedPathMixin):
         return os.path.join(config.UPLOAD_DIR, self.__directory__)
 
     def get_path(self) -> str:
+        if not self.id:
+            raise Exception('The object needs to be first saved in the db')
+
         return os.path.join(self.__directory__, str(self.id))
 
 
