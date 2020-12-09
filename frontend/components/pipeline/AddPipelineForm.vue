@@ -8,14 +8,14 @@
       :rules="[v => !!v || 'A Pipeline Name is required']"
       class="px-15 pt-10"
     />
-        <v-text-field
-        v-model="aeTitle"
-        label="AE Title"
-        class="px-15"
-        :rules="[rules.validateLength, rules.validateASCII]"
-        counter
-        prefix="RVP-"
-      />
+    <v-text-field
+      v-model="aeTitle"
+      label="AE Title"
+      class="px-15"
+      :rules="[rules.validateLength, rules.validateASCII]"
+      counter
+      :prefix="$store.state.config.PIPELINE_AE_PREFIX"
+    />
     <v-checkbox
       v-model="isShared"
       label="Shared"
@@ -80,8 +80,6 @@ export default {
       } catch (e) {
         this.$toaster.toastError('Something went wrong')
       }
-
-   
     }
   }
 }
