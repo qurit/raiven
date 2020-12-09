@@ -15,7 +15,6 @@ class User(Base):
     name = Column(String)
     ae_title = Column(String)
     is_admin = Column(Boolean, default=False)
-    ae_title = Column(String, default='')
     first_seen = Column(DateTime, default=datetime.utcnow)
     last_seen = Column(DateTime, default=datetime.utcnow)
 

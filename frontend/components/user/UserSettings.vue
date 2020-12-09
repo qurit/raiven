@@ -9,7 +9,7 @@
         v-model="aeTitle"
         :rules="[rules.validateLength, rules.validateASCII]"
         counter
-        prefix="Your AE Title is: RVU-"
+        :prefix="`Your AE Title is: ${$store.state.config.USER_AE_PREFIX}`"
         prepend-icon="mdi-access-point"
       ></v-text-field>
     </v-form>
@@ -72,7 +72,7 @@ export default {
             value.trim().length <= 12 ||
             'AE Title is too long, 12 characters max'
           )}
-         
+
         },
         validateASCII(value) {
           if (!!value) {
