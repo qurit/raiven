@@ -6,7 +6,7 @@
   <sub>Radiology + AI + Environment  = Raiven</sub>
 </p>
 <p align="center">
-<!-- <img alt="Docker API Image CI" src="https://github.com/qurit/raiven/workflows/Docker%20API%20Image%20CI/badge.svg?branch=master" /> -->
+<img alt="Tests" src="https://github.com/qurit/raiven/workflows/Python%20application/badge.svg?branch=master" />
 <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/fastapi" />
 <img alt="npm" src="https://img.shields.io/npm/v/npm" />
 
