@@ -99,7 +99,7 @@ export default {
     async saveAETitle(user) {
       const { ae_title } = user
       try {
-        if (!this.rules.validateLength(ae_title) || !this.rules.validateASCII(ae_title)) throw 'Validation Error'
+        if ((typeof this.rules.validateLength(ae_title) === "string")  || (typeof this.rules.validateASCII(ae_title) === "string")) throw 'Validation Error'
         const URL = `/user/${user.id}`
         const payload = {ae_title: ae_title}
         await generic_put(this, URL, payload)

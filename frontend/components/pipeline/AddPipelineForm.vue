@@ -69,7 +69,6 @@ export default {
         ae_title: this.aeTitle.trim().length > 0 ? this.aeTitle.trim() : null,
         is_shared: this.isShared
       }
-      console.log(payload)
       const { data } = await this.$store.dispatch(
         'pipelines/addPipeline',
         payload

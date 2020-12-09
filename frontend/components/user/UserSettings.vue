@@ -104,7 +104,6 @@ export default {
       })
     },
     async saveUserAETitle() {
-      console.log('HEER')
       const URL = `/user/${this.user.id}`
       const payload = {ae_title: this.aeTitle}
       this.ae_title = await generic_put(this, URL, payload)
