@@ -12,7 +12,7 @@ def test_io_path_mixin_not_yet_saved():
     mixin = TestModel()
 
     with pytest.raises(Exception):
-        mixin.get_abs_path()
+        mixin.get_abs_input_path()
 
     with pytest.raises(Exception):
         mixin.get_abs_output_path()
