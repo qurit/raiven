@@ -47,7 +47,7 @@ export default {
     }
   },
   created() {
-    console.log(this.$vuetify.breakpoint)
+    this.$store.dispatch('fetchConfig')
   }
 }
 </script>
