@@ -68,10 +68,11 @@ export default {
       currentAETitle: '',
       rules: {
         validateLength(value) {
-          return (
+          if (!!value) { return (
             value.trim().length <= 12 ||
             'AE Title is too long, 12 characters max'
-          )
+          )}
+         
         },
         validateASCII(value) {
           if (!!value) {
