@@ -10,16 +10,11 @@
         <v-icon-btn
           back
           color="#373740"
-          to="/pipeline"
+          @click="$router.push({ path: '/pipeline' })"
         >
         </v-icon-btn>
         <div v-if="canEdit">
-          <v-icon-btn
-            save
-            color="#373740"
-            @click="savePipeline"
-
-          />
+          <v-icon-btn save color="#373740" @click="savePipeline" />
           <v-icon-btn
             large
             @click="containerList = !containerList"
@@ -41,14 +36,27 @@
         ref="simpleFlowchart"
       >
         <!-- This overlay is shown if the pipeline is empty and it is the shared user viewing it -->
-        <v-overlay v-if="!canEdit && !scene.nodes.length" absolute color="primary" class="display-3 accent--text" opacity="100">
+        <v-overlay
+          v-if="!canEdit && !scene.nodes.length"
+          absolute
+          color="primary"
+          class="display-3 accent--text"
+          opacity="100"
+        >
           <v-row no-gutters justify="center">
-              This Pipeline has no nodes yet.
+            This Pipeline has no nodes yet.
           </v-row>
           <v-row no-gutters justify="center" class="pt-8">
-            <v-btn class="mx-auto" to="/pipeline" text outline color="accent" rounded>
+            <v-btn
+              class="mx-auto"
+              to="/pipeline"
+              text
+              outline
+              color="accent"
+              rounded
+            >
               <v-icon>mdi-arrow-left</v-icon>
-             Take me back
+              Take me back
             </v-btn>
           </v-row>
         </v-overlay>
