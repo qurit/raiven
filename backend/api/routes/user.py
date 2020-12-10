@@ -14,6 +14,9 @@ router = APIRouter()
 
 @router.get("/", response_model=List[UserSchema], dependencies=[Depends(token_auth)])
 def get_all_users(db: Session = Depends(session)):
+    """
+    Get all users.
+    """
     return db.query(User).all()
 
 
@@ -37,11 +40,17 @@ def create_local_user(user_schema: UserLocalCreate, db: Session = Depends(sessio
 
 @router.get("/me", response_model=UserSchema)
 def get_the_current_user(user: User = Depends(token_auth)):
+    """
+    Get current user
+    """
     return user
 
 
 @router.put("/{user_id}")
-def edit_user_ae_title(user_id: int, new_info: UserEdit, user: User = Depends(token_auth), db: Session = Depends(session)):
+def edit_user_settings(user_id: int, new_info: UserEdit, user: User = Depends(token_auth), db: Session = Depends(session)):
+    """
+    Edit user settings
+    """
     if user.id != user_id and not user.is_admin:
         return HTTPException(403, 'Unauthorized')
 
