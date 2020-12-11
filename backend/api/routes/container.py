@@ -18,6 +18,7 @@ router = APIRouter()
 
 @router.get("/stats")
 def get_container_stats(db: Session = Depends(session)):
+    """ Get container count. Used in dashboard counter."""
     stats = {
         "container_counts": db.query(Container).count(),
     }
@@ -31,13 +32,14 @@ def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(s
     return db.query(Container).filter((Container.user_id == user.id) | Container.is_shared).all()
 
 
-# TODO: Add response model
-@router.post("/")
+@router.post("/", response_model=container.Container)
 async def create_container(
         file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
         description: str = Form(None), is_input_container: bool = Form(...),
         is_output_container: bool = Form(...), is_shared: bool = Form(...), user: User = Depends(token_auth), db: session = Depends(session)):
+    """ Create a container """
 
+    #TODO: fix this zip file check. tried zipfile.is_zipfile() but didn't work
     if ".zip" in filename:
         z = zipfile.ZipFile(io.BytesIO(file))
         db_container = Container(
@@ -82,12 +84,12 @@ async def create_container(
     db.commit()
     ContainerController.build_container(db_container.id)
 
-    # TODO: We shoulnt return a list
-    return [db_container]
+    return db_container
 
 
 @router.get("/{container_id}", response_model=container.Container)
 def get_container(container_id: int, db: Session = Depends(session)):
+    """ Get a specific container"""
     return db.query(Container).get(container_id)
 
 
@@ -96,7 +98,7 @@ def update_container(
         container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(None),
         description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...), is_shared: bool = Form(...),
         db: session = Depends(session)):
-
+    """ Editing a container"""
     if file is not None:
         container = db.query(Container).get(container_id)
         # remove previous file
@@ -127,4 +129,5 @@ def update_container(
 
 @router.delete("/{container_id}", response_model=container.Container)
 def delete_container(container_id: int, db: Session = Depends(session)):
+    """ Delete a container"""
     return db.query(Container).get(container_id).delete(db)
