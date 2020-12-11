@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import APIRouter, Depends, HTTPException
 
 from api import session, config
-from api.models.user import User, UserLocal, UserDestination
+from api.models.user import User, UserLocal, testing
 from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit, blah, test
 from api.auth import token_auth
 
@@ -63,14 +63,28 @@ def edit_user_settings(user_id: int, new_info: UserEdit, user: User = Depends(to
     return user_to_edit
 
 
-@router.put("/user-destination")
-def test_put(user: User = Depends(token_auth), db: Session = Depends(session)):
+# @router.put("/user-destination")
+# def update_user_destination(destinations: testing, user: User = Depends(token_auth), db: Session = Depends(session)):
+#     """ Update the user's application title"""
+#     return "ok"
+
+
+
+@router.post("/permitted-ae")
+def update_user_destination(destinations: blah, user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Update the user's application title"""
-    return "ok"
+    print(destinations)
+    db.query(testing).filter(
+        testing.user_id == user.id).delete()
+    user_destinations = destinations.destinations
+    for dest in user_destinations:
+        new_destination_user = testing(user_id=user.id, destination_id=dest.id)
+        new_destination_user.save(db)
+    return new_destination_user
 
 
-@router.get("/ae-title", response_model=List[test])
+@router.get("/permitted-ae", response_model=List[test])
 def get_put(user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Get the user's permitted application entities (to receive) """
     print(user)
-    return db.query(UserDestination).filter(UserDestination.user_id == user.id).all()
+    return db.query(testing).filter(testing.user_id == user.id).all()
