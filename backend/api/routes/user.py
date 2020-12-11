@@ -5,11 +5,12 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import APIRouter, Depends, HTTPException
 
 from api import session, config
-from api.models.user import User, UserLocal
-from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit
+from api.models.user import User, UserLocal, UserDestination
+from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit, blah, test
 from api.auth import token_auth
 
 router = APIRouter()
+
 
 
 @router.get("/", response_model=List[UserSchema], dependencies=[Depends(token_auth)])
@@ -60,3 +61,16 @@ def edit_user_settings(user_id: int, new_info: UserEdit, user: User = Depends(to
     user_to_edit.ae_title = new_info.ae_title
     user_to_edit.save(db)
     return user_to_edit
+
+
+@router.put("/user-destination")
+def test_put(user: User = Depends(token_auth), db: Session = Depends(session)):
+    """ Update the user's application title"""
+    return "ok"
+
+
+@router.get("/ae-title", response_model=List[test])
+def get_put(user: User = Depends(token_auth), db: Session = Depends(session)):
+    """ Get the user's permitted application entities (to receive) """
+    print(user)
+    return db.query(UserDestination).filter(UserDestination.user_id == user.id).all()
