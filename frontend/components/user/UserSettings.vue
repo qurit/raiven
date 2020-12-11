@@ -52,7 +52,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { generic_get, generic_put } from '~/api'
+import { generic_get, generic_post } from '~/api'
 import { OutputDestinationForm } from '~/components/flowchart'
 export default {
   components: {
@@ -98,7 +98,7 @@ export default {
       this.currentAETitle = ae_title
     },
     async getUserPermittedAEs() {
-      const URL = '/destination/user-destination'
+      const URL = '/user/permitted-ae'
       const userPermittedDestinations = await generic_get(this, URL)
       userPermittedDestinations.forEach(permitted => {
         this.permittedAEs.push(permitted.destination)
@@ -110,11 +110,11 @@ export default {
       this.ae_title = await generic_put(this, URL, payload)
     },
     async savePermittedAETitles() {
-      const URL = '/destination/user-destination'
+      const URL = '/user/permitted-ae'
       const payload = {
         destinations: this.permittedAEs
       }
-      await generic_put(this, URL, payload)
+      await generic_post(this, URL, payload)
     },
     submit() {
       try {
