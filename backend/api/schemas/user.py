@@ -33,8 +33,12 @@ class UserEdit(BaseModel):
     ae_title: str
 
 
-class UserDestination(BaseModel):
+class blah(BaseModel):
     destinations: Optional[List[Destination]]
+
+
+class test(BaseORMModel):
+    destination: Destination
 
 
 class Token(BaseModel):
