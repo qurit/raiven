@@ -43,8 +43,7 @@
         ref="simpleFlowchart"
       >
         <!-- This overlay is shown if the pipeline is empty and it is the shared user viewing it -->
-        <v-overlay v-if="!canEdit && !scene.nodes.length" absolute color="primary" class="display-3 accent--text"
-                   opacity="100">
+        <v-overlay v-if="!isFetching && !canEdit && !scene.nodes.length" absolute color="primary" class="display-3 accent--text" opacity="100">
           <v-row no-gutters justify="center">
             This Pipeline has no nodes yet.
           </v-row>
@@ -58,11 +57,12 @@
       </SimpleFlowchart>
 
       <!-- Dialogs -->
+
       <v-dialog v-model="containerDialog" max-width="900px" min-height="600px">
         <ContainerForm :isEditing="false" @closeDialog="containerDialog = false"/>
       </v-dialog>
       <v-dialog v-model="pipelineDialog" max-width="1150px" min-height="600px">
-        <PipelineInfo :pipelineId="this.pipeline_id" @close="pipelineDialog = false "/>
+        <PipelineInfo :pipelineId="this.pipeline_id" />
       </v-dialog>
 
       <!-- Container List -->
@@ -137,6 +137,7 @@ export default {
     PipelineInfo
   },
   data: () => ({
+    isFetching: true,
     search: '',
     userId: '',
     containerList: false,
@@ -193,6 +194,7 @@ export default {
         }
         this.scene.nodes.push(containerNode)
       })
+      this.isFetching = false
     },
     getPipelineLinks(links) {
       links.forEach(link => {
