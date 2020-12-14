@@ -54,6 +54,8 @@
 import { mapState } from 'vuex'
 import { generic_get, generic_put } from '~/api'
 import { OutputDestinationForm } from '~/components/flowchart'
+import aeTitleValidator from '~/utilities/aeTitleValidator'
+
 export default {
   components: {
     OutputDestinationForm
@@ -67,18 +69,11 @@ export default {
       aeTitle: '',
       currentAETitle: '',
       rules: {
-        validateLength(value) {
-          if (!!value) {
-            return (
-              value.trim().length <= 16 ||
-              'AE Title is too long, 16 characters max'
-            )
-          }
+        validateLength: v => {
+          return aeTitleValidator.validateLength(v)
         },
-        validateASCII(value) {
-          if (!!value) {
-            return /^[\x00-\x7F]*$/.test(value) || 'ASCII Characters only'
-          }
+        validateASCII: v => {
+          return aeTitleValidator.validateASCII(v)
         }
       }
     }
