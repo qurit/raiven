@@ -1,57 +1,60 @@
 <template>
   <v-card elevation="6">
     <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b> About this Pipeline</b></v-toolbar-title>
+      <v-toolbar-title class="font-weight-bold">About this Pipeline</v-toolbar-title>
       <v-spacer/>
       <v-icon-btn
-        :color="isFormValid ? 'accent' : 'error'"
         @click="editState ? saveChanges() : makeEditable()"
         :icon="editState ? 'mdi-content-save' : 'mdi-pencil'"
-        :disabled="editState && !isFormValid"
+        color="accent"
       />
       <v-icon-btn color="accent" close @click="$emit('close')"/>
     </v-toolbar>
 
     <!-- Text   -->
     <v-card-text>
-      <v-row>
-        <v-col sm="12" md="5">
-          <v-text-field
-            label="Pipeline Name"
-            filled
-            :disabled="!editState"
-            v-model="pipelineName"
-          />
-        </v-col>
-        <v-col sm="12" md="5">
-          <v-text-field
-            filled
-            label="AE Title"
-            :prefix="$store.state.settings.PIPELINE_AE_PREFIX"
-            :disabled="!editState"
-            v-model="pipelineAETitle"
-             :rules="[rules.validateLength, rules.validateASCII]"
-          />
-        </v-col>
-        <v-col sm="12" md="2">
-          <v-checkbox
-            v-model="pipelineIsShared"
-            label="Shared"
-            :false-value="false"
-            :true-value="true"
-            :disabled="!editState"
-          />
-        </v-col>
+      <v-form v-model="isFormValid" ref="form">
+        <v-row>
+          <v-col sm="12" md="5">
+            <v-text-field
+              v-model="pipelineName"
+              :disabled="!editState"
+              label="Pipeline Name"
+              :rules="[rules.validateEmpty]"
+              filled
+            />
+          </v-col>
+          <v-col sm="12" md="5">
+            <v-text-field
+              v-model="pipelineAETitle"
+              :prefix="$store.state.config.PIPELINE_AE_PREFIX"
+              :disabled="!editState"
+              :rules="[rules.validateEmpty, rules.validateLength, rules.validateASCII]"
+              label="AE Title"
+              filled
+            />
+          </v-col>
+          <v-col sm="12" md="2">
+            <v-checkbox
+              v-model="pipelineIsShared"
+              label="Shared"
+              :false-value="false"
+              :true-value="true"
+              :disabled="!editState"
+            />
+          </v-col>
 
-        <v-col sm="12" md="6">
-          <span class="title">Results from this Pipeline</span>
-          <PipelineResults :pipelineId="this.pipelineId"/>
-        </v-col>
-        <v-col sm="12" md="6">
-          <span class="title">More Info</span>
-          <PipelineTreeviewInfo :pipelineId="this.pipelineId"/>
-        </v-col>
-      </v-row>
+          <v-col sm="12" md="6">
+            <span class="title">Results from this Pipeline</span>
+            <PipelineResults :pipelineId="this.pipelineId"/>
+          </v-col>
+          <v-col sm="12" md="6">
+            <span class="title">More Info</span>
+            <PipelineTreeviewInfo :pipelineId="this.pipelineId"/>
+          </v-col>
+
+        </v-row>
+      </v-form>
     </v-card-text>
 
   </v-card>
@@ -59,15 +62,13 @@
 
 <script>
 import { generic_get, generic_put } from '~/api'
-import vIconBtn from './global/v-icon-btn.vue'
 import PipelineTreeviewInfo from './PipelineTreeviewInfo'
 import PipelineResults from '~/components/pipeline/PipelineResults'
+
 export default {
-  components: { vIconBtn, PipelineResults, PipelineTreeviewInfo },
+  components: { PipelineResults, PipelineTreeviewInfo },
   props: {
-    pipelineId: {
-      type: String
-    }
+    pipelineId: Number,
   },
   data() {
     return {
@@ -77,22 +78,19 @@ export default {
       isFormValid: false,
       editState: false,
        rules: {
-        validateLength(value) {
-          return (
-            value.trim().length <= 16 ||
-            'AE Title is too long, 16 characters max'
-          )
-        },
-        validateASCII(value) {
-          if (!!value) {
-            return /^[\x00-\x7F]*$/.test(value) || 'ASCII Characters only'
-          }
-        }
+        validateLength: v => v.trim().length <= 16 || 'AE Title is too long, 16 characters max',
+        validateASCII: v => /^[\x00-\x7F]*$/.test(v) || 'ASCII Characters only',
+        validateEmpty: v => !!v || 'Field Cannot be Empty'
       },
     }
   },
   methods: {
     async saveChanges() {
+      if (!this.$refs.form.validate()) {
+        this.$toaster.toastError('Invalid Form!')
+        return
+      }
+
       try {
         const URL = `/pipeline/${this.pipelineId}/edit`
         const payload = {
