@@ -67,7 +67,7 @@ class UserLocal(Base):
         return super().save(*args, **kwargs)
 
 
-class testing(Base):
+class UserDestination(Base):
     user_id = Column(ForeignKey("user.id", ondelete="CASCADE"))
     destination_id = Column(ForeignKey("destination.id", ondelete="CASCADE"))
 
