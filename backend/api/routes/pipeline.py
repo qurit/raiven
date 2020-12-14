@@ -2,7 +2,7 @@ import os
 import shutil
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
@@ -47,8 +47,7 @@ def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
 
     # Sending the zip file as response
     zip_file = open(zip_path + '.zip', 'rb')
-    response = StreamingResponse(
-        zip_file, media_type="application/x-zip-compressed")
+    response = StreamingResponse(zip_file, media_type="application/x-zip-compressed")
     response.headers["Content-Disposition"] = "attachment; filename=results.zip"
 
     return response
@@ -66,7 +65,10 @@ def create_pipeline(pipeline: schemas.PipelineCreate, user: User = Depends(token
 
 @router.get("/{pipeline_id}", response_model=schemas.PipelineFull)
 def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
-    return db.query(Pipeline).get(pipeline_id)
+    if not (pipeline := db.query(Pipeline).get(pipeline_id)):
+        raise HTTPException(404)
+
+    return pipeline
 
 
 @router.put("/{pipeline_id}", response_model=schemas.PipelineRun)
@@ -121,4 +123,8 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
 
 @router.delete("/{pipeline_id}", response_model=schemas.Pipeline)
 def delete_pipeline(pipeline_id: int, db: Session = Depends(session)):
-    return db.query(Pipeline).get(pipeline_id).delete(db)
+    if not (pipeline := db.query(Pipeline).get(pipeline_id)):
+        raise HTTPException(404)
+
+    pipeline.delete(db)
+    return pipeline
