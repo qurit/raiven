@@ -32,10 +32,7 @@
               single-line
               hint="Press Enter to save"
               :prefix="aePrefix"
-              :rules="[
-                rules.validateASCII,
-                rules.validateLength
-              ]"
+              :rules="[rules.validateASCII, rules.validateLength]"
             ></v-text-field>
           </template>
         </v-edit-dialog>
@@ -55,6 +52,7 @@
 
 <script>
 import { generic_get, generic_put } from '~/api'
+import aeTitleValidator from '~/utilities/aeTitleValidator'
 
 export default {
   data() {
@@ -70,18 +68,11 @@ export default {
         { text: 'Last Seen', value: 'last_seen' }
       ],
       rules: {
-        validateLength(value) {
-          if (!!value) {
-            return (
-              value.trim().length <= 16 ||
-              'AE Title is too long, 16 characters max'
-            )
-          }
+        validateLength: v => {
+          return aeTitleValidator.validateLength(v)
         },
-        validateASCII(value) {
-          if (!!value) {
-            return /^[\x00-\x7F]*$/.test(value) || 'ASCII Characters only'
-          }
+        validateASCII: v => {
+          return aeTitleValidator.validateASCII(v)
         }
       }
     }
@@ -99,13 +90,19 @@ export default {
     async saveAETitle(user) {
       const { ae_title } = user
       try {
-        if ((typeof this.rules.validateLength(ae_title) === "string")  || (typeof this.rules.validateASCII(ae_title) === "string")) throw 'Validation Error'
+        if (
+          typeof this.rules.validateLength(ae_title) === 'string' ||
+          typeof this.rules.validateASCII(ae_title) === 'string'
+        )
+          throw 'Validation Error'
         const URL = `/user/${user.id}`
-        const payload = {ae_title: ae_title}
+        const payload = { ae_title: ae_title }
         await generic_put(this, URL, payload)
         this.$toaster.toastSuccess('AE Title updated!')
       } catch (e) {
-         this.$toaster.toastError('Could not save, make sure you have properly formed the AE title')
+        this.$toaster.toastError(
+          'Could not save, make sure you have properly formed the AE title'
+        )
       }
     },
     async getUsers() {

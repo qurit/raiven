@@ -39,7 +39,7 @@ import FlowchartLink from './FlowchartLink.vue'
 import FlowchartNode from './FlowchartNode.vue'
 import { getMousePosition } from './position'
 import { generic_post } from '~/api'
-import { pipelineChecker } from '~/utilities/pipelineChecker'
+import { pipelineValidator } from '~/utilities/pipelineValidator'
 
 export default {
   name: 'VueFlowchart',
@@ -335,13 +335,9 @@ export default {
       }
     },
     savePipeline() {
-      pipelineChecker(this.scene.nodes, this.scene.links)
+      pipelineValidator(this.scene.nodes, this.scene.links)
         ? this.saveNodesAndLinks()
         : this.$toaster.toastError('Pipeline is not connected!')
-      console.log('LINKS')
-      console.log(this.scene.links)
-      console.log('NODES')
-      console.log(this.scene.nodes)
     }
   }
 }
