@@ -33,7 +33,7 @@ def get_series_breakdown(dicom_type: str, dicom_id: int, db: Session = Depends(s
     return {modality: count for modality, count in dicom_modality_count}
 
 
-@router.get("/stats")
+@router.get("/stats", response_model=dicom.DicomStats)
 def get_dicom_stats(db: Session = Depends(session)):
     """ Getting counts for the DICOM images. Used in the dashboard counters """
     stats = {
