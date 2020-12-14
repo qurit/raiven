@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import ContainerCard from '~/components/flowchart/ContainerCard'
+import ContainerCard from './ContainerCard'
 
 export default {
   components: {
