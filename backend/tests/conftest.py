@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy_utils import drop_database, create_database, database_exists
 
-from tests import testing_session, models, TEST_USER
+from tests import testing_session, models, TEST_USER, utils
 from api import engine, scripts
 
 
@@ -16,9 +16,7 @@ def create_test_database():
     models.Base.metadata.create_all(bind=engine)
     scripts.run_startup_scripts()
 
-    with testing_session() as db:
-        models.user.User(username=TEST_USER.username, name=TEST_USER.name).save(db)
-        db.commit()
+    utils.create_local_user(**TEST_USER.dict())
 
     yield
 

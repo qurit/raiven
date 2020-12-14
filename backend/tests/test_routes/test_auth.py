@@ -1,12 +1,11 @@
-from tests import client
-from tests.test_routes.test_user import create_local_user
+from tests import client, utils
 
 
 def test_login():
     username = 'test_login'
     password = 'test_password'
 
-    user = create_local_user('test', username, password)
+    user = utils.create_local_user('test', username, password)
     assert user
 
     response = client.post('/auth/token', data={'username': user.username, 'password': password})
@@ -19,7 +18,7 @@ def test_login():
 def test_login_failure():
     username = 'test_failure'
     password = 'my_password'
-    user = create_local_user('test', username, password)
+    user = utils.create_local_user('test', username, password)
 
     response = client.post('/auth/token', data={'username': user.username, 'password': password})
     assert response.status_code == 200
