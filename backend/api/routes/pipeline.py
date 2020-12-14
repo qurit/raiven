@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
-from api import session, queries
+from api import session, queries, middleware
 from api.pipelining import PipelineController
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun
 from api.schemas import pipeline as schemas
@@ -122,9 +122,9 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
 
 
 @router.delete("/{pipeline_id}", response_model=schemas.Pipeline)
+@middleware.exists_or_404
 def delete_pipeline(pipeline_id: int, db: Session = Depends(session)):
-    if not (pipeline := db.query(Pipeline).get(pipeline_id)):
-        raise HTTPException(404)
+    if pipeline := db.query(Pipeline).get(pipeline_id):
+        pipeline.delete(db)
 
-    pipeline.delete(db)
     return pipeline
