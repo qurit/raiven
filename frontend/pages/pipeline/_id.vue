@@ -7,19 +7,16 @@
         no-gutters
         align="center"
       >
-<v-icon-btn
+        <v-icon-btn
           icon="mdi-keyboard-return"
           color="#373740"
           to="/pipeline"
         />
-           <v-icon-btn
+        <v-icon-btn
           color="#373740"
-          @click="
-            pipelineDialog = true
-            containerList = false"
+          @click="[pipelineDialog = true, containerList = false]"
           icon="mdi-information"
         />
-        </v-icon-btn>
         <div v-if="canEdit">
           <v-icon-btn
             save
@@ -28,15 +25,12 @@
 
           />
           <v-icon-btn
-          color="#373740"
-          @click="containerList = !containerList"
-          :icon="
+            color="#373740"
+            @click="containerList = !containerList"
+            :icon="
             containerList ? 'mdi-arrow-collapse-right' : 'mdi-arrow-expand-left'
           "
-        />
-        </div>
-        <div v-if="h">
-          No containers!
+          />
         </div>
       </v-row>
 
@@ -49,32 +43,30 @@
         ref="simpleFlowchart"
       >
         <!-- This overlay is shown if the pipeline is empty and it is the shared user viewing it -->
-        <v-overlay v-if="!canEdit && !scene.nodes.length" absolute color="primary" class="display-3 accent--text" opacity="100">
+        <v-overlay v-if="!canEdit && !scene.nodes.length" absolute color="primary" class="display-3 accent--text"
+                   opacity="100">
           <v-row no-gutters justify="center">
-              This Pipeline has no nodes yet.
+            This Pipeline has no nodes yet.
           </v-row>
           <v-row no-gutters justify="center" class="pt-8">
             <v-btn class="mx-auto" to="/pipeline" text outline color="accent" rounded>
               <v-icon>mdi-arrow-left</v-icon>
-             Take me back
+              Take me back
             </v-btn>
           </v-row>
         </v-overlay>
       </SimpleFlowchart>
 
       <!-- Dialogs -->
-
       <v-dialog v-model="containerDialog" max-width="900px" min-height="600px">
-        <ContainerForm
-          :isEditing="false"
-          @closeDialog="containerDialog = false"
-        />
+        <ContainerForm :isEditing="false" @closeDialog="containerDialog = false"/>
       </v-dialog>
       <v-dialog v-model="pipelineDialog" max-width="1150px" min-height="600px">
-        <PipelineInfo :pipelineId="this.pipeline_id" />
+        <PipelineInfo :pipelineId="this.pipeline_id" @close="pipelineDialog = false "/>
       </v-dialog>
 
       <!-- Container List -->
+<!-- TODO: REFACTOR OUT OF THIS FILE -->
       <v-navigation-drawer
         v-model="containerList"
         class="pt-3"
@@ -118,7 +110,7 @@
           :colors="colors.container"
           class="ma-2"
         >
-          <v-icon-btn add @click="addNode(c)" color="white" />
+          <v-icon-btn add @click="addNode(c)" color="white"/>
         </ContainerCard>
       </v-navigation-drawer>
     </v-col>
