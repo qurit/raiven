@@ -39,21 +39,23 @@ def create_container(
         description: str = Form(None), is_input_container: bool = Form(...),
         is_output_container: bool = Form(...), is_shared: bool = Form(...), user: User = Depends(token_auth), db: Session = Depends(session)):
 
-    if ".zip" in filename:
-        z = zipfile.ZipFile(io.BytesIO(file))
-        db_container = Container(
-            user_id=user.id,
-            name=name,
-            description=description,
-            is_input_container=is_input_container,
-            is_output_container=is_output_container,
-            is_shared=is_shared,
-            filename='Dockerfile')
-        db_container.save(db)
+    db_container = Container(
+        user_id=user.id,
+        name=name,
+        description=description,
+        is_input_container=is_input_container,
+        is_output_container=is_output_container,
+        is_shared=is_shared,
+        filename='Dockerfile')
+    db_container.save(db)
 
+    if ".zip" in filename:
+
+        z = zipfile.ZipFile(io.BytesIO(file))
         folder = db_container.get_abs_path()
         z.extractall(folder)
 
+        # Finding the Dockerfile in the zip file
         for root, _, files in os.walk(folder):
             if 'Dockerfile' in files:
                 db_container.dockerfile_path = os.path.relpath(
@@ -61,21 +63,12 @@ def create_container(
                 break
 
         db_container.save(db)
+
     else:
-        # TODO: Review This Code.  Refactoring needed
-        db_container = Container(
-            user_id=user.id,
-            name=name,
-            description=description,
-            is_input_container=is_input_container,
-            is_output_container=is_output_container,
-            is_shared=is_shared,
-            filename=filename)
-        db_container.save(db)
         with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
             fp.write(file)
-        db_container.dockerfile_path = os.path.join(
-            db_container.get_path(), filename)
+
+        db_container.dockerfile_path = os.path.join(db_container.get_path(), filename)
         db_container.save(db)
 
     # Build Container In Background
