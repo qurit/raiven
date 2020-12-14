@@ -17,12 +17,12 @@
     <v-select
       multiple
       class="mx-2"
-      hint="Choose which Association Entities can send to you"
+      hint="Choose which Application Entities can send to you"
       persistent-hint
       :items="destinations"
       item-text="full_name"
       return-object
-      label="Allowed Association Entities"
+      label="Allowed Application Entities"
       v-model="permittedAEs"
       chips
       clearable
@@ -31,7 +31,7 @@
     >
     </v-select>
     <v-row justify="center" align="center">
-      Add an Association Entity
+      Add an Application Entity
       <v-icon-btn add @click="destinationDialog = true" />
     </v-row>
     <v-divider class="my-3" light />
@@ -54,6 +54,8 @@
 import { mapState } from 'vuex'
 import { generic_get, generic_put } from '~/api'
 import { OutputDestinationForm } from '~/components/flowchart'
+import aeTitleValidator from '~/utilities/aeTitleValidator'
+
 export default {
   components: {
     OutputDestinationForm
@@ -67,17 +69,11 @@ export default {
       aeTitle: '',
       currentAETitle: '',
       rules: {
-        validateLength(value) {
-          if (!!value) { return (
-            value.trim().length <= 12 ||
-            'AE Title is too long, 12 characters max'
-          )}
-
+        validateLength: v => {
+          return aeTitleValidator.validateLength(v)
         },
-        validateASCII(value) {
-          if (!!value) {
-            return /^[\x00-\x7F]*$/.test(value) || 'ASCII Characters only'
-          }
+        validateASCII: v => {
+          return aeTitleValidator.validateASCII(v)
         }
       }
     }
@@ -105,7 +101,7 @@ export default {
     },
     async saveUserAETitle() {
       const URL = `/user/${this.user.id}`
-      const payload = {ae_title: this.aeTitle}
+      const payload = { ae_title: this.aeTitle }
       this.ae_title = await generic_put(this, URL, payload)
     },
     async savePermittedAETitles() {
@@ -118,7 +114,7 @@ export default {
     submit() {
       try {
         if (this.user.ae_title !== this.ae_title) {
-            this.saveUserAETitle()
+          this.saveUserAETitle()
         }
 
         this.savePermittedAETitles()

@@ -32,6 +32,7 @@ export default {
     delete: Boolean,
     edit: Boolean,
     refresh: Boolean,
+    close: Boolean,
   },
   computed: {
     iconToShow: (ctx) => {
@@ -42,6 +43,7 @@ export default {
       if ( ctx.save ) return 'mdi-content-save'
       if ( ctx.refresh ) return 'mdi-refresh'
       if ( ctx.back ) return 'mdi-arrow-left'
+      if ( ctx.close ) return 'mdi-close'
       return ctx.icon
     }
   }
