@@ -27,39 +27,39 @@ services:
     volumes:
       - ./uploads:/app/uploads
       - /var/run/docker.sock:/var/run/docker.sock
-#
-#  api:
-#    build: ./backend
-#    ports:
-#      - "5000:5000"
-#      - "11112:11112"
-#    env_file:
-#      - docker.env
-#    depends_on:
-#      - queue
-#      - db
-#    volumes:
-#      - ./uploads:/app/uploads
-#      - /var/run/docker.sock:/var/run/docker.sock
 
-#  orthanc:
-#    image: jodogne/orthanc
-#    container_name: orthanc
-#    command: /run/secrets/ --verbose
-#    ports:
-#      - "8042:8042"
-#      - "4242:4242"
-#    secrets:
-#      - orthanc.json
-#    volumes:
-#      - orthanc_data:/var/lib/orthanc/db/
-#
-#  frontend:
-#    build: ./frontend
-#    ports:
-#      - "3000:3000"
-#    env_file:
-#      - docker.env
+  api:
+    build: ./backend
+    ports:
+      - "5000:5000"
+      - "11112:11112"
+    env_file:
+      - docker.env
+    depends_on:
+      - queue
+      - db
+    volumes:
+      - ./uploads:/app/uploads
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  orthanc:
+    image: jodogne/orthanc
+    container_name: orthanc
+    command: /run/secrets/ --verbose
+    ports:
+      - "8042:8042"
+      - "4242:4242"
+    secrets:
+      - orthanc.json
+    volumes:
+      - orthanc_data:/var/lib/orthanc/db/
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - docker.env
 
 secrets:
   orthanc.json:
