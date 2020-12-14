@@ -79,7 +79,7 @@ export default {
   router: {
     middleware: ['auth']
   },
-
+  css: ['~/assets/main.css'],
   vuetify: {
     customVariables: ['~/assets/variables.scss', '~/assets/overides.sass'],
     treeShake: true,
