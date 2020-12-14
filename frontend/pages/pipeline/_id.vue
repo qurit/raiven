@@ -97,15 +97,14 @@ import { mapState } from 'vuex'
 import { generic_get } from '~/api'
 
 import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
-import PipelineInfo from '~/components/PipelineInfo'
+import PipelineInfo from '~/components/flowchart/PipelineInfo'
 import { ContainerForm } from '~/components/container'
 import { OutputDestinationForm } from '~/components/pipeline'
 import VIconBtn from '~/components/global/v-icon-btn'
-import ContainerDrawer from '~/components/ContainerDrawer'
+import ContainerDrawer from '~/components/flowchart/ContainerDrawer'
 
 export default {
   components: {
-    ContainerCard,
     VIconBtn,
     SimpleFlowchart,
     ContainerForm,
