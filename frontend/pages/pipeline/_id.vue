@@ -8,9 +8,9 @@
         align="center"
       >
         <v-icon-btn
-          icon="mdi-keyboard-return"
+          back
           color="#373740"
-          to="/pipeline"
+          @click="$router.push({ path: '/pipeline' })"
         />
         <v-icon-btn
           color="#373740"
@@ -18,12 +18,7 @@
           icon="mdi-information"
         />
         <div v-if="canEdit">
-          <v-icon-btn
-            save
-            color="#373740"
-            @click="savePipeline"
-
-          />
+          <v-icon-btn save color="#373740" @click="savePipeline" />
           <v-icon-btn
             color="#373740"
             @click="containerList = !containerList"
@@ -48,7 +43,14 @@
             This Pipeline has no nodes yet.
           </v-row>
           <v-row no-gutters justify="center" class="pt-8">
-            <v-btn class="mx-auto" to="/pipeline" text outline color="accent" rounded>
+            <v-btn
+              class="mx-auto"
+              to="/pipeline"
+              text
+              outline
+              color="accent"
+              rounded
+            >
               <v-icon>mdi-arrow-left</v-icon>
               Take me back
             </v-btn>
@@ -57,7 +59,6 @@
       </SimpleFlowchart>
 
       <!-- Dialogs -->
-
       <v-dialog v-model="containerDialog" max-width="900px" min-height="600px">
         <ContainerForm :isEditing="false" @closeDialog="containerDialog = false"/>
       </v-dialog>
