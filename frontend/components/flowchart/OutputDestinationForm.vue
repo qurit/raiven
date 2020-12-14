@@ -1,6 +1,6 @@
 <template>
   <v-card class="overflow-x-hidden">
-    <v-form v-model="form" class="ma-5">
+    <v-form v-model="isFormValid" class="ma-5" ref="form">
       <v-card-title> Add a destination source for your pipelines</v-card-title>
       <v-row>
         <v-col cols="6">
@@ -13,9 +13,9 @@
         </v-col>
         <v-col cols="6">
           <v-text-field
-            v-model="port"
+            v-model.number="port"
             label="Port"
-            :rules="[v => !!v || 'A Port is required']"
+            :rules="[rules.validateNumber]"
             required
           ></v-text-field>
         </v-col>
@@ -23,7 +23,7 @@
     </v-form>
     <v-row justify="center">
       <v-btn
-        :disabled="this.isDisabled"
+        :disabled="!this.isFormValid"
         @click="submit"
         color="confirm"
         class="ma-4"
@@ -39,8 +39,14 @@
 export default {
   name: 'OutputDestinationForm',
   data: () => ({
+    isFormValid: false,
+    rules: {
+      validateNumber(value) {
+        return Number.isInteger(value) || 'Port must be a number'
+      }
+    },
     host: '',
-    port: null
+    port: ''
   }),
   methods: {
     async submit() {
@@ -48,12 +54,8 @@ export default {
         host: this.host,
         port: this.port
       })
+      this.$refs.form.reset()
       this.$emit('closeDialog')
-    }
-  },
-  computed: {
-    isDisabled: function() {
-      return !(this.host && this.port)
     }
   }
 }

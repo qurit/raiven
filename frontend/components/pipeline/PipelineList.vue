@@ -18,7 +18,7 @@
         solo
       />
       <v-btn icon>
-        <v-icon @click="dialog = true" color="#373740">mdi-pen-plus</v-icon>
+        <v-icon @click="dialog = true" color="#373740">mdi-plus</v-icon>
       </v-btn>
     </v-toolbar>
     <v-data-table
@@ -84,9 +84,6 @@ export default {
   },
   computed: {
     ...mapState('pipelines', ['pipelines']),
-    isDisabled: function() {
-      return !this.pipelineName
-    },
     items() {
       return this.$store.getters['pipelines/userPipelines']
     }
