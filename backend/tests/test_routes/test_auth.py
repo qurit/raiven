@@ -12,7 +12,14 @@ def test_login():
     assert response.status_code == 200
 
     data = response.json()
-    assert 'access_token' in data and type(data['access_token']) is str
+    assert 'access_token' in data and type(token := data['access_token']) is str
+
+    response = client.get('/user/me')
+    assert response.status_code == 401
+
+    # noinspection PyUnboundLocalVariable
+    response = client.get('/user/me', headers={'Authorization': f'Bearer {token}'})
+    assert response.status_code == 200
 
 
 def test_login_failure():
