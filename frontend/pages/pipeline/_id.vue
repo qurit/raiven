@@ -61,8 +61,8 @@
       <v-dialog v-model="containerDialog" max-width="900px" min-height="600px">
         <ContainerForm :isEditing="false" @closeDialog="containerDialog = false"/>
       </v-dialog>
-      <v-dialog v-model="pipelineDialog" max-width="1150px" min-height="600px">
-        <PipelineInfo :pipelineId="this.pipeline_id" />
+      <v-dialog v-model="pipelineDialog" max-width="1150px" min-height="600px" >
+        <PipelineInfo :pipelineId="this.pipeline_id" @close="pipelineDialog = false"/>
       </v-dialog>
 
       <!-- Container List -->
