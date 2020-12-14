@@ -31,11 +31,7 @@
               v-model="pipelineAETitle"
               :prefix="$store.state.config.PIPELINE_AE_PREFIX"
               :disabled="!editState"
-              :rules="[
-                rules.validateEmpty,
-                rules.validateLength,
-                rules.validateASCII
-              ]"
+              :rules="[rules.validateLength, rules.validateASCII]"
               label="AE Title"
               filled
             />
@@ -67,6 +63,7 @@
 import { generic_get, generic_put } from '~/api'
 import PipelineTreeviewInfo from './PipelineTreeviewInfo'
 import PipelineResults from '~/components/pipeline/PipelineResults'
+import aeTitleValidator from '~/utilities/aeTitleValidator'
 
 export default {
   components: { PipelineResults, PipelineTreeviewInfo },
@@ -81,10 +78,13 @@ export default {
       isFormValid: false,
       editState: false,
       rules: {
-        validateLength: v =>
-          v.trim().length <= 16 || 'AE Title is too long, 16 characters max',
-        validateASCII: v => /^[\x00-\x7F]*$/.test(v) || 'ASCII Characters only',
-        validateEmpty: v => !!v || 'Field Cannot be Empty'
+        validateLength: v => {
+          return aeTitleValidator.validateLength(v)
+        },
+        validateASCII: v => {
+          return aeTitleValidator.validateASCII(v)
+        },
+        validateEmpty: v => !!v || 'Field cannot be empty'
       }
     }
   },
@@ -117,14 +117,11 @@ export default {
       this.getPipelineName()
     },
     async getPipelineName() {
-      // get Pipeline Name and AE Title
       const URL = `/pipeline/${this.pipelineId}`
       const { name, ae_title, is_shared } = await generic_get(this, URL)
       this.pipelineName = name
       this.pipelineAETitle = ae_title
       this.pipelineIsShared = is_shared
-      console.log(is_shared)
-      console.log(this.pipelineIsShared)
     }
   },
   created() {
