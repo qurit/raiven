@@ -3,6 +3,12 @@ from typing import Optional, List
 from datetime import datetime
 
 
+class DicomStats(BaseModel):
+    dicom_node_counts: int
+    dicom_patient_counts: int
+    dicom_study_counts: int
+    dicom_series_counts: int
+
 class DicomSeries(BaseORMModel):
     dicom_study_id: int
     series_instance_uid: str

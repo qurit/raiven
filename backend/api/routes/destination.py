@@ -20,7 +20,7 @@ def get_all_destinations(db: Session = Depends(session)):
 
 
 @router.post("/")
-def create_destination(destination: destination.CreateDestination, db: Session = Depends(session)):
+def create_destination(destination: destination.CreateDestination, db: Session = Depends(session), response_model=destination.Destination):
     """ Create a new application entity"""
     new_destination = Destination(
         host=destination.host, port=destination.port, full_name=destination.host + " " + str(destination.port))
