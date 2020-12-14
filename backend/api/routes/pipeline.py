@@ -16,7 +16,7 @@ from api.auth import token_auth
 router = APIRouter()
 
 
-@router.get("/stats")
+@router.get("/stats", response_model=schemas.PipelineStats)
 def get_pipeline_stats(db: Session = Depends(session)):
     """
     Getting total number of pipelines and pipelines.
@@ -53,7 +53,7 @@ def get_pipeline_results(pipeline_id: int, db: Session = Depends(session)):
     return db.query(PipelineRun).filter(pipeline_id == PipelineRun.pipeline_id).all()
 
 
-@router.get("/run/{pipeline_run_id}/jobs")
+@router.get("/run/{pipeline_run_id}/jobs", response_model=List[schemas.PipelineJob])
 def get_pipeline_jobs(pipeline_run_id: int, db: Session = Depends(session)):
     """
     Get all pipeline jobs for a pipeline run.
@@ -62,7 +62,7 @@ def get_pipeline_jobs(pipeline_run_id: int, db: Session = Depends(session)):
     return db.query(PipelineJob).filter(PipelineJob.pipeline_run_id == pipeline_run_id).all()
 
 
-@router.get("/job/{pipeline_job_id}/errors")
+@router.get("/job/{pipeline_job_id}/errors", response_model=List[schemas.PipelineJobError])
 def get_pipeline_job_errors(pipeline_job_id: int, db: Session = Depends(session)):
     """
     Get all pipeline errors for a pipeline job.
@@ -80,7 +80,7 @@ def get_pipeline_job_nodes(pipeline_node_id, db: Session = Depends(session)):
     return db.query(PipelineNode).filter(PipelineNode.id == pipeline_node_id).all()
 
 
-@ router.get("/download/{pipeline_run_id}", )
+@ router.get("/download/{pipeline_run_id}")
 def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
     """ Downloading the pipeline run results in a zip file form """
     pipeline_run: PipelineRun = db.query(PipelineRun).get(pipeline_run_id)
