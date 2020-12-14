@@ -7,7 +7,8 @@ from sqlalchemy.orm import sessionmaker
 
 os.environ['UNIT_TESTING'] = 'True'
 os.environ['SQLALCHEMY_DATABASE_URI'] = "sqlite:///./test.db?check_same_thread=False"
-os.environ['UPLOAD_DIR'] = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'test_uploads')
+os.environ['UPLOAD_DIR'] = os.path.join(os.path.dirname(__file__), '.test_uploads')
+os.environ['SCP_PORT'] = '11122'
 
 from api import app, models, config, schemas
 from api.database import worker_session as testing_session
