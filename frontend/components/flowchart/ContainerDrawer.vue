@@ -45,25 +45,17 @@
 import ContainerCard from './ContainerCard'
 
 export default {
-  components: {
-    ContainerCard
-  },
+  components: {ContainerCard},
   props: {
     containers: Array,
-    colors: Array
+    colors: Object
   },
-  data() {
-    return {
-      search: '',
-      containerList: false
-    }
-  },
+  data: () => ({
+    search: '',
+    containerList: false
+  }),
   computed: {
-    filteredList() {
-      return this.containers.filter(container =>
-        container.name.toLowerCase().includes(this.search.toLowerCase())
-      )
-    }
+    filteredList: ctx => ctx.containers.filter(c => c.name.toLowerCase().includes(ctx.search.toLowerCase()))
   }
 }
 </script>
