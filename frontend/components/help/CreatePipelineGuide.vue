@@ -16,7 +16,7 @@
           page
         </li>
         <li>
-          Click <v-icon small color="icon">mdi-plus</v-icon> and fill out the
+          Click <v-icon small color="icon">mdi-plus-</v-icon> and fill out the
           form
         </li>
         <li>
