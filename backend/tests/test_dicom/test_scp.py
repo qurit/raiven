@@ -23,11 +23,11 @@ def test_scp_sever_startup_and_shutdown():
 import os
 from pydicom import dcmread, uid
 
+
 if __name__ == '__main__':
     # INPUT_DIR = 'C:\\Users\\Adam\\Programming\\picom\\uploads\\dicom_nodes\\30\\31\\3\\659'
     INPUT_DIR = 'E:\\BCCRC\\dicom\\pyPET4RT'
     OUTPUT_DIR = 'C:\\Users\\Adam\\Programming\\picom\\test_out'
-
 
     for root, dirs, files in os.walk(INPUT_DIR):
         for file in files:

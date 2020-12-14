@@ -1,6 +1,6 @@
 import os
+import pathlib
 from datetime import datetime
-
 from shutil import rmtree
 
 from sqlalchemy import Column, Integer, String, DateTime
@@ -88,13 +88,13 @@ class PathMixin(NestedPathMixin):
 
     @declared_attr
     def __absolute_directory__(self) -> str:
-        return os.path.join(config.UPLOAD_DIR, self.__directory__)
+        return pathlib.Path(config.UPLOAD_DIR) / self.__directory__
 
-    def get_path(self) -> str:
+    def get_path(self) -> pathlib.Path:
         if not self.id:
             raise Exception('The object needs to be first saved in the db')
 
-        return os.path.join(self.__directory__, str(self.id))
+        return pathlib.Path(self.__directory__) / str(self.id)
 
 
 class IOPathMixin(PathMixin):
@@ -109,13 +109,14 @@ class IOPathMixin(PathMixin):
 
         # Making folders
         abs_path = self.get_abs_path()
-        [os.makedirs(p) for dirname in [self._INPUT_DIRNAME, self._OUTPUT_DIRNAME]
-         if not os.path.exists(p := os.path.join(abs_path, dirname))]
+        for dirname in [self._INPUT_DIRNAME, self._OUTPUT_DIRNAME]:
+            if not os.path.exists(p := os.path.join(abs_path, dirname)):
+                os.makedirs(p)
 
         # Saving Path info
         rel_path = self.get_path()
-        self.input_path = os.path.join(rel_path, self._INPUT_DIRNAME)
-        self.output_path = os.path.join(rel_path, self._OUTPUT_DIRNAME)
+        self.input_path = (rel_path / self._INPUT_DIRNAME).as_posix()
+        self.output_path = (rel_path / self._OUTPUT_DIRNAME).as_posix()
         super().save(*args, **kwargs)
 
     def get_abs_path(self, subdir: str = None) -> str:
