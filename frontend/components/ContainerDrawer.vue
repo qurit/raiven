@@ -42,24 +42,18 @@
 </template>
 
 <script>
-import { ContainerForm, ContainerCard } from '~/components/container'
+import { ContainerCard } from '~/components/container'
 
 export default {
   components: {
     ContainerCard
   },
   props: {
-    containers: Array
+    containers: Array,
+    colors: Array
   },
   data() {
     return {
-      colors: {
-        container: {
-          input: 'orange',
-          output: 'purple',
-          default: 'blue'
-        }
-      },
       search: '',
       containerList: false
     }
