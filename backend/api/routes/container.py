@@ -16,7 +16,7 @@ from api.auth import token_auth
 router = APIRouter()
 
 
-@router.get("/stats")
+@router.get("/stats", response_model=container.ContainerStats)
 def get_container_stats(db: Session = Depends(session)):
     """ Get container count. Used in dashboard counter."""
     stats = {
@@ -93,7 +93,7 @@ def get_container(container_id: int, db: Session = Depends(session)):
     return db.query(Container).get(container_id)
 
 
-@router.put("/{container_id}")
+@router.put("/{container_id}", response_model=container.Container)
 def update_container(
         container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(None),
         description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...), is_shared: bool = Form(...),
