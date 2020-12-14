@@ -1,3 +1,4 @@
+import pathlib
 import os
 from datetime import datetime
 
@@ -34,10 +35,8 @@ class PipelineNode(Base):
 
     destination = relationship("Destination", uselist=False)
     container = relationship("Container", uselist=False)
-    next_links = relationship(
-        'PipelineLink', foreign_keys='PipelineLink.from_node_id')
-    previous_links = relationship(
-        'PipelineLink', foreign_keys='PipelineLink.to_node_id')
+    next_links = relationship('PipelineLink', foreign_keys='PipelineLink.from_node_id')
+    previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.to_node_id')
     jobs = relationship('PipelineJob', backref='node')
 
     def is_root_node(self):
@@ -81,8 +80,7 @@ class PipelineRun(IOPathMixin, Base):
 
 class PipelineJob(IOPathMixin, TimestampMixin, Base):
     pipeline_run_id = Column(ForeignKey("pipeline_run.id", ondelete="CASCADE"))
-    pipeline_node_id = Column(ForeignKey(
-        "pipeline_node.id", ondelete="CASCADE"))
+    pipeline_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
     status = Column(String)
     exit_code = Column(Integer)
 
