@@ -33,11 +33,11 @@ class UserEdit(BaseModel):
     ae_title: str
 
 
-class blah(BaseModel):
+class PermittedApplicationEntities(BaseModel):
     destinations: Optional[List[Destination]]
 
 
-class test(BaseORMModel):
+class ApplicationEntity(BaseORMModel):
     destination: Destination
 
 
