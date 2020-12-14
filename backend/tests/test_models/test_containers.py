@@ -22,8 +22,9 @@ def test_container_create_zip(db):
         is_shared=False,
         user=utils.get_test_user(db),
         db=db
-    )[0]
+    )
 
+    assert type(container) is not list
     assert type(container) is Container
     assert pathlib.Path(abs_path := container.get_abs_path()).exists()
     assert not pathlib.Path(container.get_path()).is_absolute()
