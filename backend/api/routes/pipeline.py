@@ -36,8 +36,12 @@ def get_all_pipeline_runs(user: User = Depends(token_auth), db: Session = Depend
 
 
 @router.get("/download/{pipeline_run_id}")
+@middleware.exists_or_404
 def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
     pipeline_run: PipelineRun = db.query(PipelineRun).get(pipeline_run_id)
+    if not pipeline_run:
+        return False
+
     result_path = pipeline_run.get_abs_output_path()
     zip_path = os.path.join(pipeline_run.get_abs_path(), 'result')
 
