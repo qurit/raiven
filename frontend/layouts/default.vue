@@ -33,7 +33,7 @@ export default {
           to: '/pipeline',
           label: 'Pipelines',
           icon:
-            this.$route.path === '/pipelines'
+            this.$route.path === '/pipeline'
               ? 'mdi-transit-connection-variant'
               : 'mdi-transit-connection-horizontal'
         },

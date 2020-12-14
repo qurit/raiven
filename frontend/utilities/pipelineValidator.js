@@ -40,7 +40,7 @@ function depthFirstSearch(startingVertex, sceneNodes) {
   return sceneNodes.length === result.length
 }
 
-export function pipelineChecker(nodes, links) {
+export function pipelineValidator(nodes, links) {
   adjacencyList = {}
 
   // inital nodes in graph to compare with result nodes after DFS
