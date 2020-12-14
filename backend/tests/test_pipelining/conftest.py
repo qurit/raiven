@@ -46,3 +46,25 @@ def example_container():
         yield container
 
         delete_container(container_id=container.id, db=db)
+
+
+@pytest.fixture()
+def malformed_container():
+    with testing_session() as db:
+        container = create_container(
+            auto_build=False,
+            file=b'Pythons are cool',
+            name='Test Container',
+            filename='Dockerfile',
+            description='A simple container',
+            is_input_container=False,
+            is_output_container=False,
+            is_shared=False,
+            user=utils.get_test_user(db),
+            db=db
+        )[0]
+
+        yield container
+
+        delete_container(container_id=container.id, db=db)
+
