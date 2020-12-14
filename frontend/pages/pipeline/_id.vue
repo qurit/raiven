@@ -28,7 +28,6 @@
                 : 'mdi-arrow-expand-left'
             "
           />
-          {{ containerList }}
         </div>
       </v-row>
 
@@ -84,6 +83,7 @@
       <!-- Container List -->
       <ContainerDrawer
         :containers="this.containers"
+        :colors="this.colors"
         v-if="this.containerList"
         @open-container-form="containerDialog = true"
         @add-node="this.addNode"
@@ -98,7 +98,7 @@ import { generic_get } from '~/api'
 
 import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
 import PipelineInfo from '~/components/PipelineInfo'
-import { ContainerForm, ContainerCard } from '~/components/container'
+import { ContainerForm } from '~/components/container'
 import { OutputDestinationForm } from '~/components/pipeline'
 import VIconBtn from '~/components/global/v-icon-btn'
 import ContainerDrawer from '~/components/ContainerDrawer'
