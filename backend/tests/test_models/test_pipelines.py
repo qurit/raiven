@@ -1,3 +1,5 @@
+import pathlib
+
 from api.models.pipeline import *
 
 from tests import utils
@@ -128,3 +130,19 @@ def test_job_volumes_paths(db):
 
     assert os.path.exists(job.get_volume_abs_input_path())
     assert os.path.exists(job.get_volume_abs_output_path())
+
+
+def test_linux_paths(db):
+    pipeline = insert_pipeline(db, 'Test Pipeline Delete 2')
+    run = insert_run(db, pipeline)
+    job = insert_job(db, run)
+
+    assert '\\' not in run.input_path
+    assert '\\' not in run.output_path
+    assert pathlib.Path(run.input_path).as_posix() == run.input_path
+    assert pathlib.Path(run.output_path).as_posix() == run.output_path
+
+    assert '\\' not in job.input_path
+    assert '\\' not in job.output_path
+    assert pathlib.Path(job.input_path).as_posix() == job.input_path
+    assert pathlib.Path(job.output_path).as_posix() == job.output_path

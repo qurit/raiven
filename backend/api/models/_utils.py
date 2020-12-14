@@ -1,3 +1,4 @@
+import pathlib
 from shutil import copytree
 
 from . import NestedPathMixin, IOPathMixin
@@ -13,8 +14,8 @@ def copy_model_fs(src: NestedPathMixin, dst: IOPathMixin, dst_subdir='input', sr
     if dst_subdir not in ['input', 'output']:
         ValueError('dst_subdir kwarg can only be "input" or "output"')
 
-    src_dir = src.get_abs_path(subdir=src_subdir)
-    dst_dir = dst.get_abs_path(subdir=dst_subdir)
+    src_dir = pathlib.Path(src.get_abs_path(subdir=src_subdir)).resolve()
+    dst_dir = pathlib.Path(dst.get_abs_path(subdir=dst_subdir)).resolve()
 
     # TODO: LOCKING ?
     print("Copying", src_dir, 'to', dst_dir)
