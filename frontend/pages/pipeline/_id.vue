@@ -11,19 +11,23 @@
           back
           color="#373740"
           @click="$router.push({ path: '/pipeline' })"
-        >
-        </v-icon-btn>
+        />
+        <v-icon-btn
+          color="#373740"
+          @click=";[(pipelineDialog = true), (containerList = false)]"
+          icon="mdi-information"
+        />
         <div v-if="canEdit">
           <v-icon-btn save color="#373740" @click="savePipeline" />
           <v-icon-btn
-            large
-            @click="containerList = !containerList"
             color="#373740"
-            :icon="containerList ? 'mdi-minus' : 'mdi-plus'"
+            @click="containerList = !containerList"
+            :icon="
+              containerList
+                ? 'mdi-arrow-collapse-right'
+                : 'mdi-arrow-expand-left'
+            "
           />
-        </div>
-        <div v-if="h">
-          No containers!
         </div>
       </v-row>
 
@@ -37,7 +41,7 @@
       >
         <!-- This overlay is shown if the pipeline is empty and it is the shared user viewing it -->
         <v-overlay
-          v-if="!canEdit && !scene.nodes.length"
+          v-if="!isFetching && !canEdit && !scene.nodes.length"
           absolute
           color="primary"
           class="display-3 accent--text"
@@ -69,54 +73,21 @@
           @closeDialog="containerDialog = false"
         />
       </v-dialog>
+      <v-dialog v-model="pipelineDialog" max-width="1150px" min-height="600px">
+        <PipelineInfo
+          :pipelineId="this.pipeline_id"
+          @close="pipelineDialog = false"
+        />
+      </v-dialog>
 
       <!-- Container List -->
-      <v-navigation-drawer
-        v-model="containerList"
-        class="pt-3"
-        app
-        right
-        style="z-index: 9999"
-      >
-        <template v-slot:prepend>
-          <v-row no-gutters justify="center" class="px-2">
-            <v-btn
-              @click="containerDialog = true"
-              color="primary accent--text"
-              style="width: available"
-              class="mx-auto"
-              rounded
-              block
-            >
-              Add a Container
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </v-row>
-          <v-row no-gutters class="pt-2 px-2">
-            <v-text-field
-              v-model="search"
-              placeholder="Search container"
-              append-icon="mdi-magnify"
-              solo
-              flat
-              rounded
-              block
-              color="primary"
-              single-line
-              hide-details
-            />
-          </v-row>
-        </template>
-        <ContainerCard
-          v-for="c in filteredList"
-          :id="c.id"
-          :container="c"
-          :colors="colors.container"
-          class="ma-2"
-        >
-          <v-icon-btn add @click="addNode(c)" color="white" />
-        </ContainerCard>
-      </v-navigation-drawer>
+      <ContainerDrawer
+        :containers="this.containers"
+        :colors="this.colors"
+        v-if="this.containerList"
+        @open-container-form="containerDialog = true"
+        @add-node="this.addNode"
+      />
     </v-col>
   </v-row>
 </template>
@@ -125,23 +96,29 @@
 import { mapState } from 'vuex'
 import { generic_get } from '~/api'
 
-import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
-import { ContainerForm, ContainerCard } from '~/components/container'
+import {
+  SimpleFlowchart,
+  PipelineInfo,
+  ContainerDrawer
+} from '~/components/flowchart'
+import { ContainerForm } from '~/components/container'
 import { OutputDestinationForm } from '~/components/pipeline'
 import VIconBtn from '~/components/global/v-icon-btn'
 
 export default {
   components: {
-    ContainerCard,
     VIconBtn,
     SimpleFlowchart,
-    ContainerForm
+    ContainerForm,
+    PipelineInfo,
+    ContainerDrawer
   },
   data: () => ({
-    search: '',
+    isFetching: true,
     userId: '',
     containerList: false,
     containerDialog: false,
+    pipelineDialog: false,
     pipeline_id: '',
     colors: {
       container: {
@@ -193,6 +170,7 @@ export default {
         }
         this.scene.nodes.push(containerNode)
       })
+      this.isFetching = false
     },
     getPipelineLinks(links) {
       links.forEach(link => {
@@ -221,11 +199,6 @@ export default {
   },
   computed: {
     ...mapState('containers', ['containers']),
-    filteredList() {
-      return this.containers.filter(container =>
-        container.name.toLowerCase().includes(this.search.toLowerCase())
-      )
-    },
     canEdit() {
       return this.userId === this.$auth.user.id
     }

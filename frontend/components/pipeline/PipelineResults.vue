@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card elevation="6">
-      <v-toolbar color="primary accent--text" flat>
+      <v-toolbar color="primary accent--text" flat v-if="!this.pipelineId">
         <v-toolbar-title>
           <b>Pipeline Run Results </b>
         </v-toolbar-title>
@@ -14,6 +14,19 @@
           solo
         />
       </v-toolbar>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        :label="
+          !!this.pipelineId
+            ? 'Search by Run ID'
+            : 'Search by Run ID or Pipeline'
+        "
+        hide-details
+        v-if="!!this.pipelineId"
+        class="mx-4"
+      />
+
       <v-data-table
         id="ResultsTable"
         :headers="headers"
@@ -22,6 +35,7 @@
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
         :loading="fetching"
+        :items-per-page="5"
         loading-text="Getting Results..."
       >
         <template v-slot:item.created_datetime="{ item }">{{
@@ -46,11 +60,15 @@ const FileDownload = require('js-file-download')
 import { generic_get } from '~/api'
 
 export default {
+  props: {
+    pipelineId: {
+      type: Number
+    }
+  },
   data() {
     return {
       headers: [
         { text: 'Run ID', align: 'start', value: 'id' },
-        { text: 'Pipeline', value: 'pipeline.name' },
         { text: 'Status', value: 'status' },
         { text: 'Started on:', filterable: false, value: 'created_datetime' },
         { text: 'Finished on:', filterable: false, value: 'finished_datetime' },
@@ -65,13 +83,17 @@ export default {
   },
   created() {
     this.getPipelineRuns()
+    if (!this.pipelineId)
+      this.headers.splice(1, 0, { text: 'Pipeline', value: 'pipeline.name' })
   },
   methods: {
     formatDateTime: x => (x ? new Date(x).toLocaleString() : 'Invalid Date'),
     formatFileName: x =>
       `${x.pipeline.name}_results_${x.finished_datetime}.zip`,
     async getPipelineRuns() {
-      const URL = '/pipeline/results'
+      const URL = this.pipelineId
+        ? `/pipeline/${this.pipelineId}/results`
+        : '/pipeline/results'
       const pipelineRuns = await generic_get(this, URL)
       this.items = pipelineRuns
       this.fetching = false
