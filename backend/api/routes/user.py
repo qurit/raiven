@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from api import session, config
 from api.models.user import User, UserLocal, UserDestination
 from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit, PermittedApplicationEntities, ApplicationEntity
+from api.schemas.destination import Destination
 from api.auth import token_auth
 
 router = APIRouter()
@@ -41,7 +42,7 @@ def get_the_current_user(user: User = Depends(token_auth)):
     return user
 
 
-@router.put("/{user_id}")
+@router.put("/{user_id}", response_model=UserSchema)
 def edit_user_settings(user_id: int, new_info: UserEdit, user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Edit user settings """
     if user.id != user_id and not user.is_admin:
@@ -54,7 +55,7 @@ def edit_user_settings(user_id: int, new_info: UserEdit, user: User = Depends(to
     user_to_edit.save(db)
     return user_to_edit
 
-@router.post("/permitted-ae")
+@router.post("/permitted-ae", response_model=List[Destination])
 def update_permitted_ae(destinations: PermittedApplicationEntities, user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Update the user's application title"""
     db.query(UserDestination).filter(
@@ -63,7 +64,7 @@ def update_permitted_ae(destinations: PermittedApplicationEntities, user: User =
     for dest in user_destinations:
         new_destination_user = UserDestination(user_id=user.id, destination_id=dest.id)
         new_destination_user.save(db)
-    return new_destination_user
+    return user_destinations
 
 
 @router.get("/permitted-ae", response_model=List[ApplicationEntity])
