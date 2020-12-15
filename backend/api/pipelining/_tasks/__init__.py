@@ -1,3 +1,5 @@
+from pathlib import PureWindowsPath, PurePosixPath
+
 import docker as _docker
 import dramatiq
 import socketio
@@ -13,3 +15,4 @@ dramatiq.set_broker(broker)
 external_sio = socketio.AsyncAioPikaManager(write_only=True)
 
 HOST_OS = 'windows' if 'microsoft' in docker.version()['KernelVersion'] else 'linux'
+HOST_PATH_TYPE = PureWindowsPath if HOST_OS == 'windows' else PurePosixPath
