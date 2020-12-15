@@ -95,7 +95,7 @@ class BaseConfig:
             print(
                 f'[FAILED] ENV VARIABLE {env_var} MAY PRODUCE AN UNEXPECTED ERROR')
         finally:
-            print('[config]', env_var, v)
+            print(f'[config] {env_var}={v}')
             setattr(self, env_var, v)
 
     def _all_settings_to_json(self) -> dict:
