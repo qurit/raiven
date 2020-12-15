@@ -128,8 +128,8 @@ def test_job_volumes_paths(db):
     run = insert_run(db, pipeline)
     job = insert_job(db, run)
 
-    in_v = job.get_volume_abs_input_path()
-    out_v = job.get_volume_abs_output_path()
+    in_v = str(job.get_volume_abs_input_path())
+    out_v = str(job.get_volume_abs_output_path())
 
     assert os.path.exists(in_v)
     assert os.path.exists(out_v)

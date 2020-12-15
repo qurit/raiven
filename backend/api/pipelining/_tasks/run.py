@@ -2,7 +2,7 @@ import pathlib
 from datetime import datetime
 
 from api import config, worker_session, models
-from . import docker, dramatiq, external_sio
+from . import docker, dramatiq, external_sio, HOST_PATH_TYPE
 
 
 @dramatiq.actor(max_retries=0)
@@ -23,7 +23,6 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
             return
 
         image_tag = build.tag
-        job.detach(db)
 
         if not previous_job_id:
             src_subdir = 'input'
@@ -34,8 +33,8 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
 
         models.utils.copy_model_fs(prev, job, src_subdir=src_subdir)
         volumes = {
-            job.get_volume_abs_input_path(): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
-            job.get_volume_abs_output_path(): {'bind': config.PICOM_OUTPUT_DIR, 'mode': 'rw'}
+            HOST_PATH_TYPE(job.get_volume_abs_input_path()): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
+            HOST_PATH_TYPE(job.get_volume_abs_output_path()): {'bind': config.PICOM_OUTPUT_DIR, 'mode': 'rw'}
         }
         print(volumes)
 

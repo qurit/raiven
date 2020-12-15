@@ -87,10 +87,10 @@ class PipelineJob(IOPathMixin, TimestampMixin, Base):
     error = relationship('PipelineJobError', backref="job", uselist=False)
 
     def get_volume_abs_input_path(self):
-        return os.path.join(config.UPLOAD_VOLUME_ABSPATH, self.input_path)
+        return pathlib.Path(config.UPLOAD_VOLUME_ABSPATH) / self.input_path
 
     def get_volume_abs_output_path(self):
-        return os.path.join(config.UPLOAD_VOLUME_ABSPATH, self.output_path)
+        return pathlib.Path(config.UPLOAD_VOLUME_ABSPATH) / self.output_path
 
 
 class PipelineJobError(Base):
