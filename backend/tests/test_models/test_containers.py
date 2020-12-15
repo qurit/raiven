@@ -28,7 +28,7 @@ def test_container_create_zip(db):
     assert type(container) is Container
     assert pathlib.Path(abs_path := container.get_abs_path()).exists()
     assert not pathlib.Path(container.get_path()).is_absolute()
-    assert container.get_path() == pathlib.Path(container.get_path()).as_posix()
+    assert container.dockerfile_path == pathlib.Path(container.dockerfile_path).as_posix()
 
     delete_container(container.id, db)
     assert not pathlib.Path(abs_path).exists()

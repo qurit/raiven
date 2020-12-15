@@ -26,11 +26,7 @@ def create_test_database():
     yield
 
 
-
-
 @pytest.fixture
 def db():
     with testing_session() as db:
         yield db
-
-

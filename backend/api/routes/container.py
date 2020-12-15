@@ -1,3 +1,4 @@
+import pathlib
 import io
 import os
 import zipfile
@@ -58,8 +59,8 @@ def create_container(
         # Finding the Dockerfile in the zip file
         for root, _, files in os.walk(folder):
             if 'Dockerfile' in files:
-                db_container.dockerfile_path = os.path.relpath(
-                    os.path.join(root, 'Dockerfile'), config.UPLOAD_DIR)
+                dockerfile_path = os.path.relpath(root, config.UPLOAD_DIR)
+                db_container.dockerfile_path = (pathlib.Path(dockerfile_path) / 'Dockerfile').as_posix()
                 break
 
         db_container.save(db)
