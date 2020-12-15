@@ -128,8 +128,15 @@ def test_job_volumes_paths(db):
     run = insert_run(db, pipeline)
     job = insert_job(db, run)
 
-    assert os.path.exists(job.get_volume_abs_input_path())
-    assert os.path.exists(job.get_volume_abs_output_path())
+    in_v = job.get_volume_abs_input_path()
+    out_v = job.get_volume_abs_output_path()
+
+    assert os.path.exists(in_v)
+    assert os.path.exists(out_v)
+
+    # Making sure the paths are not windows paths and linux paths
+    assert not ('\\' in in_v and '/' in in_v)
+    assert not ('\\' in out_v and '/' in out_v)
 
 
 def test_linux_paths(db):
