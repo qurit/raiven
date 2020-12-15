@@ -49,6 +49,7 @@ class BaseConfig:
 
     # Docker
     DOCKER_URI = 'tcp://127.0.0.1:2375'
+    DOCKER_HOST_OS = 'windows'
 
     # RabbitMQ
     RABBITMQ_HOST = '127.0.0.1'
