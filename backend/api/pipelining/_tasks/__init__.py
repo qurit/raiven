@@ -14,5 +14,4 @@ broker = StubBroker() if config.UNIT_TESTING else RabbitmqBroker(host=config.RAB
 dramatiq.set_broker(broker)
 external_sio = socketio.AsyncAioPikaManager(write_only=True)
 
-HOST_OS = 'windows' if 'microsoft' in docker.version()['KernelVersion'] else 'linux'
-HOST_PATH_TYPE = PureWindowsPath if HOST_OS == 'windows' else PurePosixPath
+HOST_PATH_TYPE = PureWindowsPath if config.DOCKER_HOST_OS.lower() == 'windows' else PurePosixPath
