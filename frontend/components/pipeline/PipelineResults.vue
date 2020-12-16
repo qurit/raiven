@@ -13,6 +13,11 @@
           hide-details
           solo
         />
+        <v-btn icon>
+          <v-icon @click="this.getPipelineRuns" color="#373740"
+            >mdi-refresh</v-icon
+          >
+        </v-btn>
       </v-toolbar>
       <v-text-field
         v-model="search"

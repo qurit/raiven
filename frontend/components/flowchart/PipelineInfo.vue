@@ -47,11 +47,11 @@
               />
             </v-col>
             <v-col sm="12" md="6">
-              <span class="title">Results from this Pipeline</span>
+              <span class="title white--text">Results from this Pipeline</span>
               <PipelineResults :pipelineId="this.pipelineId" />
             </v-col>
             <v-col sm="12" md="6">
-              <span class="title">More Info</span>
+              <span class="title white--text">More Info</span>
               <PipelineTreeviewInfo :pipelineId="this.pipelineId" />
             </v-col>
           </v-row>
