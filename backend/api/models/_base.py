@@ -11,6 +11,8 @@ from inflection import underscore, pluralize
 
 from api import config
 
+CASCADE = {'ondelete': 'CASCADE'}
+
 
 class _Base:
     id = Column(Integer, primary_key=True, index=True)
