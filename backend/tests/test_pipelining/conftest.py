@@ -41,7 +41,7 @@ def example_container():
             is_shared=False,
             user=utils.get_test_user(db),
             db=db
-        )[0]
+        )
 
         yield container
 
@@ -62,7 +62,7 @@ def malformed_container():
             is_shared=False,
             user=utils.get_test_user(db),
             db=db
-        )[0]
+        )
 
         yield container
 

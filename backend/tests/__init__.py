@@ -13,7 +13,6 @@ os.environ['SCP_PORT'] = '11122'
 from api import app, models, config, schemas
 from api.database import worker_session as testing_session
 
-
 client = TestClient(app)
 
 TEST_USER = schemas.user.UserLocalCreate(
@@ -21,3 +20,5 @@ TEST_USER = schemas.user.UserLocalCreate(
     name='Test User',
     password='pAssWord'
 )
+
+from . import _mark as mark

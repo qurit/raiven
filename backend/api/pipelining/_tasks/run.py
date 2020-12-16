@@ -13,8 +13,7 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
     # TODO: Check if all previous nodes have finished
 
     with worker_session() as db:
-        job = models.pipeline.PipelineJob(
-            pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
+        job = models.pipeline.PipelineJob(pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
         job.save(db)
 
         if not (build := job.node.container.build):
