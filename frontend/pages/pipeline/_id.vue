@@ -170,7 +170,6 @@ export default {
           container_is_output: node.container_is_output,
           destination: node.destination
         }
-        console.log(containerNode)
         this.scene.nodes.push(containerNode)
       })
       this.isFetching = false
@@ -212,7 +211,6 @@ export default {
     this.getSavedPipeline(this.pipeline_id)
   },
   beforeRouteLeave(to, from, next) {
-    console.log(this.$refs.simpleFlowchart.checkSaved())
     if (!this.$refs.simpleFlowchart.checkSaved()) {
       const confirm = window.confirm(
         'You may have unsaved edits, would you still like to leave?'
