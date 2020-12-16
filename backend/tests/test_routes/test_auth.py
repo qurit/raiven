@@ -75,7 +75,7 @@ def test_expired_token(custom_serializer, db):
     assert not custom_serializer.verify_token(token)
 
 
-# noinspection DuplicatedCode
+# noinspection DuplicatedCode, PyUnboundLocalVariable, PyUnusedLocal
 def test_expired_token_api_call(custom_serializer):
     user = utils.create_local_user('test', 'ZeroLifeToken', 'expired-token')
     assert user

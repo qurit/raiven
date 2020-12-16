@@ -13,6 +13,7 @@ def simple_actor(url):
     assert len(response.text.split(" "))
 
 
+# noinspection PyUnusedLocal
 def test_broker(stub_broker, stub_worker):
     assert type(stub_broker) is StubBroker
 
