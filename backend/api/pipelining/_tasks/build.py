@@ -22,7 +22,7 @@ def build_container_task(container_id: int):
 
     try:
         image, build_logs = docker.images.build(rm=True, path=build_path, tag=tag)
-    except BuildError or APIError as e:
+    except (BuildError, APIError) as e:
         with worker_session() as db:
             container_build.status = 'exited'
             container_build.exit_code = 1
