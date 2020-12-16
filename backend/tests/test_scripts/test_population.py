@@ -1,4 +1,4 @@
-from tests import testing_session, config, models
+from tests import config, models
 
 
 def get_default_user(db) -> models.user.User:
@@ -15,17 +15,13 @@ def get_default_containers(db):
     return models.container.Container.query(db).filter_by(user_id=user.id).all()
 
 
-def test_default_user() -> int:
-
-    with testing_session() as db:
-        get_default_user(db)
+def test_default_user(db) -> int:
+    get_default_user(db)
 
 
-def test_default_containers():
+def test_default_containers(db):
+    containers = get_default_containers(db)
+    assert len(containers) == len(config.DEFAULT_CONTAINERS)
 
-    with testing_session() as db:
-        containers = get_default_containers(db)
-        assert len(containers) == len(config.DEFAULT_CONTAINERS)
-
-        for container in containers:
-            assert container.is_shared
+    for container in containers:
+        assert container.is_shared

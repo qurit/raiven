@@ -5,6 +5,7 @@ LOCALHOST = '127.0.0.1'
 
 
 class BaseConfig:
+    UNIT_TESTING = False
     RAIVEN_WORKER = False
 
     APT_HOST = '127.0.0.1'
@@ -48,6 +49,7 @@ class BaseConfig:
 
     # Docker
     DOCKER_URI = 'tcp://127.0.0.1:2375'
+    DOCKER_HOST_OS = 'windows'
 
     # RabbitMQ
     RABBITMQ_HOST = '127.0.0.1'
@@ -94,7 +96,7 @@ class BaseConfig:
             print(
                 f'[FAILED] ENV VARIABLE {env_var} MAY PRODUCE AN UNEXPECTED ERROR')
         finally:
-            print('[config]', env_var, v)
+            print(f'[config] {env_var}={v}')
             setattr(self, env_var, v)
 
     def _all_settings_to_json(self) -> dict:

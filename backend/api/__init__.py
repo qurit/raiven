@@ -24,6 +24,6 @@ app.add_middleware(
 
 app.mount('/ws', sockets.sio_app)
 
-from . import routes, pipelining, scripts
+from . import middleware, routes, pipelining, scripts
 
 scripts.run_startup_scripts()
