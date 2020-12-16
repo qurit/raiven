@@ -6,16 +6,16 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
 from api import config
-from . import Base, PathMixin, NestedPathMixin, TimestampMixin, IOPathMixin, utils
+from . import Base, PathMixin, NestedPathMixin, TimestampMixin, IOPathMixin, utils, CASCADE
 
 
 class Pipeline(Base):
-    user_id = Column(ForeignKey("user.id", ondelete="CASCADE"))
+    user_id = Column(ForeignKey("user.id", **CASCADE))
     name = Column(String)
     ae_title = Column(String)
     is_shared = Column(Boolean, default=False)
 
-    runs = relationship("PipelineRun", backref="pipeline")
+    runs = relationship("PipelineRun", backref="pipeline", passive_deletes=True)
     nodes = relationship("PipelineNode", backref="pipeline")
     links = relationship("PipelineLink", backref="pipeline")
 
@@ -25,7 +25,7 @@ class Pipeline(Base):
 
 
 class PipelineNode(Base):
-    pipeline_id = Column(ForeignKey("pipeline.id", ondelete="CASCADE"))
+    pipeline_id = Column(ForeignKey("pipeline.id", **CASCADE))
     container_id = Column(ForeignKey("container.id"))
     destination_id = Column(ForeignKey("destination.id"))
     x_coord = Column(Integer)
@@ -53,34 +53,30 @@ class PipelineNode(Base):
 
 
 class PipelineLink(Base):
-    pipeline_id = Column(ForeignKey("pipeline.id", ondelete="CASCADE"))
-    to_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
-    from_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
+    pipeline_id = Column(ForeignKey("pipeline.id", **CASCADE))
+    to_node_id = Column(ForeignKey("pipeline_node.id", **CASCADE))
+    from_node_id = Column(ForeignKey("pipeline_node.id", **CASCADE))
 
-    next_node = relationship(
-        'PipelineNode', foreign_keys='PipelineLink.to_node_id', uselist=False)
-    previous_node = relationship(
-        'PipelineNode', foreign_keys='PipelineLink.from_node_id', uselist=False)
+    next_node = relationship('PipelineNode', foreign_keys='PipelineLink.to_node_id', uselist=False)
+    previous_node = relationship('PipelineNode', foreign_keys='PipelineLink.from_node_id', uselist=False)
 
     def __repr__(self, **kwargs) -> str:
         return super().__repr__(to_node=self.to_node_id, from_node=self.from_node_id, **kwargs)
 
 
-INPUT_DIRNAME = 'input'
-OUTPUT_DIRNAME = 'output'
-
-
 class PipelineRun(IOPathMixin, Base):
-    pipeline_id = Column(ForeignKey('pipeline.id', ondelete="CASCADE"))
+    pipeline_id = Column(ForeignKey('pipeline.id', **CASCADE))
     status = Column(String, default='Created')
 
     created_datetime = Column(DateTime, default=datetime.utcnow)
     finished_datetime = Column(DateTime)
 
+    jobs = relationship('PipelineJob', backref="run")
+
 
 class PipelineJob(IOPathMixin, TimestampMixin, Base):
-    pipeline_run_id = Column(ForeignKey("pipeline_run.id", ondelete="CASCADE"))
-    pipeline_node_id = Column(ForeignKey("pipeline_node.id", ondelete="CASCADE"))
+    pipeline_run_id = Column(ForeignKey("pipeline_run.id", **CASCADE))
+    pipeline_node_id = Column(ForeignKey("pipeline_node.id", **CASCADE))
     status = Column(String)
     exit_code = Column(Integer)
 

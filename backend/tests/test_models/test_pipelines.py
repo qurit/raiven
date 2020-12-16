@@ -80,7 +80,7 @@ def test_pipeline_job(db):
 
 # noinspection DuplicatedCode
 def test_cascade_delete_pipeline(db):
-    pipeline = insert_pipeline(db, 'Test Pipeline Delete 1')
+    pipeline = insert_pipeline(db, 'test_cascade_delete_pipeline')
     run = insert_run(db, pipeline)
     job = insert_job(db, run)
 
@@ -104,7 +104,7 @@ def test_cascade_delete_pipeline(db):
 
 # noinspection DuplicatedCode
 def test_cascade_delete_run(db):
-    pipeline = insert_pipeline(db, 'Test Pipeline Delete 2')
+    pipeline = insert_pipeline(db, 'test_cascade_delete_run')
     run = insert_run(db, pipeline)
     job = insert_job(db, run)
 
@@ -126,7 +126,7 @@ def test_cascade_delete_run(db):
 
 
 def test_job_volumes_paths(db):
-    pipeline = insert_pipeline(db, 'Test Pipeline Delete 2')
+    pipeline = insert_pipeline(db, 'test_job_volumes_paths')
     run = insert_run(db, pipeline)
     job = insert_job(db, run)
 
@@ -142,7 +142,7 @@ def test_job_volumes_paths(db):
 
 
 def test_linux_paths(db):
-    pipeline = insert_pipeline(db, 'Test Pipeline Delete 2')
+    pipeline = insert_pipeline(db, 'test_linux_paths')
     run = insert_run(db, pipeline)
     job = insert_job(db, run)
 
