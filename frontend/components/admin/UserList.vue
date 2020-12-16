@@ -32,7 +32,7 @@
               single-line
               hint="Press Enter to save"
               :prefix="aePrefix"
-              :rules="[rules.validateASCII, rules.validateLength]"
+              :rules="[validateAETitle]"
             ></v-text-field>
           </template>
         </v-edit-dialog>
@@ -52,7 +52,7 @@
 
 <script>
 import { generic_get, generic_put } from '~/api'
-import aeTitleValidator from '~/utilities/aeTitleValidator'
+import { validateAETitle } from '~/utilities/aeTitleValidator'
 
 export default {
   data() {
@@ -66,15 +66,7 @@ export default {
         { text: 'AE Title', value: 'ae_title' },
         { text: 'First Seen', value: 'first_seen' },
         { text: 'Last Seen', value: 'last_seen' }
-      ],
-      rules: {
-        validateLength: v => {
-          return aeTitleValidator.validateLength(v)
-        },
-        validateASCII: v => {
-          return aeTitleValidator.validateASCII(v)
-        }
-      }
+      ]
     }
   },
   computed: {
@@ -84,16 +76,14 @@ export default {
     this.getUsers()
   },
   methods: {
+    validateAETitle,
     formatDateTime(datetime) {
       return datetime ? new Date(datetime).toLocaleString() : 'Invalid Date'
     },
     async saveAETitle(user) {
       const { ae_title } = user
       try {
-        if (
-          typeof this.rules.validateLength(ae_title) === 'string' ||
-          typeof this.rules.validateASCII(ae_title) === 'string'
-        )
+        if (typeof this.validateAETitle(ae_title) === 'string')
           throw 'Validation Error'
         const URL = `/user/${user.id}`
         const payload = { ae_title: ae_title }
