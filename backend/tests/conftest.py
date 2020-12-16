@@ -20,11 +20,6 @@ def create_test_database():
     if database_exists(url):
         drop_database(url)
 
-    def _fk_pragma_on_connect(dbapi_con, con_record):
-        dbapi_con.execute('pragma foreign_keys=ON')
-
-    event.listen(engine, 'connect', _fk_pragma_on_connect)
-
     create_database(engine.url)
     models.Base.metadata.create_all(bind=engine)
     scripts.run_startup_scripts()
