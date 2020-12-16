@@ -7,7 +7,7 @@
       <v-text-field
         class="mx-2"
         v-model="aeTitle"
-        :rules="[rules.validateLength, rules.validateASCII]"
+        :rules="[validateAETitle]"
         counter
         :prefix="`Your AE Title is: ${$store.state.config.USER_AE_PREFIX}`"
         prepend-icon="mdi-access-point"
@@ -54,7 +54,7 @@
 import { mapState } from 'vuex'
 import { generic_get, generic_put } from '~/api'
 import { OutputDestinationForm } from '~/components/flowchart'
-import aeTitleValidator from '~/utilities/aeTitleValidator'
+import { validateAETitle } from '~/utilities/aeTitleValidator'
 
 export default {
   components: {
@@ -67,15 +67,7 @@ export default {
       didChangeAE: false,
       permittedAEs: [],
       aeTitle: '',
-      currentAETitle: '',
-      rules: {
-        validateLength: v => {
-          return aeTitleValidator.validateLength(v)
-        },
-        validateASCII: v => {
-          return aeTitleValidator.validateASCII(v)
-        }
-      }
+      currentAETitle: ''
     }
   },
   computed: {
@@ -86,6 +78,7 @@ export default {
     }
   },
   methods: {
+    validateAETitle,
     async getUserInfo() {
       const URL = '/user/me'
       const { ae_title } = await generic_get(this, URL)
