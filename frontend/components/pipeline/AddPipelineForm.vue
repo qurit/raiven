@@ -12,7 +12,7 @@
         v-model="aeTitle"
         label="AE Title"
         class="px-15"
-        :rules="[rules.validateLength, rules.validateASCII]"
+        :rules="[validateAETitle]"
         counter
         :prefix="$store.state.config.PIPELINE_AE_PREFIX"
       />
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import aeTitleValidator from '~/utilities/aeTitleValidator'
+import { validateAETitle } from '~/utilities/aeTitleValidator'
 
 export default {
   data() {
@@ -47,18 +47,11 @@ export default {
       isFormValid: false,
       pipelineName: '',
       aeTitle: '',
-      rules: {
-        validateLength: v => {
-          return aeTitleValidator.validateLength(v)
-        },
-        validateASCII: v => {
-          return aeTitleValidator.validateASCII(v)
-        }
-      },
       isShared: false
     }
   },
   methods: {
+    validateAETitle,
     async savePipeline() {
       try {
         const payload = {

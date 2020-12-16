@@ -5,7 +5,8 @@ import pytest
 from tests import models, testing_session
 
 
-def test_nested_path_mixin_not_saved():
+def test_nested_path():
+    # noinspection PyAbstractClass
     class TestNestedPathModel(models.Base, models.NestedPathMixin):
         pass
 
@@ -18,27 +19,12 @@ def test_nested_path_mixin_not_saved():
         mixin.get_path()
 
 
-def test_io_path_mixin_saved():
-    class TestIOModel(models.Base, models.IOPathMixin):
+def test_path_mixin():
+    class TestPathModel(models.Base, models.PathMixin):
         pass
 
-    mixin = TestIOModel()
+    mixin = TestPathModel()
+    assert mixin.__directory__
+    assert mixin.__absolute_directory__
+    assert pathlib.Path(mixin.__absolute_directory__)
 
-    with pytest.raises(Exception):
-        mixin.get_abs_path()
-
-    with pytest.raises(Exception):
-        mixin.get_abs_output_path()
-
-#
-# def test_nested_path_mixin():
-#     assert issubclass(models.container.Container,  models.NestedPathMixin)
-#
-#     with testing_session() as db:
-#         db_container = db.query(models.container.Container).first()
-#         assert db_container
-#
-#         assert pathlib.Path(db_container.get_abs_path()).exists()
-#
-#         # TODO: GET THIS TEST TO PASS
-#         # assert db_container.get_path() == pathlib.Path(db_container.get_path()).as_posix()
