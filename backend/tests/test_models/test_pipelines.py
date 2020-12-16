@@ -2,7 +2,7 @@ import pathlib
 
 from api.models.pipeline import *
 
-from tests import utils
+from tests import utils, mark
 
 
 def insert_pipeline(db, name, **kwargs) -> Pipeline:
@@ -79,6 +79,7 @@ def test_pipeline_job(db):
 
 
 # noinspection DuplicatedCode
+@mark.no_SQLLite
 def test_cascade_delete_pipeline(db):
     pipeline = insert_pipeline(db, 'test_cascade_delete_pipeline')
     run = insert_run(db, pipeline)
@@ -103,6 +104,7 @@ def test_cascade_delete_pipeline(db):
 
 
 # noinspection DuplicatedCode
+@mark.no_SQLLite
 def test_cascade_delete_run(db):
     pipeline = insert_pipeline(db, 'test_cascade_delete_run')
     run = insert_run(db, pipeline)
