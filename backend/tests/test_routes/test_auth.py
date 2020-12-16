@@ -1,3 +1,5 @@
+from time import sleep
+
 from tests import client, utils, TEST_USER, config
 
 
@@ -65,21 +67,24 @@ def test_invalid_token(authorization_header):
     assert response.status_code == 401
 
 
-def test_expired_token(db):
-    from time import sleep
-    from api.models.user import User
-
+def test_expired_token(custom_serializer, db):
     test_user = utils.get_test_user(db)
     token = test_user.generate_token()
 
-    assert token
-    assert User.verify_token(token)
+    sleep(1)
+    assert not custom_serializer.verify_token(token)
 
-    User._set_serializer('my key', 0)
-    token = test_user.generate_token()
-    assert token
+
+# noinspection DuplicatedCode
+def test_expired_token_api_call(custom_serializer):
+    user = utils.create_local_user('test', 'ZeroLifeToken', 'expired-token')
+    assert user
+
+    response = client.post('/auth/token', data={'username': 'ZeroLifeToken', 'password': 'expired-token'})
+    assert response.status_code == 200
+
+    data = response.json()
+    assert 'access_token' in data and type(token := data['access_token']) is str
 
     sleep(1)
-    assert not User.verify_token(token)
-
-
+    assert client.get('/user/me', headers=create_header(token)).status_code == 401

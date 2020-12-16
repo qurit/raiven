@@ -1,4 +1,4 @@
-from tests import client, testing_session, utils, TEST_USER, schemas
+from tests import client, testing_session, utils, TEST_USER, schemas, mark
 
 
 def test_get_stats(authorization_header):
@@ -19,9 +19,9 @@ def test_get_results(authorization_header):
     assert response.status_code == 200
 
 
-# TODO:
+@mark.not_written
 def test_download_run():
-    raise NotImplementedError
+    pass
 
 
 def test_download_run_dne(authorization_header):
@@ -35,7 +35,7 @@ def test_download_run_dne(authorization_header):
     assert response.status_code == 404
 
 
-# TODO:
+@mark.not_written
 def test_download_run_another_users():
     raise NotImplementedError
 
@@ -48,7 +48,7 @@ def test_get_all_pipelines(authorization_header):
     return response.json()
 
 
-def test_create_pipeline(authorization_header, pipeline = schemas.pipeline.PipelineCreate(name='test-pipeline')):
+def test_create_pipeline(authorization_header, pipeline=schemas.pipeline.PipelineCreate(name='test-pipeline')):
     # Create
     before = test_get_all_pipelines(authorization_header)
     response = client.post('/pipeline/', headers=authorization_header, json=pipeline.dict())
@@ -65,11 +65,14 @@ def test_create_pipeline(authorization_header, pipeline = schemas.pipeline.Pipel
     return response.json()
 
 
+@mark.not_written
 def test_update_pipeline(authorization_header):
     pipeline = schemas.pipeline.PipelineCreate(name='test-update')
     pipeline_id = test_create_pipeline(authorization_header, pipeline)['id']
 
     assert pipeline_id
+
+    # TODO: Finish this test
     raise NotImplementedError
 
 

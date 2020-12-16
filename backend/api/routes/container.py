@@ -33,7 +33,7 @@ def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(s
 
 
 # TODO: Add response model
-@router.post("/")
+@router.post("/", response_model=container.Container)
 def create_container(
         auto_build: bool = True,
         file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
@@ -78,8 +78,7 @@ def create_container(
     if auto_build:
         ContainerController.build_container(db_container.id)
 
-    # TODO: We shoulnt return a list
-    return [db_container]
+    return db_container
 
 
 @router.get("/{container_id}", response_model=container.Container)
