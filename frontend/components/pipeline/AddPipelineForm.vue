@@ -5,7 +5,7 @@
         v-model="pipelineName"
         label="Pipeline Name*"
         required
-        :rules="[v => !!v || 'A Pipeline Name is required']"
+        :rules="[validateNotEmpty]"
         class="px-15 pt-10"
       />
       <v-text-field
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { validateAETitle } from '~/utilities/aeTitleValidator'
+import { validateAETitle, validateNotEmpty } from '~/utilities/aeTitleValidator'
 
 export default {
   data() {
@@ -52,6 +52,7 @@ export default {
   },
   methods: {
     validateAETitle,
+    validateNotEmpty,
     async savePipeline() {
       try {
         const payload = {

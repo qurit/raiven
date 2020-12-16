@@ -6,7 +6,7 @@
       >
       <v-spacer />
       <v-icon-btn
-        @click="editState ? submit() : makeEditable()"
+        @click="editState ? submit() : (editState = true)"
         :icon="editState ? 'mdi-content-save' : 'mdi-pencil'"
         color="accent"
       />
@@ -23,7 +23,7 @@
                 v-model="pipeline.name"
                 :disabled="!editState"
                 label="Pipeline Name"
-                :rules="[validateEmpty]"
+                :rules="[validateNotEmpty]"
                 filled
               />
             </v-col>
@@ -48,11 +48,11 @@
             </v-col>
             <v-col sm="12" md="6">
               <span class="title">Results from this Pipeline</span>
-              <PipelineResults :pipelineId="this.pipelineId"/>
+              <PipelineResults :pipelineId="this.pipelineId" />
             </v-col>
             <v-col sm="12" md="6">
               <span class="title">More Info</span>
-              <PipelineTreeviewInfo :pipelineId="this.pipelineId"/>
+              <PipelineTreeviewInfo :pipelineId="this.pipelineId" />
             </v-col>
           </v-row>
         </v-form>
@@ -75,12 +75,11 @@ export default {
   data: () => ({
     pipeline: undefined,
     isFormValid: false,
-    editState: false,
+    editState: false
   }),
   methods: {
     validateAETitle,
     validateEmpty,
-    makeEditable: () => this.editState = true,
     async submit() {
       if (!this.$refs.form.validate()) {
         this.$toaster.toastError('Invalid Form!')
@@ -95,8 +94,7 @@ export default {
           this.$toaster.toastError('Could not save changes')
         }
       }
-    },
-
+    }
   },
   async created() {
     const URL = `/pipeline/${this.pipelineId}`
