@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from dramatiq import Worker
 
@@ -25,8 +27,11 @@ def stub_worker():
 
 @pytest.fixture(scope="module")
 def example_container():
+    assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
+    assert os.path.exists(file_path := os.path.join(mock_path, 'simple_container.zip'))
+    assert os.path.isfile(file_path)
 
-    with open('C:\\Users\\Adam\\Programming\\picom\\examples\\simple_container.zip', 'rb') as fp:
+    with open(file_path, 'rb') as fp:
         data = fp.read()
 
     with testing_session() as db:
