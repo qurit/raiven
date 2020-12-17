@@ -24,7 +24,7 @@
                 :disabled="!editState"
                 label="Pipeline Name"
                 :rules="[validateNotEmpty]"
-                filled
+                solo
               />
             </v-col>
             <v-col sm="12" md="5">
@@ -34,7 +34,7 @@
                 :disabled="!editState"
                 :rules="[validateAETitle]"
                 label="AE Title"
-                filled
+                solo
               />
             </v-col>
             <v-col sm="12" md="2">
@@ -65,7 +65,7 @@
 import { generic_get, generic_put } from '~/api'
 import PipelineTreeviewInfo from './PipelineTreeviewInfo'
 import PipelineResults from '~/components/pipeline/PipelineResults'
-import { validateAETitle, validateEmpty } from '~/utilities/validationRules'
+import { validateAETitle, validateNotEmpty } from '~/utilities/validationRules'
 
 export default {
   components: { PipelineResults, PipelineTreeviewInfo },
@@ -79,7 +79,7 @@ export default {
   }),
   methods: {
     validateAETitle,
-    validateEmpty,
+    validateNotEmpty,
     async submit() {
       if (!this.$refs.form.validate()) {
         this.$toaster.toastError('Invalid Form!')
