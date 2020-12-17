@@ -31,7 +31,7 @@ class Association:
 
     def __get_assoc(self):
         ae = AE(ae_title=config.SCP_AE_TITLE)
-        [ae.add_requested_context(c) for c in self.contexts]
+        ae.requested_contexts = self.contexts
 
         assoc = ae.associate(addr=self.host, port=self.port, ae_title=self.ae_title, contexts=self.contexts, **self.kwargs)
 
