@@ -17,7 +17,7 @@ class Association:
     def __init__(self, scp: Destination, contexts: list = AllStoragePresentationContexts, **kwargs):
         self.host = scp.host
         self.port = scp.port
-        self.ae_title = scp.ae_title
+        self.ae_title = scp.full_name
         self.contexts = contexts
         self.kwargs = kwargs
 
