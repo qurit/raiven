@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="6" height="460" class="overflow-y-auto overflow-x-hidden">
+  <v-card elevation="6" height="515" class="overflow-y-auto overflow-x-hidden">
     <v-toolbar color="primary accent--text" flat>
       <v-toolbar-title> <b>Pipelines in Progress</b></v-toolbar-title>
       <v-spacer />

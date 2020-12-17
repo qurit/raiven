@@ -40,12 +40,12 @@ import { DicomBreakdown } from '~/components/graphs'
 export default {
   components: { DicomBreakdown },
   props: {
-    'dicom_obj_type': String,
-    'dicom_obj_id': String,
-    'nodes': String,
-    'patients': String,
-    'studies': String,
-    'series': String,
+    dicom_obj_type: String,
+    dicom_obj_id: String,
+    nodes: String,
+    patients: String,
+    studies: String,
+    series: String
   },
   data: () => ({
     pipeline_id: undefined
@@ -68,7 +68,9 @@ export default {
         }
         try {
           const data = await generic_put(this, URL, PAYLOAD)
-          this.$toaster.toastSuccess(data)
+          this.$toaster.toastSuccess(
+            data.pipeline.name + ' has started Run #' + data.id
+          )
           this.$emit('closeDialog')
         } catch (e) {
           this.$toaster.toastError(e)
