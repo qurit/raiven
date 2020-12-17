@@ -13,11 +13,7 @@
           hide-details
           solo
         />
-        <v-btn icon>
-          <v-icon @click="this.getPipelineRuns" color="#373740"
-            >mdi-refresh</v-icon
-          >
-        </v-btn>
+        <v-icon-btn @click="getPipelineRuns" color="#373740" refresh />
       </v-toolbar>
       <v-text-field
         v-model="search"
@@ -63,8 +59,10 @@
 const FileDownload = require('js-file-download')
 
 import { generic_get } from '~/api'
+import vIconBtn from '../global/v-icon-btn.vue'
 
 export default {
+  components: { vIconBtn },
   props: {
     pipelineId: {
       type: Number

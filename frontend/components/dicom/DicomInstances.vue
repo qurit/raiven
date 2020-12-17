@@ -3,9 +3,7 @@
     <v-toolbar color="primary accent--text" flat>
       <v-toolbar-title><b>DICOM Instances</b></v-toolbar-title>
       <v-spacer />
-      <v-btn icon>
-        <v-icon @click="this.getNodes" color="#373740">mdi-refresh</v-icon>
-      </v-btn>
+      <v-icon-btn @click="getNodes" color="#373740" refresh />
     </v-toolbar>
     <DicomBreakdown />
 
