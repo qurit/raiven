@@ -14,7 +14,7 @@ export const getters = {
 
 export const mutations = {
   setContainers: (state, containers) => (state.containers = containers),
-  addContainer: (state, container) => (state.containers = state.containers.push(container)),
+  addContainer: (state, container) => state.containers.push(container),
   deleteContainer: (state, id) => {
     const index = state.containers.findIndex(container => container.id === id)
     state.containers.splice(index, 1)

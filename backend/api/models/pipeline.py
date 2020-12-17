@@ -15,7 +15,8 @@ class Pipeline(Base):
     ae_title = Column(String)
     is_shared = Column(Boolean, default=False)
 
-    runs = relationship("PipelineRun", backref="pipeline", passive_deletes=True)
+    runs = relationship("PipelineRun", backref="pipeline",
+                        passive_deletes=True)
     nodes = relationship("PipelineNode", backref="pipeline")
     links = relationship("PipelineLink", backref="pipeline")
 
@@ -35,8 +36,10 @@ class PipelineNode(Base):
 
     destination = relationship("Destination", uselist=False)
     container = relationship("Container", uselist=False)
-    next_links = relationship('PipelineLink', foreign_keys='PipelineLink.from_node_id')
-    previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.to_node_id')
+    next_links = relationship(
+        'PipelineLink', foreign_keys='PipelineLink.from_node_id')
+    previous_links = relationship(
+        'PipelineLink', foreign_keys='PipelineLink.to_node_id')
     jobs = relationship('PipelineJob', backref='node')
 
     def is_root_node(self):
@@ -57,8 +60,10 @@ class PipelineLink(Base):
     to_node_id = Column(ForeignKey("pipeline_node.id", **CASCADE))
     from_node_id = Column(ForeignKey("pipeline_node.id", **CASCADE))
 
-    next_node = relationship('PipelineNode', foreign_keys='PipelineLink.to_node_id', uselist=False)
-    previous_node = relationship('PipelineNode', foreign_keys='PipelineLink.from_node_id', uselist=False)
+    next_node = relationship(
+        'PipelineNode', foreign_keys='PipelineLink.to_node_id', uselist=False)
+    previous_node = relationship(
+        'PipelineNode', foreign_keys='PipelineLink.from_node_id', uselist=False)
 
     def __repr__(self, **kwargs) -> str:
         return super().__repr__(to_node=self.to_node_id, from_node=self.from_node_id, **kwargs)
@@ -68,7 +73,7 @@ class PipelineRun(IOPathMixin, Base):
     pipeline_id = Column(ForeignKey('pipeline.id', **CASCADE))
     status = Column(String, default='Created')
 
-    created_datetime = Column(DateTime, default=datetime.utcnow)
+    created_datetime = Column(DateTime, default=datetime.now)
     finished_datetime = Column(DateTime)
 
     jobs = relationship('PipelineJob', backref="run")
