@@ -207,6 +207,16 @@ export default {
     this.pipeline_id = parseInt(this.$router.history.current.params.id)
     this.getContainers()
     this.getSavedPipeline(this.pipeline_id)
+  },
+  beforeRouteLeave(to, from, next) {
+    if (!this.$refs.simpleFlowchart.checkSaved()) {
+      const confirm = window.confirm(
+        'You may have unsaved edits, would you still like to leave?'
+      )
+      confirm ? next() : next(false)
+    } else {
+      next()
+    }
   }
 }
 </script>
