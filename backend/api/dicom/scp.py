@@ -5,6 +5,7 @@ import pathlib
 import shutil
 
 from pynetdicom import AE, evt, debug_logger
+from pydicom.filewriter import write_file_meta_info
 from pynetdicom.presentation import AllStoragePresentationContexts
 from pynetdicom.sop_class import VerificationSOPClass
 from pydicom import uid
@@ -12,6 +13,7 @@ from pydicom import uid
 from api import config
 from api.database import worker_session as session
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
+from api.pipelining._tasks.ingest import run_ingest_task
 
 # debug_logger()
 
@@ -56,9 +58,12 @@ def handle_association_request(event):
 
 def handle_association_release(event):
     requestor_ae_title, called_ae_title = get_ae_titles(event)
+    calling_host, calling_port = event.assoc.requestor.address, event.assoc.requestor.port
 
     if requestor_ae_title in CONNECTIONS:
         # shutil.rmtree(CONNECTIONS[requestor_ae_title])
+
+        run_ingest_task(CONNECTIONS[requestor_ae_title], called_ae_title, calling_host, calling_port)
         del CONNECTIONS[requestor_ae_title]
 
     return 0x0000
@@ -68,8 +73,9 @@ def handle_store(event):
     """ Handles EVT_C_STORE """
     requestor_ae_title, called_ae_title = get_ae_titles(event)
 
-    path = CONNECTIONS[requestor_ae_title] / event.request.AffectedSOPInstanceUID
+    path = CONNECTIONS[requestor_ae_title] / (event.request.AffectedSOPInstanceUID + '.dcm')
     with open(path, 'wb') as f:
+        print(path)
 
         f.write(b'\x00' * 128)
         f.write(b'DICM')

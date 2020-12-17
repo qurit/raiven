@@ -1,17 +1,17 @@
 import os
 import pathlib
 import shutil
+from typing import Union
 from datetime import datetime
 
 from pydicom import dcmread
 
 from api import config, worker_session
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
-from . import dramatiq
 
 
-@dramatiq.actor(max_retries=0)
-def run_ingest_task(folder: str, calling_aet, calling_port, calling_host):
+# @dramatiq.actor(max_retries=0)
+def run_ingest_task(folder: Union[str, os.PathLike], calling_aet: str, calling_host: str, calling_port: int):
     """
     The models will automatically create the folders because they inherit from NestedPathMixin found in database.py
     Speed can be improved by starting query from series (requires joins) but will cut the avg amount of queries down
@@ -22,24 +22,22 @@ def run_ingest_task(folder: str, calling_aet, calling_port, calling_host):
     with worker_session() as db:
 
         for file in os.listdir(folder):
-            ds = dcmread(file_path := pathlib.Path(folder) / file)
+            ds = dcmread(str(file_path := pathlib.Path(folder) / file))
 
             # TODO: SHOULD START WITH SERIES FOR MORE EFFICIENCY
             if not (node := db.query(DicomNode).filter_by(title=calling_aet).first()):
                 node = DicomNode(title=calling_aet, host=calling_host, port=calling_port)
                 node.save(db)
 
-            if not (patient := db.query(DicomPatient).filter_by(postgres_data=node.id, patient_id=ds.PatientID).first()):
+            if not (patient := db.query(DicomPatient).filter_by(dicom_node_id=node.id, patient_id=ds.PatientID).first()):
                 patient = DicomPatient(dicom_node_id=node.id, patient_id=ds.PatientID)
                 patient.save(db)
 
             if not (study := db.query(DicomStudy).filter_by(dicom_patient_id=patient.id, study_instance_uid=ds.StudyInstanceUID).first()):
-                raw_date_time = ds.StudyDate + ds.StudyTime
-                formatted_date_time = datetime.datetime.strptime(raw_date_time, '%Y%m%d%H%M%S')
                 study = DicomStudy(
                     dicom_patient_id=patient.id,
                     study_instance_uid=ds.StudyInstanceUID,
-                    study_date=formatted_date_time
+                    study_date=datetime.strptime(ds.StudyDate + ds.StudyTime, '%Y%m%d%H%M%S')
                 )
                 study.save(db)
 
@@ -50,11 +48,17 @@ def run_ingest_task(folder: str, calling_aet, calling_port, calling_host):
                     # TODO: Add a series description table
                     series_description=ds.SeriesDescription,
                     modality=ds.Modality,
-                    date_received=datetime.datetime.today()
+                    date_received=datetime.today()
 
                 )
                 series.save(db)
 
             # Grab the save path so we can release the session connection
-            save_path = pathlib.Path(series.get_abs_path()) / ds.SOPInstanceUID + '.dcm'
+            save_path = pathlib.Path(series.get_abs_path()) / (ds.SOPInstanceUID + '.dcm')
             shutil.move(file_path, save_path)
+        db.commit()
+
+
+# if __name__ == '__main__':
+#     path = 'C:\\Users\\Adam\\Programming\\picom\\backend\\tests\\.test_uploads\\tmp\\d25a7b24-409e-11eb-9808-408d5c570833'
+#     run_ingest_task(path, 'test', 'localhost', 80)
