@@ -93,7 +93,6 @@ export default {
   props: {
     canEdit: { type: Boolean },
     id: { type: Number },
-    x: { type: Number },
     y: { type: Number },
     x: { type: Number },
     type: { type: String },
