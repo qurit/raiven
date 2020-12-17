@@ -54,7 +54,7 @@
 import { mapState } from 'vuex'
 import { generic_get, generic_put } from '~/api'
 import { OutputDestinationForm } from '~/components/flowchart'
-import { validateAETitle } from '~/utilities/aeTitleValidator'
+import { validateAETitle } from '~/utilities/validationRules'
 
 export default {
   components: {

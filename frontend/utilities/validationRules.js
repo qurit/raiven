@@ -5,8 +5,7 @@ export const validateLength = (v, length) => v.trim().length <= length
 export function validateAETitle(v) {
   if (!!v) {
     if (!validateASCII(v)) return 'Field must only contain ASCII characters'
-    if (!validateLength(v, 16)) return 'Field must be less then 16 characters'
-
+    if (!validateLength(v, 12)) return 'Field must be less then 12 characters'
     return true
   }
 }
