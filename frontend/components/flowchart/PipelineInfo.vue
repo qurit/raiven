@@ -65,7 +65,7 @@
 import { generic_get, generic_put } from '~/api'
 import PipelineTreeviewInfo from './PipelineTreeviewInfo'
 import PipelineResults from '~/components/pipeline/PipelineResults'
-import { validateAETitle, validateEmpty } from '~/utilities/aeTitleValidator'
+import { validateAETitle, validateEmpty } from '~/utilities/validationRules'
 
 export default {
   components: { PipelineResults, PipelineTreeviewInfo },

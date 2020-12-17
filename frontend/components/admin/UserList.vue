@@ -52,7 +52,7 @@
 
 <script>
 import { generic_get, generic_put } from '~/api'
-import { validateAETitle } from '~/utilities/aeTitleValidator'
+import { validateAETitle } from '~/utilities/validationRules'
 
 export default {
   data() {

@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { validateAETitle, validateNotEmpty } from '~/utilities/aeTitleValidator'
+import { validateAETitle, validateNotEmpty } from '~/utilities/validationRules'
 
 export default {
   data() {
