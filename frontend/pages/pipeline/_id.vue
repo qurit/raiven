@@ -37,8 +37,6 @@
         :id="pipeline_id"
         :colors="colors.container"
         :canEdit="canEdit"
-        :savedNodes="savedNodes"
-        :savedLinks="savedLinks"
         ref="simpleFlowchart"
       >
         <!-- This overlay is shown if the pipeline is empty and it is the shared user viewing it -->
