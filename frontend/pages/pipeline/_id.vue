@@ -209,7 +209,7 @@ export default {
     this.getSavedPipeline(this.pipeline_id)
   },
   beforeRouteLeave(to, from, next) {
-    if (!this.$refs.simpleFlowchart.checkSaved()) {
+    if (this.canEdit && !this.$refs.simpleFlowchart.checkSaved()) {
       const confirm = window.confirm(
         'You may have unsaved edits, would you still like to leave?'
       )
