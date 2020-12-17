@@ -1,6 +1,5 @@
 <template>
-  <v-card class="overflow-x-hidden"  width="600">
-    <v-form v-model="isFormValid" class="ma-5" ref="form">
+  <v-card class="overflow-x-hidden" width="600">
       <v-card-title> Add a destination source for your pipelines</v-card-title>
       <v-row>
 
@@ -29,18 +28,18 @@
           />
         </v-col>
       </v-row>
-    <v-card-actions>
-      <v-spacer />
-      <v-btn
-        :disabled="!this.isFormValid"
-        @click="submit"
-        color="confirm"
-        class="ma-4"
-        text
-      >
-        Add destination
-      </v-btn>
-    </v-card-actions>
+      <v-card-actions>
+        <v-spacer/>
+        <v-btn
+          :disabled="!this.isFormValid"
+          @click="submit"
+          color="confirm"
+          class="ma-4"
+          text
+        >
+          Add destination
+        </v-btn>
+      </v-card-actions>
   </v-card>
 </template>
 
