@@ -20,11 +20,11 @@
           Pipeline by clicking on the respective row
         </li>
         <li>
-          Select which pipeline you would like to send the images to.
+          Select which pipeline you would like to send the images to
         </li>
         <li>
           Click <v-btn text x-small color="confirm"> Send </v-btn> to start the
-          Pipeline Run.
+          Pipeline Run
         </li>
       </ol>
     </v-card-text>
@@ -42,7 +42,7 @@
         </li>
         <li>
           Click <v-icon small color="icon">mdi-download</v-icon> next to the
-          repsective pipeline run to download the results as a zip file.
+          repsective pipeline run to download the results as a zip file
         </li>
       </ol>
     </v-card-text>
@@ -63,11 +63,11 @@
         </li>
         <li>
           Click <v-icon small color="icon">mdi-information</v-icon> on the top
-          left to view this pipeline's runs.
+          left to view this pipeline's runs
           <ul>
             <li>
               Information about a run's containers and errors can be found here
-              as well.
+              as well
             </li>
           </ul>
         </li>

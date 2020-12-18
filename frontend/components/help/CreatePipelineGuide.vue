@@ -20,12 +20,16 @@
           form
           <ul>
             <li>
-              You must provide a pipeline name.
+              You must provide a pipeline name
+            </li>
+            <li>
+              You may provide an AE title if you would like this pipeline to
+              automatically run upon receiving a specific DICOM instance
             </li>
           </ul>
         </li>
         <li>
-          You will be brought to the pipeline-making canvas board.
+          You will be brought to the pipeline-making canvas board
         </li>
 
         <li>
@@ -35,16 +39,28 @@
         <li>
           From the right-hand Container list, click
           <v-icon small color="icon">mdi-plus</v-icon> on the Container card to
-          add it to the canvas.
+          add it to the canvas
         </li>
         <li>Drag your Containers around to build your pipeline flow</li>
         <li>
           Connect your Containers with the small nodes at the bottom and top of
-          the cards.
+          the cards
           <ul>
             <li>
               The link between containers should start from a Container's bottom
-              node to another Container's top node.
+              node to another Container's top node
+            </li>
+          </ul>
+        </li>
+        <li>
+          If you would like your Pipeline results to be sent to another DICOM
+          node, you can add the default <b>Dicom Output Container</b> to the end
+          of your flow.
+          <ul>
+            <li>
+              To designate the DICOM node to send to, add the node's host and
+              port and select it in the <b> Dicom Output Container</b>'s
+              dropdown menu.
             </li>
           </ul>
         </li>
