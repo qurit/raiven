@@ -8,6 +8,22 @@ from .container import Container
 from .destination import Destination
 from api.models import dicom, Base
 
+class PipelineStats(BaseModel):
+    pipeline_counts: int
+    pipeline_run_counts: int
+
+class PipelineJob(BaseORMModel):
+    pipeline_node_id: int
+    timestamp: datetime
+    input_path: str
+    status: str
+    pipeline_run_id: str
+    output_path: str
+    exit_code: Optional[str]
+
+class PipelineJobError(BaseORMModel):
+    pipeline_job_id: int
+    stderr: str
 
 class PipelineNodeCreate(BaseModel):
     node_id: int

@@ -3,6 +3,9 @@ from typing import Optional
 from .user import User
 
 
+class ContainerStats(BaseModel):
+    container_counts: int
+
 class ContainerCreate(BaseModel):
     user_id: int
     name: str
