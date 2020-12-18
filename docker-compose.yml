@@ -30,6 +30,12 @@ services:
       - ./uploads:/app/uploads
       - /var/run/docker.sock:/var/run/docker.sock
 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
 #  api:
 #    build: ./backend
 #    ports:
@@ -63,10 +69,12 @@ services:
 #    env_file:
 #      - docker.env
 
-secrets:
-  orthanc.json:
-    file: orthanc.json
+# secrets:
+#   orthanc.json:
+#     file: orthanc.json
+
+# volumes:
+#   orthanc_data:
 
 volumes:
-  orthanc_data:
-  postgres_data:
+    postgres_data:
