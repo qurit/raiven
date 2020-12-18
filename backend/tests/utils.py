@@ -14,6 +14,18 @@ def create_local_user(name, username, password) -> schemas.user.User:
     return schemas.user.User(**data)
 
 
+# noinspection PyUnboundLocalVariable
+def get_auth_header(username: str, password: str) -> dict:
+    response = client.post('/auth/token', data={'username': username, 'password': password})
+    print(response)
+    assert response.status_code == 200
+
+    data = response.json()
+    assert 'access_token' in data and type(token := data['access_token']) is str
+
+    return {'Authorization': f'Bearer {token}'}
+
+
 def get_test_user(db) -> models.user.User:
     assert (user := db.query(models.user.User).filter_by(username=TEST_USER.username).first())
 
