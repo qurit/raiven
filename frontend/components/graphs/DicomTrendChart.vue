@@ -1,13 +1,7 @@
 <template>
-  <div>
-    <v-card elevation="6">
-      <line-chart
-        v-if="loaded"
-        :chart-data="dataCollection"
-        :options="options"
-      ></line-chart>
-    </v-card>
-  </div>
+  <v-card elevation="6">
+    <line-chart :chart-data="dataCollection" :options="options"></line-chart>
+  </v-card>
 </template>
 
 <script>
@@ -22,7 +16,6 @@ export default {
   data() {
     return {
       dataCollection: null,
-      loaded: false,
       chartData: null,
       options: {
         legend: {
@@ -69,10 +62,8 @@ export default {
   async mounted() {
     const URL = '/dicom/received-series'
     try {
-      this.loaded = false
       this.chartData = await generic_get(this, URL)
       this.fillData()
-      this.loaded = true
     } catch (e) {
       console.log(e)
     }

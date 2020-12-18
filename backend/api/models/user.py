@@ -1,5 +1,4 @@
-from itsdangerous import (
-    TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 from passlib.hash import pbkdf2_sha256
 
 from sqlalchemy import *
@@ -11,6 +10,8 @@ from api import config
 
 
 class User(Base):
+    __serializer__ = Serializer(config.SECRET_KEY, expires_in=config.TOKEN_TTL)
+
     username = Column(String, index=True, unique=True)
     name = Column(String)
     ae_title = Column(String)
@@ -21,28 +22,23 @@ class User(Base):
     ldap_user = relationship("UserLDAP", backref='user', uselist=False)
     local_user = relationship("UserLocal", backref='user', uselist=False)
 
-    def generate_token(self, expiration=config.TOKEN_TTL):
-        s = Serializer(config.SECRET_KEY, expires_in=expiration)
-        return s.dumps({'id': self.id})
+    def generate_token(self) -> bytes:
+        return self.__serializer__.dumps({'id': self.id})
 
     @staticmethod
-    def verify_token(token, db: Session = None):
-        s = Serializer(config.SECRET_KEY)
-
+    def verify_token(token) -> int:
         try:
-            data = s.loads(token)
+            data = User.__serializer__.loads(token)
         except SignatureExpired:
             return None  # valid token, but expired
         except BadSignature:
             return None  # invalid token
-
-        if db:
-            user = User.query(db).get(data['id'])
-            user.last_seen = datetime.utcnow()
-            user.save(db)
-            return user
         else:
             return data['id']
+
+    @classmethod
+    def _set_serializer(cls, secret_key, expiration):
+        cls.__serializer__ = Serializer(secret_key, expiration)
 
 
 class UserLDAP(Base):
@@ -52,7 +48,7 @@ class UserLDAP(Base):
     company = Column(String)
 
     def verify_password(self, password):
-        pass
+        raise NotImplementedError
 
 
 class UserLocal(Base):

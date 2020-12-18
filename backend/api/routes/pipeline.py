@@ -2,11 +2,11 @@ import os
 import shutil
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
-from api import session, queries
+from api import session, queries, middleware
 from api.pipelining import PipelineController
 from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun, PipelineJob, PipelineJobError
 from api.schemas import pipeline as schemas
@@ -80,10 +80,14 @@ def get_pipeline_job_nodes(pipeline_node_id, db: Session = Depends(session)):
     return db.query(PipelineNode).filter(PipelineNode.id == pipeline_node_id).all()
 
 
-@ router.get("/download/{pipeline_run_id}")
+@ router.get("/download/{pipeline_run_id}", )
+@ middleware.exists_or_404
 def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
     """ Downloading the pipeline run results in a zip file form """
     pipeline_run: PipelineRun = db.query(PipelineRun).get(pipeline_run_id)
+    if not pipeline_run:
+        return False
+
     result_path = pipeline_run.get_abs_output_path()
     zip_path = os.path.join(pipeline_run.get_abs_path(), 'result')
 
@@ -112,10 +116,12 @@ def create_pipeline(pipeline: schemas.PipelineCreate, user: User = Depends(token
     return(Pipeline(name=pipeline.name, ae_title=pipeline.ae_title, is_shared=pipeline.is_shared, user_id=user.id)).save(db)
 
 
-@ router.get("/{pipeline_id}", response_model=schemas.PipelineFull)
+@router.get("/{pipeline_id}", response_model=schemas.PipelineFull)
 def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
-    """ Get a specific pipeline """
-    return db.query(Pipeline).get(pipeline_id)
+    if not (pipeline := db.query(Pipeline).get(pipeline_id)):
+        raise HTTPException(404)
+
+    return pipeline
 
 
 @ router.put("/{pipeline_id}/edit", response_model=schemas.Pipeline)
@@ -145,23 +151,22 @@ def get_pipeline_nodes(pipeline_id: int, db: Session = Depends(session)):
     return db.query(PipelineNode).filter(PipelineNode.pipeline_id == pipeline_id).all()
 
 
-@ router.get("/{pipeline_id}/links")
+@router.get("/{pipeline_id}/links")
 def get_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
     """ Get all links from a pipeline """
     return db.query(PipelineLink).filter(PipelineLink.pipeline_id == pipeline_id).delete()
 
 
-@ router.post("/{pipeline_id}", response_model=schemas.Pipeline)
+@router.post("/{pipeline_id}", response_model=schemas.Pipeline)
 def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, db: Session = Depends(session)):
     """ This Allows you to update / add pipeline containers and links """
-    print("pipeline payload from frontend")
-    print(pipeline_update)
 
     # clear out any previous nodes / links
     db.query(PipelineNode).filter(
         PipelineNode.pipeline_id == pipeline_id).delete()
     db.query(PipelineLink).filter(
         PipelineLink.pipeline_id == pipeline_id).delete()
+
     # save new nodes and links
     nodes = {node.node_id: PipelineNode(
         pipeline_id=pipeline_id,
@@ -183,7 +188,10 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
     return db.query(Pipeline).get(pipeline_id)
 
 
-@ router.delete("/{pipeline_id}", response_model=schemas.Pipeline)
+@router.delete("/{pipeline_id}", response_model=schemas.Pipeline)
+@middleware.exists_or_404
 def delete_pipeline(pipeline_id: int, db: Session = Depends(session)):
-    """ Delete a pipeline """
-    return db.query(Pipeline).get(pipeline_id).delete(db)
+    if pipeline := db.query(Pipeline).get(pipeline_id):
+        pipeline.delete(db)
+
+    return pipeline

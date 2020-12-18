@@ -2,6 +2,8 @@
   <v-card class="mx-auto" elevation="6">
     <v-toolbar color="primary accent--text" flat>
       <v-toolbar-title><b>DICOM Instances</b></v-toolbar-title>
+      <v-spacer />
+      <v-icon-btn @click="getNodes" color="#373740" refresh />
     </v-toolbar>
     <DicomBreakdown />
 
