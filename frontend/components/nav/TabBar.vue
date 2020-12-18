@@ -8,7 +8,7 @@
         width="40"
       />
     </n-link>
-    <v-tab v-for="link in items" :to="link.to" nuxt :ripple="false">
+    <v-tab v-for="link in items" :to="link.to" nuxt :ripple="false" :key="link.to">
       <v-icon
         v-text="link.icon"
         large

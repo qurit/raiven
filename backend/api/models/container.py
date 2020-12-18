@@ -4,12 +4,12 @@ from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
 from api import config
-from . import Base, PathMixin, TimestampMixin
+from . import Base, PathMixin, TimestampMixin, CASCADE
 from api.models.pipeline import PipelineNode
 
 
 class Container(PathMixin, Base):
-    user_id = Column(ForeignKey("user.id", ondelete="CASCADE"))
+    user_id = Column(ForeignKey("user.id", **CASCADE))
     name = Column(String)
     dockerfile_path = Column(String)
     is_input_container = Column(Boolean, default=False)
@@ -31,7 +31,7 @@ class Container(PathMixin, Base):
 
 
 class ContainerBuild(TimestampMixin, Base):
-    container_id = Column(ForeignKey("container.id", ondelete="CASCADE"))
+    container_id = Column(ForeignKey("container.id", **CASCADE))
     exit_code = Column(Integer)
     status = Column(String)
     tag = Column(String)

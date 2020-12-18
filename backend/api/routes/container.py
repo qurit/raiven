@@ -1,3 +1,4 @@
+import pathlib
 import io
 import os
 import zipfile
@@ -32,58 +33,52 @@ def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(s
 
 
 # TODO: Add response model
-@router.post("/")
-async def create_container(
+@router.post("/", response_model=container.Container)
+def create_container(
+        auto_build: bool = True,
         file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
         description: str = Form(None), is_input_container: bool = Form(...),
-        is_output_container: bool = Form(...), is_shared: bool = Form(...), user: User = Depends(token_auth), db: session = Depends(session)):
+        is_output_container: bool = Form(...), is_shared: bool = Form(...), user: User = Depends(token_auth), db: Session = Depends(session)):
+
+    db_container = Container(
+        user_id=user.id,
+        name=name,
+        description=description,
+        is_input_container=is_input_container,
+        is_output_container=is_output_container,
+        is_shared=is_shared,
+        filename='Dockerfile')
+    db_container.save(db)
 
     if ".zip" in filename:
-        z = zipfile.ZipFile(io.BytesIO(file))
-        db_container = Container(
-            user_id=user.id,
-            name=name,
-            description=description,
-            is_input_container=is_input_container,
-            is_output_container=is_output_container,
-            is_shared=is_shared,
-            filename='Dockerfile')
-        db_container.save(db)
 
+        z = zipfile.ZipFile(io.BytesIO(file))
         folder = db_container.get_abs_path()
         z.extractall(folder)
-        print(folder)
+
+        # Finding the Dockerfile in the zip file
         for root, _, files in os.walk(folder):
-            print(root, _, files)
             if 'Dockerfile' in files:
-                db_container.dockerfile_path = os.path.relpath(
-                    os.path.join(root, 'Dockerfile'), config.UPLOAD_DIR)
+                dockerfile_path = os.path.relpath(root, config.UPLOAD_DIR)
+                db_container.dockerfile_path = (pathlib.Path(dockerfile_path) / 'Dockerfile').as_posix()
                 break
 
         db_container.save(db)
+
     else:
-        # TODO: Review This Code.  Refactoring needed
-        db_container = Container(
-            user_id=user.id,
-            name=name,
-            description=description,
-            is_input_container=is_input_container,
-            is_output_container=is_output_container,
-            is_shared=is_shared,
-            filename=filename)
-        db_container.save(db)
         with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
             fp.write(file)
-        db_container.dockerfile_path = os.path.join(
-            db_container.get_path(), filename)
+
+        db_container.dockerfile_path = os.path.join(db_container.get_path(), filename)
         db_container.save(db)
 
     # Build Container In Background
     db.commit()
-    ContainerController.build_container(db_container.id)
 
-    # TODO: We shoulnt return a list
-    return [db_container]
+    if auto_build:
+        ContainerController.build_container(db_container.id)
+
+    return db_container
 
 
 @router.get("/{container_id}", response_model=container.Container)

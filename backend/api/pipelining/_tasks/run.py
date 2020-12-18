@@ -1,10 +1,11 @@
+import pathlib
 from datetime import datetime
 
 from api import config, worker_session, models
-from . import docker, dramatiq, external_sio
+from . import docker, dramatiq, external_sio, HOST_PATH_TYPE
 
 
-@dramatiq.actor
+@dramatiq.actor(max_retries=0)
 def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
     # external_sio.emit('message', f"RUNNING NODE: {node_id}, RUN: {run_id}")
     print('Got past the emit')
@@ -12,8 +13,7 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
     # TODO: Check if all previous nodes have finished
 
     with worker_session() as db:
-        job = models.pipeline.PipelineJob(
-            pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
+        job = models.pipeline.PipelineJob(pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
         job.save(db)
 
         if not (build := job.node.container.build):
@@ -22,7 +22,6 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
             return
 
         image_tag = build.tag
-        job.detach(db)
 
         if not previous_job_id:
             src_subdir = 'input'
@@ -31,11 +30,10 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
             src_subdir = 'output'
             prev = db.query(models.pipeline.PipelineJob).get(previous_job_id)
 
-        # TODO: Locking
         models.utils.copy_model_fs(prev, job, src_subdir=src_subdir)
         volumes = {
-            job.get_volume_abs_input_path(): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
-            job.get_volume_abs_output_path(): {'bind': config.PICOM_OUTPUT_DIR, 'mode': 'rw'}
+            HOST_PATH_TYPE(job.get_volume_abs_input_path()): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
+            HOST_PATH_TYPE(job.get_volume_abs_output_path()): {'bind': config.PICOM_OUTPUT_DIR, 'mode': 'rw'}
         }
         print(volumes)
 

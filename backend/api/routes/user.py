@@ -42,8 +42,14 @@ def get_the_current_user(user: User = Depends(token_auth)):
     return user
 
 
-@router.put("/{user_id}/update-ae-title",  response_model=UserSchema)
-def update_ae_title(ae_title: UserEdit, user_id: int, db: Session = Depends(session)):
-    user_to_edit = db.query(User).get(user_id)
-    user_to_edit.ae_title = ae_title.ae_title
+@router.put("/{user_id}")
+def edit_user_ae_title(user_id: int, new_info: UserEdit, user: User = Depends(token_auth), db: Session = Depends(session)):
+    if user.id != user_id and not user.is_admin:
+        return HTTPException(403, 'Unauthorized')
+
+    if not (user_to_edit := db.query(User).get(user_id)):
+        return HTTPException(401, 'User does not exist')
+
+    user_to_edit.ae_title = new_info.ae_title
+    user_to_edit.save(db)
     return user_to_edit

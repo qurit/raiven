@@ -32,9 +32,13 @@ export default {
         {
           to: '/pipeline',
           label: 'Pipelines',
-          icon: 'mdi-transit-connection-variant'
+          icon:
+            this.$route.path === '/pipeline'
+              ? 'mdi-transit-connection-variant'
+              : 'mdi-transit-connection-horizontal'
         },
         { to: '/runs', label: 'Runs', icon: 'mdi-air-filter' },
+        { to: '/settings', label: 'Settings', icon: 'mdi-account-cog-outline' },
         { to: '/help', label: 'Help', icon: 'mdi-help' },
         ...(this.$auth.user.is_admin
           ? [{ to: '/admin', label: 'Admin', icon: 'mdi-head-cog-outline' }]
@@ -43,7 +47,7 @@ export default {
     }
   },
   created() {
-    console.log(this.$vuetify.breakpoint)
+    this.$store.dispatch('fetchConfig')
   }
 }
 </script>
