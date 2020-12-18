@@ -6,7 +6,7 @@
       >
       <v-spacer />
       <v-icon-btn
-        @click="editState ? submit() : makeEditable()"
+        @click="editState ? submit() : (editState = true)"
         :icon="editState ? 'mdi-content-save' : 'mdi-pencil'"
         color="accent"
       />
@@ -23,8 +23,8 @@
                 v-model="pipeline.name"
                 :disabled="!editState"
                 label="Pipeline Name"
-                :rules="[validateEmpty]"
-                filled
+                :rules="[validateNotEmpty]"
+                solo
               />
             </v-col>
             <v-col sm="12" md="5">
@@ -34,7 +34,7 @@
                 :disabled="!editState"
                 :rules="[validateAETitle]"
                 label="AE Title"
-                filled
+                solo
               />
             </v-col>
             <v-col sm="12" md="2">
@@ -47,12 +47,12 @@
               />
             </v-col>
             <v-col sm="12" md="6">
-              <span class="title">Results from this Pipeline</span>
-              <PipelineResults :pipelineId="this.pipelineId"/>
+              <span class="title white--text">Results from this Pipeline</span>
+              <PipelineResults :pipelineId="this.pipelineId" />
             </v-col>
             <v-col sm="12" md="6">
-              <span class="title">More Info</span>
-              <PipelineTreeviewInfo :pipelineId="this.pipelineId"/>
+              <span class="title white--text">More Info</span>
+              <PipelineTreeviewInfo :pipelineId="this.pipelineId" />
             </v-col>
           </v-row>
         </v-form>
@@ -65,7 +65,7 @@
 import { generic_get, generic_put } from '~/api'
 import PipelineTreeviewInfo from './PipelineTreeviewInfo'
 import PipelineResults from '~/components/pipeline/PipelineResults'
-import { validateAETitle, validateEmpty } from '~/utilities/aeTitleValidator'
+import { validateAETitle, validateNotEmpty } from '~/utilities/validationRules'
 
 export default {
   components: { PipelineResults, PipelineTreeviewInfo },
@@ -75,12 +75,11 @@ export default {
   data: () => ({
     pipeline: undefined,
     isFormValid: false,
-    editState: false,
+    editState: false
   }),
   methods: {
     validateAETitle,
-    validateEmpty,
-    makeEditable: () => this.editState = true,
+    validateNotEmpty,
     async submit() {
       if (!this.$refs.form.validate()) {
         this.$toaster.toastError('Invalid Form!')
@@ -95,8 +94,7 @@ export default {
           this.$toaster.toastError('Could not save changes')
         }
       }
-    },
-
+    }
   },
   async created() {
     const URL = `/pipeline/${this.pipelineId}`
