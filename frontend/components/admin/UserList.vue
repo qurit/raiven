@@ -23,7 +23,7 @@
           :return-value.sync="item.ae_title"
           @save="saveAETitle(item)"
         >
-          {{ item.ae_title }}
+          {{ item.ae_title ? aePrefix + item.ae_title : '' }}
           <template v-slot:input>
             <v-text-field
               class="my-2"
@@ -31,11 +31,8 @@
               label="Edit"
               single-line
               hint="Press Enter to save"
-              :rules="[
-                rules.validateUserPrefix,
-                rules.validateASCII,
-                rules.validateLength
-              ]"
+              :prefix="aePrefix"
+              :rules="[rules.validateASCII, rules.validateLength]"
             ></v-text-field>
           </template>
         </v-edit-dialog>
@@ -55,6 +52,7 @@
 
 <script>
 import { generic_get, generic_put } from '~/api'
+import aeTitleValidator from '~/utilities/aeTitleValidator'
 
 export default {
   data() {
@@ -70,29 +68,17 @@ export default {
         { text: 'Last Seen', value: 'last_seen' }
       ],
       rules: {
-        validateLength(value) {
-          if (!!value) {
-            return (
-              value.trim().length <= 16 ||
-              'AE Title is too long, 16 characters max'
-            )
-          }
+        validateLength: v => {
+          return aeTitleValidator.validateLength(v)
         },
-        validateASCII(value) {
-          if (!!value) {
-            return /^[\x00-\x7F]*$/.test(value) || 'ASCII Characters only'
-          }
-        },
-        validateUserPrefix(value) {
-          if (!!value) {
-            return (
-              value.substring(0, 4) === 'RVU-' ||
-              "User AE Titles should have an 'RVU-' prefix"
-            )
-          }
+        validateASCII: v => {
+          return aeTitleValidator.validateASCII(v)
         }
       }
     }
+  },
+  computed: {
+    aePrefix: ctx => ctx.$store.state.config.USER_AE_PREFIX
   },
   created() {
     this.getUsers()
@@ -103,18 +89,17 @@ export default {
     },
     async saveAETitle(user) {
       const { ae_title } = user
-      if (
-        this.rules.validateLength(ae_title) === true &&
-        this.rules.validateASCII(ae_title) === true &&
-        this.rules.validateUserPrefix(ae_title) === true
-      ) {
-        const URL = `/user/${user.id}/update-ae-title`
-        const payload = {
-          ae_title: ae_title
-        }
+      try {
+        if (
+          typeof this.rules.validateLength(ae_title) === 'string' ||
+          typeof this.rules.validateASCII(ae_title) === 'string'
+        )
+          throw 'Validation Error'
+        const URL = `/user/${user.id}`
+        const payload = { ae_title: ae_title }
         await generic_put(this, URL, payload)
         this.$toaster.toastSuccess('AE Title updated!')
-      } else {
+      } catch (e) {
         this.$toaster.toastError(
           'Could not save, make sure you have properly formed the AE title'
         )

@@ -3,7 +3,7 @@ import os
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
-from . import Base, PathMixin, NestedPathMixin
+from . import Base, PathMixin, NestedPathMixin, CASCADE
 
 
 class DicomNode(PathMixin, Base):
@@ -15,8 +15,7 @@ class DicomNode(PathMixin, Base):
 
 
 class DicomPatient(NestedPathMixin, Base):
-    dicom_node_id = Column(Integer, ForeignKey(
-        "dicom_node.id", ondelete="CASCADE"))
+    dicom_node_id = Column(Integer, ForeignKey("dicom_node.id", **CASCADE))
     patient_id = Column(String)
 
     studies = relationship('DicomStudy', backref='patient')
@@ -26,8 +25,7 @@ class DicomPatient(NestedPathMixin, Base):
 
 
 class DicomStudy(NestedPathMixin, Base):
-    dicom_patient_id = Column(Integer, ForeignKey(
-        "dicom_patient.id", ondelete='CASCADE'))
+    dicom_patient_id = Column(Integer, ForeignKey("dicom_patient.id", **CASCADE))
     study_instance_uid = Column(String)
     study_date = Column(DateTime)
 
@@ -38,8 +36,7 @@ class DicomStudy(NestedPathMixin, Base):
 
 
 class DicomSeries(NestedPathMixin, Base):
-    dicom_study_id = Column(Integer, ForeignKey(
-        "dicom_study.id", ondelete="CASCADE"))
+    dicom_study_id = Column(Integer, ForeignKey("dicom_study.id", **CASCADE))
     series_instance_uid = Column(String)
     series_description = Column(String)
     modality = Column(String)

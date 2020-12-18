@@ -93,8 +93,7 @@ class SCP:
 
     def start_server(self, blocking=False):
         handlers = [(evt.EVT_C_STORE, handle_store)]
-        self._ae.start_server((self.host, self.port),
-                              block=blocking, evt_handlers=handlers)
+        self._ae.start_server((self.host, self.port), block=blocking, evt_handlers=handlers)
 
     def stop_server(self):
         self._ae.shutdown()
