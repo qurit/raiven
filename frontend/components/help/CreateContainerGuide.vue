@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="10">
     <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Create a Container</b></v-toolbar-title>
+      <v-toolbar-title><b>1. Create a Container</b></v-toolbar-title>
     </v-toolbar>
     <v-card-subtitle>
       <b>Creating a Container</b>
@@ -13,8 +13,8 @@
           your <b> main algorithm </b>
         </li>
         <li>
-          The <b> Dockerfile </b> should resemble this example
-          <v-icon-btn @click="dockerExample = true" info small />.
+          The <b> Dockerfile </b> should resemble
+          <a @click="dockerExample = true"> this example </a>
           <ul>
             <li>
               Install any dependencies you may require and set the environment
@@ -30,8 +30,8 @@
           </ul>
         </li>
         <li>
-          The <b> main algorithm </b> should resemble this example
-          <v-icon-btn @click="mainAlgorithmExample = true" info small />.
+          The <b> main algorithm </b> should resemble
+          <a @click="mainAlgorithmExample = true"> this example </a>
           <ul>
             <li>
               Map the <b> INPUT_DIR </b> to the previously defined
