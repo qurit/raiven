@@ -9,7 +9,6 @@
     <v-toolbar color="primary accent--text" flat>
       <v-toolbar-title><b>Your Pipelines</b></v-toolbar-title>
       <v-spacer />
-      <v-spacer />
       <v-text-field
         v-model="search"
         append-icon="mdi-magnify"
@@ -18,7 +17,7 @@
         solo
       />
       <v-btn icon>
-        <v-icon @click="dialog = true" color="#373740">mdi-plus</v-icon>
+        <v-icon @click="dialog = true" large color="#373740">mdi-plus</v-icon>
       </v-btn>
     </v-toolbar>
     <v-data-table
