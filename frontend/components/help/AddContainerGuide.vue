@@ -18,7 +18,7 @@
         <li>Fill out the "Add a Container" form</li>
         <ul>
           <li>
-            You must provide a container name and an attached file.
+            You must provide a container name and an attached file
           </li>
         </ul>
         <li>Click <v-btn x-small color="green" text>Add Container </v-btn></li>

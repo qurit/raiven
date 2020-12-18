@@ -19,13 +19,13 @@
             <li>
               Install any dependencies you may require and set the environment
               variables to be <b> PICOM_INPUT_DIR /mnt/picom/input </b> and
-              <b> PICOM_OUTPUT_DIR /mnt/picom/output</b>.
+              <b> PICOM_OUTPUT_DIR /mnt/picom/output</b>
             </li>
           </ul>
           <ul>
             <li>
               Finally, write the instruction to run your
-              <b> main algorithm </b> code.
+              <b> main algorithm </b> code
             </li>
           </ul>
         </li>
@@ -43,20 +43,20 @@
                   <b> ENV </b> variables in the <b> Dockerfile </b>, then you
                   can set the <b> INPUT_DIR </b> to be
                   <b> /mnt/picom/input </b> and the <b> OUTPUT_DIR </b> to be
-                  <b> /mnt/picom/output </b>.
+                  <b> /mnt/picom/output </b>
                 </li>
               </ul>
             </li>
           </ul>
           <ul>
             <li>
-              Insert your DICOM processing algorithm.
+              Insert your DICOM processing algorithm
             </li>
           </ul>
         </li>
         <li>
           Place both the <b> Dockerfile </b> and <b> main algorithm </b> in a
-          zippped folder.
+          zippped folder
         </li>
       </ol>
     </v-card-text>
