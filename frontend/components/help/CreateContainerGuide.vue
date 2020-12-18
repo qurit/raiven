@@ -13,7 +13,8 @@
           your <b> main algorithm </b>
         </li>
         <li>
-          The <b> Dockerfile </b> should resemble this example.
+          The <b> Dockerfile </b> should resemble this example
+          <v-icon-btn @click="dockerExample = true" info small />.
           <ul>
             <li>
               Install any dependencies you may require and set the environment
@@ -29,7 +30,8 @@
           </ul>
         </li>
         <li>
-          The <b> main algorithm </b> should resemble this example.
+          The <b> main algorithm </b> should resemble this example
+          <v-icon-btn @click="mainAlgorithmExample = true" info small />.
           <ul>
             <li>
               Map the <b> INPUT_DIR </b> to the previously defined
@@ -59,14 +61,24 @@
         </li>
       </ol>
     </v-card-text>
-    <v-dialog>
-      <v-card>
-        <v-card-text>
-          FROM python:3.8-slim WORKDIR /src RUN pip install pydicom numpy COPY .
-          . ENV PICOM_INPUT_DIR /mnt/picom/input ENV PICOM_OUTPUT_DIR
-          /mnt/picom/output CMD python main.py
-        </v-card-text>
-      </v-card>
+    <v-dialog v-model="dockerExample" max-width="900">
+      <v-img :src="require('@/static/docker-example.png')" />
+    </v-dialog>
+    <v-dialog v-model="mainAlgorithmExample" max-width="900">
+      <v-img :src="require('@/static/main-algorithm-example.png')" />
     </v-dialog>
   </v-card>
 </template>
+
+<script>
+import VIconBtn from '../global/v-icon-btn.vue'
+
+export default {
+  data() {
+    return {
+      dockerExample: false,
+      mainAlgorithmExample: false
+    }
+  }
+}
+</script>
