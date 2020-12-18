@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="10">
     <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>1. Create a Container</b></v-toolbar-title>
+      <v-toolbar-title><b>Step 1: Create a Container</b></v-toolbar-title>
     </v-toolbar>
     <v-card-subtitle>
       <b>Creating a Container</b>
@@ -56,8 +56,7 @@
         </li>
         <li>
           Place both the <b> Dockerfile </b> and <b> main algorithm </b> in a
-          zippped folder. You are now ready to move onto the next step,
-          <b> Uploading a Container</b>!
+          zippped folder.
         </li>
       </ol>
     </v-card-text>
