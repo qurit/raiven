@@ -33,7 +33,6 @@ def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(s
     return db.query(Container).filter((Container.user_id == user.id) | Container.is_shared).all()
 
 
-# TODO: Add response model
 @router.post("/", response_model=container.Container)
 def create_container(
         auto_build: bool = True,
@@ -51,6 +50,7 @@ def create_container(
         filename='Dockerfile')
     db_container.save(db)
 
+    # TODO: fix this zip file check, tried zipfile.is_zipfile() but didn't work
     if ".zip" in filename:
         z = zipfile.ZipFile(io.BytesIO(file))
         folder = db_container.get_abs_path()
