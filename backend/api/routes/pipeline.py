@@ -97,8 +97,7 @@ def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
 
     # Sending the zip file as response
     zip_file = open(zip_path + '.zip', 'rb')
-    response = StreamingResponse(
-        zip_file, media_type="application/x-zip-compressed")
+    response = StreamingResponse(zip_file, media_type="application/x-zip-compressed")
     response.headers["Content-Disposition"] = "attachment; filename=results.zip"
 
     return response
@@ -162,10 +161,8 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
     """ This Allows you to update / add pipeline containers and links """
 
     # clear out any previous nodes / links
-    db.query(PipelineNode).filter(
-        PipelineNode.pipeline_id == pipeline_id).delete()
-    db.query(PipelineLink).filter(
-        PipelineLink.pipeline_id == pipeline_id).delete()
+    db.query(PipelineNode).filter(PipelineNode.pipeline_id == pipeline_id).delete()
+    db.query(PipelineLink).filter(PipelineLink.pipeline_id == pipeline_id).delete()
 
     # save new nodes and links
     nodes = {node.node_id: PipelineNode(
