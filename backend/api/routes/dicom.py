@@ -29,7 +29,8 @@ def get_series_breakdown(dicom_type: str, dicom_id: int, db: Session = Depends(s
         'Series': (q, DicomSeries)
     }.get(dicom_type)
 
-    dicom_modality_count = q.group_by(DicomSeries.modality).filter(cls.id == dicom_id).all()
+    dicom_modality_count = q.group_by(
+        DicomSeries.modality).filter(cls.id == dicom_id).all()
     return {modality: count for modality, count in dicom_modality_count}
 
 
@@ -67,6 +68,7 @@ def get_patient_studies(dicom_node_id: int, patient_id: int, db: Session = Depen
 def get_study_series(patient_id: int, study_id: int, db: Session = Depends(session)):
     """ Get a study's series """
     return db.query(DicomSeries).filter_by(dicom_study_id=study_id).all()
+
 
 @ router.delete("/node/{dicom_node_id}", response_model=dicom.DicomNode)
 def delete_node(dicom_node_id: int, db: Session = Depends(session)):

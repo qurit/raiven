@@ -39,7 +39,7 @@ import FlowchartLink from './FlowchartLink.vue'
 import FlowchartNode from './FlowchartNode.vue'
 import { getMousePosition } from './position'
 import { generic_post } from '~/api'
-import { pipelineChecker } from '~/utilities/pipelineChecker'
+import { pipelineValidator } from '~/utilities/pipelineValidator'
 
 export default {
   name: 'VueFlowchart',
@@ -73,6 +73,8 @@ export default {
     }
   },
   data: () => ({
+    savedNodes: [],
+    savedLinks: [],
     action: {
       linking: false,
       dragging: false,
@@ -291,11 +293,11 @@ export default {
       )
     },
     async saveNodesAndLinks() {
-      const nodes = this.scene.nodes
-      const links = this.scene.links
+      this.savedNodes = this.scene.nodes
+      this.savedLinks = this.scene.links
       var nodeArray = []
       var linkArray = []
-      nodes.forEach(node => {
+      this.savedNodes.forEach(node => {
         const newPipelineNode = {
           node_id: node.id,
           container_id: node.container_id,
@@ -313,7 +315,7 @@ export default {
         })
         nodeArray.push(newPipelineNode)
       })
-      links.forEach(link => {
+      this.savedLinks.forEach(link => {
         const newPipelineLink = {
           to: link.to,
           from: link.from
@@ -335,13 +337,15 @@ export default {
       }
     },
     savePipeline() {
-      pipelineChecker(this.scene.nodes, this.scene.links)
+      pipelineValidator(this.scene.nodes, this.scene.links)
         ? this.saveNodesAndLinks()
         : this.$toaster.toastError('Pipeline is not connected!')
-      console.log('LINKS')
-      console.log(this.scene.links)
-      console.log('NODES')
-      console.log(this.scene.nodes)
+    },
+    checkSaved() {
+      return (
+        this.savedNodes === this.scene.nodes &&
+        this.savedLinks === this.scene.links
+      )
     }
   }
 }

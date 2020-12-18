@@ -7,36 +7,27 @@
         no-gutters
         align="center"
       >
-<v-icon-btn
-          icon="mdi-keyboard-return"
+        <v-icon-btn
+          back
           color="#373740"
-          to="/pipeline"
+          @click="$router.push({ path: '/pipeline' })"
         />
-           <v-icon-btn
+        <v-icon-btn
           color="#373740"
-          @click="
-            pipelineDialog = true
-            containerList = false"
+          @click=";[(pipelineDialog = true), (containerList = false)]"
           icon="mdi-information"
         />
-        </v-icon-btn>
         <div v-if="canEdit">
+          <v-icon-btn save color="#373740" @click="savePipeline" />
           <v-icon-btn
-            save
             color="#373740"
-            @click="savePipeline"
-
+            @click="containerList = !containerList"
+            :icon="
+              containerList
+                ? 'mdi-arrow-collapse-right'
+                : 'mdi-arrow-expand-left'
+            "
           />
-          <v-icon-btn
-          color="#373740"
-          @click="containerList = !containerList"
-          :icon="
-            containerList ? 'mdi-arrow-collapse-right' : 'mdi-arrow-expand-left'
-          "
-        />
-        </div>
-        <div v-if="h">
-          No containers!
         </div>
       </v-row>
 
@@ -49,21 +40,33 @@
         ref="simpleFlowchart"
       >
         <!-- This overlay is shown if the pipeline is empty and it is the shared user viewing it -->
-        <v-overlay v-if="!isFetching && !canEdit && !scene.nodes.length" absolute color="primary" class="display-3 accent--text" opacity="100">
+        <v-overlay
+          v-if="!isFetching && !canEdit && !scene.nodes.length"
+          absolute
+          color="primary"
+          class="display-3 accent--text"
+          opacity="100"
+        >
           <v-row no-gutters justify="center">
-              This Pipeline has no nodes yet.
+            This Pipeline has no nodes yet.
           </v-row>
           <v-row no-gutters justify="center" class="pt-8">
-            <v-btn class="mx-auto" to="/pipeline" text outline color="accent" rounded>
+            <v-btn
+              class="mx-auto"
+              to="/pipeline"
+              text
+              outline
+              color="accent"
+              rounded
+            >
               <v-icon>mdi-arrow-left</v-icon>
-             Take me back
+              Take me back
             </v-btn>
           </v-row>
         </v-overlay>
       </SimpleFlowchart>
 
       <!-- Dialogs -->
-
       <v-dialog v-model="containerDialog" max-width="900px" min-height="600px">
         <ContainerForm
           :isEditing="false"
@@ -71,56 +74,20 @@
         />
       </v-dialog>
       <v-dialog v-model="pipelineDialog" max-width="1150px" min-height="600px">
-        <PipelineInfo :pipelineId="this.pipeline_id" />
+        <PipelineInfo
+          :pipelineId="this.pipeline_id"
+          @close="pipelineDialog = false"
+        />
       </v-dialog>
 
       <!-- Container List -->
-      <v-navigation-drawer
-        v-model="containerList"
-        class="pt-3"
-        app
-        right
-        style="z-index: 9999"
-      >
-        <template v-slot:prepend>
-          <v-row no-gutters justify="center" class="px-2">
-            <v-btn
-              @click="containerDialog = true"
-              color="primary accent--text"
-              style="width: available"
-              class="mx-auto"
-              rounded
-              block
-            >
-              Add a Container
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </v-row>
-          <v-row no-gutters class="pt-2 px-2">
-            <v-text-field
-              v-model="search"
-              placeholder="Search container"
-              append-icon="mdi-magnify"
-              solo
-              flat
-              rounded
-              block
-              color="primary"
-              single-line
-              hide-details
-            />
-          </v-row>
-        </template>
-        <ContainerCard
-          v-for="c in filteredList"
-          :id="c.id"
-          :container="c"
-          :colors="colors.container"
-          class="ma-2"
-        >
-          <v-icon-btn add @click="addNode(c)" color="white" />
-        </ContainerCard>
-      </v-navigation-drawer>
+      <ContainerDrawer
+        :containers="this.containers"
+        :colors="this.colors"
+        v-if="this.containerList"
+        @open-container-form="containerDialog = true"
+        @add-node="this.addNode"
+      />
     </v-col>
   </v-row>
 </template>
@@ -129,24 +96,25 @@
 import { mapState } from 'vuex'
 import { generic_get } from '~/api'
 
-import SimpleFlowchart from '~/components/flowchart/SimpleFlowchart'
-import PipelineInfo from '~/components/PipelineInfo'
-import { ContainerForm, ContainerCard } from '~/components/container'
+import {
+  SimpleFlowchart,
+  PipelineInfo,
+  ContainerDrawer
+} from '~/components/flowchart'
+import { ContainerForm } from '~/components/container'
 import { OutputDestinationForm } from '~/components/pipeline'
 import VIconBtn from '~/components/global/v-icon-btn'
 
-
 export default {
   components: {
-    ContainerCard,
     VIconBtn,
     SimpleFlowchart,
     ContainerForm,
-    PipelineInfo
+    PipelineInfo,
+    ContainerDrawer
   },
   data: () => ({
     isFetching: true,
-    search: '',
     userId: '',
     containerList: false,
     containerDialog: false,
@@ -231,11 +199,6 @@ export default {
   },
   computed: {
     ...mapState('containers', ['containers']),
-    filteredList() {
-      return this.containers.filter(container =>
-        container.name.toLowerCase().includes(this.search.toLowerCase())
-      )
-    },
     canEdit() {
       return this.userId === this.$auth.user.id
     }
@@ -244,6 +207,16 @@ export default {
     this.pipeline_id = parseInt(this.$router.history.current.params.id)
     this.getContainers()
     this.getSavedPipeline(this.pipeline_id)
+  },
+  beforeRouteLeave(to, from, next) {
+    if (!this.$refs.simpleFlowchart.checkSaved()) {
+      const confirm = window.confirm(
+        'You may have unsaved edits, would you still like to leave?'
+      )
+      confirm ? next() : next(false)
+    } else {
+      next()
+    }
   }
 }
 </script>

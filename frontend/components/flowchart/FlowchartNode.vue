@@ -17,12 +17,12 @@
       <!-- Node Data -->
       <v-card-title v-text="type" />
       <v-select
-        v-if="container_is_output || container_is_input"
+        v-if="container_is_output"
         v-model="selected"
         :items="destinations"
         item-text="full_name"
         item-value="id"
-        label="Destination"
+        label="Application Entity"
         dense
         solo
         flat
@@ -84,7 +84,7 @@
 
 <script>
 import FlowchartNodePort from './FlowchartNodePort.vue'
-import { OutputDestinationForm } from '~/components/pipeline'
+import OutputDestinationForm from './OutputDestinationForm'
 import { mapState } from 'vuex'
 
 export default {

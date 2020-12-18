@@ -1,22 +1,9 @@
 import os
 
 from api.models.user import User
-from api.schemas.user import UserLocalCreate, User as UserSchema
+from api.schemas.user import UserLocalCreate
 
-from tests import client, testing_session
-
-
-def create_local_user(name, username, password) -> UserSchema:
-    user_to_create = UserLocalCreate(name=name, username=username, password=password)
-    response = client.post('/user/', json=user_to_create.dict())
-    data = response.json()
-
-    assert response.status_code == 200
-    assert data['username'] == user_to_create.username
-    assert data['name'] == user_to_create.name
-    assert not data['is_admin']
-
-    return UserSchema(**data)
+from tests import client, testing_session, utils
 
 
 def test_get_users() -> list:
@@ -36,7 +23,7 @@ def test_add_user():
             user.delete(db)
             db.commit()
 
-    create_local_user(**test_user.dict())
+    utils.create_local_user(**test_user.dict())
 
 
 
