@@ -20,7 +20,15 @@ def token_auth(token: str = Depends(oauth2_scheme), db: type(session) = Depends(
         raise HTTPException(401, "Invalid token")
 
 
+def admin_auth(token: str = Depends(oauth2_scheme), db: type(session) = Depends(session)):
+    """ Only allows users you are admins """
+
+    if (user := token_auth(token, db)).is_admin:
+        return user
+
+    raise HTTPException(401, "Unauthorized")
+
+
 def socket_auth(token):
     """ Returns the user id """
     return User.verify_token(token)
-
