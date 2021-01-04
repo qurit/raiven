@@ -1,17 +1,16 @@
 from typing import List
 
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
-from api import session, config
-from api.models.user import User, UserLocal
-from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit
-from api.auth import token_auth, admin_auth
-from api.models.user import User, UserLocal, UserDestination
-from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit, PermittedApplicationEntities, ApplicationEntity
-from api.schemas.destination import Destination
+from api import session
+from api.auth import admin_auth
 from api.auth import token_auth
+from api.models.user import User, UserLocal, UserDestination
+from api.schemas.destination import Destination
+from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit, PermittedApplicationEntities, \
+    ApplicationEntity
 
 router = APIRouter()
 
