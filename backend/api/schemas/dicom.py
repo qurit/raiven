@@ -3,6 +3,12 @@ from typing import Optional, List
 from datetime import datetime
 
 
+class DicomStats(BaseModel):
+    dicom_node_counts: int
+    dicom_patient_counts: int
+    dicom_study_counts: int
+    dicom_series_counts: int
+
 class DicomSeries(BaseORMModel):
     dicom_study_id: int
     series_instance_uid: str
@@ -15,17 +21,15 @@ class DicomStudy(BaseORMModel):
     dicom_patient_id: int
     study_instance_uid: str
     study_date: datetime
-    # series: Optional[List[DicomSeries]]
 
 
 class DicomPatient(BaseORMModel):
     patient_id: str
     dicom_node_id: int
-    # studies: Optional[List[DicomStudy]]
 
 
 class DicomNode(BaseORMModel):
     title: str
     host: str
     port: int
-    # patients: Optional[List[DicomPatient]]
+
