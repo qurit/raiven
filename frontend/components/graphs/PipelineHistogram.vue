@@ -1,13 +1,7 @@
 <template>
-  <div>
-    <v-card elevation="6">
-      <bar-chart
-        v-if="loaded"
-        :chart-data="dataCollection"
-        :options="options"
-      ></bar-chart>
-    </v-card>
-  </div>
+  <v-card elevation="6">
+    <bar-chart :chart-data="dataCollection" :options="options"></bar-chart>
+  </v-card>
 </template>
 
 <script>
@@ -23,7 +17,6 @@ export default {
   },
   data() {
     return {
-      loaded: false,
       chartData: null,
       dataCollection: null,
       options: {
@@ -77,10 +70,8 @@ export default {
   async mounted() {
     const URL = '/pipeline/runs'
     try {
-      this.loaded = false
       this.chartData = await generic_get(this, URL)
       this.fillData()
-      this.loaded = true
     } catch (e) {
       console.log(e)
     }
