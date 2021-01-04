@@ -5,6 +5,9 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import APIRouter, Depends, HTTPException
 
 from api import session, config
+from api.models.user import User, UserLocal
+from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit
+from api.auth import token_auth, admin_auth
 from api.models.user import User, UserLocal, UserDestination
 from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit, PermittedApplicationEntities, ApplicationEntity
 from api.schemas.destination import Destination
@@ -13,10 +16,10 @@ from api.auth import token_auth
 router = APIRouter()
 
 
-
-@router.get("/", response_model=List[UserSchema], dependencies=[Depends(token_auth)])
+@router.get("/", response_model=List[UserSchema], dependencies=[Depends(admin_auth)])
 def get_all_users(db: Session = Depends(session)):
-    """ Get all users."""
+    """ Gets all the users in the database. Only Admins are allowed to access this endpoint."""
+
     return db.query(User).all()
 
 

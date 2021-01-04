@@ -7,9 +7,6 @@
 </p>
 <p align="center">
 <img alt="Tests" src="https://github.com/qurit/raiven/workflows/Python%20application/badge.svg?branch=master" />
-<img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/fastapi" />
-<img alt="npm" src="https://img.shields.io/npm/v/npm" />
-
 </p>
 
 ---
