@@ -1,11 +1,10 @@
-import pathlib
 from datetime import datetime
 
 from api import config, worker_session, models
-from . import docker, dramatiq, external_sio, HOST_PATH_TYPE
+from api.dicom.scu import send_dicom_folder
 from api.models.pipeline import PipelineRun, PipelineJob, PipelineJobError
-from api.dicom import scu
-from . import docker, dramatiq, external_sio
+
+from . import HOST_PATH_TYPE, docker, dramatiq
 
 
 def _run_next_nodes(job: PipelineJob, run_id: int):
@@ -103,7 +102,7 @@ def dicom_output_task(run_id: int, node_id: int, previous_job_id: int):
             print(prev)
 
             # Detach db first
-            scu.send_dicom_folder(dest, prev.get_abs_output_path())
+            send_dicom_folder(dest, prev.get_abs_output_path())
 
     with worker_session() as db:
         job.status = 'exited'

@@ -13,7 +13,7 @@ from pydicom import uid
 from api import config
 from api.database import worker_session as session
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
-from api.pipelining._tasks.ingest import run_ingest_task
+from api.pipelining import DicomIngestController
 
 # debug_logger()
 
@@ -43,7 +43,7 @@ def get_ae_titles(event):
 def handle_association_request(event):
     requestor_ae_title, called_ae_title = get_ae_titles(event)
 
-    # TODO: Not in list of allowed connections
+    # TODO: Not in list of allowed connections and allow push to pipe
     if config.SCP_AE_TITLE not in called_ae_title:
         event.assoc.acse.send_reject(REJECTED_PERMANENT, SOURCE_SERVICE_USER, DIAG_CALLED_AET_NOT_RECOGNIZED)
 
@@ -57,13 +57,23 @@ def handle_association_request(event):
 
 
 def handle_association_release(event):
+    """ Upon release start a task for all the received files to be ingested into the db """
+
     requestor_ae_title, called_ae_title = get_ae_titles(event)
     calling_host, calling_port = event.assoc.requestor.address, event.assoc.requestor.port
 
     if requestor_ae_title in CONNECTIONS:
         # shutil.rmtree(CONNECTIONS[requestor_ae_title])
 
-        run_ingest_task(CONNECTIONS[requestor_ae_title], called_ae_title, calling_host, calling_port)
+        # Start task
+        DicomIngestController.ingest_folder(
+            folder=CONNECTIONS[requestor_ae_title],
+            calling_aet=requestor_ae_title,
+            calling_host=calling_host,
+            calling_port=calling_port,
+            called_aet=called_ae_title
+        )
+
         del CONNECTIONS[requestor_ae_title]
 
     return 0x0000

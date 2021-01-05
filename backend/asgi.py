@@ -1,7 +1,7 @@
 import uvicorn
 
 from api import config, app as application
-from api.dicom import SCP
+from api.dicom.scp import SCP
 
 
 def start_dicom_server():

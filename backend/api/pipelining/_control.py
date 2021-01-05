@@ -1,8 +1,11 @@
+from os import PathLike
+from typing import Union
+
 from api.models import pipeline as models, utils
 from api.schemas import pipeline as schemas
 
 from api.models.pipeline import PipelineRun
-from ._tasks import build, run, test
+from ._tasks import build, run, test, ingest
 
 
 def run_test_task():
@@ -34,3 +37,27 @@ class PipelineController:
         utils.copy_model_fs(input_data_model, run)
 
         return run
+
+
+class DicomIngestController:
+
+    @staticmethod
+    def ingest_folder(folder: Union[str, PathLike], calling_aet: str, calling_host: str, calling_port: int, called_aet: str):
+        # TODO: Finish logic here.
+
+        # Pushed globally
+        if called_aet == config.SCP_AE_TITLE:
+            args = (folder, calling_aet, calling_host, calling_port)
+            ingest.run_ingest_task.send(args=args)
+
+        # Pushed to user
+        elif called_aet.startswith(config.USER_AE_PREFIX):
+            raise NotImplementedError
+
+        # Pushed to pipeline
+        elif called_aet.startswith(config.PIPELINE_AE_PREFIX):
+            raise NotImplementedError
+
+        # Pushed to an undefined location
+        else:
+            raise NotImplementedError
