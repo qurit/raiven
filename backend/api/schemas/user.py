@@ -33,8 +33,12 @@ class UserEdit(BaseModel):
     ae_title: str
 
 
-class UserDestination(BaseModel):
+class PermittedApplicationEntities(BaseModel):
     destinations: Optional[List[Destination]]
+
+
+class ApplicationEntity(BaseORMModel):
+    destination: Destination
 
 
 class Token(BaseModel):

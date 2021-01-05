@@ -17,8 +17,9 @@ from api.auth import token_auth
 router = APIRouter()
 
 
-@router.get("/stats")
+@router.get("/stats", response_model=container.ContainerStats)
 def get_container_stats(db: Session = Depends(session)):
+    """ Get container count. Used in dashboard counter."""
     stats = {
         "container_counts": db.query(Container).count(),
     }
@@ -32,7 +33,6 @@ def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(s
     return db.query(Container).filter((Container.user_id == user.id) | Container.is_shared).all()
 
 
-# TODO: Add response model
 @router.post("/", response_model=container.Container)
 def create_container(
         auto_build: bool = True,
@@ -50,8 +50,8 @@ def create_container(
         filename='Dockerfile')
     db_container.save(db)
 
+    # TODO: fix this zip file check, tried zipfile.is_zipfile() but didn't work
     if ".zip" in filename:
-
         z = zipfile.ZipFile(io.BytesIO(file))
         folder = db_container.get_abs_path()
         z.extractall(folder)
@@ -83,15 +83,16 @@ def create_container(
 
 @router.get("/{container_id}", response_model=container.Container)
 def get_container(container_id: int, db: Session = Depends(session)):
+    """ Get a specific container"""
     return db.query(Container).get(container_id)
 
 
-@router.put("/{container_id}")
+@router.put("/{container_id}", response_model=container.Container)
 def update_container(
         container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(None),
         description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...), is_shared: bool = Form(...),
         db: session = Depends(session)):
-
+    """ Editing a container"""
     if file is not None:
         container = db.query(Container).get(container_id)
         # remove previous file
@@ -122,4 +123,5 @@ def update_container(
 
 @router.delete("/{container_id}", response_model=container.Container)
 def delete_container(container_id: int, db: Session = Depends(session)):
+    """ Delete a container"""
     return db.query(Container).get(container_id).delete(db)
