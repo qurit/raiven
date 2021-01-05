@@ -47,5 +47,6 @@ class ContainerBuild(TimestampMixin, Base):
 
 
 class ContainerBuildError(Base):
+	# TODO rename to container_build_id?
     container_id = Column(ForeignKey("container_build.id", ondelete="CASCADE"))
     stderr = Column(String)
