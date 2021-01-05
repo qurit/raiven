@@ -108,7 +108,7 @@ def test_store(db, association, stub_broker, stub_worker):
     print('here')
 
 
-# @mark.not_written
+@mark.not_written
 def test_store_same_instance(db, association):
     assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
 
