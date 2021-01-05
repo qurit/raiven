@@ -1,28 +1,9 @@
 import os
 
 import pytest
-from dramatiq import Worker
 
-# noinspection PyProtectedMember
-from api.pipelining._tasks import broker
 from api.routes.container import create_container, delete_container
-
-
 from tests import utils, testing_session
-
-
-@pytest.fixture()
-def stub_broker():
-    broker.flush_all()
-    return broker
-
-
-@pytest.fixture()
-def stub_worker():
-    worker = Worker(broker, worker_timeout=100)
-    worker.start()
-    yield worker
-    worker.stop()
 
 
 @pytest.fixture(scope="module")

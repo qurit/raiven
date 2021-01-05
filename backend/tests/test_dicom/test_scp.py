@@ -8,6 +8,9 @@ from api.dicom.scp import SCP
 
 from tests import config, models, mark
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 
 def test_scp_class(ae_title: str = "TEST_AE_TITLE", port: int = 11010) -> SCP:
     scp = SCP(ae_title=ae_title, port=port)
@@ -73,8 +76,8 @@ def test_echo(association):
     assert status
 
 
-@mark.not_written
-def test_store(db, association):
+# @mark.not_written
+def test_store(db, association, stub_broker, stub_worker):
     assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
 
     uids_added = []
@@ -95,6 +98,9 @@ def test_store(db, association):
     print(db.query(models.dicom.DicomSeries).all())
 
     association.release()
+    stub_broker.join('default', fail_fast=True)
+    stub_worker.join()
+
     for uid in uids_added:
         assert models.dicom.DicomSeries.query(db).filter_by(series_instance_uid=uid).first(), \
             f'Could not find series_instance_uid={uid} in db'
@@ -102,7 +108,7 @@ def test_store(db, association):
     print('here')
 
 
-@mark.not_written
+# @mark.not_written
 def test_store_same_instance(db, association):
     assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
 

@@ -1,29 +1,28 @@
-import os
 import pathlib
 import shutil
 from datetime import datetime
-from typing import Union
 
 from pydicom import dcmread
 
-from api import worker_session
+from api import worker_session, config
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
 from . import dramatiq
 
 
 @dramatiq.actor(max_retries=0)
-def run_ingest_task(folder: Union[str, os.PathLike], calling_aet: str, calling_host: str, calling_port: int):
+def run_ingest_task(folder: str, calling_aet: str, calling_host: str, calling_port: int):
     """
     The models will automatically create the folders because they inherit from NestedPathMixin found in database.py
     Speed can be improved by starting query from series (requires joins) but will cut the avg amount of queries down
     from n=4 to n=1. Calculating the storage path could be faster by not using lazy relationships in the NestedPathMixin
     """
+    folder = pathlib.Path(config.UPLOAD_DIR) / folder
 
     # TODO: should we put this in the loop instead and make more, shorter connections?
     with worker_session() as db:
 
-        for file in os.listdir(folder):
-            ds = dcmread(str(file_path := pathlib.Path(folder) / file))
+        for file_path in folder.glob('**/*.dcm'):
+            ds = dcmread(str(file_path))
 
             # TODO: SHOULD START WITH SERIES FOR MORE EFFICIENCY
             if not (node := db.query(DicomNode).filter_by(title=calling_aet).first()):
@@ -59,7 +58,4 @@ def run_ingest_task(folder: Union[str, os.PathLike], calling_aet: str, calling_h
             shutil.move(file_path, save_path)
         db.commit()
 
-
-# if __name__ == '__main__':
-#     path = 'C:\\Users\\Adam\\Programming\\picom\\backend\\tests\\.test_uploads\\tmp\\d25a7b24-409e-11eb-9808-408d5c570833'
-#     run_ingest_task(path, 'test', 'localhost', 80)
+    shutil.rmtree(folder)

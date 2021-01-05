@@ -1,13 +1,14 @@
 import os
 import shutil
-import pytest
 
-from sqlalchemy import event
+import pytest
+from dramatiq import Worker
 from sqlalchemy_utils import drop_database, create_database, database_exists
 
+from api import engine, scripts
+from api.pipelining._tasks import broker
 
 from tests import testing_session, models, TEST_USER, utils, config
-from api import engine, scripts
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -33,3 +34,17 @@ def create_test_database():
 def db():
     with testing_session() as db:
         yield db
+
+
+@pytest.fixture()
+def stub_broker():
+    broker.flush_all()
+    return broker
+
+
+@pytest.fixture()
+def stub_worker():
+    worker = Worker(broker, worker_timeout=100)
+    worker.start()
+    yield worker
+    worker.stop()

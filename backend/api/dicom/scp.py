@@ -63,7 +63,7 @@ def handle_association_release(event):
     calling_host, calling_port = event.assoc.requestor.address, event.assoc.requestor.port
 
     if requestor_ae_title in CONNECTIONS:
-        # shutil.rmtree(CONNECTIONS[requestor_ae_title])
+
 
         # Start task
         DicomIngestController.ingest_folder(
@@ -85,8 +85,6 @@ def handle_store(event):
 
     path = CONNECTIONS[requestor_ae_title] / (event.request.AffectedSOPInstanceUID + '.dcm')
     with open(path, 'wb') as f:
-        print(path)
-
         f.write(b'\x00' * 128)
         f.write(b'DICM')
         # TODO: check this is still needed
