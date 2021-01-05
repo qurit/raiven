@@ -4,7 +4,7 @@ from pydicom import dcmread
 from pynetdicom import AE
 from pynetdicom.sop_class import VerificationSOPClass
 
-from api.dicom import SCP
+from api.dicom.scp import SCP
 
 from tests import config, models, mark
 

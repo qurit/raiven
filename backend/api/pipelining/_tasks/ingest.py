@@ -1,16 +1,17 @@
 import os
 import pathlib
 import shutil
-from typing import Union
 from datetime import datetime
+from typing import Union
 
 from pydicom import dcmread
 
-from api import config, worker_session
+from api import worker_session
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
+from . import dramatiq
 
 
-# @dramatiq.actor(max_retries=0)
+@dramatiq.actor(max_retries=0)
 def run_ingest_task(folder: Union[str, os.PathLike], calling_aet: str, calling_host: str, calling_port: int):
     """
     The models will automatically create the folders because they inherit from NestedPathMixin found in database.py

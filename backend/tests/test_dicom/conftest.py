@@ -1,10 +1,8 @@
 import pytest
-
 from pynetdicom import AE, StoragePresentationContexts
 from pynetdicom.sop_class import VerificationSOPClass
 
-from api.dicom import SCP
-
+from api.dicom.scp import SCP
 from tests import config
 
 
