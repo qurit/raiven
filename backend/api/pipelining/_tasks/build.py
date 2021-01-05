@@ -28,7 +28,7 @@ def build_container_task(container_id: int):
             container_build.exit_code = 1
             container_build.save(db)
 
-            ContainerBuildError(container_id=container_build.id, stderr=str(e)).save(db)
+            ContainerBuildError(container_build_id=container_build.id, stderr=str(e)).save(db)
     else:
         with worker_session() as db:
             container_build.status = 'exited'
