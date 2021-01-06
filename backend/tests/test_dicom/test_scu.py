@@ -7,14 +7,15 @@ from pynetdicom.sop_class import CTImageStorage
 
 # Replace with your own path to a test folder
 UPLOAD_DIR = 'E:\\BCCRC\\dicom\\pyPET4RT'
-
+# Replace with title of desired AE. RAIVEN for default
+UPLOAD_AE_TITLE = 'RVP-test'
 if __name__ == '__main__':
     """ Small test program that uploads an entire dicom directory to a node """
 
     ae = AE(ae_title='BC158VIPT1')
     ae.requested_contexts = StoragePresentationContexts
 
-    assoc = ae.associate('localhost', 11112, ae_title='RAIVEN')
+    assoc = ae.associate('localhost', 11112, ae_title=UPLOAD_AE_TITLE)
     if assoc.is_established:
         print('ESTABLISHED')
 
