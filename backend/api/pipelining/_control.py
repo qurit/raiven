@@ -1,8 +1,7 @@
 import pathlib
-from os import PathLike
 import shutil
 from typing import Union
-from os import walk
+
 from api import config
 from api.models import utils
 from api.models.pipeline import Pipeline, PipelineRun
@@ -41,9 +40,6 @@ class PipelineController:
         shutil.rmtree(folder.resolve())
         db.commit()
 
-        _, _, filenames = next(walk(pipeline_run.get_abs_input_path()))
-        print(filenames)
-
         return PipelineController.run_pipeline_task(db, pipeline_run)
 
     @staticmethod
@@ -60,36 +56,46 @@ class PipelineController:
 class DicomIngestController:
 
     @staticmethod
-    def ingest_folder(folder: pathlib.Path, calling_aet: str, calling_host: str, calling_port: int, called_aet: str):
-        rel_folder: str = folder.relative_to(config.UPLOAD_DIR).as_posix()
+    # Returns whether or not the ingest operation successfully completed
+    def ingest_folder(folder: pathlib.Path, calling_aet: str, calling_host: str, calling_port: int, called_aet: str) -> bool:
         # TODO: Finish logic here.
 
         # Pushed globally
         if called_aet == config.SCP_AE_TITLE:
-            print("Running ingested folder through global config")
-            args = (rel_folder, calling_aet, calling_host, calling_port)
-            ingest.run_ingest_task.send_with_options(args=args)
+            return DicomIngestController.ingest_globally(folder, calling_aet, calling_host, calling_port)
 
         # Pushed to user
         elif called_aet.startswith(config.USER_AE_PREFIX):
-            raise NotImplementedError
+            return DicomIngestController.ingest_to_user()
 
         # Pushed to pipeline
         elif called_aet.startswith(config.PIPELINE_AE_PREFIX):
-            print("Running ingested folder directly on pipeline")
-            DicomIngestController.ingest_folder_through_pipeline(folder, called_aet)
+            return DicomIngestController.ingest_through_pipeline(folder, called_aet)
 
         # Pushed to an undefined location
         else:
             raise NotImplementedError
 
     @staticmethod
-    def ingest_folder_through_pipeline(folder: pathlib.Path, ae_title: str):
+    def ingest_globally(folder: pathlib.Path, calling_aet: str, calling_host: str, calling_port: int) -> bool:
+        print("Running ingested folder through global config")
+        rel_folder: str = folder.relative_to(config.UPLOAD_DIR).as_posix()
+        args = (rel_folder, calling_aet, calling_host, calling_port)
+        ingest.run_ingest_task.send_with_options(args=args)
+        return True
+
+    @staticmethod
+    def ingest_to_user():
+        raise NotImplementedError
+
+    @staticmethod
+    def ingest_through_pipeline(folder: pathlib.Path, called_aet: str) -> bool:
+        print("Running ingested folder directly on pipeline")
         with worker_session() as db:
             # Test if pipeline exists
-            if not (pipeline := db.query(Pipeline).filter(config.PIPELINE_AE_PREFIX + Pipeline.ae_title == ae_title).first()):
-                print("Requested pipeline does not exist")
+            if not (pipeline := db.query(Pipeline).filter(Pipeline.ae_title == called_aet.strip(config.PIPELINE_AE_PREFIX)).first()):
+                print("ERROR: Requested pipeline does not exist")
                 raise NotImplementedError
             else:
                 # Pipeline exists, Run folder through pipeline
-                PipelineController.run_pipeline_on_folder(db, pipeline.id, folder)
+                return PipelineController.run_pipeline_on_folder(db, pipeline.id, folder)
