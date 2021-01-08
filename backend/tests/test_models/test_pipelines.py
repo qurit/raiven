@@ -94,8 +94,6 @@ def test_cascade_delete_pipeline(db):
     pipeline.delete(db)
     db.commit()
 
-    print(pipeline, run, job)
-
     assert not PipelineRun.query(db).get(run.id)
     assert not PipelineJob.query(db).get(job.id)
 
