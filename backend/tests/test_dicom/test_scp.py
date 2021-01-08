@@ -109,6 +109,7 @@ def test_store_global(db, association, stub_broker, stub_worker):
         assert models.dicom.DicomSeries.query(db).filter_by(series_instance_uid=uid).first(), \
             f'Could not find series_instance_uid={uid} in db'
 
+
 def test_store_valid_pipeline(db, stub_broker, stub_worker):
     pipeline_ae_title = "test_scp"
     insert_pipeline(db, "test", ae_title=pipeline_ae_title)
@@ -117,16 +118,17 @@ def test_store_valid_pipeline(db, stub_broker, stub_worker):
     init_dicom_node_count = db.query(DicomNode).count()
 
     association = get_association_to_ae(config.PIPELINE_AE_PREFIX + pipeline_ae_title)
-    perform_store(db, association, stub_broker, stub_worker)
+    perform_store(association, stub_broker, stub_worker)
 
     assert init_pipeline_run_count < db.query(PipelineRun).count() 
     assert init_dicom_node_count == db.query(DicomNode).count() # DICOM data should NOT be saved
+
 
 def test_store_invalid_pipeline(db, stub_broker, stub_worker):
     ae_title = "test"
     init_pipeline_run_count = db.query(PipelineRun).count()
     association = get_association_to_ae(config.PIPELINE_AE_PREFIX + ae_title)
-    perform_store(db, association, stub_broker, stub_worker)
+    perform_store(association, stub_broker, stub_worker)
 
     assert init_pipeline_run_count == db.query(PipelineRun).count()
 
@@ -168,7 +170,8 @@ def get_association_to_ae(ae_title):
     assert assoc.is_established
     return assoc
 
-def perform_store(db, association, stub_broker, stub_worker):
+
+def perform_store(association, stub_broker, stub_worker):
     assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
     for root, _, files in os.walk(mock_path):
         for file in files:
