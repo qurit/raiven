@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "v-icon-btn",
+  name: 'v-icon-btn',
   props: {
     color: {
       type: String,
@@ -32,18 +32,18 @@ export default {
     delete: Boolean,
     edit: Boolean,
     refresh: Boolean,
-    close: Boolean,
+    close: Boolean
   },
   computed: {
-    iconToShow: (ctx) => {
-      if ( ctx.plus ) return 'mdi-plus'
-      if ( ctx.minus ) return 'mdi-minus'
-      if ( ctx.delete ) return 'mdi-delete'
-      if ( ctx.edit ) return 'mdi-edit'
-      if ( ctx.save ) return 'mdi-content-save'
-      if ( ctx.refresh ) return 'mdi-refresh'
-      if ( ctx.back ) return 'mdi-arrow-left'
-      if ( ctx.close ) return 'mdi-close'
+    iconToShow: ctx => {
+      if (ctx.plus) return 'mdi-plus'
+      if (ctx.minus) return 'mdi-minus'
+      if (ctx.delete) return 'mdi-delete'
+      if (ctx.edit) return 'mdi-edit'
+      if (ctx.save) return 'mdi-content-save'
+      if (ctx.refresh) return 'mdi-refresh'
+      if (ctx.back) return 'mdi-arrow-left'
+      if (ctx.close) return 'mdi-close'
       return ctx.icon
     }
   }

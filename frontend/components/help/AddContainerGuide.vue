@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="10">
     <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Add a Container</b></v-toolbar-title>
+      <v-toolbar-title><b>Step 2: Add a Container</b></v-toolbar-title>
     </v-toolbar>
     <v-card-subtitle>
       <b>Uploading a Container</b>
@@ -16,6 +16,11 @@
           page
         </li>
         <li>Fill out the "Add a Container" form</li>
+        <ul>
+          <li>
+            You must provide a container name and an attached file
+          </li>
+        </ul>
         <li>Click <v-btn x-small color="green" text>Add Container </v-btn></li>
       </ol>
     </v-card-text>
@@ -30,8 +35,15 @@
           page
         </li>
         <li>
-          Click  <v-icon small color="icon"> mdi-pencil </v-icon> Edit</v-btn> next to the
+          Click <v-icon small color="icon"> mdi-pencil </v-icon> next to the
           Container to be edited
+          <ul>
+            <li>
+              Alternatively, click
+              <v-icon small color="icon"> mdi-delete </v-icon> to completely
+              delete the container
+            </li>
+          </ul>
         </li>
         <li>Edit the form</li>
         <li>Click <v-btn x-small color="green" text>Save Edits</v-btn></li>
