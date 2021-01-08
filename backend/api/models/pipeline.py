@@ -12,7 +12,7 @@ from . import Base, PathMixin, NestedPathMixin, TimestampMixin, IOPathMixin, uti
 class Pipeline(Base):
     user_id = Column(ForeignKey("user.id", **CASCADE))
     name = Column(String)
-    ae_title = Column(String)
+    ae_title = Column(String, unique=True)
     is_shared = Column(Boolean, default=False)
 
     runs = relationship("PipelineRun", backref="pipeline",

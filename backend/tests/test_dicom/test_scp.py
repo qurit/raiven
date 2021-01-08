@@ -3,12 +3,18 @@ import os
 from pydicom import dcmread
 from pynetdicom import AE
 from pynetdicom.sop_class import VerificationSOPClass
+from pynetdicom import AE, StoragePresentationContexts
 
 from api.dicom.scp import SCP
+from api.models.dicom import DicomNode
+from api.models.pipeline import PipelineRun
 
 from tests import config, models, mark
 
 import logging
+
+from tests.test_models.test_pipelines import insert_pipeline
+
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -77,7 +83,7 @@ def test_echo(association):
 
 
 # @mark.not_written
-def test_store(db, association, stub_broker, stub_worker):
+def test_store_global(db, association, stub_broker, stub_worker):
     assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
 
     uids_added = []
@@ -95,8 +101,6 @@ def test_store(db, association, stub_broker, stub_worker):
                 assert status
                 uids_added.append(uid)
 
-    print(db.query(models.dicom.DicomSeries).all())
-
     association.release()
     stub_broker.join('default', fail_fast=True)
     stub_worker.join()
@@ -105,7 +109,26 @@ def test_store(db, association, stub_broker, stub_worker):
         assert models.dicom.DicomSeries.query(db).filter_by(series_instance_uid=uid).first(), \
             f'Could not find series_instance_uid={uid} in db'
 
-    print('here')
+def test_store_valid_pipeline(db, stub_broker, stub_worker):
+    pipeline_ae_title = "test_scp"
+    insert_pipeline(db, "test", ae_title=pipeline_ae_title)
+
+    init_pipeline_run_count = db.query(PipelineRun).count()
+    init_dicom_node_count = db.query(DicomNode).count()
+
+    association = get_association_to_ae(config.PIPELINE_AE_PREFIX + pipeline_ae_title)
+    perform_store(db, association, stub_broker, stub_worker)
+
+    assert init_pipeline_run_count < db.query(PipelineRun).count() 
+    assert init_dicom_node_count == db.query(DicomNode).count() # DICOM data should NOT be saved
+
+def test_store_invalid_pipeline(db, stub_broker, stub_worker):
+    ae_title = "test"
+    init_pipeline_run_count = db.query(PipelineRun).count()
+    association = get_association_to_ae(config.PIPELINE_AE_PREFIX + ae_title)
+    perform_store(db, association, stub_broker, stub_worker)
+
+    assert init_pipeline_run_count == db.query(PipelineRun).count()
 
 
 @mark.not_written
@@ -135,3 +158,26 @@ def test_store_same_instance(db, association):
         assert len(models.dicom.DicomSeries.query(db).filter_by(series_instance_uid=uid).all()) == 1
 
 
+def get_association_to_ae(ae_title):
+    # Create association to pipeline
+    ae = AE(ae_title='test')
+    ae.requested_contexts = StoragePresentationContexts
+    assoc = ae.associate(
+        config.SCP_HOST, config.SCP_PORT, ae_title=ae_title
+        )
+    assert assoc.is_established
+    return assoc
+
+def perform_store(db, association, stub_broker, stub_worker):
+    assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
+    for root, _, files in os.walk(mock_path):
+        for file in files:
+            if file.endswith('.dcm'):
+                ds = dcmread(os.path.join(root, file)) 
+
+                status = association.send_c_store(ds)
+                assert status
+
+    association.release()
+    stub_broker.join('default', fail_fast=True)
+    stub_worker.join()

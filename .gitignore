@@ -4,7 +4,7 @@ dist
 .idea
 .nuxt
 .pytest_cache
-__pycache__
+__pycache__/
 
 # Files
 .env
@@ -18,3 +18,4 @@ sw.*
 /examples/output/
 /uploads/
 .zip
+backend/api/__pycache__/__init__.cpython-38.pyc
