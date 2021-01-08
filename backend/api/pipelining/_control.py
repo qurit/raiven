@@ -28,6 +28,11 @@ class PipelineController:
         [run.run_node_task.send_with_options(args=(pipeline_run.id, n.id,), priority=priority) for n in pipeline_run.pipeline.get_starting_nodes()]
         pipeline_run.status = 'running'
         pipeline_run.save(db)
+        # TODO remove below code
+        print(pipeline_run.pipeline.get_starting_nodes())
+        db.commit()
+        print("saving piupeline run")
+        print(db.query(PipelineRun).count())
         return True
 
     @staticmethod
@@ -98,4 +103,5 @@ class DicomIngestController:
                 raise NotImplementedError
             else:
                 # Pipeline exists, Run folder through pipeline
+                print("Running folder through pipeline '{}'".format(pipeline.ae_title))
                 return PipelineController.run_pipeline_on_folder(db, pipeline.id, folder)
