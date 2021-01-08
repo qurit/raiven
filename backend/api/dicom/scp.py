@@ -55,10 +55,13 @@ def handle_association_request(event):
         CONNECTIONS[requestor_ae_title] = path
         path.mkdir(parents=True)
 
+
 def is_valid_ae_title(called_ae_title):
     is_global_ae_title = config.SCP_AE_TITLE in called_ae_title
     has_valid_ae_title_prefix = called_ae_title.startswith(config.VALID_AE_PREFIXES)
+
     return is_global_ae_title or has_valid_ae_title_prefix
+
 
 def handle_association_release(event):
     """ Upon release start a task for all the received files to be ingested into the db """
@@ -67,7 +70,6 @@ def handle_association_release(event):
     calling_host, calling_port = event.assoc.requestor.address, event.assoc.requestor.port
 
     if requestor_ae_title in CONNECTIONS:
-
 
         # Start task
         DicomIngestController.ingest_folder(

@@ -17,4 +17,4 @@ def copy_model_fs(src: NestedPathMixin, dst: IOPathMixin, dst_subdir='input', sr
     src_dir = pathlib.Path(src.get_abs_path(subdir=src_subdir)).resolve()
     dst_dir = pathlib.Path(dst.get_abs_path(subdir=dst_subdir)).resolve()
 
-    copytree(src_dir, dst_dir, dirs_exist_ok=True, )
+    copytree(src_dir, dst_dir, dirs_exist_ok=True)
