@@ -7,6 +7,7 @@ LOCALHOST = '127.0.0.1'
 class BaseConfig:
     UNIT_TESTING = False
     RAIVEN_WORKER = False
+    SCP_DEBUG = True
 
     APT_HOST = '127.0.0.1'
     API_PORT = 5000
