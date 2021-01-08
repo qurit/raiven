@@ -16,8 +16,12 @@ from api.auth import token_auth
 router = APIRouter()
 
 
-@router.get("/stats")
+@router.get("/stats", response_model=schemas.PipelineStats)
 def get_pipeline_stats(db: Session = Depends(session)):
+    """
+    Getting total number of pipelines and pipelines.
+    Used for the dashboard counters
+    """
     stats = {
         "pipeline_counts": db.query(Pipeline).count(),
         "pipeline_run_counts": db.query(PipelineRun).count()
@@ -26,38 +30,60 @@ def get_pipeline_stats(db: Session = Depends(session)):
 
 
 @router.get("/runs")
-def get_all_pipeline_runs(limit: int = 7, db: Session = Depends(session)):
+def get_pipeline_runs_dashboard(limit: int = 7, db: Session = Depends(session)):
+    """
+    Getting number of pipeline runs in the past 7 days.
+    Used for the dashboard bar chart
+    """
     return queries.group_by_date(db, PipelineRun.created_datetime, limit=limit)
 
 
 @router.get("/results", response_model=List[schemas.PipelineRun])
 def get_all_pipeline_runs(user: User = Depends(token_auth), db: Session = Depends(session)):
+    """ Get the user's pipeline runs """
     return db.query(PipelineRun).join(Pipeline).filter(Pipeline.user_id == user.id).all()
 
 
 @router.get("/{pipeline_id}/results", response_model=List[schemas.PipelineRun])
 def get_pipeline_results(pipeline_id: int, db: Session = Depends(session)):
+    """
+    Get pipeline runs for a specific pipeline.
+    Used in pipeline info
+    """
     return db.query(PipelineRun).filter(pipeline_id == PipelineRun.pipeline_id).all()
 
 
-@router.get("/run/{pipeline_run_id}/jobs")
+@router.get("/run/{pipeline_run_id}/jobs", response_model=List[schemas.PipelineJob])
 def get_pipeline_jobs(pipeline_run_id: int, db: Session = Depends(session)):
+    """
+    Get all pipeline jobs for a pipeline run.
+    Used in pipeline info
+    """
     return db.query(PipelineJob).filter(PipelineJob.pipeline_run_id == pipeline_run_id).all()
 
 
-@router.get("/job/{pipeline_job_id}/errors")
-def get_pipeline_errors(pipeline_job_id: int, db: Session = Depends(session)):
+@router.get("/job/{pipeline_job_id}/errors", response_model=List[schemas.PipelineJobError])
+def get_pipeline_job_errors(pipeline_job_id: int, db: Session = Depends(session)):
+    """
+    Get all pipeline errors for a pipeline job.
+    Used in pipeline info treeview.
+    """
     return db.query(PipelineJobError).filter(PipelineJobError.pipeline_job_id == pipeline_job_id).all()
 
 
 @router.get("/job/node/{pipeline_node_id}", response_model=List[schemas.PipelineNode])
-def get_pipeline_errors(pipeline_node_id, db: Session = Depends(session)):
+def get_pipeline_job_nodes(pipeline_node_id, db: Session = Depends(session)):
+    """
+    Get the pipeline node for a pipeline node.
+    Used in pipeline info treeview.
+    """
     return db.query(PipelineNode).filter(PipelineNode.id == pipeline_node_id).all()
 
 
 @ router.get("/download/{pipeline_run_id}", )
 @ middleware.exists_or_404
 def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
+    """ Downloading the pipeline run results in a zip file form """
     pipeline_run: PipelineRun = db.query(PipelineRun).get(pipeline_run_id)
     if not pipeline_run:
         return False
@@ -65,7 +91,7 @@ def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
     result_path = pipeline_run.get_abs_output_path()
     zip_path = os.path.join(pipeline_run.get_abs_path(), 'result')
 
-    # Creating a zip file if it doesn't exist'
+    # Creating a zip file if it doesn't exist
     if not os.path.exists(zip_path):
         shutil.make_archive(zip_path, 'zip', result_path)
 
@@ -79,11 +105,13 @@ def download_pipeline_run(pipeline_run_id: int, db: Session = Depends(session)):
 
 @ router.get("/", response_model=List[schemas.Pipeline])
 def get_all_pipelines(user: User = Depends(token_auth), db: Session = Depends(session)):
+    """ Get current user's pipelines. """
     return db.query(Pipeline).filter((Pipeline.user_id == user.id) | Pipeline.is_shared).all()
 
 
 @router.post("/", response_model=schemas.Pipeline)
 def create_pipeline(pipeline: schemas.PipelineCreate, user: User = Depends(token_auth), db: Session = Depends(session)):
+    """ Create a new pipeline """
     return(Pipeline(name=pipeline.name, ae_title=pipeline.ae_title, is_shared=pipeline.is_shared, user_id=user.id)).save(db)
 
 
@@ -97,6 +125,7 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
 
 @ router.put("/{pipeline_id}/edit", response_model=schemas.Pipeline)
 def edit_pipeline(pipeline_id: int, pipeline: schemas.PipelineCreate, db: Session = Depends(session)):
+    """ Edit a pipeline """
     pipeline_to_edit = db.query(Pipeline).get(pipeline_id)
     pipeline_to_edit.name = pipeline.name
     pipeline_to_edit.ae_title = pipeline.ae_title
@@ -115,13 +144,15 @@ def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, db: 
     return run
 
 
-@ router.get("/{pipeline_id}/nodes", response_model=List[schemas.PipelineNode])
+@router.get("/{pipeline_id}/nodes", response_model=List[schemas.PipelineNode])
 def get_pipeline_nodes(pipeline_id: int, db: Session = Depends(session)):
+    """ Get all nodes from a pipeline """
     return db.query(PipelineNode).filter(PipelineNode.pipeline_id == pipeline_id).all()
 
 
 @router.get("/{pipeline_id}/links")
 def get_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
+    """ Get all links from a pipeline """
     return db.query(PipelineLink).filter(PipelineLink.pipeline_id == pipeline_id).delete()
 
 
