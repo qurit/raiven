@@ -20,6 +20,8 @@ services:
   worker:
     build: ./backend
     command: dramatiq api.pipelining._tasks
+    environment:
+      PYTHONUNBUFFERED: 1 # Fix to allow print statements within the docker container
     env_file:
       - docker.env
       - worker.env
@@ -35,12 +37,15 @@ services:
     ports:
       - "5000:5000"
       - "11112:11112"
+    environment:
+      PYTHONUNBUFFERED: 1 # Fix to allow print statements within the docker container
     env_file:
       - docker.env
     depends_on:
       - queue
       - db
     volumes:
+      - ./backend:/backend
       - ./uploads:/app/uploads
       - /var/run/docker.sock:/var/run/docker.sock
 

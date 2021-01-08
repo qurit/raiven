@@ -23,7 +23,7 @@ client = TestClient(app)
 TEST_USER = schemas.user.UserLocalCreate(
     username='test_user',
     name='Test User',
-    password='pAssWord'
+    password='PassWord'
 )
 
 from . import _mark as mark

@@ -44,7 +44,7 @@ def handle_association_request(event):
     requestor_ae_title, called_ae_title = get_ae_titles(event)
 
     # TODO: Not in list of allowed connections and allow push to pipe
-    if config.SCP_AE_TITLE not in called_ae_title:
+    if not is_valid_ae_title(called_ae_title):
         event.assoc.acse.send_reject(REJECTED_PERMANENT, SOURCE_SERVICE_USER, DIAG_CALLED_AET_NOT_RECOGNIZED)
 
     # ALREADY CONNECTED
@@ -55,6 +55,10 @@ def handle_association_request(event):
         CONNECTIONS[requestor_ae_title] = path
         path.mkdir(parents=True)
 
+def is_valid_ae_title(called_ae_title):
+    is_global_ae_title = config.SCP_AE_TITLE in called_ae_title
+    has_valid_ae_title_prefix = called_ae_title.startswith(config.VALID_AE_PREFIXES)
+    return is_global_ae_title or has_valid_ae_title_prefix
 
 def handle_association_release(event):
     """ Upon release start a task for all the received files to be ingested into the db """

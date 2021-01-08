@@ -1,9 +1,8 @@
-import passlib
-from config import BaseConfig
-config = BaseConfig()
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from config import BaseConfig
+config = BaseConfig()
 
 from .database import session, worker_session, engine
 from . import models, schemas, sockets
