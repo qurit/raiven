@@ -25,12 +25,15 @@ class PipelineController:
 
     @staticmethod
     def run_pipeline_task(db, pipeline_run: PipelineRun, priority: int = 1) -> bool:
-        [run.run_node_task.send_with_options(args=(pipeline_run.id, n.id,), priority=priority) for n in pipeline_run.pipeline.get_starting_nodes()]
         pipeline_run.status = 'running'
         pipeline_run.save(db)
+        db.commit()
+
+        [run.run_node_task.send_with_options(args=(pipeline_run.id, n.id,), priority=priority) for n in
+         pipeline_run.pipeline.get_starting_nodes()]
+
         # TODO remove below code
         print(pipeline_run.pipeline.get_starting_nodes())
-        db.commit()
         print("saving piupeline run")
         print(db.query(PipelineRun).count())
         return True
@@ -40,7 +43,7 @@ class PipelineController:
         pipeline_run = PipelineRun(pipeline_id=pipeline_id)
         pipeline_run.save(db)
 
-        # Copy temp files to pipeline input and commmit 
+        # Copy temp files to pipeline input and commit
         shutil.copytree(folder.resolve(), pipeline_run.get_abs_input_path(), dirs_exist_ok=True)
         shutil.rmtree(folder.resolve())
         db.commit()
