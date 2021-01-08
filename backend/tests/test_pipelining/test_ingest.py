@@ -25,7 +25,7 @@ def test_ingest_folder_to_bad_pipeline(mock_images_folder):
 
 def test_ingest_folder_to_valid_pipeline(mock_images_folder, db):
     # Insert pipeline to be run
-    ae_title = 'test'
+    ae_title = 'test_ingest'
     insert_pipeline(db, "test", ae_title=ae_title)
 
     # Test the pipeline was run
