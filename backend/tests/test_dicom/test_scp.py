@@ -1,22 +1,24 @@
+import logging
 import os
 from time import sleep
 
 from pydicom import dcmread
-from pynetdicom import AE
-from pynetdicom.sop_class import VerificationSOPClass
 from pynetdicom import AE, StoragePresentationContexts
+from pynetdicom.sop_class import VerificationSOPClass
 
 from api.dicom.scp import SCP
 from api.models.dicom import DicomNode
 from api.models.pipeline import PipelineRun
 
 from tests import config, models, mark
-
-import logging
-
 from tests.test_models.test_pipelines import insert_pipeline
 
 logging.basicConfig(level=logging.DEBUG)
+
+
+def join(broker, worker):
+    broker.join('default', fail_fast=True)
+    worker.join()
 
 
 def test_scp_class(ae_title: str = "TEST_AE_TITLE", port: int = 11010) -> SCP:
@@ -103,8 +105,7 @@ def test_store_global(db, association, stub_broker, stub_worker):
                 uids_added.append(uid)
 
     association.release()
-    stub_broker.join('default', fail_fast=True)
-    stub_worker.join()
+    join(stub_broker, stub_worker)
 
     for uid in uids_added:
         assert models.dicom.DicomSeries.query(db).filter_by(series_instance_uid=uid).first(), \
@@ -119,22 +120,25 @@ def test_store_valid_pipeline(db, stub_broker, stub_worker):
     init_dicom_node_count = db.query(DicomNode).count()
 
     association = get_association_to_ae(config.PIPELINE_AE_PREFIX + pipeline_ae_title)
-    perform_store(association, stub_broker, stub_worker)
+    perform_store(association)
+    join(stub_broker, stub_worker)
 
     # Ensure SCP server has time to process request and generate PipelineRun record
     try:
         assert init_pipeline_run_count < db.query(PipelineRun).count() 
     except AssertionError:
-        sleep(3) # DB not updated, try waiting first
-        assert init_pipeline_run_count < db.query(PipelineRun).count() 
-    assert init_dicom_node_count == db.query(DicomNode).count() # DICOM data should NOT be saved
+        sleep(3)  # DB not updated, try waiting first
+        assert init_pipeline_run_count < db.query(PipelineRun).count()
+    finally:
+        assert init_dicom_node_count == db.query(DicomNode).count()  # DICOM data should NOT be saved
 
 
 def test_store_invalid_pipeline(db, stub_broker, stub_worker):
     init_pipeline_run_count = db.query(PipelineRun).count()
 
     association = get_association_to_ae(config.PIPELINE_AE_PREFIX + "Fake_AE")
-    perform_store(association, stub_broker, stub_worker)
+    perform_store(association)
+    join(stub_broker, stub_worker)
 
     assert init_pipeline_run_count == db.query(PipelineRun).count()
 
@@ -177,7 +181,7 @@ def get_association_to_ae(ae_title):
     return assoc
 
 
-def perform_store(association, stub_broker, stub_worker):
+def perform_store(association):
     assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
     for root, _, files in os.walk(mock_path):
         for file in files:
@@ -188,5 +192,3 @@ def perform_store(association, stub_broker, stub_worker):
                 assert status
 
     association.release()
-    stub_broker.join('default', fail_fast=True)
-    stub_worker.join()
