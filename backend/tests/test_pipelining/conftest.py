@@ -55,6 +55,7 @@ def malformed_container():
 
         delete_container(container_id=container.id, db=db)
 
+
 @pytest.fixture
 def mock_images_folder():
     # Test images are contained in path
