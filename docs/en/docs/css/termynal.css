@@ -58,6 +58,11 @@ a[data-terminal-control] {
     color: #aebbff;
 }
 
+a[data-terminal-control]:hover {
+    color: var(--md-primary-fg-color);
+}
+
+
 [data-ty] {
     display: block;
     line-height: 2;
