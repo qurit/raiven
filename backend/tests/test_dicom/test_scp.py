@@ -3,7 +3,7 @@ import os
 from time import sleep
 
 from pydicom import dcmread
-from pynetdicom import AE, StoragePresentationContexts
+from pynetdicom import AE, StoragePresentationContexts, debug_logger
 from pynetdicom.sop_class import VerificationSOPClass
 
 from api.dicom.scp import SCP
@@ -71,23 +71,33 @@ def test_same_ae_connect():
     assoc_fail.release()
 
 
-# def test_scp_pipeline_association():
-#     ae = AE(ae_title='Test AE')
-#     ae.add_requested_context(VerificationSOPClass)
-#
-#     assoc = ae.associate(config.SCP_HOST, config.SCP_PORT, ae_title='RVP-my-pipe')
-#     assert assoc.is_established
-#     assert False
+def test_scp_pipeline_association():
+    ae = AE(ae_title='Test AE')
+    ae.add_requested_context(VerificationSOPClass)
+
+    assoc = ae.associate(config.SCP_HOST, config.SCP_PORT, ae_title='RVP-my-pipe')
+    assert assoc.is_established
+
+    assoc.release()
 
 
-def test_echo(association):
+def test_echo():
+    ae = AE(ae_title='Test AE')
+    ae.add_requested_context(VerificationSOPClass)
+    association = ae.associate(config.SCP_HOST, config.SCP_PORT, ae_title=config.SCP_AE_TITLE)
+
+    assert association.is_established
+
     status = association.send_c_echo()
     assert status
 
+    association.release()
+
 
 # @mark.not_written
-def test_store_global(db, association, stub_broker, stub_worker):
+def test_store_global(db, stub_broker, stub_worker):
     assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
+    association = get_association_to_ae(config.SCP_AE_TITLE)
 
     uids_added = []
     for root, _, files in os.walk(mock_path):
@@ -174,9 +184,8 @@ def get_association_to_ae(ae_title):
     # Create association to pipeline
     ae = AE(ae_title='test')
     ae.requested_contexts = StoragePresentationContexts
-    assoc = ae.associate(
-        config.SCP_HOST, config.SCP_PORT, ae_title=ae_title
-        )
+    assoc = ae.associate(config.SCP_HOST, config.SCP_PORT, ae_title=ae_title)
+
     assert assoc.is_established
     return assoc
 
