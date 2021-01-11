@@ -1,0 +1,39 @@
+site_name: Raiven
+repo_url: https://github.com/qurit/raiven
+repo_name: qurit/raiven
+edit_uri: ''
+
+theme:
+  name: material
+  palette:
+    - scheme: primary
+  icon:
+    repo: fontawesome/brands/github-alt
+  logo: assets/raiven-logo-black.svg
+  favicon: assets/raiven-logo.svg
+  language: en
+
+# Nav
+nav:
+  - Overview: index.md
+
+markdown_extensions:
+  - meta
+  - extra
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+extra:
+  social:
+  - icon: fontawesome/brands/github-alt
+    link: https://github.com/qurit
+  - icon: fontawesome/solid/globe
+    link: https://qurit.ca
+
+extra_css:
+  - css/main.css
+  - css/termynal.css
+extra_javascript:
+  - js/termynal.js
+  - js/termy.js

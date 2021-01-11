@@ -56,6 +56,14 @@ alembic revision --autogenerate -m <message>  # Create a revision
 alembic upgrade head # Upgrade to latest revision
 ```
 
+## Documentation
+
+The documentation for raiven was created with mkdocs-material. To test the documentation locally:
+```bash
+cd docs/en
+python mkdocs serve
+```
+
 ## Config
 
 Configuration of Raiven can be done in multiple places. If you are using docker, configuration
