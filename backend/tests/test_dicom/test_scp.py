@@ -8,13 +8,15 @@ from pynetdicom import AE, StoragePresentationContexts
 
 from api.dicom.scp import SCP
 from api.models.dicom import DicomNode
-from api.models.pipeline import PipelineRun
+from api.models.pipeline import Pipeline, PipelineRun
 
-from tests import config, models, mark
+from tests import client, config, models, mark
 
 import logging
+from tests.test_models.test_containers import create_and_test_container, delete_and_test_container
 
 from tests.test_models.test_pipelines import insert_pipeline
+from tests.test_pipelining.test_build import build_container_foreground
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -111,7 +113,7 @@ def test_store_global(db, association, stub_broker, stub_worker):
             f'Could not find series_instance_uid={uid} in db'
 
 
-def test_store_valid_pipeline(db, stub_broker, stub_worker):
+def test_store_valid_pipeline_no_containers(db, stub_broker, stub_worker):
     pipeline_ae_title = "test_scp"
     insert_pipeline(db, "test", ae_title=pipeline_ae_title)
 
@@ -128,6 +130,30 @@ def test_store_valid_pipeline(db, stub_broker, stub_worker):
         sleep(3) # DB not updated, try waiting first
         assert init_pipeline_run_count < db.query(PipelineRun).count() 
     assert init_dicom_node_count == db.query(DicomNode).count() # DICOM data should NOT be saved
+
+
+def test_store_pipeline_workflow(db, stub_broker, stub_worker, authorization_header):
+    # Upload / build containers
+    assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
+    assert os.path.exists(file_path := os.path.join(mock_path, 'simple_container.zip'))
+    assert os.path.isfile(file_path)
+    container = create_and_test_container(db, file_path)
+    build_container_foreground(container)
+
+    # Create pipeline with containers
+    pipeline_ae_title = "workflow"
+    pipeline = insert_pipeline(db, "test", ae_title=pipeline_ae_title)
+    add_container_to_pipeline(container, pipeline, authorization_header)
+
+    # Run pipeline by uploading dicom
+    init_pipeline_run_count = db.query(PipelineRun).count()
+    association = get_association_to_ae(config.PIPELINE_AE_PREFIX + pipeline_ae_title)
+    perform_store(association, stub_broker, stub_worker)
+
+    # Wait and get results
+    assert init_pipeline_run_count < db.query(PipelineRun).count()
+    assert db.query(PipelineRun).first().status == "complete"
+    delete_and_test_container(db, container)
 
 
 def test_store_invalid_pipeline(db, stub_broker, stub_worker):
@@ -188,5 +214,30 @@ def perform_store(association, stub_broker, stub_worker):
                 assert status
 
     association.release()
+    sleep(2) # Ensure detached SCP server has enough time to send job to worker before .join
     stub_broker.join('default', fail_fast=True)
     stub_worker.join()
+
+
+def add_container_to_pipeline(container, pipeline, authorization_header):
+    response = client.post(
+        f'/pipeline/{pipeline.id}',
+        json={
+            "pipeline_id": pipeline.id,
+            "nodes": [
+                {
+                "node_id": 0,
+                "container_id": container.id,
+                "x": 0,
+                "y": 0,
+                "container_is_input": False,
+                "container_is_output": False,
+                "destination_id": 0
+                }
+            ],
+            "links": [
+            ]},
+        headers=authorization_header
+    )
+
+    assert response.status_code == 200
