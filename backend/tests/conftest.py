@@ -8,7 +8,7 @@ from sqlalchemy_utils import drop_database, create_database, database_exists
 from api import engine, scripts
 from api.pipelining._tasks import broker
 
-from tests import testing_session, models, TEST_USER, utils, config
+from tests import client, testing_session, models, TEST_USER, utils, config
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -48,3 +48,12 @@ def stub_worker():
     worker.start()
     yield worker
     worker.stop()
+
+
+@pytest.fixture(scope="module")
+def authorization_header():
+    response = client.post('/auth/token', data={'username': TEST_USER.username, 'password': TEST_USER.password})
+    assert response.status_code == 200
+
+    return {'Authorization': f'Bearer {response.json()["access_token"]}'}
+
