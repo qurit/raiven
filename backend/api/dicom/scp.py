@@ -67,7 +67,6 @@ def is_valid_ae_title(called_ae_title):
 
 def handle_association_release(event):
     """ Upon release start a task for all the received files to be ingested into the db """
-    print('RELEASE')
 
     requestor_ae_title, called_ae_title = get_ae_titles(event)
     calling_host, calling_port = event.assoc.requestor.address, event.assoc.requestor.port
