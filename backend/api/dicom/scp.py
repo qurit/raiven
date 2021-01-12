@@ -71,8 +71,6 @@ def handle_association_release(event):
     requestor_ae_title, called_ae_title = get_ae_titles(event)
     calling_host, calling_port = event.assoc.requestor.address, event.assoc.requestor.port
 
-    print('RELEASE', requestor_ae_title, CONNECTIONS)
-
     if requestor_ae_title in CONNECTIONS:
 
         # Start task
