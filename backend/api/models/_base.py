@@ -106,20 +106,21 @@ class IOPathMixin(PathMixin):
     input_path = Column(String)
     output_path = Column(String)
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, create_folders: bool = True, **kwargs):
         super().save(*args, **kwargs)
 
         # Making folders
-        abs_path = self.get_abs_path()
-        for dirname in [self._INPUT_DIRNAME, self._OUTPUT_DIRNAME]:
-            if not os.path.exists(p := os.path.join(abs_path, dirname)):
-                os.makedirs(p)
+        if create_folders:
+            abs_path = self.get_abs_path()
+            for dirname in [self._INPUT_DIRNAME, self._OUTPUT_DIRNAME]:
+                if not os.path.exists(p := os.path.join(abs_path, dirname)):
+                    os.makedirs(p)
 
-        # Saving Path info
-        rel_path = self.get_path()
-        self.input_path = (rel_path / self._INPUT_DIRNAME).as_posix()
-        self.output_path = (rel_path / self._OUTPUT_DIRNAME).as_posix()
-        super().save(*args, **kwargs)
+            # Saving Path info
+            rel_path = self.get_path()
+            self.input_path = (rel_path / self._INPUT_DIRNAME).as_posix()
+            self.output_path = (rel_path / self._OUTPUT_DIRNAME).as_posix()
+            super().save(*args, **kwargs)
 
     def get_abs_path(self, subdir: str = None) -> str:
         if subdir == 'input':

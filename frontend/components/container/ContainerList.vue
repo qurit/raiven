@@ -55,7 +55,7 @@
       min-height="600px"
     >
       <v-card class="overflow-x-hidden">
-        <v-card-title>
+        <v-card-title style="word-break: break-word">
           Deleting this container will clear all pipelines with this container.
         </v-card-title>
         <v-card-subtitle>

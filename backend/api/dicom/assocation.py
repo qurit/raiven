@@ -17,7 +17,7 @@ class Association:
     def __init__(self, scp: Destination, contexts: list = AllStoragePresentationContexts, **kwargs):
         self.host = scp.host
         self.port = scp.port
-        self.ae_title = scp.ae_title
+        self.ae_title = scp.full_name
         self.contexts = contexts
         self.kwargs = kwargs
 
@@ -31,7 +31,7 @@ class Association:
 
     def __get_assoc(self):
         ae = AE(ae_title=config.SCP_AE_TITLE)
-        [ae.add_requested_context(c) for c in self.contexts]
+        ae.requested_contexts = self.contexts
 
         assoc = ae.associate(addr=self.host, port=self.port, ae_title=self.ae_title, contexts=self.contexts, **self.kwargs)
 

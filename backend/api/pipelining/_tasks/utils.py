@@ -11,5 +11,4 @@ def validate_tag(tag: str) -> str:
     """
     tag = tag.lower()
 
-    print(tag)
     return re.sub('[!"#$%&\'()*+,/:;<=>?@[\\]^`{|}~ \t\n\r\x0b\x0c]', '', tag)

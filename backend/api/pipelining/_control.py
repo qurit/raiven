@@ -1,8 +1,13 @@
-from api.models import pipeline as models, utils
-from api.schemas import pipeline as schemas
+import pathlib
+import shutil
+from typing import Union
 
-from api.models.pipeline import PipelineRun
-from ._tasks import build, run, test
+from api import config
+from api.models import utils
+from api.models.pipeline import Pipeline, PipelineRun
+from api.database import worker_session
+
+from ._tasks import build, run, test, ingest
 
 
 def run_test_task():
@@ -20,17 +25,91 @@ class PipelineController:
 
     @staticmethod
     def run_pipeline_task(db, pipeline_run: PipelineRun, priority: int = 1) -> bool:
-        [run.run_node_task.send_with_options(args=(pipeline_run.id, n.id,), priority=priority) for n in pipeline_run.pipeline.get_starting_nodes()]
         pipeline_run.status = 'running'
         pipeline_run.save(db)
+        db.commit()
+
+        [run.run_node_task.send_with_options(args=(pipeline_run.id, n.id,), priority=priority) for n in
+         pipeline_run.pipeline.get_starting_nodes()]
         return True
 
     @staticmethod
+    def run_pipeline_on_folder(db, pipeline_id: str, folder: pathlib.Path) -> bool:
+        pipeline_run = PipelineRun(pipeline_id=pipeline_id)
+        pipeline_run.save(db)
+
+        # Copy temp files to pipeline input and commit
+        shutil.copytree(folder.resolve(), pipeline_run.get_abs_input_path(), dirs_exist_ok=True)
+        shutil.rmtree(folder.resolve())
+        db.commit()
+
+        return PipelineController.run_pipeline_task(db, pipeline_run)
+
+    @staticmethod
     def pipeline_run_factory(db, dicom_cls, dicom_obj_id, pipeline_id) -> PipelineRun:
-        run = PipelineRun(pipeline_id=pipeline_id)
-        run.save(db)
+        pipeline_run = PipelineRun(pipeline_id=pipeline_id)
+        pipeline_run.save(db)
 
         input_data_model = dicom_cls.query(db).get(dicom_obj_id)
-        utils.copy_model_fs(input_data_model, run)
+        utils.copy_model_fs(input_data_model, pipeline_run)
 
-        return run
+        return pipeline_run
+
+
+class DicomIngestController:
+
+    class EmptyFolderException(Exception):
+        pass
+
+    def __init__(self, folder: pathlib.Path, calling_aet: str, calling_host: str, calling_port: int, called_aet: str):
+        if not any(folder.iterdir()):
+            raise self.EmptyFolderException('An Ingest Folder Cannot Be Empty')
+
+        self.folder = folder
+        self.calling_aet = calling_aet
+        self.calling_host = calling_host
+        self.calling_port = calling_port
+        self.called_aet = called_aet
+
+        # Pushed globally
+        if self.called_aet == config.SCP_AE_TITLE:
+            self.ingest_globally()
+
+        # Pushed to user
+        elif self.called_aet.startswith(config.USER_AE_PREFIX):
+            self.ingest_to_user()
+
+        # Pushed to pipeline
+        elif self.called_aet.startswith(config.PIPELINE_AE_PREFIX):
+            self.ingest_through_pipeline()
+
+        # Pushed to an undefined location
+        else:
+            raise NotImplementedError
+
+    def ingest_globally(self) -> bool:
+        print("Running ingested folder through global config")
+        rel_folder: str = self.folder.relative_to(config.UPLOAD_DIR).as_posix()
+        args = (rel_folder, self.calling_aet, self.calling_host, self.calling_port)
+        ingest.run_ingest_task.send_with_options(args=args)
+        return True
+
+    def ingest_to_user(self):
+        raise NotImplementedError
+
+    def ingest_through_pipeline(self) -> bool:
+        print("Running ingested folder directly on pipeline")
+        with worker_session() as db:
+            ae_title = self.called_aet.strip(config.PIPELINE_AE_PREFIX)
+
+            pipeline = db.query(Pipeline)\
+                .filter_by(ae_title=ae_title)\
+                .first()
+
+            if pipeline:
+                # Pipeline exists, Run folder through pipeline
+                print("Running folder through pipeline '{}'".format(pipeline.ae_title))
+                return PipelineController.run_pipeline_on_folder(db, pipeline.id, self.folder)
+            else:
+                print("ERROR: Requested pipeline does not exist")
+                raise NotImplementedError

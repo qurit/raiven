@@ -54,8 +54,8 @@ def test_get_users_admin_only(authorization_header, db) -> list:
 
 def test_add_user():
     test_user = UserLocalCreate(
-        username='joeBlow420',
-        name='Joe Blow',
+        username='joeSmith',
+        name='Joe Smith',
         password='password',
     )
 

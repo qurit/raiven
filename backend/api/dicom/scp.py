@@ -1,7 +1,11 @@
 import os
+import uuid
 import datetime
+import pathlib
+import shutil
 
 from pynetdicom import AE, evt, debug_logger
+from pydicom.filewriter import write_file_meta_info
 from pynetdicom.presentation import AllStoragePresentationContexts
 from pynetdicom.sop_class import VerificationSOPClass
 from pydicom import uid
@@ -9,75 +13,106 @@ from pydicom import uid
 from api import config
 from api.database import worker_session as session
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
+from api.pipelining import DicomIngestController
+
+# debug_logger()
+
+# Use a hash map
+CONNECTIONS = {}
+
+REJECTED_PERMANENT = 0x01
+REJECTED_TRANSIENT = 0x02
+SOURCE_SERVICE_USER = 0x01
+SOURCE_PROVIDER_USER = 0x03
+DIAG_CALLING_AET_NOT_RECOGNIZED = 0x03
+DIAG_CALLED_AET_NOT_RECOGNIZED = 0x07
+DIAG_LOCAL_LIMIT_EXCEEDED = 0x02
 
 
-def get_ae_title(event):
-    return str(event.assoc.requestor.ae_title, encoding='utf-8').strip()
+def encode_aet(ae_title_bytes: bytes) -> str:
+    return str(ae_title_bytes, encoding='utf-8').strip()
+
+
+def get_ae_titles(event):
+    return (
+        encode_aet(event.assoc.requestor.primitive.calling_ae_title),
+        encode_aet(event.assoc.requestor.primitive.called_ae_title)
+    )
+
+
+def handle_association_request(event):
+    requestor_ae_title, called_ae_title = get_ae_titles(event)
+
+    # TODO: Not in list of allowed connections and allow push to pipe
+    if not is_valid_ae_title(called_ae_title):
+        event.assoc.acse.send_reject(REJECTED_PERMANENT, SOURCE_SERVICE_USER, DIAG_CALLED_AET_NOT_RECOGNIZED)
+
+    # ALREADY CONNECTED
+    elif requestor_ae_title in CONNECTIONS:
+        event.assoc.acse.send_reject(REJECTED_TRANSIENT, SOURCE_PROVIDER_USER, DIAG_LOCAL_LIMIT_EXCEEDED)
+    else:
+        path = pathlib.Path(config.UPLOAD_DIR) / 'tmp' / str(uuid.uuid1())
+        CONNECTIONS[requestor_ae_title] = path
+        path.mkdir(parents=True)
+
+
+def is_valid_ae_title(called_ae_title):
+    is_global_ae_title = config.SCP_AE_TITLE in called_ae_title
+    has_valid_ae_title_prefix = called_ae_title.startswith(config.VALID_AE_PREFIXES)
+
+    return is_global_ae_title or has_valid_ae_title_prefix
+
+
+def handle_association_release(event):
+    """ Upon release start a task for all the received files to be ingested into the db """
+
+    requestor_ae_title, called_ae_title = get_ae_titles(event)
+    calling_host, calling_port = event.assoc.requestor.address, event.assoc.requestor.port
+
+    if requestor_ae_title in CONNECTIONS:
+
+        # Start task
+        try:
+            DicomIngestController(
+                folder=CONNECTIONS[requestor_ae_title],
+                calling_aet=requestor_ae_title,
+                calling_host=calling_host,
+                calling_port=calling_port,
+                called_aet=called_ae_title
+            )
+        except DicomIngestController.EmptyFolderException:
+            """ No C Store was performed """
+            pass
+        except Exception as e:
+            print(e)
+        finally:
+            del CONNECTIONS[requestor_ae_title]
+
+    return 0x0000
 
 
 def handle_store(event):
     """ Handles EVT_C_STORE """
-    ae_title = get_ae_title(event)
-    ds = event.dataset
-    ds.file_meta = event.file_meta
-    ds.file_meta.TransferSyntaxUID = uid.ImplicitVRLittleEndian
+    requestor_ae_title, called_ae_title = get_ae_titles(event)
 
-    with session() as db:
-        """
-        The models will automatically create the folders because they inherit from NestedPathMixin found in database.py
-        Speed can be improved by starting query from series (requires joins) but will cut the avg amount of queries down
-        from n=4 to n=1. Calculating the storage path could be faster by not using lazy relationships in the NestedPathMixin
-        """
-
-        # TODO: SHOULD START WITH SERIES FOR MORE EFFICIENCY
-        if not (node := db.query(DicomNode).filter_by(title=ae_title).first()):
-            node = DicomNode(
-                title=ae_title,
-                host=event.assoc.requestor.address,
-                port=event.assoc.requestor.port
-            )
-            node.save(db)
-
-        if not (patient := db.query(DicomPatient).filter_by(dicom_node_id=node.id, patient_id=ds.PatientID).first()):
-            patient = DicomPatient(
-                dicom_node_id=node.id,
-                patient_id=ds.PatientID
-            )
-            patient.save(db)
-
-        if not (study := db.query(DicomStudy).filter_by(dicom_patient_id=patient.id, study_instance_uid=ds.StudyInstanceUID).first()):
-            raw_date_time = ds.StudyDate + ds.StudyTime
-            formatted_date_time = datetime.datetime.strptime(
-                raw_date_time, '%Y%m%d%H%M%S')
-            study = DicomStudy(
-                dicom_patient_id=patient.id,
-                study_instance_uid=ds.StudyInstanceUID,
-                study_date=formatted_date_time
-            )
-            study.save(db)
-
-        if not (series := db.query(DicomSeries).filter_by(dicom_study_id=study.id, series_instance_uid=ds.SeriesInstanceUID).first()):
-            series = DicomSeries(
-                dicom_study_id=study.id,
-                series_instance_uid=ds.SeriesInstanceUID,
-                # TODO: Add a series description table
-                series_description=ds.SeriesDescription,
-                modality=ds.Modality,
-                date_received=datetime.datetime.today()
-
-            )
-            series.save(db)
-
-        # Grab the save path so we can release the session connection
-        save_path = series.get_abs_path()
-
-    ds.save_as(os.path.join(save_path, ds.SOPInstanceUID + '.dcm'),
-               write_like_original=False)
+    path = CONNECTIONS[requestor_ae_title] / (event.request.AffectedSOPInstanceUID + '.dcm')
+    with open(path, 'wb') as f:
+        f.write(b'\x00' * 128)
+        f.write(b'DICM')
+        # TODO: check this is still needed
+        # event.file_meta.TransferSyntaxUID = uid.ImplicitVRLittleEndian
+        write_file_meta_info(f, event.file_meta)
+        f.write(event.request.DataSet.getvalue())
 
     return 0x0000
 
 
 class SCP:
+    _handlers = [
+        (evt.EVT_REQUESTED, handle_association_request),
+        (evt.EVT_RELEASED, handle_association_release),
+        (evt.EVT_C_STORE, handle_store),
+    ]
 
     def __init__(self, ae_title='PICOM_SCP', host='localhost', port=11112, debug=False):
         self.ae_title = ae_title
@@ -92,8 +127,7 @@ class SCP:
             debug_logger()
 
     def start_server(self, blocking=False):
-        handlers = [(evt.EVT_C_STORE, handle_store)]
-        self._ae.start_server((self.host, self.port), block=blocking, evt_handlers=handlers)
+        self._ae.start_server((self.host, self.port), block=blocking, evt_handlers=self._handlers)
 
     def stop_server(self):
         self._ae.shutdown()

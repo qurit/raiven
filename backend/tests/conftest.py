@@ -1,13 +1,14 @@
 import os
 import shutil
-import pytest
 
-from sqlalchemy import event
+import pytest
+from dramatiq import Worker
 from sqlalchemy_utils import drop_database, create_database, database_exists
 
-
-from tests import testing_session, models, TEST_USER, utils, config
 from api import engine, scripts
+from api.pipelining._tasks import broker
+
+from tests import client, testing_session, models, TEST_USER, utils, config
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -33,3 +34,26 @@ def create_test_database():
 def db():
     with testing_session() as db:
         yield db
+
+
+@pytest.fixture()
+def stub_broker():
+    broker.flush_all()
+    return broker
+
+
+@pytest.fixture()
+def stub_worker():
+    worker = Worker(broker, worker_timeout=100)
+    worker.start()
+    yield worker
+    worker.stop()
+
+
+@pytest.fixture(scope="module")
+def authorization_header():
+    response = client.post('/auth/token', data={'username': TEST_USER.username, 'password': TEST_USER.password})
+    assert response.status_code == 200
+
+    return {'Authorization': f'Bearer {response.json()["access_token"]}'}
+

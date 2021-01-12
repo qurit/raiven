@@ -4,16 +4,20 @@ from api.models.container import ContainerBuild, ContainerBuildError
 
 
 def test_container_build_foreground(example_container):
-    build_container_task(example_container.id)
+    build_container_foreground(example_container)
 
-    assert example_container.build
-    assert example_container.build.status == 'exited'
-    assert example_container.build.exit_code == 0
-    assert example_container.build.tag
-    assert example_container.build.timestamp
-    assert not example_container.build.error
+# Extract method to use in other tests
+def build_container_foreground(container):
+    build_container_task(container.id)
 
-    assert docker.images.get(example_container.build.tag)
+    assert container.build
+    assert container.build.status == 'exited'
+    assert container.build.exit_code == 0
+    assert container.build.tag
+    assert container.build.timestamp
+    assert not container.build.error
+
+    assert docker.images.get(container.build.tag)
 
 
 def test_container_build_background(stub_broker, stub_worker, example_container):
