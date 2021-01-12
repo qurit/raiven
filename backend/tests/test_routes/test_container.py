@@ -29,7 +29,7 @@ def test_add_container(authorization_header, form_data: dict = None, user_id: in
     return response.json()
 
 
-def test_get_containers() -> dict:
-    response = client.get('/container/')
+def test_get_containers(authorization_header) -> dict:
+    response = client.get('/container/', headers=authorization_header)
     assert response.status_code == 200
     assert type(response.json()) is list
