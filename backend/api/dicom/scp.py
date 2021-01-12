@@ -49,8 +49,6 @@ def handle_association_request(event):
 
     # ALREADY CONNECTED
     elif requestor_ae_title in CONNECTIONS:
-        print('here')
-        print(CONNECTIONS)
         event.assoc.acse.send_reject(REJECTED_TRANSIENT, SOURCE_PROVIDER_USER, DIAG_LOCAL_LIMIT_EXCEEDED)
     else:
         path = pathlib.Path(config.UPLOAD_DIR) / 'tmp' / str(uuid.uuid1())
