@@ -175,7 +175,6 @@ def test_store_pipeline_workflow(db, stub_broker, stub_worker, authorization_hea
 
     # Wait and get results
     assert init_pipeline_run_count < db.query(PipelineRun).count()
-    print(db.query(PipelineRun).all())
 
     assert db.query(PipelineRun).first().status == "complete"
     delete_and_test_container(db, container)
