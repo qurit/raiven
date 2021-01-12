@@ -13,10 +13,16 @@ def test_container_create_zip(db):
     assert os.path.exists(file_path := os.path.join(mock_path, 'simple_container.zip'))
     assert os.path.isfile(file_path)
 
+    container = create_and_test_container(db, file_path)
+    assert type(container) is Container
+    delete_and_test_container(db, container)
+
+
+def create_and_test_container(db, file_path):
     with open(file_path, 'rb') as fp:
         data = fp.read()
 
-    container: Container = create_container(
+    container = create_container(
         auto_build=False,
         file=data,
         name='test_container_create_zip',
@@ -31,11 +37,14 @@ def test_container_create_zip(db):
 
     assert type(container) is not list
     assert type(container) is Container
-    assert pathlib.Path(abs_path := container.get_abs_path()).exists()
+    assert pathlib.Path(container.get_abs_path()).exists()
     assert not pathlib.Path(container.get_path()).is_absolute()
     assert container.dockerfile_path == pathlib.Path(container.dockerfile_path).as_posix()
+    return container
 
+
+def delete_and_test_container(db, container):
+    assert type(container) is Container
+    abs_path = container.get_abs_path()
     delete_container(container.id, db)
     assert not pathlib.Path(abs_path).exists()
-
-
