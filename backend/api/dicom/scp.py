@@ -49,6 +49,8 @@ def handle_association_request(event):
 
     # ALREADY CONNECTED
     elif requestor_ae_title in CONNECTIONS:
+        print('here')
+        print(CONNECTIONS)
         event.assoc.acse.send_reject(REJECTED_TRANSIENT, SOURCE_PROVIDER_USER, DIAG_LOCAL_LIMIT_EXCEEDED)
     else:
         path = pathlib.Path(config.UPLOAD_DIR) / 'tmp' / str(uuid.uuid1())
@@ -65,22 +67,31 @@ def is_valid_ae_title(called_ae_title):
 
 def handle_association_release(event):
     """ Upon release start a task for all the received files to be ingested into the db """
+    print('RELEASE')
 
     requestor_ae_title, called_ae_title = get_ae_titles(event)
     calling_host, calling_port = event.assoc.requestor.address, event.assoc.requestor.port
 
+    print('RELEASE', requestor_ae_title, CONNECTIONS)
+
     if requestor_ae_title in CONNECTIONS:
 
         # Start task
-        DicomIngestController.ingest_folder(
-            folder=CONNECTIONS[requestor_ae_title],
-            calling_aet=requestor_ae_title,
-            calling_host=calling_host,
-            calling_port=calling_port,
-            called_aet=called_ae_title
-        )
-
-        del CONNECTIONS[requestor_ae_title]
+        try:
+            DicomIngestController(
+                folder=CONNECTIONS[requestor_ae_title],
+                calling_aet=requestor_ae_title,
+                calling_host=calling_host,
+                calling_port=calling_port,
+                called_aet=called_ae_title
+            )
+        except DicomIngestController.EmptyFolderException:
+            """ No C Store was performed """
+            pass
+        except Exception as e:
+            print(e)
+        finally:
+            del CONNECTIONS[requestor_ae_title]
 
     return 0x0000
 

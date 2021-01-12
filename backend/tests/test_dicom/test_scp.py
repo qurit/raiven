@@ -88,7 +88,8 @@ def test_scp_pipeline_association():
 def test_echo():
     ae = AE(ae_title='Test AE')
     ae.add_requested_context(VerificationSOPClass)
-    association = ae.associate(config.SCP_HOST, config.SCP_PORT, ae_title=config.SCP_AE_TITLE)
+
+    association = ae.associate(config.SCP_HOST, config.SCP_PORT, ae_title='RVU-Echo')
 
     assert association.is_established
 
@@ -152,6 +153,7 @@ def test_store_pipeline_workflow(db, stub_broker, stub_worker, authorization_hea
     assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
     assert os.path.exists(file_path := os.path.join(mock_path, 'simple_container.zip'))
     assert os.path.isfile(file_path)
+
     container = create_and_test_container(db, file_path)
     build_container_foreground(container)
 
@@ -161,12 +163,20 @@ def test_store_pipeline_workflow(db, stub_broker, stub_worker, authorization_hea
     add_container_to_pipeline(container, pipeline, authorization_header)
 
     # Run pipeline by uploading dicom
+    db.query(PipelineRun).delete()
+    db.commit()
+
     init_pipeline_run_count = db.query(PipelineRun).count()
     association = get_association_to_ae(config.PIPELINE_AE_PREFIX + pipeline_ae_title)
-    perform_store(association, stub_broker, stub_worker)
+
+    perform_store(association)
+    sleep(2)  # Ensure detached SCP server has enough time to send job to worker before .join
+    join(stub_broker, stub_worker)
 
     # Wait and get results
     assert init_pipeline_run_count < db.query(PipelineRun).count()
+    print(db.query(PipelineRun).all())
+
     assert db.query(PipelineRun).first().status == "complete"
     delete_and_test_container(db, container)
 
@@ -229,9 +239,6 @@ def perform_store(association):
                 assert status
 
     association.release()
-    sleep(2) # Ensure detached SCP server has enough time to send job to worker before .join
-    stub_broker.join('default', fail_fast=True)
-    stub_worker.join()
 
 
 def add_container_to_pipeline(container, pipeline, authorization_header):
@@ -250,8 +257,8 @@ def add_container_to_pipeline(container, pipeline, authorization_header):
                 "destination_id": 0
                 }
             ],
-            "links": [
-            ]},
+            "links": []
+        },
         headers=authorization_header
     )
 
