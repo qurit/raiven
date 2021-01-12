@@ -1,15 +1,15 @@
 <template>
-  <v-card class="overflow-x-hidden">
-    <v-form v-model="isFormValid" class="ma-5" ref="form">
+  <v-card class="overflow-x-hidden" width="600">
       <v-card-title> Add a destination source for your pipelines</v-card-title>
       <v-row>
+
         <v-col cols="6">
           <v-text-field
             v-model="host"
             label="Host Address"
             :rules="[v => !!v || 'A Host Address is required']"
             required
-          ></v-text-field>
+          />
         </v-col>
         <v-col cols="6">
           <v-text-field
@@ -17,25 +17,35 @@
             label="Port"
             :rules="[rules.validateNumber]"
             required
-          ></v-text-field>
+          />
+        </v-col>
+        <v-col cols="12">
+          <v-text-field
+            v-model="ae_title"
+            label="AE Title"
+            :rules="[v => !!v || 'A AE Title is required']"
+            required
+          />
         </v-col>
       </v-row>
-    </v-form>
-    <v-row justify="center">
-      <v-btn
-        :disabled="!this.isFormValid"
-        @click="submit"
-        color="confirm"
-        class="ma-4"
-        text
-      >
-        Add destination
-      </v-btn>
-    </v-row>
+      <v-card-actions>
+        <v-spacer/>
+        <v-btn
+          :disabled="!this.isFormValid"
+          @click="submit"
+          color="confirm"
+          class="ma-4"
+          text
+        >
+          Add destination
+        </v-btn>
+      </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'OutputDestinationForm',
   data: () => ({
@@ -46,7 +56,8 @@ export default {
       }
     },
     host: '',
-    port: ''
+    port: '',
+    ae_title: null,
   }),
   methods: {
     async submit() {
@@ -57,6 +68,9 @@ export default {
       this.$refs.form.reset()
       this.$emit('closeDialog')
     }
+  },
+  computed: {
+    isDisabled: ctx => !ctx.host || !ctx.port || !ctx.ae_title
   }
 }
 </script>

@@ -14,6 +14,8 @@ services:
       - docker.env
     ports:
       - 5432:5432
+    volumes:
+      - raiven_pg_data:/var/lib/postgresql/data/
 
   worker:
     build: ./backend
@@ -28,38 +30,41 @@ services:
       - ./uploads:/app/uploads
       - /var/run/docker.sock:/var/run/docker.sock
 
-#  api:
-#    build: ./backend
-#    ports:
-#      - "5000:5000"
-#      - "11112:11112"
-#    env_file:
-#      - docker.env
-#    depends_on:
-#      - queue
-#      - db
-#    volumes:
-#      - ./uploads:/app/uploads
-#      - /var/run/docker.sock:/var/run/docker.sock
+  api:
+    build: ./backend
+    ports:
+      - "5000:5000"
+      - "11112:11112"
+    environment:
+      PYTHONUNBUFFERED: 1 # Fix to allow print statements within the docker container
+    env_file:
+      - docker.env
+    depends_on:
+      - queue
+      - db
+    volumes:
+      - ./backend:/backend
+      - ./uploads:/app/uploads
+      - /var/run/docker.sock:/var/run/docker.sock
 
-#  orthanc:
-#    image: jodogne/orthanc
-#    container_name: orthanc
-#    command: /run/secrets/ --verbose
-#    ports:
-#      - "8042:8042"
-#      - "4242:4242"
-#    secrets:
-#      - orthanc.json
-#    volumes:
-#      - orthanc_data:/var/lib/orthanc/db/
-#
-#  frontend:
-#    build: ./frontend
-#    ports:
-#      - "3000:3000"
-#    env_file:
-#      - docker.env
+  orthanc:
+    image: jodogne/orthanc
+    container_name: orthanc
+    command: /run/secrets/ --verbose
+    ports:
+      - "8042:8042"
+      - "4242:4242"
+    secrets:
+      - orthanc.json
+    volumes:
+      - orthanc_data:/var/lib/orthanc/db/
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - docker.env
 
 secrets:
   orthanc.json:
@@ -67,3 +72,4 @@ secrets:
 
 volumes:
   orthanc_data:
+  raiven_pg_data:

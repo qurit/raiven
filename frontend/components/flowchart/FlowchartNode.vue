@@ -15,7 +15,7 @@
       />
 
       <!-- Node Data -->
-      <v-card-title v-text="type" />
+      <v-card-title v-text="type" style="word-break: break-word" />
       <v-select
         v-if="container_is_output"
         v-model="selected"
@@ -93,7 +93,6 @@ export default {
   props: {
     canEdit: { type: Boolean },
     id: { type: Number },
-    x: { type: Number },
     y: { type: Number },
     x: { type: Number },
     type: { type: String },

@@ -98,8 +98,6 @@ def delete_series(series_id: int, db: Session = Depends(session)):
 
 @ router.put("/node/{dicom_node_id}")
 def send_dicom_node(dicom_node_id: int, pipeline_id: pipeline.PipelineId, db: Session = Depends(session)):
-    print(dicom_node_id)
-    print(pipeline_id)
     dicom_node = db.query(DicomNode).get(dicom_node_id)
     return dicom_node.abs_path
 
