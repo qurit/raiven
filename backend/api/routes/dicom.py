@@ -1,12 +1,14 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
-from sqlalchemy import func
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from api import session, queries
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
+from api.models.user import User
 from api.schemas import dicom, pipeline
+from api.auth import token_auth
 
 router = APIRouter()
 
@@ -44,6 +46,14 @@ def get_dicom_stats(db: Session = Depends(session)):
         "dicom_series_counts": db.query(DicomSeries).count()
     }
     return stats
+
+
+@router.get("/nodes/{user_id}", response_model=List[dicom.DicomNode])
+def get_user_dicom_nodes(user_id: int, user: User = Depends(token_auth), db: Session = Depends(session)):
+    """ Get user's DICOM nodes """
+    if user_id != user.id:
+        raise HTTPException(status_code=401 , detail="Cannot view Dicom nodes belonging to other users")
+    return db.query(DicomNode).filter(or_(DicomNode.user_id == user_id, DicomNode.user_id == None)).all()
 
 
 @router.get("/nodes", response_model=List[dicom.DicomNode])
