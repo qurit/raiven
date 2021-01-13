@@ -10,6 +10,8 @@ class DicomNode(PathMixin, Base):
     title = Column(String)
     host = Column(String)
     port = Column(Integer)
+    # Null user ID means DicomNode is available globally 
+    user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
 
     patients = relationship('DicomPatient', backref='node')
 
