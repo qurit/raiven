@@ -10,7 +10,7 @@ from . import dramatiq
 
 
 @dramatiq.actor(max_retries=0)
-def run_ingest_task(folder: str, calling_aet: str, calling_host: str, calling_port: int):
+def run_ingest_task(folder: str, calling_aet: str, calling_host: str, calling_port: int, user_id: int = None):
     """
     The models will automatically create the folders because they inherit from NestedPathMixin found in database.py
     Speed can be improved by starting query from series (requires joins) but will cut the avg amount of queries down
@@ -25,8 +25,8 @@ def run_ingest_task(folder: str, calling_aet: str, calling_host: str, calling_po
             ds = dcmread(str(file_path))
 
             # TODO: SHOULD START WITH SERIES FOR MORE EFFICIENCY
-            if not (node := db.query(DicomNode).filter_by(title=calling_aet).first()):
-                node = DicomNode(title=calling_aet, host=calling_host, port=calling_port)
+            if not (node := db.query(DicomNode).filter_by(title=calling_aet, user_id=user_id).first()):
+                node = DicomNode(title=calling_aet, host=calling_host, port=calling_port, user_id=user_id)
                 node.save(db)
 
             if not (patient := db.query(DicomPatient).filter_by(dicom_node_id=node.id, patient_id=ds.PatientID).first()):
