@@ -1,11 +1,11 @@
 <template>
   <v-app>
 
-    <v-content id="splash">
+    <v-main id="splash">
       <v-container fill-height>
         <nuxt />
       </v-container>
-    </v-content>
+    </v-main>
 
 
 

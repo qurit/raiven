@@ -4,11 +4,11 @@
     <NavDrawer v-else app :items="links" />
     <Toast />
 
-    <v-content>
+    <v-main>
       <v-container fluid>
         <nuxt />
       </v-container>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 <script>
