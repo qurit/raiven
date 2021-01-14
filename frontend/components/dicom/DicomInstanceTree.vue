@@ -3,7 +3,7 @@
     dense
     :items="nodes"
     item-text="id"
-    :loadChildren="fetchTest"
+    :loadChildren="loadChildren"
     hoverable
   >
     <template v-slot:prepend="{ item }">
@@ -39,10 +39,6 @@
 <script>
 export default {
   name: 'DicomInstanceTree',
-  props: ['nodes', 'send'],
-  created() {
-    console.log('NODES')
-    console.log(this.nodes)
-  },
+  props: ['nodes', 'send', 'loadChildren'],
 }
 </script>

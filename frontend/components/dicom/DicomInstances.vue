@@ -116,17 +116,14 @@ export default {
       }
     },
     async getNodes() {
-      const URL = '/dicom/nodes'
+      const URL = `/dicom/nodes/${this.$auth.user.id}`
       await generic_get(this, URL)
         .then((data) => {
           this.nodes = data
           this.global_nodes = data.filter((node) => !node.user_id)
-          console.log(data)
           this.private_nodes = data.filter(
             (node) => node.user_id == this.$auth.user.id
           )
-          console.log(data)
-          console.log(data[0].user_id == this.$auth.user.id)
         })
         .then(() => {
           this.nodes.forEach((node) => {
