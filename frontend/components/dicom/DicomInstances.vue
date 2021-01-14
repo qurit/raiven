@@ -10,13 +10,13 @@
     <DicomInstanceTree
       :nodes="global_nodes"
       :load-children="fetchTest"
-      :send="send"
+      @select="send"
     />
     <p class="pl-3 pt-3 ma-0">Private:</p>
     <DicomInstanceTree
       :nodes="private_nodes"
       :load-children="fetchTest"
-      :send="send"
+      @select="send"
     />
     <v-dialog v-model="dialog" width="500px" height="600px">
       <DicomForm
