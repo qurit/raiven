@@ -29,7 +29,7 @@ def upload_folder(upload_dir, upload_ae_title):
 
 
 if __name__ == '__main__':
-    # Replace with your own path to a test folder
+    # Replace with your own absolute path to a test folder
     UPLOAD_DIR = 'E:\\BCCRC\\dicom\\pyPET4RT'
     # Replace with title of desired AE. RAIVEN for default
     UPLOAD_AE_TITLE = 'RVP-test'
