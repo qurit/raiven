@@ -6,13 +6,13 @@
       <v-icon-btn @click="getNodes" color="#373740" refresh />
     </v-toolbar>
     <DicomBreakdown />
-    <p class="pl-3 pt-3 ma-0">Global:</p>
+    <p v-if="global_nodes.length > 0" class="pl-3 pt-3 ma-0">Global:</p>
     <DicomInstanceTree
       :nodes="global_nodes"
       :load-children="fetchTest"
       @select="send"
     />
-    <p class="pl-3 pt-3 ma-0">Private:</p>
+    <p v-if="private_nodes.length > 0" class="pl-3 pt-3 ma-0">Private:</p>
     <DicomInstanceTree
       :nodes="private_nodes"
       :load-children="fetchTest"
@@ -51,8 +51,8 @@ export default {
     dicom_obj_type: undefined,
     dicom_obj_id: undefined,
     nodes: undefined,
-    global_nodes: undefined,
-    private_nodes: undefined,
+    global_nodes: [],
+    private_nodes: [],
     patients: [],
     studies: [],
     series: [],
@@ -118,13 +118,7 @@ export default {
     async getNodes() {
       const URL = `/dicom/nodes/${this.$auth.user.id}`
       await generic_get(this, URL)
-        .then((data) => {
-          this.nodes = data
-          this.global_nodes = data.filter((node) => !node.user_id)
-          this.private_nodes = data.filter(
-            (node) => node.user_id == this.$auth.user.id
-          )
-        })
+        .then((data) => this.updateTreeview(data))
         .then(() => {
           this.nodes.forEach((node) => {
             this.$set(node, 'children', [])
@@ -137,8 +131,12 @@ export default {
       this.dicom_obj_id = id
       this.dialog = true
     },
-    updateTreeview(nodes) {
-      this.nodes = nodes
+    updateTreeview(data) {
+      this.nodes = data
+      this.global_nodes = data.filter((node) => !node.user_id)
+      this.private_nodes = data.filter(
+        (node) => node.user_id == this.$auth.user.id
+      )
     },
   },
 }
