@@ -1,7 +1,7 @@
 <template>
   <v-treeview
       dense
-      :items="global_nodes"
+      :items="nodes"
       item-text="id"
       :loadChildren="fetchTest"
       hoverable
@@ -35,13 +35,14 @@
     </template>
   </v-treeview>
 </template>
+
 <script>
 export default {
   name: 'DicomInstanceTree',
-  props: {
-    fetchTest: {},
-    global_nodes: {},
-    send: {}
+  props: ['nodes', 'send'],
+  created() {
+    console.log("NODES");
+    console.log(this.nodes);
   }
 }
 </script>
