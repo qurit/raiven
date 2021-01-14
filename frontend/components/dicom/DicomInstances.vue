@@ -6,13 +6,13 @@
       <v-icon-btn @click="getNodes" color="#373740" refresh />
     </v-toolbar>
     <DicomBreakdown />
-    <p>Global:</p>
+    <p class="pl-3 pt-3 ma-0">Global:</p>
     <DicomInstanceTree
       :nodes="global_nodes"
       :load-children="fetchTest"
       :send="send"
     />
-    <p>Private:</p>
+    <p class="pl-3 pt-3 ma-0">Private:</p>
     <DicomInstanceTree
       :nodes="private_nodes"
       :load-children="fetchTest"
