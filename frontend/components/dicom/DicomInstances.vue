@@ -25,22 +25,22 @@
         @closeDialog="dialog = false"
         @onDelete="updateTreeview"
       />
-      <DicomTest/>
     </v-dialog>
   </v-card>
 </template>
 
 <script>
-import {DicomForm, DicomInstanceTree, DicomTest} from '~/components/dicom'
+import {DicomForm} from '~/components/dicom'
 import {DicomBreakdown} from '~/components/graphs'
 import {generic_get} from '~/api'
+import DicomInstanceTree from './DicomInstanceTree'
+
 
 export default {
   components: {
     DicomBreakdown,
     DicomForm,
     DicomInstanceTree,
-    DicomTest,
   },
   data: () => ({
     dialog: false,
