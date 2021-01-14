@@ -7,7 +7,11 @@
     </v-toolbar>
     <DicomBreakdown />
     <p>Global:</p>
-    <DicomInstanceTree :fetch-test="fetchTest" :global_nodes="global_nodes" :send="send('Node', 0)"/>
+    <DicomInstanceTree
+      :nodes="global_nodes"
+      :load-children="fetchTest"
+      :send="send"
+    />
     <p>Private:</p>
     <DicomInstanceTree
       :nodes="private_nodes"
