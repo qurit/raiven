@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       dataCollection: null,
-      chartData: null,
+      chartData: {},
       options: {
         legend: {
           labels: {
