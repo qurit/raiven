@@ -16,6 +16,7 @@ theme:
 # Nav
 nav:
   - Overview: index.md
+  - Pushing DICOM data to Raiven: pushing-dicom.md
 
 markdown_extensions:
   - meta
@@ -23,6 +24,7 @@ markdown_extensions:
   - admonition
   - pymdownx.highlight
   - pymdownx.superfences
+  - abbr
 
 extra:
   social:
