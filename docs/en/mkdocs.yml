@@ -16,6 +16,7 @@ theme:
 # Nav
 nav:
   - Overview: index.md
+  - User Guide: help.md
 
 markdown_extensions:
   - meta

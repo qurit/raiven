@@ -10,8 +10,7 @@
 
 ---
 
-Build using python, fastapi, and nuxt, Raiven is full-featured application for building and maintaining DICOM image processing pipelines. Raiven hopes to become the radiology room of the future.
-
+Built using python, fastapi, and nuxt, Raiven is a full-featured application for building and maintaining DICOM image processing pipelines. Raiven hopes to become the radiology room of the future.
 
 ## Deployment
 
@@ -22,6 +21,7 @@ The easiest way to deploy Raiven is using docker. Raiven comes with a preconfigu
 ```console
 $ docker-compose up -d
 ```
+
 </div>
 
 ## Config
