@@ -16,7 +16,9 @@ theme:
 # Nav
 nav:
   - Overview: index.md
-  - User Guide: help.md
+  - User Guide:
+    - Container Guide: container-guide.md
+    - Pipeline Guide: pipeline-guide.md
 
 markdown_extensions:
   - meta
@@ -24,7 +26,9 @@ markdown_extensions:
   - admonition
   - pymdownx.highlight
   - pymdownx.superfences
-
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
 extra:
   social:
   - icon: fontawesome/brands/github-alt
