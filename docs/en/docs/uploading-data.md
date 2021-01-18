@@ -1,7 +1,7 @@
 
 ---
 
-DICOM is the standard for the communication and management of medical images and related data. Raiven has built in support for AE's to push DICOM data directly to a Raiven server and allows for three different options for pushing files. Which option you select is dictated by the <b>ae_title</b> you associate with when making the connection to the Raiven server. The available options are: pushing DICOM globally, pushing DICOM to a specific user, and pushing DICOM to a specific pipeline.
+DICOM is the standard for the communication and management of medical images and related data. Raiven has built in support for AE's to upload DICOM data directly to a Raiven server and allows for three different options for pushing files. Which option you select is dictated by the <b>ae_title</b> you associate with when making the connection to the Raiven server. The available options are: pushing DICOM globally, pushing DICOM to a specific user, and pushing DICOM to a specific pipeline.
 
 ## Pushing DICOM globally
 

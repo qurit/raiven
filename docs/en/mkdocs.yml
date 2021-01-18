@@ -16,7 +16,7 @@ theme:
 # Nav
 nav:
   - Overview: index.md
-  - Pushing DICOM data to Raiven: pushing-dicom.md
+  - Uploading data: uploading-data.md
 
 markdown_extensions:
   - meta
