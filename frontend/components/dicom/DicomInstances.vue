@@ -6,18 +6,22 @@
       <v-icon-btn @click="getNodes" color="#373740" refresh />
     </v-toolbar>
     <DicomBreakdown />
-    <p v-if="global_nodes.length > 0" class="pl-3 pt-3 ma-0">Global:</p>
-    <DicomInstanceTree
-      :nodes="global_nodes"
-      :load-children="fetchTest"
-      @select="send"
-    />
-    <p v-if="private_nodes.length > 0" class="pl-3 pt-3 ma-0">Private:</p>
-    <DicomInstanceTree
-      :nodes="private_nodes"
-      :load-children="fetchTest"
-      @select="send"
-    />
+    <div v-if="global_nodes.length">
+      <p class="pl-3 pt-3 ma-0">Global:</p>
+      <DicomInstanceTree
+        :nodes="global_nodes"
+        :load-children="fetchTest"
+        @select="send"
+      />
+    </div>
+    <div v-if="private_nodes.length">
+      <p class="pl-3 pt-3 ma-0">Private:</p>
+      <DicomInstanceTree
+        :nodes="private_nodes"
+        :load-children="fetchTest"
+        @select="send"
+      />
+    </div>
     <v-dialog v-model="dialog" width="500px" height="600px">
       <DicomForm
         :dicom_obj_type="dicom_obj_type"
