@@ -35,7 +35,6 @@ CMD python main.py
 
 An example algorithm that runs inside the container is shown below. In the code below, the algorithm reads all the dicom 
 files from the input directory, doubles the value of their pixels, and then saves the new image to the output directory.
-
 ```python
 import os
 
@@ -55,7 +54,8 @@ if __name__ == '__main__':
                 pixels = pixels * 2
                 ds.PixelData = pixels.tobytes()
                 ds.save_as(os.path.join(OUTPUT_DIR, file))
-```   
+```
+
 !!! note
     If you did not set up the input and output environment variables in the Dockerfile, you can set the 
     input and output directories to be `/mnt/raiven/input` and `/mnt/raiven/output`.
