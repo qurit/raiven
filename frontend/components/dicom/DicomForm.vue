@@ -41,14 +41,14 @@ export default {
   components: { DicomBreakdown },
   props: {
     dicom_obj_type: String,
-    dicom_obj_id: String,
-    nodes: String,
-    patients: String,
-    studies: String,
-    series: String
+    dicom_obj_id: Number,
+    nodes: Array,
+    patients: Array,
+    studies: Array,
+    series: Array
   },
   data: () => ({
-    pipeline_id: undefined
+    pipeline_id:  undefined
   }),
   created() {
     this.$store.dispatch('pipelines/fetchPipelines')

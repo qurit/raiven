@@ -31,6 +31,7 @@
     </template>
     <ContainerCard
       v-for="c in filteredList"
+      :key="c.id"
       :id="c.id"
       :container="c"
       :colors="colors.container"

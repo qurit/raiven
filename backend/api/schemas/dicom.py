@@ -32,4 +32,5 @@ class DicomNode(BaseORMModel):
     title: str
     host: str
     port: int
+    user_id: Optional[int] = None
 

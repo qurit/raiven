@@ -17,7 +17,7 @@ export default {
   },
   data() {
     return {
-      chartData: null,
+      chartData: {},
       dataCollection: null,
       options: {
         legend: {

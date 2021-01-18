@@ -11,7 +11,6 @@ ENV NUXT_HOST '0.0.0.0'
 ENV NUXT_PORT 3000
 
 COPY . .
-RUN npm run build
 
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dev"]

@@ -6,6 +6,7 @@ from api import config
 from api.models import utils
 from api.models.pipeline import Pipeline, PipelineRun
 from api.database import worker_session
+from api.models.user import User
 
 from ._tasks import build, run, test, ingest
 
@@ -63,6 +64,7 @@ class DicomIngestController:
 
     def __init__(self, folder: pathlib.Path, calling_aet: str, calling_host: str, calling_port: int, called_aet: str):
         if not any(folder.iterdir()):
+            print("INFO: Empty ingested folder")
             raise self.EmptyFolderException('An Ingest Folder Cannot Be Empty')
 
         self.folder = folder
@@ -85,20 +87,35 @@ class DicomIngestController:
 
         # Pushed to an undefined location
         else:
+            print("ERROR: Undefined called AET")
             raise NotImplementedError
 
     def ingest_globally(self) -> bool:
-        print("Running ingested folder through global config")
+        print("Ingesting folder globally")
         rel_folder: str = self.folder.relative_to(config.UPLOAD_DIR).as_posix()
         args = (rel_folder, self.calling_aet, self.calling_host, self.calling_port)
         ingest.run_ingest_task.send_with_options(args=args)
         return True
 
     def ingest_to_user(self):
-        raise NotImplementedError
+        with worker_session() as db:
+            # Get user id from username
+            username = self.called_aet.strip(config.USER_AE_PREFIX)
+            query_user = db.query(User)\
+                .filter_by(username=username)\
+                .first()
+
+            if query_user:
+                print(f"Ingesting folder to user: '{query_user.username}'")
+                rel_folder: str = self.folder.relative_to(config.UPLOAD_DIR).as_posix()
+                args = (rel_folder, self.calling_aet, self.calling_host, self.calling_port, query_user.id)
+                ingest.run_ingest_task.send_with_options(args=args)
+                return True
+            else:
+                print("ERROR: Attempted to ingest to non-existant user")
+                raise NotImplementedError
 
     def ingest_through_pipeline(self) -> bool:
-        print("Running ingested folder directly on pipeline")
         with worker_session() as db:
             ae_title = self.called_aet.strip(config.PIPELINE_AE_PREFIX)
 
@@ -107,9 +124,8 @@ class DicomIngestController:
                 .first()
 
             if pipeline:
-                # Pipeline exists, Run folder through pipeline
-                print("Running folder through pipeline '{}'".format(pipeline.ae_title))
+                print("Running folder through pipeline: '{}'".format(pipeline.ae_title))
                 return PipelineController.run_pipeline_on_folder(db, pipeline.id, self.folder)
             else:
-                print("ERROR: Requested pipeline does not exist")
+                print("ERROR: Attempted to ingest to non-existant pipeline")
                 raise NotImplementedError
