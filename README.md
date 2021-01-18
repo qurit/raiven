@@ -7,6 +7,7 @@
 </p>
 <p align="center">
 <img alt="Tests" src="https://github.com/qurit/raiven/workflows/Python%20application/badge.svg?branch=master" />
+<img alt="Docs" src="https://github.com/qurit/raiven/workflows/docs/badge.svg" />
 </p>
 
 ---
