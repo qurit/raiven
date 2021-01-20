@@ -294,4 +294,5 @@ def add_container_to_pipeline(container, pipeline, authorization_header):
         headers=authorization_header
     )
 
+    print(response.__dict__)
     assert response.status_code == 200
