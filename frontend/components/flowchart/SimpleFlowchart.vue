@@ -39,7 +39,6 @@ import FlowchartLink from './FlowchartLink.vue'
 import FlowchartNode from './FlowchartNode.vue'
 import { getMousePosition } from './position'
 import { generic_post } from '~/api'
-import { pipelineValidator } from '~/utilities/pipelineValidator'
 
 export default {
   name: 'VueFlowchart',
@@ -292,7 +291,7 @@ export default {
         link => link.from !== id && link.to !== id
       )
     },
-    async saveNodesAndLinks() {
+    async savePipeline() {
       this.savedNodes = this.scene.nodes
       this.savedLinks = this.scene.links
       var nodeArray = []
@@ -309,8 +308,7 @@ export default {
         // if there is a node with a destination, then save the destination as well
         this.pipelineNodeDestinations.forEach(pipelineNodeDestination => {
           if (pipelineNodeDestination.pipelineNodeId === node.id) {
-            newPipelineNode['destination_id'] =
-              pipelineNodeDestination.destinationId
+            newPipelineNode['destination_id'] = pipelineNodeDestination.destinationId
           }
         })
         nodeArray.push(newPipelineNode)
@@ -322,24 +320,23 @@ export default {
         }
         linkArray.push(newPipelineLink)
       })
-      const PAYLOAD = {
-        nodes: nodeArray,
-        links: linkArray
-      }
+
+      const PAYLOAD = {nodes: nodeArray, links: linkArray}
       const URL = `/pipeline/${this.id}`
       try {
         await generic_post(this, URL, PAYLOAD)
         this.$toaster.toastSuccess('Pipeline saved!')
       } catch (e) {
-        this.$toaster.toastError(
-          'Something went wrong, please make sure your pipeline is properly formed'
-        )
+        let msg = 'Something went wrong, please make sure your pipeline is properly formed'
+
+        try {
+          msg = e.response.data.detail[0].msg
+        } finally {
+          this.$toaster.toastError(msg)
+        }
+
+
       }
-    },
-    savePipeline() {
-      pipelineValidator(this.scene.nodes, this.scene.links)
-        ? this.saveNodesAndLinks()
-        : this.$toaster.toastError('Pipeline is not connected!')
     },
     checkSaved() {
       return (

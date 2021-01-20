@@ -1,4 +1,5 @@
 from tests import client, testing_session, utils, TEST_USER, schemas, mark
+from tests.test_routes.test_container import test_add_container
 
 
 def test_get_stats(authorization_header):
@@ -60,6 +61,145 @@ def test_create_pipeline(authorization_header, pipeline=schemas.pipeline.Pipelin
     assert data['name'] == pipeline.name
 
     response = client.get(f'/pipeline/{data["id"]}', headers=authorization_header)
+    assert response.status_code == 200
+
+    return response.json()
+
+
+def test_create_pipeline_cyclic(authorization_header):
+    container = test_add_container(authorization_header)
+    pipeline_schema = schemas.pipeline.PipelineCreate(name='cyclic-pipeline')
+    pipeline = test_create_pipeline(authorization_header, pipeline_schema)
+
+    data = {
+        "pipeline_id": pipeline['id'],
+        "nodes": [
+            {
+                "node_id": 0,
+                "container_id": container['id'],
+                "x": 0,
+                "y": 0,
+                "container_is_input": False,
+                "container_is_output": False,
+                "destination_id": 0
+            }
+        ],
+        "links": [
+            {
+                "to": 0,
+                "from": 0
+            }
+        ]
+    }
+
+    url = f'/pipeline/{pipeline["id"]}'
+    response = client.post(url, json=data, headers=authorization_header)
+
+    assert response.status_code == 422
+
+    return response.json()
+
+
+def test_create_pipeline_disconnected(authorization_header):
+    container = test_add_container(authorization_header)
+    pipeline_schema = schemas.pipeline.PipelineCreate(name='disconnected-pipeline')
+    pipeline = test_create_pipeline(authorization_header, pipeline_schema)
+
+    data = {
+        "pipeline_id": pipeline['id'],
+        "nodes": [
+            {
+                "node_id": 0,
+                "container_id": container['id'],
+                "x": 0,
+                "y": 0,
+                "container_is_input": False,
+                "container_is_output": False,
+                "destination_id": 0
+            },
+            {
+                "node_id": 1,
+                "container_id": container['id'],
+                "x": 0,
+                "y": 0,
+                "container_is_input": False,
+                "container_is_output": False,
+                "destination_id": 0
+            }
+        ],
+        "links": []
+    }
+
+    url = f'/pipeline/{pipeline["id"]}'
+    response = client.post(url, json=data, headers=authorization_header)
+
+    assert response.status_code == 422
+
+    return response.json()
+
+
+def test_duplicated_node_ids(authorization_header):
+    container = test_add_container(authorization_header)
+    pipeline_schema = schemas.pipeline.PipelineCreate(name='disconnected-pipeline')
+    pipeline = test_create_pipeline(authorization_header, pipeline_schema)
+
+    data = {
+        "pipeline_id": pipeline['id'],
+        "nodes": [
+            {
+                "node_id": 0,
+                "container_id": container['id'],
+                "x": 0,
+                "y": 0,
+                "container_is_input": False,
+                "container_is_output": False,
+                "destination_id": 0
+            },
+            {
+                "node_id": 0,
+                "container_id": container['id'],
+                "x": 0,
+                "y": 0,
+                "container_is_input": False,
+                "container_is_output": False,
+                "destination_id": 0
+            }
+        ],
+        "links": []
+    }
+
+    url = f'/pipeline/{pipeline["id"]}'
+    response = client.post(url, json=data, headers=authorization_header)
+
+    assert response.status_code == 422
+
+    return response.json()
+
+
+def test_create_pipeline_connected(authorization_header):
+    container = test_add_container(authorization_header)
+    pipeline_schema = schemas.pipeline.PipelineCreate(name='disconnected-pipeline')
+    pipeline = test_create_pipeline(authorization_header, pipeline_schema)
+
+    data = {
+        "pipeline_id": pipeline['id'],
+        "nodes": [
+            {
+                "node_id": 0,
+                "container_id": container['id'],
+                "x": 0,
+                "y": 0,
+                "container_is_input": False,
+                "container_is_output": False,
+                "destination_id": 0
+            },
+        ],
+        "links": []
+    }
+
+    url = f'/pipeline/{pipeline["id"]}'
+    response = client.post(url, json=data, headers=authorization_header)
+
     assert response.status_code == 200
 
     return response.json()

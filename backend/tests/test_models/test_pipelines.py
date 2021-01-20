@@ -1,4 +1,9 @@
 import pathlib
+import pytest
+
+from networkx.exception import NetworkXNoCycle
+from networkx.algorithms.cycles import find_cycle
+from networkx.algorithms.components import is_connected
 
 from api.models.pipeline import *
 
@@ -155,3 +160,34 @@ def test_linux_paths(db):
     assert '\\' not in job.output_path
     assert pathlib.Path(job.input_path).as_posix() == job.input_path
     assert pathlib.Path(job.output_path).as_posix() == job.output_path
+
+
+def test_graphs(db):
+    pipeline = insert_pipeline(db, 'test_graphs')
+    dg = pipeline.to_graph()
+
+    assert len(dg.nodes) == 0
+    assert len(dg.edges) == 0
+
+    n1 = PipelineNode(pipeline_id=pipeline.id)
+    n2 = PipelineNode(pipeline_id=pipeline.id)
+    n1.save(db)
+    n2.save(db)
+
+    l1 = PipelineLink(pipeline_id=pipeline.id, from_node_id=n1.id, to_node_id=n2.id)
+    l1.save(db)
+
+    db.commit()
+
+    assert len(pipeline.nodes) == 2
+    assert len(pipeline.links) == 1
+
+    dg = pipeline.to_graph()
+    assert len(dg.nodes) == len(pipeline.nodes)
+    assert len(dg.edges) == len(pipeline.links)
+    assert dg.is_directed()
+
+    with pytest.raises(NetworkXNoCycle):
+        find_cycle(dg)
+
+    assert is_connected(dg.to_undirected())
