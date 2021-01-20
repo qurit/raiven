@@ -4,6 +4,7 @@ from datetime import datetime
 
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
+from networkx import DiGraph
 
 from api import config
 from . import Base, PathMixin, NestedPathMixin, TimestampMixin, IOPathMixin, utils, CASCADE
@@ -24,6 +25,13 @@ class Pipeline(Base):
     def get_starting_nodes(self):
         return [n for n in self.nodes if n.is_root_node()]
 
+    def to_graph(self) -> DiGraph:
+        graph = DiGraph()
+        graph.add_nodes_from([v.id for v in self.nodes])
+        graph.add_edges_from([(e.from_node_id, e.to_node_id) for e in self.links])
+
+        return graph
+
 
 class PipelineNode(Base):
     pipeline_id = Column(ForeignKey("pipeline.id", **CASCADE))
@@ -36,10 +44,8 @@ class PipelineNode(Base):
 
     destination = relationship("Destination", uselist=False)
     container = relationship("Container", uselist=False)
-    next_links = relationship(
-        'PipelineLink', foreign_keys='PipelineLink.from_node_id')
-    previous_links = relationship(
-        'PipelineLink', foreign_keys='PipelineLink.to_node_id')
+    next_links = relationship('PipelineLink', foreign_keys='PipelineLink.from_node_id')
+    previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.to_node_id')
     jobs = relationship('PipelineJob', backref='node')
 
     def is_root_node(self):
