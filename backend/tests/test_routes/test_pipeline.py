@@ -100,6 +100,44 @@ def test_create_pipeline_cyclic(authorization_header):
     return response.json()
 
 
+def test_create_pipeline_disconnected(authorization_header):
+    container = test_add_container(authorization_header)
+    pipeline_schema = schemas.pipeline.PipelineCreate(name='disconnected-pipeline')
+    pipeline = test_create_pipeline(authorization_header, pipeline_schema)
+
+    data = {
+        "pipeline_id": pipeline['id'],
+        "nodes": [
+            {
+                "node_id": 0,
+                "container_id": container['id'],
+                "x": 0,
+                "y": 0,
+                "container_is_input": False,
+                "container_is_output": False,
+                "destination_id": 0
+            },
+            {
+                "node_id": 0,
+                "container_id": container['id'],
+                "x": 0,
+                "y": 0,
+                "container_is_input": False,
+                "container_is_output": False,
+                "destination_id": 0
+            }
+        ],
+        "links": []
+    }
+
+    url = f'/pipeline/{pipeline["id"]}'
+    response = client.post(url, json=data, headers=authorization_header)
+
+    assert response.status_code == 422
+
+    return response.json()
+
+
 @mark.not_written
 def test_update_pipeline(authorization_header):
     pipeline = schemas.pipeline.PipelineCreate(name='test-update')
