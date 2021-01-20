@@ -146,6 +146,7 @@ def test_store_valid_user(db, stub_broker, stub_worker):
     assert (node := db.query(DicomNode).first())
     assert node.user_id == utils.get_test_user(db).id
 
+
 def test_store_invalid_user(db, stub_broker, stub_worker):
     # Ensure no DicomNodes in test data 
     db.query(DicomNode).delete()
