@@ -16,3 +16,4 @@ python-socketio
 aio_pika
 alembic
 pytest
+networkx
