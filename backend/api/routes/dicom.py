@@ -62,6 +62,15 @@ def get_all_dicom_nodes(db: Session = Depends(session)):
     return db.query(DicomNode).all()
 
 
+@router.get("/nodes")
+def create_dicom_node(node: dicom.DicomNodeCreate, user: User = Depends(token_auth), db: Session = Depends(session)):
+    """ Create a dicom node """
+    db_node = DicomNode(**node.dict(), user_id=user.id)
+    db_node.save(db)
+
+    return db_node
+
+
 @ router.get("/nodes/{dicom_node_id}/patients", response_model=List[dicom.DicomPatient])
 def get_node_patients(dicom_node_id: int, db: Session = Depends(session)):
     """ Get a DICOM node's patients"""

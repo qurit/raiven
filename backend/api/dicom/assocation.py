@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pynetdicom import AE, AllStoragePresentationContexts
 
 from api import config
-from api.models.destination import Destination
+from api.models.dicom import DicomNode
 
 
 class AssociationException(Exception):
@@ -14,10 +14,10 @@ class AssociationException(Exception):
 class Association:
     __association = None
 
-    def __init__(self, scp: Destination, contexts: list = AllStoragePresentationContexts, **kwargs):
+    def __init__(self, scp: DicomNode, contexts: list = AllStoragePresentationContexts, **kwargs):
         self.host = scp.host
         self.port = scp.port
-        self.ae_title = scp.full_name
+        self.ae_title = scp.title
         self.contexts = contexts
         self.kwargs = kwargs
 
