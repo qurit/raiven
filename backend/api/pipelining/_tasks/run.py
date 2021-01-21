@@ -99,7 +99,10 @@ def dicom_output_task(run_id: int, node_id: int, previous_job_id: int):
 
         if dest := job.node.destination:
             prev: PipelineJob = PipelineJob.query(db).get(previous_job_id)
-            print(prev)
+
+            # Return to sender
+            if dest.host == '*':
+                dest = job.run.intiator
 
             # Detach db first
             send_dicom_folder(dest, prev.get_abs_output_path())
@@ -107,7 +110,3 @@ def dicom_output_task(run_id: int, node_id: int, previous_job_id: int):
     with worker_session() as db:
         job.status = 'exited'
         job.save(db)
-
-
-
-

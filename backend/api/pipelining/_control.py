@@ -7,6 +7,8 @@ from api.models import utils
 from api.models.pipeline import Pipeline, PipelineRun
 from api.database import worker_session
 from api.models.user import User
+from api.models.dicom import DicomNode
+from api.schemas.dicom import DicomNode as DicomNodeSchema
 
 from ._tasks import build, run, test, ingest
 
@@ -35,8 +37,8 @@ class PipelineController:
         return True
 
     @staticmethod
-    def run_pipeline_on_folder(db, pipeline_id: str, folder: pathlib.Path) -> bool:
-        pipeline_run = PipelineRun(pipeline_id=pipeline_id)
+    def run_pipeline_on_folder(db, pipeline_id: str, folder: pathlib.Path, initiator_dicom_node_id: int = None) -> bool:
+        pipeline_run = PipelineRun(pipeline_id=pipeline_id, initiator_dicom_node_id=initiator_dicom_node_id)
         pipeline_run.save(db)
 
         # Copy temp files to pipeline input and commit
@@ -68,9 +70,7 @@ class DicomIngestController:
             raise self.EmptyFolderException('An Ingest Folder Cannot Be Empty')
 
         self.folder = folder
-        self.calling_aet = calling_aet
-        self.calling_host = calling_host
-        self.calling_port = calling_port
+        self.calling_node = DicomNodeSchema(title=calling_aet, host=calling_host, port=calling_port)
         self.called_aet = called_aet
 
         # Pushed globally
@@ -93,7 +93,7 @@ class DicomIngestController:
     def ingest_globally(self) -> bool:
         print("Ingesting folder globally")
         rel_folder: str = self.folder.relative_to(config.UPLOAD_DIR).as_posix()
-        args = (rel_folder, self.calling_aet, self.calling_host, self.calling_port)
+        args = (rel_folder, self.calling_node.title, self.calling_node.host, self.calling_node.port)
         ingest.run_ingest_task.send_with_options(args=args)
         return True
 
@@ -108,7 +108,7 @@ class DicomIngestController:
             if query_user:
                 print(f"Ingesting folder to user: '{query_user.username}'")
                 rel_folder: str = self.folder.relative_to(config.UPLOAD_DIR).as_posix()
-                args = (rel_folder, self.calling_aet, self.calling_host, self.calling_port, query_user.id)
+                args = (rel_folder, self.calling_node.title, self.calling_node.host, self.calling_node.port, query_user.id)
                 ingest.run_ingest_task.send_with_options(args=args)
                 return True
             else:
@@ -123,9 +123,12 @@ class DicomIngestController:
                 .filter_by(ae_title=ae_title)\
                 .first()
 
+            if not (initiator := db.query(DicomNode).filter_by(**self.calling_node.to_dict()).first()):
+                initiator = DicomNode(**self.calling_node.to_dict()).save(db)
+
             if pipeline:
                 print("Running folder through pipeline: '{}'".format(pipeline.ae_title))
-                return PipelineController.run_pipeline_on_folder(db, pipeline.id, self.folder)
+                return PipelineController.run_pipeline_on_folder(db, pipeline.id, self.folder, initiator.id)
             else:
                 print("ERROR: Attempted to ingest to non-existant pipeline")
                 raise NotImplementedError

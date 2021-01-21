@@ -77,12 +77,14 @@ class PipelineLink(Base):
 
 class PipelineRun(IOPathMixin, Base):
     pipeline_id = Column(ForeignKey('pipeline.id', **CASCADE))
+    initiator_id = Column(ForeignKey("dicom_node.id"), nullable=True)
     status = Column(String, default='Created')
 
     created_datetime = Column(DateTime, default=datetime.now)
     finished_datetime = Column(DateTime)
 
     jobs = relationship('PipelineJob', backref="run")
+    initiator = relationship('DicomNode')
 
 
 class PipelineJob(IOPathMixin, TimestampMixin, Base):
