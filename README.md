@@ -7,13 +7,27 @@
 </p>
 <p align="center">
 <img alt="Tests" src="https://github.com/qurit/raiven/workflows/Python%20application/badge.svg?branch=master" />
+<img alt="Docs" src="https://github.com/qurit/raiven/workflows/docs/badge.svg" />
 </p>
 
 ---
 
-Build using python, fastapi, and nuxt, Raiven is full-featured application for building and maintaining DICOM image processing pipelines. Raiven hopes to become the radiology room of the future.
+Artificial intelligence (AI) is finding an increasing number of applications in nuclear medicine and radiology. Deep
+learning models have been used to improve image quality, automate image segmentation, and aid in disease classification.
+Models that combine learned features, radiomic features, and clinical information can be used to predict disease progression,
+treatment outcome and survival.
 
-Raiven aims to fulfill these [user stories](./stories.md).
+However, translation of such models/algorithms into clinical trials or standard of care applications is often nontrivial
+due to the lack of an appropriate framework for model deployment. The aim of this project is to develop such a framework
+that satisfies the following design specifications:
+
+1. Allows easy combination of different algorithms to create pipelines with multistep workflows
+2. Works with existing workstations available to physicians/researchers
+3. Allows the deployment of models developed in any programming language without the need for cumbersome and time-consuming configuration
+4. Is easy to deploy and use.
+
+The RAIVEN (Radiology AI Virtual ENvironment) framework represents a vision of a new radiology environment that
+incorporates AI tools to better treat and diagnose disease.
 
 ## Requirements
 
@@ -59,6 +73,7 @@ alembic upgrade head # Upgrade to latest revision
 ## Documentation
 
 The documentation for raiven was created with mkdocs-material. To test the documentation locally:
+
 ```bash
 cd docs/en
 python mkdocs serve

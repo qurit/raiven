@@ -32,13 +32,13 @@ class BaseConfig:
     TOKEN_TTL = 3600
 
     # LDAP CONFIG
-    LDAP_HOST = '10.9.2.37'
+    LDAP_HOST = ''
     LDAP_PORT = 389
     LDAP_USE_SSL = False
-    LDAP_USERNAME_BASE = 'CRC\\'
-    LDAP_BASE_DN = 'DC=BCCRC,DC=CA'
-    LDAP_TEST_USR = 'crcldapviewer'
-    LDAP_TEST_PW = 'LD@P2020pw!'
+    LDAP_USERNAME_BASE = ''
+    LDAP_BASE_DN = ''
+    LDAP_TEST_USR = ''
+    LDAP_TEST_PW = ''
 
     # DB Config
     POSTGRES_HOST = '127.0.0.1'

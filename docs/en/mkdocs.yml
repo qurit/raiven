@@ -16,6 +16,10 @@ theme:
 # Nav
 nav:
   - Overview: index.md
+  - User Guide:
+    - Containers: containers.md
+    - Pipelines: pipelines.md
+  - Uploading data: uploading-data.md
 
 markdown_extensions:
   - meta
@@ -23,6 +27,10 @@ markdown_extensions:
   - admonition
   - pymdownx.highlight
   - pymdownx.superfences
+  - abbr
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
 
 extra:
   social:

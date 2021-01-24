@@ -9,7 +9,7 @@ from api.dicom.scp import SCP
 from api.models.dicom import DicomNode
 from api.models.pipeline import Pipeline, PipelineRun
 
-from tests import client, config, models, mark
+from tests import client, config, models, mark, utils
 
 import logging
 from tests.test_models.test_containers import create_and_test_container, delete_and_test_container
@@ -99,8 +99,11 @@ def test_echo():
     association.release()
 
 
-# @mark.not_written
 def test_store_global(db, stub_broker, stub_worker):
+    # Ensure no DicomNodes in test data 
+    db.query(DicomNode).delete()
+    db.commit()
+
     assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
     association = get_association_to_ae(config.SCP_AE_TITLE)
 
@@ -122,9 +125,40 @@ def test_store_global(db, stub_broker, stub_worker):
     association.release()
     join(stub_broker, stub_worker)
 
+    assert (node := db.query(DicomNode).first())
+    assert node.user_id == None # Node should not be tied to one user
     for uid in uids_added:
         assert models.dicom.DicomSeries.query(db).filter_by(series_instance_uid=uid).first(), \
             f'Could not find series_instance_uid={uid} in db'
+
+
+def test_store_valid_user(db, stub_broker, stub_worker):
+    # Ensure no DicomNodes in test data 
+    db.query(DicomNode).delete()
+    db.commit()
+
+    # Send dicom to user
+    association = get_association_to_ae(config.USER_AE_PREFIX + utils.get_test_user(db).username)
+    perform_store(association)
+    sleep(1)  # Ensure detached SCP server has enough time to send job to worker before .join
+    join(stub_broker, stub_worker)
+
+    assert (node := db.query(DicomNode).first())
+    assert node.user_id == utils.get_test_user(db).id
+
+
+def test_store_invalid_user(db, stub_broker, stub_worker):
+    # Ensure no DicomNodes in test data 
+    db.query(DicomNode).delete()
+    db.commit()
+
+    # Send dicom to user
+    association = get_association_to_ae(config.USER_AE_PREFIX + "FAKE_NAME")
+    perform_store(association)
+    sleep(1)  # Ensure detached SCP server has enough time to send job to worker before .join
+    join(stub_broker, stub_worker)
+
+    assert db.query(DicomNode).count() == 0
 
 
 def test_store_valid_pipeline_no_containers(db, stub_broker, stub_worker):
@@ -173,10 +207,9 @@ def test_store_pipeline_workflow(db, stub_broker, stub_worker, authorization_hea
     sleep(2)  # Ensure detached SCP server has enough time to send job to worker before .join
     join(stub_broker, stub_worker)
 
-    # Wait and get results
     assert init_pipeline_run_count < db.query(PipelineRun).count()
-
     assert db.query(PipelineRun).first().status == "complete"
+
     delete_and_test_container(db, container)
 
 
@@ -189,7 +222,7 @@ def test_store_invalid_pipeline(db, stub_broker, stub_worker):
 
     assert init_pipeline_run_count == db.query(PipelineRun).count()
 
-
+    
 @mark.not_written
 def test_store_same_instance(db, association):
     assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))

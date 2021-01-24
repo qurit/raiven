@@ -9,6 +9,7 @@ class DicomStats(BaseModel):
     dicom_study_counts: int
     dicom_series_counts: int
 
+
 class DicomSeries(BaseORMModel):
     dicom_study_id: int
     series_instance_uid: str
@@ -32,4 +33,4 @@ class DicomNode(BaseORMModel):
     title: str
     host: str
     port: int
-
+    user_id: Optional[int] = None

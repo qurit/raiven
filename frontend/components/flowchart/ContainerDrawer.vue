@@ -31,6 +31,7 @@
     </template>
     <ContainerCard
       v-for="c in filteredList"
+      :key="c.id"
       :id="c.id"
       :container="c"
       :colors="colors.container"
@@ -45,7 +46,7 @@
 import ContainerCard from './ContainerCard'
 
 export default {
-  components: {ContainerCard},
+  components: { ContainerCard },
   props: {
     containers: Array,
     colors: Object
@@ -55,7 +56,10 @@ export default {
     containerList: false
   }),
   computed: {
-    filteredList: ctx => ctx.containers.filter(c => c.name.toLowerCase().includes(ctx.search.toLowerCase()))
+    filteredList: ctx =>
+      ctx.containers.filter(c =>
+        c.name.toLowerCase().includes(ctx.search.toLowerCase())
+      )
   }
 }
 </script>
