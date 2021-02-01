@@ -72,4 +72,5 @@ def edit_user_settings(user_id: int, new_info: UserEdit, user: User = Depends(to
 @router.get("/permitted-ae", response_model=List[ApplicationEntity])
 def get_permitted_ae(user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Get the user's permitted application entities (to receive) """
-    return db.query(UserDestination).filter(UserDestination.user_id == user.id).all()
+    # return db.query(DicomNode).filter(UserDestination.user_id == user.id).all()
+    return []

@@ -44,7 +44,7 @@ class PipelineNodeCreate(BaseModel):
 class PipelineNode(BaseORMModel):
     pipeline_id: int
     container_id: int
-    dicom_node_id: int
+    dicom_node_id: Optional[int]
     x_coord: int
     y_coord: int
     container_is_input: bool

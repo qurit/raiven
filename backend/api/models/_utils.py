@@ -18,3 +18,10 @@ def copy_model_fs(src: NestedPathMixin, dst: IOPathMixin, dst_subdir='input', sr
     dst_dir = pathlib.Path(dst.get_abs_path(subdir=dst_subdir)).resolve()
 
     copytree(src_dir, dst_dir, dirs_exist_ok=True)
+
+
+def strip_prefix(str_: str, prefix: str):
+    if str_.startswith(prefix):
+        str_ = str_[len(prefix):]
+
+    return str_

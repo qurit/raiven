@@ -33,8 +33,8 @@ class DicomNode(BaseORMModel):
     title: str
     host: str
     port: int
-    output: bool
-    input: bool
+    output: bool = False
+    input: bool = False
     user_id: Optional[int] = None
 
 
