@@ -7,8 +7,7 @@ from sqlalchemy.orm import Session
 from api import session
 from api.auth import admin_auth
 from api.auth import token_auth
-from api.models.user import User, UserLocal, UserDestination
-from api.schemas.destination import Destination
+from api.models.user import User, UserLocal
 from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit, PermittedApplicationEntities, \
     ApplicationEntity
 
@@ -57,16 +56,17 @@ def edit_user_settings(user_id: int, new_info: UserEdit, user: User = Depends(to
     user_to_edit.save(db)
     return user_to_edit
 
-@router.post("/permitted-ae", response_model=List[Destination])
-def update_permitted_ae(destinations: PermittedApplicationEntities, user: User = Depends(token_auth), db: Session = Depends(session)):
-    """ Update the user's application title"""
-    db.query(UserDestination).filter(
-        UserDestination.user_id == user.id).delete()
-    user_destinations = destinations.destinations
-    for dest in user_destinations:
-        new_destination_user = UserDestination(user_id=user.id, destination_id=dest.id)
-        new_destination_user.save(db)
-    return user_destinations
+# TODO FIX THIS
+# @router.post("/permitted-ae", response_model=List[Destination])
+# def update_permitted_ae(destinations: PermittedApplicationEntities, user: User = Depends(token_auth), db: Session = Depends(session)):
+#     """ Update the user's application title"""
+#     db.query(UserDestination).filter(
+#         UserDestination.user_id == user.id).delete()
+#     user_destinations = destinations.destinations
+#     for dest in user_destinations:
+#         new_destination_user = UserDestination(user_id=user.id, destination_id=dest.id)
+#         new_destination_user.save(db)
+#     return user_destinations
 
 
 @router.get("/permitted-ae", response_model=List[ApplicationEntity])
