@@ -48,21 +48,26 @@ def get_dicom_stats(db: Session = Depends(session)):
     return stats
 
 
-@router.get("/nodes/{user_id}", response_model=List[dicom.DicomNode])
-def get_user_dicom_nodes(user_id: int, user: User = Depends(token_auth), db: Session = Depends(session)):
-    """ Get user's DICOM nodes """
-    if user_id != user.id:
-        raise HTTPException(status_code=401 , detail="Cannot view Dicom nodes belonging to other users")
-    return db.query(DicomNode).filter(or_(DicomNode.user_id == user_id, DicomNode.user_id == None)).all()
-
-
 @router.get("/nodes", response_model=List[dicom.DicomNode])
-def get_all_dicom_nodes(db: Session = Depends(session)):
+def get_all_dicom_nodes(
+    input_node: bool = None,
+    output_node: bool = None,
+    user: User = Depends(token_auth),
+    db: Session = Depends(session)
+):
     """ Get all DICOM nodes """
-    return db.query(DicomNode).all()
+    q = db.query(DicomNode).filter(or_(DicomNode.user_id == user.id, DicomNode.user_id == None))
+
+    if input_node is not None:
+        q = q.filter(DicomNode.input == input_node)
+
+    if output_node is not None:
+        q = q.filter(DicomNode.output == output_node)
+
+    return q.all()
 
 
-@router.get("/nodes")
+@router.post("/nodes")
 def create_dicom_node(node: dicom.DicomNodeCreate, user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Create a dicom node """
     db_node = DicomNode(**node.dict(), user_id=user.id)

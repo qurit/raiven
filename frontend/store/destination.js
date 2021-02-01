@@ -12,7 +12,7 @@ export const mutations = {
 export const actions = {
   async fetchDestinations({ commit }) {
     try {
-      const URL = '/destination'
+      const URL = '/dicom/nodes?output_node=true'
       const res = await generic_get(this, URL)
       commit('setDestinations', res)
       return res

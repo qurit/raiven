@@ -1,9 +1,9 @@
 <template>
   <v-card class="overflow-x-hidden" width="600">
       <v-card-title> Add a destination source for your pipelines</v-card-title>
-      <v-row>
-
-        <v-col cols="6">
+      <v-card-text>
+        <v-row>
+          <v-col cols="6">
           <v-text-field
             v-model="host"
             label="Host Address"
@@ -27,7 +27,8 @@
             required
           />
         </v-col>
-      </v-row>
+        </v-row>
+      </v-card-text>
       <v-card-actions>
         <v-spacer/>
         <v-btn
@@ -44,8 +45,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   name: 'OutputDestinationForm',
   data: () => ({

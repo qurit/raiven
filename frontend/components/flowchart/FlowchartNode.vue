@@ -20,7 +20,7 @@
         v-if="container_is_output"
         v-model="selected"
         :items="destinations"
-        item-text="full_name"
+        item-text="title"
         item-value="id"
         label="Application Entity"
         dense
@@ -170,7 +170,9 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('destination/fetchDestinations')
+    if (this.container_is_output) this.$store.dispatch('destination/fetchDestinations')
+
+
     this.selected = this.destination
     if (this.selected) {
       this.$emit('setDestination', {
