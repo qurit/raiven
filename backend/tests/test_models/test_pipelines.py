@@ -6,8 +6,65 @@ from networkx.algorithms.cycles import find_cycle
 from networkx.algorithms.components import is_connected
 
 from api.models.pipeline import *
+from api.models.container import Container
+from api.models.user import User
 
-from tests import utils, mark
+from api.schemas.container import Container as ContainerSchema
+from api.schemas.pipeline import PipelineNodeCreate as PipelineNodeCreateSchema
+from api.schemas.dicom import DicomNode as DicomNodeSchema
+
+from tests import utils, mark, config
+
+
+class LinearPipelineFactory:
+    def __init__(self, db, pipeline_name, **kwargs):
+        self.pipeline = insert_pipeline(db, pipeline_name, **kwargs)
+        self.nodes = []
+        self.edges = []
+        self.db = db
+
+    def add_container(self, container: ContainerSchema, destination: DicomNodeSchema = None) -> ContainerSchema:
+        node = PipelineNodeCreateSchema(
+            node_id=len(self.nodes),
+            container_id=container.id,
+            container_is_input=container.is_input_container,
+            container_is_output=container.is_output_container,
+            x=0,
+            y=0,
+            destination=destination
+        )
+
+        if self.nodes:
+            self.edges.append((self.nodes[-1]['node_id'], node.node_id))
+
+        self.nodes.append(node.dict())
+
+        return container
+
+    def add_output_container(self, destination: DicomNodeSchema) -> ContainerSchema:
+        container = self.db.query(Container).join(User).filter(
+            User.name == config.INTERNAL_USERNAME,
+            Container.is_output_container
+        ).first()
+
+        assert container
+        schema = ContainerSchema.from_orm(container)
+
+        return self.add_container(schema, destination)
+
+    def create_pipeline(self, client, authorization_header):
+        response = client.post(
+            f'/pipeline/{self.pipeline.id}',
+            json={
+                "pipeline_id": self.pipeline.id,
+                "nodes": self.nodes,
+                "links": [{'from': src, 'to': dest} for src, dest in self.edges]
+            },
+            headers=authorization_header
+        )
+
+        assert response.status_code == 200
+        return response.json()
 
 
 def insert_pipeline(db, name, **kwargs) -> Pipeline:

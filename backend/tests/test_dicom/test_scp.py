@@ -8,13 +8,15 @@ from pynetdicom.sop_class import VerificationSOPClass
 from api.dicom.scp import SCP
 from api.models.dicom import DicomNode
 from api.models.pipeline import Pipeline, PipelineRun
+from api.schemas.dicom import DicomNode as DicomNodeSchema
+from api.queries.internal import get_return_to_sender
 
 from tests import client, config, models, mark, utils
 
 import logging
 from tests.test_models.test_containers import create_and_test_container, delete_and_test_container
 
-from tests.test_models.test_pipelines import insert_pipeline
+from tests.test_models.test_pipelines import insert_pipeline, LinearPipelineFactory
 from tests.test_pipelining.test_build import build_container_foreground
 
 logging.basicConfig(level=logging.DEBUG)
@@ -280,13 +282,13 @@ def add_container_to_pipeline(container, pipeline, authorization_header):
             "pipeline_id": pipeline.id,
             "nodes": [
                 {
-                "node_id": 0,
-                "container_id": container.id,
-                "x": 0,
-                "y": 0,
-                "container_is_input": False,
-                "container_is_output": False,
-                "destination_id": 0
+                    "node_id": 0,
+                    "container_id": container.id,
+                    "x": 0,
+                    "y": 0,
+                    "container_is_input": False,
+                    "container_is_output": False,
+                    "destination_id": 0
                 }
             ],
             "links": []
@@ -296,3 +298,29 @@ def add_container_to_pipeline(container, pipeline, authorization_header):
 
     print(response.__dict__)
     assert response.status_code == 200
+
+
+def test_return_to_sender(db, stub_broker, stub_worker, authorization_header):
+    assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
+    assert os.path.exists(file_path := os.path.join(mock_path, 'simple_container.zip'))
+    assert os.path.isfile(file_path)
+
+    container = create_and_test_container(db, file_path)
+    build_container_foreground(container)
+
+    factory = LinearPipelineFactory(db, 'rts_pipeline', ae_title='rts')
+    factory.add_container(container)
+
+    dest = DicomNodeSchema.from_orm(get_return_to_sender(db))
+    factory.add_output_container(dest)
+
+    pipeline = factory.create_pipeline(client, authorization_header)
+
+    association = get_association_to_ae(config.PIPELINE_AE_PREFIX + pipeline['ae_title'])
+
+    perform_store(association)
+    sleep(2)  # Ensure detached SCP server has enough time to send job to worker before .join
+    join(stub_broker, stub_worker)
+
+
+
