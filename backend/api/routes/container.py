@@ -36,9 +36,16 @@ def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(s
 @router.post("/", response_model=container.Container)
 def create_container(
         auto_build: bool = True,
-        file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
-        description: str = Form(None), is_input_container: bool = Form(...),
-        is_output_container: bool = Form(...), is_shared: bool = Form(...), user: User = Depends(token_auth), db: Session = Depends(session)):
+        file: bytes = File(...),
+        name: str = Form(...),
+        filename: str = Form(...),
+        description: str = Form(None),
+        is_input_container: bool = Form(...),
+        is_output_container: bool = Form(...),
+        is_shared: bool = Form(...),
+        user: User = Depends(token_auth),
+        db: Session = Depends(session)
+):
 
     db_container = Container(
         user_id=user.id,
@@ -89,10 +96,18 @@ def get_container(container_id: int, db: Session = Depends(session)):
 
 @router.put("/{container_id}", response_model=container.Container)
 def update_container(
-        container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(None),
-        description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...), is_shared: bool = Form(...),
-        db: session = Depends(session)):
+        container_id: int,
+        file: bytes = File(None),
+        name: str = Form(...),
+        filename: str = Form(None),
+        description: str = Form(None),
+        is_input_container: bool = Form(...),
+        is_output_container: bool = Form(...),
+        is_shared: bool = Form(...),
+        db: session = Depends(session)
+):
     """ Editing a container"""
+
     if file is not None:
         container = db.query(Container).get(container_id)
         # remove previous file
