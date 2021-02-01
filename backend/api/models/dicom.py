@@ -16,6 +16,7 @@ class DicomNode(PathMixin, Base):
     # Null user ID means DicomNode is available globally 
     user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
     patients = relationship('DicomPatient', backref='node')
+    user = relationship('User', backref='dicom_nodes')
 
 
 class DicomPatient(NestedPathMixin, Base):

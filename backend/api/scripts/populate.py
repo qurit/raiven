@@ -15,4 +15,4 @@ def populate_default_user(db):
         [Container(user_id=user.id, is_shared=True, **kwargs).save(db) for kwargs in config.DEFAULT_CONTAINERS]
 
     if not db.query(DicomNode).filter_by(user_id=user.id).first():
-        DicomNode(title='__RETURN__TO_SENDER__', host='*', output=True).save(db)
+        DicomNode(title='__RETURN__TO_SENDER__', host='*', output=True, user_id=user.id).save(db)

@@ -101,11 +101,13 @@ def dicom_output_task(run_id: int, node_id: int, previous_job_id: int):
             prev: PipelineJob = PipelineJob.query(db).get(previous_job_id)
 
             # Return to sender
-            if dest.host == '*':
+            if dest.user.name == config.INTERNAL_USERNAME:
                 dest = job.run.intiator
 
-            # Detach db first
-            send_dicom_folder(dest, prev.get_abs_output_path())
+            dest.detach(db)
+
+    # Long running task
+    send_dicom_folder(dest, prev.get_abs_output_path())
 
     with worker_session() as db:
         job.status = 'exited'
