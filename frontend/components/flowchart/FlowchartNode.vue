@@ -36,7 +36,7 @@
               </v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
-              <v-icon-btn add @click="destinationDialog = true" />
+              <v-icon-btn add @click="$emit('showDestinationForm')" />
             </v-list-item-action>
           </v-list-item>
           <v-divider light />
@@ -70,14 +70,6 @@
         class="node-port node-output"
         @mousedown="$emit('linkingStart')"
       />
-      <!-- Destination Dialogs -->
-      <v-dialog
-        v-model="destinationDialog"
-        max-width="900px"
-        min-height="600px"
-      >
-        <OutputDestinationForm @closeDialog="destinationDialog = false" />
-      </v-dialog>
     </v-card>
   </v-hover>
 </template>

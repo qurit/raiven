@@ -1,48 +1,57 @@
 <template>
-  <div>
-    <div
-      class="flowchart-container"
-      @mousemove="handleMove"
-      @mouseup="handleUp"
-      @mousedown="handleDown"
-    >
-      <svg width="100%" height="100%">
-        <FlowchartLink
-          v-bind.sync="link"
-          v-for="(link, index) in lines"
-          :key="`link${index}`"
-          @deleteLink="linkDelete(link.id)"
-        ></FlowchartLink>
-      </svg>
-      <slot />
-      <FlowchartNode
-        v-bind.sync="node"
-        :scene.sync="scene"
-        v-for="(node, index) in scene.nodes"
-        :key="`node${index}`"
-        :options="nodeOptions"
-        :colors="colors.container"
-        :canEdit="canEdit"
-        @setDestination="setDestinations"
-        @linkingStart="linkingStart(node.id)"
-        @linkingStop="linkingStop(node.id)"
-        @nodeSelected="nodeSelected(node.id, $event)"
-        @deleteNode="deleteNode(node.id)"
-      >
-      </FlowchartNode>
-    </div>
+  <div
+    class="flowchart-container"
+    @mousemove="handleMove"
+    @mouseup="handleUp"
+    @mousedown="handleDown"
+  >
+    <svg width="100%" height="100%">
+      <FlowchartLink
+        v-bind.sync="link"
+        v-for="(link, index) in lines"
+        :key="`link${index}`"
+        @deleteLink="linkDelete(link.id)"
+      />
+    </svg>
+    <slot/>
+    <FlowchartNode
+      v-bind.sync="node"
+      :scene.sync="scene"
+      v-for="(node, index) in scene.nodes"
+      :key="`node${index}`"
+      :options="nodeOptions"
+      :colors="colors.container"
+      :canEdit="canEdit"
+      @setDestination="setDestinations"
+      @linkingStart="linkingStart(node.id)"
+      @linkingStop="linkingStop(node.id)"
+      @nodeSelected="nodeSelected(node.id, $event)"
+      @deleteNode="deleteNode(node.id)"
+      @showDestinationForm="destinationDialog = true"
+    />
+
+<!-- DestinationDialog -->
+    <v-expand-transition>
+      <OutputDestinationForm
+        v-if="destinationDialog"
+        class="ma-2"
+        style="position: absolute; z-index: 1000; bottom: 0;"
+        @close="destinationDialog = false"
+      />
+    </v-expand-transition>
   </div>
 </template>
 
 <script>
 import FlowchartLink from './FlowchartLink.vue'
 import FlowchartNode from './FlowchartNode.vue'
+import OutputDestinationForm from './OutputDestinationForm.vue'
 import { getMousePosition } from './position'
 import { generic_post } from '~/api'
 
 export default {
   name: 'VueFlowchart',
-  components: { FlowchartLink, FlowchartNode },
+  components: { FlowchartLink, FlowchartNode, OutputDestinationForm },
   props: {
     scene: {
       type: Object,
@@ -72,6 +81,7 @@ export default {
     }
   },
   data: () => ({
+    destinationDialog: false,
     savedNodes: [],
     savedLinks: [],
     action: {

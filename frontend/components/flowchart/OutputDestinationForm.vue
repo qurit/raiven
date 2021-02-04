@@ -1,71 +1,61 @@
 <template>
-  <v-card class="overflow-x-hidden" width="600">
-      <v-card-title> Add a destination source for your pipelines</v-card-title>
-      <v-card-text>
-        <v-row>
-          <v-col cols="6">
-          <v-text-field
-            v-model="host"
-            label="Host Address"
-            :rules="[v => !!v || 'A Host Address is required']"
-            required
-          />
-        </v-col>
-        <v-col cols="6">
-          <v-text-field
-            v-model.number="port"
-            label="Port"
-            :rules="[rules.validateNumber]"
-            required
-          />
-        </v-col>
-        <v-col cols="12">
-          <v-text-field
-            v-model="ae_title"
-            label="AE Title"
-            :rules="[v => !!v || 'A AE Title is required']"
-            required
-          />
-        </v-col>
-        </v-row>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer/>
-        <v-btn
-          :disabled="!this.isFormValid"
-          @click="submit"
-          color="confirm"
-          class="ma-4"
-          text
-        >
-          Add destination
-        </v-btn>
-      </v-card-actions>
+   <v-card dense max-width="400">
+    <v-toolbar color="primary accent--text" dense flat>{{ title }}</v-toolbar>
+     <v-card-text>
+       <v-form v-model="isFormValid">
+         <v-row>
+           <v-col cols="6">
+             <v-text-field
+               v-bind="textFieldAttrs"
+               v-model="node.host"
+               label="Host"
+             />
+           </v-col>
+           <v-col cols="6">
+             <v-text-field
+               v-bind="textFieldAttrs"
+               v-model="node.port"
+               label="Port"
+               type="number"
+             />
+           </v-col>
+           <v-col cols="12">
+             <v-text-field
+               v-bind="textFieldAttrs"
+               v-model="node.title"
+               label="AE Title"
+             />
+           </v-col>
+         </v-row>
+       </v-form>
+     </v-card-text>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn rounded dense small text v-text="'Cancel'" @click="$emit('close')" />
+      <v-btn rounded color="primary accent--text" v-text="'Save'" small @click="submit" />
+    </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import { toPropFormat } from "@/utilities/propHelpers";
+
 export default {
-  name: 'OutputDestinationForm',
+  name: "OutputDestinationForm",
   data: () => ({
+    title: 'Add Dicom Node',
     isFormValid: false,
-    rules: {
-      validateNumber(value) {
-        return Number.isInteger(value) || 'Port must be a number'
-      }
-    },
-    host: '',
-    port: '',
-    ae_title: null,
+    textFieldAttrs: toPropFormat(['solo', 'single-line', 'hide-details', 'dense', 'flat']),
+    node: {
+      title: undefined,
+      host: undefined,
+      port: undefined
+    }
   }),
   methods: {
     async submit() {
-      this.$store.dispatch('destination/addDestination', {
-        host: this.host,
-        port: this.port
-      })
-      this.$refs.form.reset()
-      this.$emit('closeDialog')
+      await this.$store.dispatch('destination/addDestination', this.node)
+      this.$emit('close')
     }
   },
   computed: {
