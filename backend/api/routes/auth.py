@@ -8,8 +8,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from api import session
 from api.models.user import User, UserLocal, UserLDAP
 from api.schemas.user import Token
+from api.auth.ldap import LDAPManager
 
 router = APIRouter()
+ldap = LDAPManager()
 
 
 class LoginException(HTTPException):
@@ -21,14 +23,20 @@ class LoginException(HTTPException):
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(session)):
     user = User.query(db).filter_by(username=form_data.username).first()
 
+    # Try creating an new ldap account
     if not user:
-        #TODO: try ldap
+        user = ldap.user_factory(username, password, db)
+
+    # User is invalid
+    if not user:
         raise LoginException()
 
-    if ldap := user.ldap_user:
-        #TODO: implement ldap authentication
+    # Try LDAP authentication
+    if user.ldap_user and not ldap.authenticate(user.username, form_data.password):
         raise LoginException()
-    elif (local := user.local_user) and not local.verify_password(form_data.password):
+
+    # Local user Authentication
+    elif user.local_user and not local.verify_password(form_data.password):
         raise LoginException()
 
     return Token(access_token=user.generate_token())
