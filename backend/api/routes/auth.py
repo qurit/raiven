@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
-from api import session
+from api import session, config
 from api.models.user import User, UserLocal, UserLDAP
 from api.schemas.user import Token
 from api.auth.ldap import LDAPManager
@@ -26,7 +26,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     user = User.query(db).filter_by(username=username).first()
 
     # Try creating an new ldap account
-    if not user:
+    if not user and config.LDAP_AUTH_ENABLED:
         user = ldap.user_factory(username, password, db)
 
     # User is invalid
