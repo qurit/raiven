@@ -33,7 +33,6 @@ class PipelineController:
             task = run.dicom_output_task if node.container_is_output else run.run_node_task
             args = pipeline_run.id, node.id
 
-            print(task)
             task.send_with_options(args=args, priority=priority)
 
         return True
