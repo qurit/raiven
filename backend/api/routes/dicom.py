@@ -53,6 +53,7 @@ def get_dicom_stats(db: Session = Depends(session)):
 def get_all_dicom_nodes(
     input_node: bool = None,
     output_node: bool = None,
+    rts: bool = False,
     user: User = Depends(token_auth),
     db: Session = Depends(session)
 ):
@@ -65,7 +66,12 @@ def get_all_dicom_nodes(
     if output_node is not None:
         q = q.filter(DicomNode.output == output_node)
 
-    return q.all()
+    nodes: List[DicomNode] = q.all()
+
+    if rts:
+        nodes.insert(0, queries.internal.get_return_to_sender(db))
+
+    return nodes
 
 
 @router.post("/nodes")
