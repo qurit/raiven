@@ -14,7 +14,6 @@ def send_dicom_folder(dest: DicomNode, abs_dicom_folder: str):
     """
     Send a dicom folder to a DICOM node using a c_store.
     """
-    print('output', DicomNode, abs_dicom_folder)
 
     try:
         with Association(dest, StoragePresentationContexts) as assoc:
@@ -30,7 +29,12 @@ def send_dicom_folder(dest: DicomNode, abs_dicom_folder: str):
         print(e)
 
 
-def send_echo(dest: DicomNode):
+def send_echo(dest: DicomNode) -> bool:
+    """
+    Send a C-echo to an external dicom modality
+    :param dest: destination
+    :return: was success
+    """
 
     try:
         with Association(dest, VerificationSOPClass) as assoc:

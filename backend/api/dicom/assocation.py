@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from typing import Union, List
 
 from pynetdicom import AE, AllStoragePresentationContexts
 
@@ -14,7 +14,7 @@ class AssociationException(Exception):
 class Association:
     __association = None
 
-    def __init__(self, scp: DicomNode, contexts: list = AllStoragePresentationContexts, **kwargs):
+    def __init__(self, scp: DicomNode, contexts: Union[str, List[str]] = AllStoragePresentationContexts, **kwargs):
         self.host = scp.host
         self.port = scp.port
         self.ae_title = scp.title
@@ -31,9 +31,13 @@ class Association:
 
     def __get_assoc(self):
         ae = AE(ae_title=config.SCP_AE_TITLE)
-        ae.requested_contexts = self.contexts
 
-        assoc = ae.associate(addr=self.host, port=self.port, ae_title=self.ae_title, contexts=self.contexts, **self.kwargs)
+        if self.contexts is list:
+            ae.requested_contexts = self.contexts
+        else:
+            ae.add_requested_context(self.contexts)
+
+        assoc = ae.associate(addr=self.host, port=self.port, ae_title=self.ae_title, **self.kwargs)
 
         if not assoc.is_established:
             raise AssociationException(ae_title=self.ae_title)

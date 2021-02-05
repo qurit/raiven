@@ -2,16 +2,24 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, or_
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from api import session, queries
 from api.auth import token_auth
+from api.dicom import scu
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
 from api.models.user import User
-from api.schemas import dicom, pipeline
+from api.schemas import dicom
 
 router = APIRouter()
+
+
+@router.get('/echo')
+def c_echo(host: str, port: int, title: str):
+    """ Performs a DICOM c_echo to dicom node """
+
+    node = DicomNode(title=title, host=host, port=port)
+    return scu.send_echo(node)
 
 
 @router.get("/received-series")

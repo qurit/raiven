@@ -63,6 +63,8 @@ class DicomIngestController:
 
     def __init__(self, folder: pathlib.Path, calling_aet: str, calling_host: str, calling_port: int, called_aet: str):
         if not any(folder.iterdir()):
+            shutil.rmtree(folder.resolve())
+
             print("INFO: Empty ingested folder")
             raise self.EmptyFolderException('An Ingest Folder Cannot Be Empty')
 
