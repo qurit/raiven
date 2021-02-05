@@ -40,7 +40,7 @@ class BaseConfig:
     LDAP_TEST_USR = ''
     LDAP_TEST_PW = ''
     LDAP_SEARCH_FILTER = '(&(objectCategory=person)(objectClass=user)(sAMAccountName=%s))'
-    LDAP_AUTH_ENABLED = True
+    LDAP_AUTH_ENABLED = False
 
     # DB Config
     POSTGRES_HOST = '127.0.0.1'
