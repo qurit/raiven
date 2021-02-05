@@ -318,7 +318,7 @@ export default {
         // if there is a node with a destination, then save the destination as well
         this.pipelineNodeDestinations.forEach(pipelineNodeDestination => {
           if (pipelineNodeDestination.pipelineNodeId === node.id) {
-            newPipelineNode['destination_id'] = pipelineNodeDestination.destinationId
+            newPipelineNode['dicom_node_id'] = pipelineNodeDestination.destinationId
           }
         })
         nodeArray.push(newPipelineNode)

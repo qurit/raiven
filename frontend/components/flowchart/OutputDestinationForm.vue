@@ -3,7 +3,11 @@
     <v-toolbar :color="color" dense flat>
       {{ title }}
       <v-spacer />
-      <v-icon-btn :icon="echoIcon" @click="sendEcho" :color="isFormValid ? 'accent' : 'white'" />
+      <v-icon-btn
+        :icon="echoIcon"
+        :color="isFormValid ? 'accent' : 'white'"
+        @click="$refs.form.validate() && sendEcho(node)"
+      />
     </v-toolbar>
     <v-card-text>
       <v-form v-model="isFormValid" ref="form" lazy-validation>
@@ -46,12 +50,13 @@
 </template>
 
 <script>
-import { send_c_echo } from "@/api/dicom";
+import echoMixin from "@/utilities/echoMixin";
 import { toPropFormat } from "@/utilities/propHelpers";
 import { validateHostAddress, validatePort, validateNotEmpty } from '@/utilities/validationRules'
 
 export default {
   name: "OutputDestinationForm",
+  mixins: [echoMixin],
   data: () => ({
     title: 'Add Dicom Node',
     echoIcon: 'mdi-wifi',
@@ -75,23 +80,6 @@ export default {
         this.$emit('close')
       }
     },
-
-    async sendEcho() {
-      if(this.$refs.form.validate()) {
-        this.loading = 'accent'
-
-        try {
-          await send_c_echo(this, this.node)
-          this.echoIcon = 'mdi-wifi-strength-4'
-          this.$toaster.toastSuccess('C-ECHO Succeeded')
-        } catch (e) {
-          this.echoIcon = 'mdi-wifi-strength-alert-outline'
-          this.$toaster.toastError('C-ECHO Failed')
-        }
-
-        this.loading = false
-      }
-    }
   },
   computed: {
     color: ({isFormValid}) => isFormValid ? 'primary accent--text' : 'error'

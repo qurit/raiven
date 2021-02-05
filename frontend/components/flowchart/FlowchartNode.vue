@@ -6,6 +6,7 @@
       @mousedown="handleMousedown"
       v-bind:class="{ selected: options.selected === id }"
       rounded
+      :loading="loading"
     >
       <!-- Input Port -->
       <FlowchartNodePort
@@ -15,7 +16,14 @@
       />
 
       <!-- Node Data -->
-      <v-card-title v-text="type" style="word-break: break-word" />
+      <v-card-title style="word-break: break-word">
+        {{ type }}
+        <v-icon-btn
+          v-if="selected"
+          :icon="echoIcon"
+          @click="sendEcho(selected)"
+        />
+      </v-card-title>
       <v-select
         v-if="container_is_output"
         v-model="selected"
@@ -26,6 +34,7 @@
         dense
         solo
         flat
+        return-object
         @change="changeDestination(selected)"
       >
         <template v-slot:prepend-item>
@@ -75,6 +84,7 @@
 </template>
 
 <script>
+import echoMixin from "@/utilities/echoMixin";
 import FlowchartNodePort from './FlowchartNodePort.vue'
 import OutputDestinationForm from './OutputDestinationForm'
 import { mapState } from 'vuex'
@@ -82,6 +92,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'FlowchartNode',
   components: { FlowchartNodePort, OutputDestinationForm },
+  mixins: [echoMixin],
   props: {
     canEdit: { type: Boolean },
     id: { type: Number },
@@ -143,11 +154,10 @@ export default {
     }
   },
   methods: {
-    changeDestination(destination) {
-      const { host, port } = this.destinations[this.selected - 1]
+    changeDestination() {
       this.$emit('setDestination', {
         pipelineNodeId: this.id,
-        destinationId: this.destinations[this.selected - 1].id
+        destinationId: this.selected.id,
       })
     },
     handleMousedown(e) {
@@ -161,11 +171,10 @@ export default {
       e.preventDefault()
     }
   },
-  created() {
-    if (this.container_is_output) this.$store.dispatch('destination/fetchDestinations')
+  async created() {
+    if (this.container_is_output) await this.$store.dispatch('destination/fetchDestinations')
+    if (this.destination) this.selected = this.destination
 
-
-    this.selected = this.destination
     if (this.selected) {
       this.$emit('setDestination', {
         pipelineNodeId: this.id,
