@@ -32,7 +32,7 @@ class Association:
     def __get_assoc(self):
         ae = AE(ae_title=config.SCP_AE_TITLE)
 
-        if self.contexts is list:
+        if type(self.contexts) is list:
             ae.requested_contexts = self.contexts
         else:
             ae.add_requested_context(self.contexts)

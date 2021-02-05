@@ -16,4 +16,4 @@ def populate_default_user(db):
         [Container(user_id=user.id, is_shared=True, **kwargs).save(db) for kwargs in config.DEFAULT_CONTAINERS]
 
     if not internal.get_return_to_sender(db):
-        DicomNode(title='__RETURN__TO_SENDER__', host='*', port=-1, output=True, user_id=user.id).save(db)
+        DicomNode(title='Dynamic', host='*', port=-1, output=True, user_id=user.id).save(db)

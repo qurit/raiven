@@ -19,7 +19,7 @@
       <v-card-title style="word-break: break-word">
         {{ type }}
         <v-icon-btn
-          v-if="selected"
+          v-if="selected && selected.host !== '*'"
           :icon="echoIcon"
           @click="sendEcho(selected)"
         />
