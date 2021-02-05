@@ -18,9 +18,6 @@ class LDAPManager:
             assert Connection(self.server, auto_bind=True)
 
     def _get_connection(self, username, password) -> Connection:
-        if not password:
-            return False
-
         cn = self.user_base + username
         return Connection(self.server, cn, password)
 
