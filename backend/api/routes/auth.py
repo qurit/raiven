@@ -36,7 +36,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         raise LoginException()
 
     # Local user Authentication
-    elif user.local_user and not local.verify_password(form_data.password):
+    elif user.local_user and not user.local_user.verify_password(form_data.password):
         raise LoginException()
 
     return Token(access_token=user.generate_token())
