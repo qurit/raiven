@@ -7,7 +7,7 @@ from pynetdicom.sop_class import VerificationSOPClass
 from api.models.dicom import DicomNode
 from .assocation import Association, AssociationException
 
-debug_logger()
+# debug_logger()
 
 
 def send_dicom_folder(dest: DicomNode, abs_dicom_folder: str):

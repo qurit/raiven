@@ -109,7 +109,7 @@ def get_all_pipelines(user: User = Depends(token_auth), db: Session = Depends(se
     return db.query(Pipeline).filter((Pipeline.user_id == user.id) | Pipeline.is_shared).all()
 
 
-@router.post("/", response_model=schemas.Pipeline)
+@router.post("/", response_model=schemas.PipelineFull)
 def create_pipeline(pipeline: schemas.PipelineCreate, user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Create a new pipeline """
     return(Pipeline(name=pipeline.name, ae_title=pipeline.ae_title, is_shared=pipeline.is_shared, user_id=user.id)).save(db)
@@ -156,7 +156,7 @@ def get_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
     return db.query(PipelineLink).filter(PipelineLink.pipeline_id == pipeline_id).delete()
 
 
-@router.post("/{pipeline_id}", response_model=schemas.Pipeline)
+@router.post("/{pipeline_id}", response_model=schemas.PipelineFull)
 def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, db: Session = Depends(session)):
     """ This Allows you to update / add pipeline containers and links """
 

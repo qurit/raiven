@@ -31,7 +31,7 @@ class LinearPipelineFactory:
             container_is_output=container.is_output_container,
             x=0,
             y=0,
-            destination=destination
+            dicom_node_id=destination.id
         )
 
         if self.nodes:

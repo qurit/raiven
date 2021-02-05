@@ -29,8 +29,13 @@ class PipelineController:
         pipeline_run.save(db)
         db.commit()
 
-        [run.run_node_task.send_with_options(args=(pipeline_run.id, n.id,), priority=priority) for n in
-         pipeline_run.pipeline.get_starting_nodes()]
+        for node in pipeline_run.pipeline.get_starting_nodes():
+            task = run.dicom_output_task if node.container_is_output else run.run_node_task
+            args = pipeline_run.id, node.id
+
+            print(task)
+            task.send_with_options(args=args, priority=priority)
+
         return True
 
     @staticmethod

@@ -97,24 +97,27 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
 
 
 @dramatiq.actor(max_retries=3)
-def dicom_output_task(run_id: int, node_id: int, previous_job_id: int):
-    print('output task')
-
+def dicom_output_task(run_id: int, node_id: int, previous_job_id: int = None):
     try:
         with worker_session() as db:
             job = PipelineJob(pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
             job.save(db)
-            print('here1')
+
             if dest := job.node.destination:
-                prev: PipelineJob = PipelineJob.query(db).get(previous_job_id)
-                print('here1')
+                if not previous_job_id:
+                    prev: PipelineRun = db.query(PipelineRun).get(run_id)
+                    folder = prev.get_abs_input_path()
+                else:
+                    prev: PipelineJob = PipelineJob.query(db).get(previous_job_id)
+                    folder = prev.get_abs_output_path()
+
                 # Return to sender
                 if dest.user.name == config.INTERNAL_USERNAME:
                     dest = job.run.initiator
-                print('here2')
+
                 # Long running task
-                send_dicom_folder(dest, prev.get_abs_output_path())
-                print('here3')
+                send_dicom_folder(dest, folder)
+
         with worker_session() as db:
             job.status = 'exited'
             job.save(db)
