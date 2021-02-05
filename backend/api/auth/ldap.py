@@ -28,7 +28,7 @@ class LDAPManager:
         return self._get_connection(username, password).bind()
 
     def user_factory(self, username: str, password: str, db) -> Optional[User]:
-        connection = self._get_connection().bind(username, password)
+        connection = self._get_connection(username, password).bind()
 
         # Attempting auth
         if not connection.bind():
