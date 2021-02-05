@@ -2,6 +2,7 @@ from sqlalchemy.orm.session import Session
 from tests import client, utils
 from api.models.dicom import DicomNode
 
+
 def test_get_user_dicom_nodes(db, authorization_header):
     # Delete existing DICOM nodes in db
     db.query(DicomNode).delete()
@@ -23,6 +24,7 @@ def test_get_user_dicom_nodes(db, authorization_header):
     assert len(data) == 2
     for node in data:
         assert node['user_id'] in [global_node.user_id, user_node.user_id]
+
 
 def test_get_other_user_dicom_nodes(authorization_header):
     other_user = utils.create_local_user("private", "private", "private")

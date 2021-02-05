@@ -1,16 +1,20 @@
 from datetime import datetime
 from typing import List, Optional
-from pydantic import validator
+from pydantic import validator, root_validator
+from networkx import DiGraph
 
+from api.models import dicom, Base
+from api.pipelining.utils import validate_pipeline_structure
 
 from . import BaseModel, BaseORMModel
 from .container import Container
 from .destination import Destination
-from api.models import dicom, Base
+
 
 class PipelineStats(BaseModel):
     pipeline_counts: int
     pipeline_run_counts: int
+
 
 class PipelineJob(BaseORMModel):
     pipeline_node_id: int
@@ -21,9 +25,11 @@ class PipelineJob(BaseORMModel):
     output_path: str
     exit_code: Optional[str]
 
+
 class PipelineJobError(BaseORMModel):
     pipeline_job_id: int
     stderr: str
+
 
 class PipelineNodeCreate(BaseModel):
     node_id: int
@@ -72,6 +78,22 @@ class PipelineUpdate(BaseModel):
     pipeline_id: Optional[int]
     nodes: Optional[List[PipelineNodeCreate]] = []
     links: Optional[List[PipelineLinkCreate]] = []
+
+    @root_validator
+    def check_pipeline_structure(cls, values):
+        graph = DiGraph()
+        graph.add_nodes_from([v.node_id for v in values.get('nodes')])
+        graph.add_edges_from([(e.from_, e.to) for e in values.get('links')])
+        validate_pipeline_structure(graph)
+
+        return values
+
+    @validator('nodes')
+    def unique_node_ids(cls, v):
+        s = set([node.node_id for node in v])
+        assert len(s) == len(v), 'Pipeline cannot contain duplicate nodes_ids'
+
+        return v
 
 
 class Pipeline(PipelineCreate, BaseORMModel):
