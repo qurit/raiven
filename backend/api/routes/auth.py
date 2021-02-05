@@ -21,7 +21,9 @@ class LoginException(HTTPException):
 
 @router.post("/token", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(session)):
-    user = User.query(db).filter_by(username=form_data.username).first()
+    username = form_data.username
+    password = form_data.password
+    user = User.query(db).filter_by(username=username).first()
 
     # Try creating an new ldap account
     if not user:
@@ -32,11 +34,11 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         raise LoginException()
 
     # Try LDAP authentication
-    if user.ldap_user and not ldap.authenticate(user.username, form_data.password):
+    if user.ldap_user and not ldap.authenticate(username, password):
         raise LoginException()
 
     # Local user Authentication
-    elif user.local_user and not user.local_user.verify_password(form_data.password):
+    elif user.local_user and not user.local_user.verify_password(password):
         raise LoginException()
 
     return Token(access_token=user.generate_token())
