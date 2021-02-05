@@ -14,12 +14,14 @@ from api.schemas import dicom
 router = APIRouter()
 
 
-@router.get('/echo')
+@router.get('/echo', response_model=None)
 def c_echo(host: str, port: int, title: str):
     """ Performs a DICOM c_echo to dicom node """
 
     node = DicomNode(title=title, host=host, port=port)
-    return scu.send_echo(node)
+
+    if not scu.send_echo(node):
+        raise HTTPException(503, "C-Echo Failed")
 
 
 @router.get("/received-series")

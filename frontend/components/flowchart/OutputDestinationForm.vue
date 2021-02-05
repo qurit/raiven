@@ -1,6 +1,10 @@
 <template>
-  <v-card dense max-width="400">
-    <v-toolbar :color="color" dense flat>{{ title }}</v-toolbar>
+  <v-card dense max-width="400" :loading="loading">
+    <v-toolbar :color="color" dense flat>
+      {{ title }}
+      <v-spacer />
+      <v-icon-btn :icon="echoIcon" @click="sendEcho" :color="isFormValid ? 'accent' : 'white'" />
+    </v-toolbar>
     <v-card-text>
       <v-form v-model="isFormValid" ref="form" lazy-validation>
         <v-row>
@@ -42,13 +46,16 @@
 </template>
 
 <script>
+import { send_c_echo } from "@/api/dicom";
 import { toPropFormat } from "@/utilities/propHelpers";
-import { validateHostAddress, validatePort, validateNotEmpty } from '~/utilities/validationRules'
+import { validateHostAddress, validatePort, validateNotEmpty } from '@/utilities/validationRules'
 
 export default {
   name: "OutputDestinationForm",
   data: () => ({
     title: 'Add Dicom Node',
+    echoIcon: 'mdi-wifi',
+    loading: false,
     isFormValid: true,
     textFieldAttrs: toPropFormat(['solo', 'single-line', 'hide-details', 'dense', 'flat']),
     node: {
@@ -66,6 +73,23 @@ export default {
       if(this.$refs.form.validate()) {
         await this.$store.dispatch('destination/addDestination', this.node)
         this.$emit('close')
+      }
+    },
+
+    async sendEcho() {
+      if(this.$refs.form.validate()) {
+        this.loading = 'accent'
+
+        try {
+          await send_c_echo(this, this.node)
+          this.echoIcon = 'mdi-wifi-strength-4'
+          this.$toaster.toastSuccess('C-ECHO Succeeded')
+        } catch (e) {
+          this.echoIcon = 'mdi-wifi-strength-alert-outline'
+          this.$toaster.toastError('C-ECHO Failed')
+        }
+
+        this.loading = false
       }
     }
   },
