@@ -1,8 +1,10 @@
+from typing import Optional
 from datetime import datetime
 
 from ldap3 import Server, Connection, Reader, ObjectDef
 
 from api import config
+from api.models.user import User, UserLDAP
 
 
 class LDAPManager:
@@ -12,23 +14,27 @@ class LDAPManager:
         self.user_base = config.LDAP_USERNAME_BASE
         self.base_dn = config.LDAP_BASE_DN
 
-        if config.AUTH_ENABLED:
+        if config.LDAP_AUTH_ENABLED:
             assert Connection(self.server, auto_bind=True)
 
-    def authenticate(self, username, password):
+    def _get_connection(self, username, password) -> Connection:
         if not password:
-            return None
+            return False
 
         cn = self.user_base + username
-        connection = Connection(self.server, cn, password)
+        return Connection(self.server, cn, password)
 
-        if connection.bind():
-            return self.add_user(connection, username)
-        else:
+    def authenticate(self, username: str, password: str) -> bool:
+        return self._get_connection(username, password).bind()
+
+    def user_factory(self, username: str, password: str, db) -> Optional[User]:
+        connection = self._get_connection.bind(username, password)
+
+        # Attempting auth
+        if not connection.bind():
             return None
 
-    def add_user(self, connection: Connection, username: str):
-        search_filter = '(&(objectCategory=person)(objectClass=user)(sAMAccountName=%s))'
+        search_filter = config.LDAP_SEARCH_FILTER
         connection.search(self.base_dn, (search_filter % username))
 
         user_dn = connection.response[0]['dn']
@@ -39,11 +45,15 @@ class LDAPManager:
 
         result = reader.entries[0]
 
-        return {
-            'username': username,
-            'name': str(result.name),
-            'title': str(result.title),
-            'department': str(result.department),
-            'company': str(result.company),
-            'last_seen': str(datetime.now()),
-        }
+        # Saving user to db
+        user = User(username=username, name=str(result.name))
+        user.save(db)
+
+        UserLDAP(
+            id=user.id,
+            title=str(result.title),
+            department=str(result.department),
+            company=str(result.company),
+        ).save(db)
+
+        return user

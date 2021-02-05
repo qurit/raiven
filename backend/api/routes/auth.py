@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
 from api import session
-from api.models.user import User, UserLocal
+from api.models.user import User, UserLocal, UserLDAP
 from api.schemas.user import Token
 
 router = APIRouter()
@@ -20,6 +20,7 @@ class LoginException(HTTPException):
 @router.post("/token", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(session)):
     user = User.query(db).filter_by(username=form_data.username).first()
+
     if not user:
         #TODO: try ldap
         raise LoginException()
