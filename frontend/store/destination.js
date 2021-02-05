@@ -20,16 +20,19 @@ export const actions = {
       console.log(err)
     }
   },
-  async addDestination({ commit }, data) {
+  async addDestination({ commit }, node) {
     try {
-      const URL = '/destination'
-      const res = await generic_post(this, URL, {
-        host: data.host,
-        port: data.port
-      })
+      const URL = '/dicom/nodes'
+      const res = await generic_post(this, URL, node)
+
       commit('addDestination', res)
-    } catch (err) {
-      console.log(err)
+    } catch (e) {
+      let msg = 'Node Exists Already'
+      try {
+        msg = e.response.data.detail
+      } finally {
+        this.$toaster.toastError(msg)
+      }
     }
   }
 }

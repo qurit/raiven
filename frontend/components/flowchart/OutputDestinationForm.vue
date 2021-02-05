@@ -52,9 +52,9 @@ export default {
     isFormValid: true,
     textFieldAttrs: toPropFormat(['solo', 'single-line', 'hide-details', 'dense', 'flat']),
     node: {
-      title: undefined,
-      host: undefined,
-      port: undefined
+      title: 'orthanc',
+      host: '127.0.0.1',
+      port: '4242'
     }
   }),
   methods: {
@@ -63,7 +63,10 @@ export default {
     validateNotEmpty,
 
     async submit() {
-      this.isFormValid = this.$refs.form.validate()
+      if(this.$refs.form.validate()) {
+        await this.$store.dispatch('destination/addDestination', this.node)
+        this.$emit('close')
+      }
     }
   },
   computed: {

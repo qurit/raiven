@@ -18,6 +18,10 @@ class DicomNode(PathMixin, Base):
     patients = relationship('DicomPatient', backref='node')
     user = relationship('User', backref='dicom_nodes')
 
+    __table_args__ = (
+        UniqueConstraint('title', 'host', 'port', 'user_id', name='_node_uc'),
+    )
+
 
 class DicomPatient(NestedPathMixin, Base):
     dicom_node_id = Column(Integer, ForeignKey("dicom_node.id", **CASCADE))

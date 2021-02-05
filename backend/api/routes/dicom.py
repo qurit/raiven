@@ -2,13 +2,14 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, or_
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from api import session, queries
+from api.auth import token_auth
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
 from api.models.user import User
 from api.schemas import dicom, pipeline
-from api.auth import token_auth
 
 router = APIRouter()
 
@@ -70,10 +71,20 @@ def get_all_dicom_nodes(
 @router.post("/nodes")
 def create_dicom_node(node: dicom.DicomNodeCreate, user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Create a dicom node """
-    db_node = DicomNode(**node.dict(), user_id=user.id)
-    db_node.save(db)
+    q = db.query(DicomNode).filter_by(title=node.title, host=node.host, port=node.port)
 
-    return db_node
+    if not (db_node := q.first()):
+        db_node = DicomNode(**node.dict(), user_id=user.id)
+        db_node.save(db)
+        return db_node
+
+    # Update to a output node
+    elif not db_node.output:
+        db_node.output = True
+        return db_node
+
+    else:
+        raise HTTPException(422, 'Node already exists')
 
 
 @ router.get("/nodes/{dicom_node_id}/patients", response_model=List[dicom.DicomPatient])
