@@ -11,6 +11,8 @@ class BaseConfig:
     APT_HOST = '127.0.0.1'
     API_PORT = 5000
     API_HOT_RELOAD = True
+    API_CORS_ALLOWED_ORIGINS = ['"http://localhost:3000"']
+
     UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
     UPLOAD_VOLUME_ABSPATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
     INTERNAL_USERNAME = 'RAIVEN_INTERNAL'
@@ -86,12 +88,14 @@ class BaseConfig:
         #     self.RABBITMQ_URI = f'amqp://{self.RABBITMQ_HOST}'
 
     def apply_env_var(self, env_var) -> None:
-        v = os.environ[env_var]
+        v: str = os.environ[env_var]
 
         try:
             type_ = type(getattr(BaseConfig, env_var))
             if type_ is bool:
                 v = strtobool(v)
+            if type_ is list:
+                v = v.split(',')
             else:
                 v = type_(v)
         except (TypeError, ValueError):

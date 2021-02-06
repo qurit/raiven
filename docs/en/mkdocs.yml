@@ -16,6 +16,7 @@ theme:
 # Nav
 nav:
   - Overview: index.md
+  - Configuration: configuration.md
   - User Guide:
     - Containers: containers.md
     - Pipelines: pipelines.md
