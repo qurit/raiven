@@ -130,6 +130,7 @@ export default {
           ? payload.conditions[condition.type].push(condition.identifier)
           : (payload.conditions[condition.type] = [condition.identifier])
       })
+      this.$store.dispatch('conditions/addCondition', payload)
       this.$emit('closeDialog')
       console.log(payload)
     }
