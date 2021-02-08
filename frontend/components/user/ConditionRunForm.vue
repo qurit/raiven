@@ -115,6 +115,8 @@ export default {
       const type = this.newConditionType
       const identifier = this.newConditionIdentifier
       this.currentConditions.push({ type, identifier })
+      this.newConditionType = null
+      this.newConditionIdentifier = null
     },
     removeCondition(index) {
       this.currentConditions.splice(index, 1)
