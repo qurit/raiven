@@ -29,6 +29,13 @@ def create_condition(condition: schemas.PipelineConditionCreate, db: Session = D
     return new_condition
 
 
+@router.delete("/condition/{condition_id}", response_model=schemas.PipelineCondition)
+def delete_condition(condition_id: int, db: Session = Depends(session)):
+    if condition := db.query(PipelineCondition).get(condition_id):
+        condition.delete(db)
+    return condition
+
+
 @router.get("/stats", response_model=schemas.PipelineStats)
 def get_pipeline_stats(db: Session = Depends(session)):
     """

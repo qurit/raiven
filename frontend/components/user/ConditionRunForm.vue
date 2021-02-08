@@ -82,7 +82,7 @@
     <v-row justify="center" align="center">
       <v-btn
         text
-        class="ml-16"
+        class="ma-4"
         color="confirm"
         @click="submit"
         :disabled="
@@ -132,7 +132,12 @@ export default {
       })
       this.$store.dispatch('conditions/addCondition', payload)
       this.$emit('closeDialog')
-      console.log(payload)
+      this.currentConditions = []
+      this.newConditionIdentifier = null
+      this.newConditionType = null
+      this.isActive = false
+      this.conditionName = null
+      this.pipelineId = null
     }
   },
   created() {

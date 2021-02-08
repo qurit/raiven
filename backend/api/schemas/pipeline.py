@@ -31,13 +31,6 @@ class PipelineJobError(BaseORMModel):
     stderr: str
 
 
-class PipelineCondition(BaseORMModel):
-    condition_name: str
-    conditions: dict
-    is_active: bool
-    pipeline_id: int
-
-
 class PipelineConditionCreate(BaseModel):
     condition_name: str
     conditions: dict
@@ -113,6 +106,14 @@ class PipelineUpdate(BaseModel):
 class Pipeline(PipelineCreate, BaseORMModel):
     user_id: Optional[int]
     name: str
+
+
+class PipelineCondition(BaseORMModel):
+    condition_name: str
+    conditions: dict
+    is_active: bool
+    pipeline_id: int
+    pipeline: Pipeline
 
 
 class PipelineFull(Pipeline):

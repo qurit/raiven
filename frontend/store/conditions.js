@@ -1,4 +1,4 @@
-import { generic_get, generic_post } from '~/api'
+import { generic_get, generic_post, generic_delete } from '~/api'
 
 export const state = () => ({
   conditions: []
@@ -6,7 +6,11 @@ export const state = () => ({
 
 export const mutations = {
   setConditions: (state, conditions) => (state.conditions = conditions),
-  addCondition: (state, condition) => state.conditions.push(condition)
+  addCondition: (state, condition) => state.conditions.push(condition),
+  deleteCondition: (state, id) => {
+    const index = state.conditions.findIndex(condition => condition.id === id)
+    state.conditions.splice(index, 1)
+  }
 }
 
 export const actions = {
@@ -20,8 +24,17 @@ export const actions = {
       console.log(err)
     }
   },
+  async deleteCondition({ commit }, id) {
+    try {
+      const URL = `/pipeline/condition/${id}`
+      await generic_delete(this, URL)
+      commit('deleteCondition', id)
+      this.$toaster.toastSuccess('Condition deleted!')
+    } catch (err) {
+      this.$toaster.toastError('Could not delete condition')
+    }
+  },
   async addCondition({ commit }, payload) {
-    console.log(payload)
     try {
       const URL = '/pipeline/condition'
       const res = await generic_post(this, URL, {
@@ -31,8 +44,9 @@ export const actions = {
         pipeline: payload.pipeline
       })
       commit('addCondition', res)
+      this.$toaster.toastSuccess('Condition added!')
     } catch (err) {
-      console.log(err)
+      this.$toaster.toastError('Could not add condition')
     }
   }
 }

@@ -4,7 +4,7 @@
       <v-col sm="12" md="5">
         <UserSettings />
       </v-col>
-      <v-col sm="12" md="5">
+      <v-col sm="12" md="7">
         <Conditions />
       </v-col>
     </v-row>
