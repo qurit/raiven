@@ -20,6 +20,7 @@ class Pipeline(Base):
                         passive_deletes=True)
     nodes = relationship("PipelineNode", backref="pipeline")
     links = relationship("PipelineLink", backref="pipeline")
+    conditions = relationship("PipelineCondition", backref="pipeline")
 
     # TODO: This query can be optimized by joins
     def get_starting_nodes(self):
@@ -31,6 +32,13 @@ class Pipeline(Base):
         graph.add_edges_from([(e.from_node_id, e.to_node_id) for e in self.links])
 
         return graph
+
+
+class PipelineCondition(Base):
+    condition_name = Column(String)
+    conditions = Column(JSON)
+    is_active = Column(Boolean)
+    pipeline_id = Column(ForeignKey("pipeline.id", **CASCADE))
 
 
 class PipelineNode(Base):
