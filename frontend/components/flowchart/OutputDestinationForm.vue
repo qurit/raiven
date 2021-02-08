@@ -58,7 +58,7 @@ export default {
   name: "OutputDestinationForm",
   mixins: [echoMixin],
   data: () => ({
-    title: 'Add Dicom Node',
+    title: 'Add Dicom Node as Destination',
     echoIcon: 'mdi-wifi',
     loading: false,
     isFormValid: true,
