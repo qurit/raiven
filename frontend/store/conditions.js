@@ -1,4 +1,5 @@
 import { generic_get, generic_post, generic_delete } from '~/api'
+const URL = '/pipeline/condition'
 
 export const state = () => ({
   conditions: []
@@ -16,7 +17,6 @@ export const mutations = {
 export const actions = {
   async fetchConditions({ commit }) {
     try {
-      const URL = '/pipeline/condition'
       const res = await generic_get(this, URL)
       commit('setConditions', res)
       return res
@@ -26,8 +26,7 @@ export const actions = {
   },
   async deleteCondition({ commit }, id) {
     try {
-      const URL = `/pipeline/condition/${id}`
-      await generic_delete(this, URL)
+      await generic_delete(this, `${URL}/${id}`)
       commit('deleteCondition', id)
       this.$toaster.toastSuccess('Condition deleted!')
     } catch (err) {
@@ -36,7 +35,6 @@ export const actions = {
   },
   async addCondition({ commit }, payload) {
     try {
-      const URL = '/pipeline/condition'
       const res = await generic_post(this, URL, {
         is_active: payload.isActive,
         condition_name: payload.conditionName,
