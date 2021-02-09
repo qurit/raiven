@@ -110,14 +110,22 @@ def dicom_output_task(run_id: int, node_id: int, previous_job_id: int = None):
                     folder = prev.get_abs_output_path()
 
                 # Return to sender
-                if dest.user.name == config.INTERNAL_USERNAME:
+                if dest.host == config._RTS_HOST and dest.port == config._RTS_PORT:
                     dest = job.run.initiator
 
-                # Long running task
-                send_dicom_folder(dest, folder)
+                dest.detach(db)
+            else:
+                job.status = 'except'
+                job.exit_code = -1
+                job.save(db)
+                PipelineJobError(pipeline_job_id=job.id, stderr='No Destination for the pipeline').save(db)
+
+        # Long running task
+        send_dicom_folder(dest, folder)
 
         with worker_session() as db:
             job.status = 'exited'
+            job.exit_code = 0
             job.save(db)
     except Exception as e:
         print(e)
