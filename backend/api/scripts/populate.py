@@ -5,7 +5,7 @@ from api.models.dicom import DicomNode
 from api.queries import internal
 
 
-def populate_default_user(db):
+def pre_populate_internal(db):
     """ Adds a default internal user and default containers if they do not exist """
 
     if not (user := internal.get_internal_user(db)):
