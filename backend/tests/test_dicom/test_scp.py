@@ -8,13 +8,15 @@ from pynetdicom.sop_class import VerificationSOPClass
 from api.dicom.scp import SCP
 from api.models.dicom import DicomNode
 from api.models.pipeline import Pipeline, PipelineRun
+from api.schemas.dicom import DicomNode as DicomNodeSchema
+from api.queries.internal import get_return_to_sender
 
 from tests import client, config, models, mark, utils
 
 import logging
 from tests.test_models.test_containers import create_and_test_container, delete_and_test_container
 
-from tests.test_models.test_pipelines import insert_pipeline
+from tests.test_models.test_pipelines import insert_pipeline, LinearPipelineFactory
 from tests.test_pipelining.test_build import build_container_foreground
 
 logging.basicConfig(level=logging.DEBUG)
@@ -126,7 +128,7 @@ def test_store_global(db, stub_broker, stub_worker):
     join(stub_broker, stub_worker)
 
     assert (node := db.query(DicomNode).first())
-    assert node.user_id == None # Node should not be tied to one user
+    assert node.user_id == None  # Node should not be tied to one user
     for uid in uids_added:
         assert models.dicom.DicomSeries.query(db).filter_by(series_instance_uid=uid).first(), \
             f'Could not find series_instance_uid={uid} in db'
@@ -166,7 +168,6 @@ def test_store_valid_pipeline_no_containers(db, stub_broker, stub_worker):
     insert_pipeline(db, "test", ae_title=pipeline_ae_title)
 
     init_pipeline_run_count = db.query(PipelineRun).count()
-    init_dicom_node_count = db.query(DicomNode).count()
 
     association = get_association_to_ae(config.PIPELINE_AE_PREFIX + pipeline_ae_title)
     perform_store(association)
@@ -174,12 +175,10 @@ def test_store_valid_pipeline_no_containers(db, stub_broker, stub_worker):
 
     # Ensure SCP server has time to process request and generate PipelineRun record
     try:
-        assert init_pipeline_run_count < db.query(PipelineRun).count() 
+        assert init_pipeline_run_count < db.query(PipelineRun).count()
     except AssertionError:
         sleep(3)  # DB not updated, try waiting first
         assert init_pipeline_run_count < db.query(PipelineRun).count()
-    finally:
-        assert init_dicom_node_count == db.query(DicomNode).count()  # DICOM data should NOT be saved
 
 
 def test_store_pipeline_workflow(db, stub_broker, stub_worker, authorization_header):
@@ -222,7 +221,7 @@ def test_store_invalid_pipeline(db, stub_broker, stub_worker):
 
     assert init_pipeline_run_count == db.query(PipelineRun).count()
 
-    
+
 @mark.not_written
 def test_store_same_instance(db, association):
     assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
@@ -251,6 +250,7 @@ def test_store_same_instance(db, association):
 
 
 def get_association_to_ae(ae_title):
+
     # Create association to pipeline
     ae = AE(ae_title='test')
     ae.requested_contexts = StoragePresentationContexts
@@ -260,12 +260,13 @@ def get_association_to_ae(ae_title):
     return assoc
 
 
-def perform_store(association):
-    assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
+def perform_store(association, mock_path=os.path.join(os.path.dirname(__file__), 'mock_data')):
+    assert os.path.exists(mock_path)
+
     for root, _, files in os.walk(mock_path):
         for file in files:
             if file.endswith('.dcm'):
-                ds = dcmread(os.path.join(root, file)) 
+                ds = dcmread(os.path.join(root, file))
 
                 status = association.send_c_store(ds)
                 assert status
@@ -274,19 +275,19 @@ def perform_store(association):
 
 
 def add_container_to_pipeline(container, pipeline, authorization_header):
-    response = client.post(
+    response = client.put(
         f'/pipeline/{pipeline.id}',
         json={
             "pipeline_id": pipeline.id,
             "nodes": [
                 {
-                "node_id": 0,
-                "container_id": container.id,
-                "x": 0,
-                "y": 0,
-                "container_is_input": False,
-                "container_is_output": False,
-                "destination_id": 0
+                    "node_id": 0,
+                    "container_id": container.id,
+                    "x": 0,
+                    "y": 0,
+                    "container_is_input": False,
+                    "container_is_output": False,
+                    "destination_id": 0
                 }
             ],
             "links": []

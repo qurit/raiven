@@ -5,12 +5,23 @@ from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from api import session, queries
+from api.auth import token_auth
+from api.dicom import scu
 from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
 from api.models.user import User
-from api.schemas import dicom, pipeline
-from api.auth import token_auth
+from api.schemas import dicom
 
 router = APIRouter()
+
+
+@router.get('/echo', response_model=None)
+def c_echo(host: str, port: int, title: str):
+    """ Performs a DICOM c_echo to dicom node """
+
+    node = DicomNode(title=title, host=host, port=port)
+
+    if not scu.send_echo(node):
+        raise HTTPException(503, "C-Echo Failed")
 
 
 @router.get("/received-series")
@@ -48,18 +59,48 @@ def get_dicom_stats(db: Session = Depends(session)):
     return stats
 
 
-@router.get("/nodes/{user_id}", response_model=List[dicom.DicomNode])
-def get_user_dicom_nodes(user_id: int, user: User = Depends(token_auth), db: Session = Depends(session)):
-    """ Get user's DICOM nodes """
-    if user_id != user.id:
-        raise HTTPException(status_code=401 , detail="Cannot view Dicom nodes belonging to other users")
-    return db.query(DicomNode).filter(or_(DicomNode.user_id == user_id, DicomNode.user_id == None)).all()
-
-
 @router.get("/nodes", response_model=List[dicom.DicomNode])
-def get_all_dicom_nodes(db: Session = Depends(session)):
+def get_all_dicom_nodes(
+    input_node: bool = None,
+    output_node: bool = None,
+    rts: bool = False,
+    user: User = Depends(token_auth),
+    db: Session = Depends(session)
+):
     """ Get all DICOM nodes """
-    return db.query(DicomNode).all()
+    q = db.query(DicomNode).filter(or_(DicomNode.user_id == user.id, DicomNode.user_id == None))
+
+    if input_node is not None:
+        q = q.filter(DicomNode.input == input_node)
+
+    if output_node is not None:
+        q = q.filter(DicomNode.output == output_node)
+
+    nodes: List[DicomNode] = q.all()
+
+    if rts:
+        nodes.insert(0, queries.internal.get_return_to_sender(db))
+
+    return nodes
+
+
+@router.post("/nodes")
+def create_dicom_node(node: dicom.DicomNodeCreate, user: User = Depends(token_auth), db: Session = Depends(session)):
+    """ Create a dicom node """
+    q = db.query(DicomNode).filter_by(title=node.title, host=node.host, port=node.port)
+
+    if not (db_node := q.first()):
+        db_node = DicomNode(**node.dict(), user_id=user.id)
+        db_node.save(db)
+        return db_node
+
+    # Update to a output node
+    elif not db_node.output:
+        db_node.output = True
+        return db_node
+
+    else:
+        raise HTTPException(422, 'Node already exists')
 
 
 @ router.get("/nodes/{dicom_node_id}/patients", response_model=List[dicom.DicomPatient])
@@ -102,29 +143,3 @@ def delete_study(study_id: int, db: Session = Depends(session)):
 def delete_series(series_id: int, db: Session = Depends(session)):
     """ Delete a series """
     return db.query(DicomSeries).get(series_id).delete(db)
-
-# the send to container code stuff
-
-
-@ router.put("/node/{dicom_node_id}")
-def send_dicom_node(dicom_node_id: int, pipeline_id: pipeline.PipelineId, db: Session = Depends(session)):
-    dicom_node = db.query(DicomNode).get(dicom_node_id)
-    return dicom_node.abs_path
-
-
-@ router.put("/node/{dicom_node_id}/{dicom_patient_id}")
-def send_dicom_patient(dicom_node_id: int, dicom_patient_id: int, pipeline_id: pipeline.PipelineId, db: Session = Depends(session)):
-    dicom_patient = db.query(DicomPatient).get(dicom_patient_id)
-    return dicom_patient.abs_path
-
-
-@ router.put("/node/{dicom_node_id}/{dicom_patient_id}/{dicom_study_id}")
-def send_dicom_study(dicom_node_id: int, dicom_patient_id: int, dicom_study_id: int, pipeline_id: pipeline.PipelineId, db: Session = Depends(session)):
-    dicom_study = db.query(DicomStudy).get(dicom_study_id)
-    return dicom_study.abs_path
-
-
-@ router.put("/node/{dicom_node_id}/{dicom_patient_id}/{dicom_study_id}/{dicom_series_id}")
-def send_dicom_series(dicom_node_id: int, dicom_patient_id: int, dicom_study_id: int, dicom_series_id: int, pipeline_id: pipeline.PipelineId, db: Session = Depends(session)):
-    dicom_series = db.query(DicomSeries).get(dicom_series_id)
-    return dicom_series.abs_path

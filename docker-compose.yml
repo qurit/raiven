@@ -58,16 +58,16 @@ services:
       - orthanc.json
     volumes:
       - orthanc_data:/var/lib/orthanc/db/
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/frontend
-      - /frontend/node_modules
-    env_file:
-      - docker.env
+#
+#  frontend:
+#    build: ./frontend
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - ./frontend:/frontend
+#      - /frontend/node_modules
+#    env_file:
+#      - docker.env
 
 secrets:
   orthanc.json:
