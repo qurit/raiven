@@ -275,7 +275,7 @@ def perform_store(association, mock_path=os.path.join(os.path.dirname(__file__),
 
 
 def add_container_to_pipeline(container, pipeline, authorization_header):
-    response = client.post(
+    response = client.put(
         f'/pipeline/{pipeline.id}',
         json={
             "pipeline_id": pipeline.id,

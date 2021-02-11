@@ -123,7 +123,7 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
     return pipeline
 
 
-@ router.put("/{pipeline_id}/edit", response_model=schemas.Pipeline)
+@router.put("/{pipeline_id}/edit", response_model=schemas.Pipeline)
 def edit_pipeline(pipeline_id: int, pipeline: schemas.PipelineCreate, db: Session = Depends(session)):
     """ Edit a pipeline """
     pipeline_to_edit = db.query(Pipeline).get(pipeline_id)
@@ -133,7 +133,7 @@ def edit_pipeline(pipeline_id: int, pipeline: schemas.PipelineCreate, db: Sessio
     return pipeline_to_edit
 
 
-@ router.put("/{pipeline_id}", response_model=schemas.PipelineRun)
+@router.put("/{pipeline_id}/run", response_model=schemas.PipelineRun)
 def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, db: Session = Depends(session)):
     """ Runs A Pipeline. """
     run = PipelineController.pipeline_run_factory(
@@ -156,7 +156,7 @@ def get_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
     return db.query(PipelineLink).filter(PipelineLink.pipeline_id == pipeline_id).delete()
 
 
-@router.post("/{pipeline_id}", response_model=schemas.PipelineFull)
+@router.put("/{pipeline_id}", response_model=schemas.PipelineFull)
 def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, db: Session = Depends(session)):
     """ This Allows you to update / add pipeline containers and links """
 

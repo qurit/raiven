@@ -47,7 +47,7 @@ import FlowchartLink from './FlowchartLink.vue'
 import FlowchartNode from './FlowchartNode.vue'
 import OutputDestinationForm from './OutputDestinationForm.vue'
 import { getMousePosition } from './position'
-import { generic_post } from '~/api'
+import { generic_put } from '~/api'
 
 export default {
   name: 'VueFlowchart',
@@ -334,7 +334,7 @@ export default {
       const PAYLOAD = {nodes: nodeArray, links: linkArray}
       const URL = `/pipeline/${this.id}`
       try {
-        await generic_post(this, URL, PAYLOAD)
+        await generic_put(this, URL, PAYLOAD)
         this.$toaster.toastSuccess('Pipeline saved!')
       } catch (e) {
         let msg = 'Something went wrong, please make sure your pipeline is properly formed'

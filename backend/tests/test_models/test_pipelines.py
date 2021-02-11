@@ -53,7 +53,7 @@ class LinearPipelineFactory:
         return self.add_container(schema, destination)
 
     def create_pipeline(self, client, authorization_header):
-        response = client.post(
+        response = client.put(
             f'/pipeline/{self.pipeline.id}',
             json={
                 "pipeline_id": self.pipeline.id,
