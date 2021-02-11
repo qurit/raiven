@@ -116,9 +116,11 @@
 
 <script>
 import { mapState } from 'vuex'
-import settingsVue from '../../pages/settings.vue'
 
 export default {
+  props: {
+    pipelineId: Number
+  },
   data() {
     return {
       pipelineId: '',

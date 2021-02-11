@@ -34,7 +34,7 @@
         <v-simple-checkbox :value="item.is_shared" disabled />
       </template>
       <template v-slot:item.add_conditions="{ item }">
-        <v-icon medium @click.stop="conditionRunForm = true" color="info">
+        <v-icon medium @click.stop="openConditionForm(item.id)" color="info">
           mdi-send
         </v-icon>
       </template>
@@ -44,8 +44,11 @@
         </v-icon>
       </template>
     </v-data-table>
-    <v-dialog v-model="conditionRunForm" max-width="900px" min-height="600px">
-      <ConditionRunForm @closeDialog="conditionRunForm = false" />
+    <v-dialog v-model="conditionRunDialog" max-width="900px" min-height="600px">
+      <ConditionRunForm
+        @closeDialog="conditionRunDialog = false"
+        :pipelineId="pipelineId"
+      />
     </v-dialog>
     <v-dialog v-model="addPipelineDialog" max-width="600px">
       <AddPipelineForm @closeDialog="addPipelineForm = false" />
@@ -89,7 +92,8 @@ export default {
       addPipelineDialog: false,
       confirmDeleteDialog: false,
       deletePipelineId: null,
-      conditionRunForm: false,
+      conditionRunDialog: false,
+      pipelineId: null,
       headers: [
         { text: 'Pipeline Name', value: 'name' },
         { text: 'AE Title', value: 'ae_title' },
@@ -114,8 +118,9 @@ export default {
     viewPipeline(pipeline) {
       this.$router.push({ path: `/pipeline/${pipeline.id}` })
     },
-    openConditionForm() {
-      console.log('clicked')
+    openConditionForm(itemID) {
+      this.conditionRunDialog = true
+      this.pipelineId = itemID
     },
     async confirmDeletePipeline() {
       try {
