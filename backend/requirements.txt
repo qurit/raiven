@@ -18,3 +18,4 @@ alembic
 pytest
 networkx
 ldap3
+numpy
