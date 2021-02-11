@@ -37,10 +37,22 @@
           When these DICOM series have been received:
         </v-card-title>
         <v-row align="center" class="mx-2">
-          <v-col cols="5">
-            <v-select label="Type" :items="types" v-model="newConditionType" />
+          <v-col cols="3">
+            <v-select
+              label="Type"
+              :items="types"
+              v-model="newConditionType"
+              v-on:change="identifierSubtype"
+            />
           </v-col>
-          <v-col cols="6">
+          <v-col cols="3">
+            <v-select
+              label="Subtype"
+              :items="subTypes"
+              v-model="newCondtionSubtype"
+            />
+          </v-col>
+          <v-col cols="5">
             <v-text-field label="Idenfier" v-model="newConditionIdentifier" />
           </v-col>
           <v-col cols="1">
@@ -57,14 +69,21 @@
           class="mx-2"
           align="center"
         >
-          <v-col cols="5">
+          <v-col cols="3">
             <v-text-field
               disabled
               label="Type"
               v-model="currentCondition.type"
             />
           </v-col>
-          <v-col cols="6">
+          <v-col cols="3">
+            <v-text-field
+              disabled
+              label="Subtype"
+              v-model="currentCondition.subType"
+            />
+          </v-col>
+          <v-col cols="5">
             <v-text-field
               disabled
               label="Identifier"
@@ -105,21 +124,47 @@ export default {
       isActive: false,
       conditionName: '',
       types: ['Node', 'Patient', 'Study', 'Series'],
+      subTypes: [],
       newConditionIdentifier: '',
       newConditionType: '',
+      newCondtionSubtype: '',
       currentConditions: []
     }
   },
   methods: {
     addCondition() {
       const type = this.newConditionType
+      const subType = this.newCondtionSubtype
       const identifier = this.newConditionIdentifier
-      this.currentConditions.push({ type, identifier })
+      this.currentConditions.push({ type, subType, identifier })
       this.newConditionType = null
       this.newConditionIdentifier = null
+      this.newCondtionSubtype = null
+
+      const test = { type, subType, identifier }
+      console.log(test)
     },
     removeCondition(index) {
       this.currentConditions.splice(index, 1)
+    },
+    identifierSubtype() {
+      switch (this.newConditionType) {
+        case 'Node':
+          this.subTypes = ['AE Title']
+          break
+        case 'Patient':
+          this.subTypes = ['Patient ID']
+          break
+        case 'Study':
+          this.subTypes = ['Study Instance UID', 'Study Date']
+          break
+        case 'Series':
+          this.subTypes = [
+            'Series Instance UID',
+            'Series Description',
+            'Modality'
+          ]
+      }
     },
     submit() {
       const payload = {}
@@ -127,11 +172,18 @@ export default {
       payload['isActive'] = this.isActive
       payload['conditionName'] = this.conditionName
       payload['conditions'] = {}
+      // this.currentConditions.forEach(condition => {
+      //   payload.conditions[condition.type] = condition.subType
+      // })
+
       this.currentConditions.forEach(condition => {
-        payload.conditions[condition.type]
-          ? payload.conditions[condition.type].push(condition.identifier)
-          : (payload.conditions[condition.type] = [condition.identifier])
+        console.log(condition.subType)
+        payload.conditions[condition.subType]
+          ? payload.conditions[condition.subType].push(condition.identifier)
+          : (payload.conditions[condition.subType] = [condition.identifier])
       })
+
+      console.log(payload)
       this.$store.dispatch('conditions/addCondition', payload)
       this.$emit('closeDialog')
       this.currentConditions = []
