@@ -174,32 +174,18 @@ export default {
       payload['conditionName'] = this.conditionName
       payload['conditions'] = {}
 
-      const blah = {}
-
       this.currentConditions.forEach(condition => {
-        blah[condition.type]
-          ? blah[condition.type][condition.subType]
-          : (blah[condition.type] = {})
-        blah[condition.type][condition.subType]
-          ? blah[condition.type][condition.subType].push(condition.identifier)
-          : (blah[condition.type][condition.subType] = [condition.identifier])
+        const type = condition.type
+        const subType = condition.subType
+        const identifier = condition.identifier
+        payload.conditions[type]
+          ? payload.conditions[type][subType]
+          : (payload.conditions[type] = {})
+        payload.conditions[type][subType]
+          ? payload.conditions[type][subType].push(identifier)
+          : (payload.conditions[type][subType] = [identifier])
       })
 
-      console.log(blah)
-
-      this.currentConditions.forEach(condition => {
-        payload.conditions[condition.type]
-          ? payload.conditions[condition.type][condition.subType]
-          : (payload.conditions[condition.type] = {})
-        payload.conditions[condition.type][condition.subType]
-          ? payload.conditions[condition.type][condition.subType].push(
-              condition.identifier
-            )
-          : (payload.conditions[condition.type][condition.subType] = [
-              condition.identifier
-            ])
-      })
-      console.log(payload)
       this.$store.dispatch('conditions/addCondition', payload)
       this.$emit('closeDialog')
       this.currentConditions = []
