@@ -1,6 +1,8 @@
 import os
 from time import sleep
+from pathlib import Path
 
+import numpy as np
 from pydicom import dcmread
 from pynetdicom import AE, evt, AllStoragePresentationContexts, StoragePresentationContexts
 
@@ -13,7 +15,7 @@ from tests.test_models.test_pipelines import LinearPipelineFactory
 PORT = 11114
 
 
-def custom_store_scp(ae_title, storage_folder):
+def custom_store_scp(ae_title, storage_folder, mock_path):
 
     def handle_store(event):
         ds = event.dataset
@@ -21,7 +23,10 @@ def custom_store_scp(ae_title, storage_folder):
         ds.save_as(str(storage_folder / ds.SOPInstanceUID), write_like_original=False)
         return 0x0000
 
-    handlers = [(evt.EVT_C_STORE, handle_store)]
+    def handle_release(event):
+        compare_dcm_files(mock_files, storage_folder)
+
+    handlers = [(evt.EVT_C_STORE, handle_store), (evt.EVT_RELEASED, handle_release)]
 
     ae = AE(ae_title=ae_title)
     ae.supported_contexts = AllStoragePresentationContexts
@@ -36,11 +41,23 @@ def custom_store_scu(ae_title):
     return ae
 
 
+def compare_dcm_files(mock_files: Path, received_files: Path):
+    mock_datasets = {ds.SOPInstanceUID: ds for f in mock_files.glob('*.dcm') if (ds := dcmread(f))}
+    received_datasets = {ds.SOPInstanceUID: ds for f in received_files.glob('*.dcm') if (ds := dcmread(f))}
+
+    for SOPInstanceUID, ds in mock_datasets.items():
+        assert SOPInstanceUID in received_datasets
+        other = received_datasets[SOPInstanceUID]
+
+        assert hasattr(ds, 'pixel_array')
+        assert hasattr(other, 'pixel_array')
+
+        assert ds.pixel_array.shape == other.pixel_array.shape
+        assert (ds.pixel_array == other.pixel_array).all()
+
+
 # TODO: this test only works like once a minute
-def test_return_to_sender(db, stub_broker, stub_worker, authorization_header, tmp_folder):
-    assert os.path.exists(mock_path := os.path.join(os.path.dirname(__file__), 'mock_data'))
-    assert os.path.exists(file_path := os.path.join(mock_path, 'simple_container.zip'))
-    assert os.path.isfile(file_path)
+def test_return_to_sender(db, stub_broker, stub_worker, authorization_header, tmp_folder, mock_path):
 
     factory = LinearPipelineFactory(db, 'rts_pipeline', ae_title='RTS')
     rts_container = DicomNodeSchema.from_orm(get_return_to_sender(db))
@@ -57,23 +74,10 @@ def test_return_to_sender(db, stub_broker, stub_worker, authorization_header, tm
     assoc.release()
 
     # Starting the RTS server
-    scp, handlers = custom_store_scp('RTS', storage_folder=tmp_folder)
+    scp, handlers = custom_store_scp('RTS', storage_folder=tmp_folder, mock_path=mock_path)
     scp.start_server(('', PORT), evt_handlers=handlers, block=False)
 
     # Ensure detached SCP server has enough time to send job to worker before .join
     sleep(2)
     join(stub_broker, stub_worker)
     scp.shutdown()
-
-    # Making sure files are the same
-    received_files = [str(f.stem) for f in tmp_folder.iterdir()]
-    for f in os.listdir(mock_path):
-        if f.endswith('.dcm'):
-            ds = dcmread(os.path.join(mock_path, f))
-
-            # TODO: COMPARE FILES
-            # # assert ds.SOPInstanceUID in received_files
-            # received_ds = dcmread(str(tmp_folder / ds.SOPInstanceUID))
-            #
-            # # assert ds.SOPInstanceUID == received_ds.SOPInstanceUID
-            # assert ds.pixel_array == received_ds.pixel_array

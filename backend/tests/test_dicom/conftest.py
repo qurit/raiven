@@ -11,6 +11,7 @@ from api.dicom.scp import SCP
 from tests import config
 
 TMP_FOLDER = Path(__file__).parent / 'tmp'
+MOCK_DATA_DIR = Path(__file__).parent / 'mock_data'
 
 
 @pytest.fixture(scope="module", autouse="True")
@@ -22,6 +23,12 @@ def scp_server():
     yield
 
     scp_server.stop_server()
+
+
+@pytest.fixture(scope="module")
+def mock_path():
+    assert MOCK_DATA_DIR.exists()
+    yield MOCK_DATA_DIR
 
 
 @pytest.fixture()
