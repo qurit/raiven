@@ -116,6 +116,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import settingsVue from '../../pages/settings.vue'
 
 export default {
   data() {
@@ -172,17 +173,32 @@ export default {
       payload['isActive'] = this.isActive
       payload['conditionName'] = this.conditionName
       payload['conditions'] = {}
-      // this.currentConditions.forEach(condition => {
-      //   payload.conditions[condition.type] = condition.subType
-      // })
+
+      const blah = {}
 
       this.currentConditions.forEach(condition => {
-        console.log(condition.subType)
-        payload.conditions[condition.subType]
-          ? payload.conditions[condition.subType].push(condition.identifier)
-          : (payload.conditions[condition.subType] = [condition.identifier])
+        blah[condition.type]
+          ? blah[condition.type][condition.subType]
+          : (blah[condition.type] = {})
+        blah[condition.type][condition.subType]
+          ? blah[condition.type][condition.subType].push(condition.identifier)
+          : (blah[condition.type][condition.subType] = [condition.identifier])
       })
 
+      console.log(blah)
+
+      this.currentConditions.forEach(condition => {
+        payload.conditions[condition.type]
+          ? payload.conditions[condition.type][condition.subType]
+          : (payload.conditions[condition.type] = {})
+        payload.conditions[condition.type][condition.subType]
+          ? payload.conditions[condition.type][condition.subType].push(
+              condition.identifier
+            )
+          : (payload.conditions[condition.type][condition.subType] = [
+              condition.identifier
+            ])
+      })
       console.log(payload)
       this.$store.dispatch('conditions/addCondition', payload)
       this.$emit('closeDialog')
