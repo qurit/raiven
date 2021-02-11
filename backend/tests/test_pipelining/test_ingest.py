@@ -29,4 +29,3 @@ def test_ingest_folder_to_valid_pipeline(mock_images_folder, db):
     assert DicomIngestController(mock_images_folder, "test", "test", "0", config.PIPELINE_AE_PREFIX + ae_title)
     assert init_pipeline_run_count < db.query(PipelineRun).count()
     assert not os.path.exists(mock_images_folder.resolve()) # Temp folder gets removed on delete
-    

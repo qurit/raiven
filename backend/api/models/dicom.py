@@ -10,10 +10,17 @@ class DicomNode(PathMixin, Base):
     title = Column(String)
     host = Column(String)
     port = Column(Integer)
+    input = Column(Boolean, default=False)
+    output = Column(Boolean, default=False)
+
     # Null user ID means DicomNode is available globally 
     user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
-
     patients = relationship('DicomPatient', backref='node')
+    user = relationship('User', backref='dicom_nodes')
+
+    __table_args__ = (
+        UniqueConstraint('title', 'host', 'port', 'user_id', name='_node_uc'),
+    )
 
 
 class DicomPatient(NestedPathMixin, Base):

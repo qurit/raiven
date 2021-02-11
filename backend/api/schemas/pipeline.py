@@ -8,7 +8,7 @@ from api.pipelining.utils import validate_pipeline_structure
 
 from . import BaseModel, BaseORMModel
 from .container import Container
-from .destination import Destination
+from .dicom import DicomNode
 
 
 class PipelineStats(BaseModel):
@@ -45,18 +45,20 @@ class PipelineNodeCreate(BaseModel):
     y: int
     container_is_input: bool
     container_is_output: bool
-    destination_id: Optional[int]
+    dicom_node_id: Optional[int]
 
 
 class PipelineNode(BaseORMModel):
     pipeline_id: int
     container_id: int
+    dicom_node_id: Optional[int]
     x_coord: int
     y_coord: int
     container_is_input: bool
     container_is_output: bool
+
     container: Container
-    destination: Optional[Destination]
+    destination: Optional[DicomNode]
 
 
 class PipelineLinkCreate(BaseModel):

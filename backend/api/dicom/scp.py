@@ -1,18 +1,12 @@
-import os
-import uuid
-import datetime
 import pathlib
-import shutil
+import uuid
 
-from pynetdicom import AE, evt, debug_logger
 from pydicom.filewriter import write_file_meta_info
+from pynetdicom import AE, evt, debug_logger
 from pynetdicom.presentation import AllStoragePresentationContexts
 from pynetdicom.sop_class import VerificationSOPClass
-from pydicom import uid
 
 from api import config
-from api.database import worker_session as session
-from api.models.dicom import DicomNode, DicomPatient, DicomStudy, DicomSeries
 from api.pipelining import DicomIngestController
 
 # debug_logger()

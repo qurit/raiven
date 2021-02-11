@@ -1,14 +1,16 @@
 import os
 
 from pydicom import dcmread
-from pynetdicom import AE, StoragePresentationContexts
+from pynetdicom import AE, StoragePresentationContexts, debug_logger
 from pynetdicom.sop_class import VerificationSOPClass
 
-from api.models.destination import Destination
+from api.models.dicom import DicomNode
 from .assocation import Association, AssociationException
 
+# debug_logger()
 
-def send_dicom_folder(dest: Destination, abs_dicom_folder: str):
+
+def send_dicom_folder(dest: DicomNode, abs_dicom_folder: str):
     """
     Send a dicom folder to a DICOM node using a c_store.
     """
@@ -27,7 +29,12 @@ def send_dicom_folder(dest: Destination, abs_dicom_folder: str):
         print(e)
 
 
-def send_echo(dest: Destination):
+def send_echo(dest: DicomNode) -> bool:
+    """
+    Send a C-echo to an external dicom modality
+    :param dest: destination
+    :return: was success
+    """
 
     try:
         with Association(dest, VerificationSOPClass) as assoc:
