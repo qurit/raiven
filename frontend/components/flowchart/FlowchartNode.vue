@@ -6,6 +6,7 @@
       @mousedown="handleMousedown"
       v-bind:class="{ selected: options.selected === id }"
       rounded
+      :loading="loading"
     >
       <!-- Input Port -->
       <FlowchartNodePort
@@ -15,17 +16,25 @@
       />
 
       <!-- Node Data -->
-      <v-card-title v-text="type" style="word-break: break-word" />
+      <v-card-title style="word-break: break-word">
+        {{ type }}
+        <v-icon-btn
+          v-if="selected && selected.host !== '*'"
+          :icon="echoIcon"
+          @click="sendEcho(selected)"
+        />
+      </v-card-title>
       <v-select
         v-if="container_is_output"
         v-model="selected"
         :items="destinations"
-        item-text="full_name"
+        item-text="title"
         item-value="id"
         label="Application Entity"
         dense
         solo
         flat
+        return-object
         @change="changeDestination(selected)"
       >
         <template v-slot:prepend-item>
@@ -36,7 +45,7 @@
               </v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
-              <v-icon-btn add @click="destinationDialog = true" />
+              <v-icon-btn add @click="$emit('showDestinationForm')" />
             </v-list-item-action>
           </v-list-item>
           <v-divider light />
@@ -70,19 +79,12 @@
         class="node-port node-output"
         @mousedown="$emit('linkingStart')"
       />
-      <!-- Destination Dialogs -->
-      <v-dialog
-        v-model="destinationDialog"
-        max-width="900px"
-        min-height="600px"
-      >
-        <OutputDestinationForm @closeDialog="destinationDialog = false" />
-      </v-dialog>
     </v-card>
   </v-hover>
 </template>
 
 <script>
+import echoMixin from "@/utilities/echoMixin";
 import FlowchartNodePort from './FlowchartNodePort.vue'
 import OutputDestinationForm from './OutputDestinationForm'
 import { mapState } from 'vuex'
@@ -90,6 +92,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'FlowchartNode',
   components: { FlowchartNodePort, OutputDestinationForm },
+  mixins: [echoMixin],
   props: {
     canEdit: { type: Boolean },
     id: { type: Number },
@@ -151,11 +154,10 @@ export default {
     }
   },
   methods: {
-    changeDestination(destination) {
-      const { host, port } = this.destinations[this.selected - 1]
+    changeDestination() {
       this.$emit('setDestination', {
         pipelineNodeId: this.id,
-        destinationId: this.destinations[this.selected - 1].id
+        destinationId: this.selected.id,
       })
     },
     handleMousedown(e) {
@@ -169,9 +171,10 @@ export default {
       e.preventDefault()
     }
   },
-  created() {
-    this.$store.dispatch('destination/fetchDestinations')
-    this.selected = this.destination
+  async created() {
+    if (this.container_is_output) await this.$store.dispatch('destination/fetchDestinations')
+    if (this.destination) this.selected = this.destination
+
     if (this.selected) {
       this.$emit('setDestination', {
         pipelineNodeId: this.id,

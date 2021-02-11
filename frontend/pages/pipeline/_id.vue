@@ -5,7 +5,7 @@
         class="ma-2"
         style="position: absolute; z-index: 1;"
         no-gutters
-        align="center"
+        align="start"
       >
         <v-icon-btn
           back
@@ -30,6 +30,8 @@
           />
         </div>
       </v-row>
+
+
 
       <!-- Pipeline Builder -->
       <SimpleFlowchart
@@ -99,10 +101,10 @@ import { generic_get } from '~/api'
 import {
   SimpleFlowchart,
   PipelineInfo,
-  ContainerDrawer
+  ContainerDrawer,
+  OutputDestinationForm
 } from '~/components/flowchart'
 import { ContainerForm } from '~/components/container'
-import { OutputDestinationForm } from '~/components/pipeline'
 import VIconBtn from '~/components/global/v-icon-btn'
 
 export default {
@@ -111,7 +113,8 @@ export default {
     SimpleFlowchart,
     ContainerForm,
     PipelineInfo,
-    ContainerDrawer
+    ContainerDrawer,
+    OutputDestinationForm
   },
   data: () => ({
     isFetching: true,

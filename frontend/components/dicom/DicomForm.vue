@@ -61,7 +61,7 @@ export default {
   methods: {
     async submit() {
       if (this.pipeline_id && this.dicom_obj_type && this.dicom_obj_id) {
-        const URL = `/pipeline/${this.pipeline_id}`
+        const URL = `/pipeline/${this.pipeline_id}/run`
         const PAYLOAD = {
           dicom_obj_type: this.dicom_obj_type,
           dicom_obj_id: this.dicom_obj_id
