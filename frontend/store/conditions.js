@@ -36,7 +36,6 @@ export const actions = {
   async addCondition({ commit }, payload) {
     try {
       const res = await generic_post(this, URL, {
-        is_active: payload.isActive,
         condition_name: payload.conditionName,
         conditions: payload.conditions,
         pipeline: payload.pipeline

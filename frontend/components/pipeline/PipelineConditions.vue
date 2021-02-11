@@ -52,7 +52,6 @@ export default {
         { text: 'Name', value: 'condition_name' },
         { text: 'Conditions', value: 'conditions' },
         { text: 'Pipeline', value: 'pipeline.name' },
-        { text: 'Active', value: 'is_active' },
         {
           text: 'Delete',
           value: 'actions',

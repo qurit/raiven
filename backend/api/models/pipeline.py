@@ -35,9 +35,9 @@ class Pipeline(Base):
 
 
 class PipelineCondition(Base):
+    user_id = Column(ForeignKey("user.id", **CASCADE))
     condition_name = Column(String)
     conditions = Column(JSON)
-    is_active = Column(Boolean)
     pipeline_id = Column(ForeignKey("pipeline.id", **CASCADE))
 
 

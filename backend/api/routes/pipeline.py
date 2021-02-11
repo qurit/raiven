@@ -22,9 +22,9 @@ def get_conditions(db: Session = Depends(session)):
 
 
 @router.post("/condition", response_model=schemas.PipelineCondition)
-def create_condition(condition: schemas.PipelineConditionCreate, db: Session = Depends(session)):
+def create_condition(condition: schemas.PipelineConditionCreate, user: User = Depends(token_auth), db: Session = Depends(session)):
     new_condition = PipelineCondition(
-        condition_name=condition.condition_name, conditions=condition.conditions, is_active=condition.is_active, pipeline_id=condition.pipeline)
+        condition_name=condition.condition_name, conditions=condition.conditions, pipeline_id=condition.pipeline, user_id=user.id)
     new_condition.save(db)
     return new_condition
 

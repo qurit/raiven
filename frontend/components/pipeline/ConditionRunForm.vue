@@ -15,13 +15,6 @@
             Automatically send to Pipeline:
           </v-card-title>
           <v-spacer />
-          <v-checkbox
-            v-model="isActive"
-            label="Active"
-            false-value="false"
-            true-value="true"
-            class="pr-8"
-          />
         </v-row>
         <v-select
           v-model="pipelineId"
@@ -124,7 +117,6 @@ export default {
   data() {
     return {
       pipelineId: '',
-      isActive: false,
       conditionName: '',
       types: ['Node', 'Patient', 'Study', 'Series'],
       subTypes: [],
@@ -169,7 +161,6 @@ export default {
     submit() {
       const payload = {}
       payload['pipeline'] = this.pipelineId
-      payload['isActive'] = this.isActive
       payload['conditionName'] = this.conditionName
       payload['conditions'] = {}
 
@@ -190,7 +181,6 @@ export default {
       this.currentConditions = []
       this.newConditionIdentifier = null
       this.newConditionType = null
-      this.isActive = false
       this.conditionName = null
       this.pipelineId = null
     }
