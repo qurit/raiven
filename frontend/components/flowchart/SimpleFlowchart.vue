@@ -28,6 +28,7 @@
       @nodeSelected="nodeSelected(node.id, $event)"
       @deleteNode="deleteNode(node.id)"
       @showDestinationForm="destinationDialog = true"
+      @showConditionBuilder="conditionDialog = true"
     />
 
 <!-- DestinationDialog -->
@@ -39,6 +40,20 @@
         @close="destinationDialog = false"
       />
     </v-expand-transition>
+
+<!-- ConditionsDialog -->
+    <v-expand-transition>
+      <ConditionBuilder
+        v-if="conditionDialog"
+        class="ma-2"
+        style="position: absolute; z-index: 1000; bottom: 0;"
+        @close="conditionDialog = false"
+      >
+        <template slot="actions">
+          <v-spacer /><v-btn color="primary accent--text" @click="conditionDialog = false" rounded>Close</v-btn>
+        </template>
+      </ConditionBuilder>
+    </v-expand-transition>
   </div>
 </template>
 
@@ -48,10 +63,11 @@ import FlowchartNode from './FlowchartNode.vue'
 import OutputDestinationForm from './OutputDestinationForm.vue'
 import { getMousePosition } from './position'
 import { generic_put } from '~/api'
+import ConditionBuilder from "@/components/conditions/ConditionBuilder";
 
 export default {
   name: 'VueFlowchart',
-  components: { FlowchartLink, FlowchartNode, OutputDestinationForm },
+  components: {ConditionBuilder, FlowchartLink, FlowchartNode, OutputDestinationForm },
   props: {
     scene: {
       type: Object,
@@ -82,6 +98,7 @@ export default {
   },
   data: () => ({
     destinationDialog: false,
+    conditionDialog: false,
     savedNodes: [],
     savedLinks: [],
     action: {

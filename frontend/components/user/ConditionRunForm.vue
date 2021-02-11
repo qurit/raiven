@@ -1,84 +1,24 @@
 <template>
   <v-card class="overflow-x-hidden">
-    <v-row>
-      <v-col cols="12">
-        <v-text-field
-          label="Condition Name"
-          v-model="conditionName"
-          :rules="[v => !!v || 'A name is required']"
-          required
-          class="ma-2"
-        >
-        </v-text-field>
-        <v-row>
-          <v-card-title class="ml-2">
-            Automatically send to Pipeline:
-          </v-card-title>
-          <v-spacer />
-          <v-checkbox
-            v-model="isActive"
-            label="Active"
-            false-value="false"
-            true-value="true"
-            class="pr-8"
+    <v-card-title>Add a Condition</v-card-title>
+    <v-card-subtitle>Start a pipeline when only a specific series has been received</v-card-subtitle>
+    <v-card-text>
+      <v-row>
+        <v-col>
+          <v-select
+            v-model="pipelineId"
+            :items="pipelines"
+            item-text="name"
+            item-value="id"
+            label="Choose a pipeline"
+            class="mx-2"
+            solo
+            flat
           />
-        </v-row>
-        <v-select
-          v-model="pipelineId"
-          :items="pipelines"
-          item-text="name"
-          item-value="id"
-          label="Choose a pipeline"
-          class="mx-2"
-          solo
-          flat
-        />
-        <v-card-title>
-          When these DICOM series have been received:
-        </v-card-title>
-        <v-row align="center" class="mx-2">
-          <v-col cols="5">
-            <v-select label="Type" :items="types" v-model="newConditionType" />
-          </v-col>
-          <v-col cols="6">
-            <v-text-field label="Idenfier" v-model="newConditionIdentifier" />
-          </v-col>
-          <v-col cols="1">
-            <v-icon
-              @click="addCondition"
-              color="primary"
-              :disabled="!newConditionType || !newConditionIdentifier"
-              >mdi-plus</v-icon
-            >
-          </v-col>
-        </v-row>
-        <v-row
-          v-for="(currentCondition, index) in currentConditions"
-          class="mx-2"
-          align="center"
-        >
-          <v-col cols="5">
-            <v-text-field
-              disabled
-              label="Type"
-              v-model="currentCondition.type"
-            />
-          </v-col>
-          <v-col cols="6">
-            <v-text-field
-              disabled
-              label="Identifier"
-              v-model="currentCondition.identifier"
-            />
-          </v-col>
-          <v-col cols="1">
-            <v-icon @click="removeCondition(index)" color="cancel"
-              >mdi-delete</v-icon
-            >
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
+        </v-col>
+      </v-row>
+    </v-card-text>
+
     <v-row justify="center" align="center">
       <v-btn
         text
@@ -97,6 +37,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import {toPropFormat} from "@/utilities/propHelpers";
 
 export default {
   data() {
@@ -104,6 +45,7 @@ export default {
       pipelineId: '',
       isActive: false,
       conditionName: '',
+      textFieldAttrs: toPropFormat(['solo', 'single-line', 'hide-details', 'dense', 'flat']),
       types: ['Node', 'Patient', 'Study', 'Series'],
       newConditionIdentifier: '',
       newConditionType: '',

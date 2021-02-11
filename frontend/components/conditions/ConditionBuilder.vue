@@ -1,6 +1,6 @@
 
 <template>
-  <v-card flat outlined width="1000">
+  <v-card flat>
     <v-sheet flat tile color="primary accent--text" >
       <v-row no-gutters align="center" class="pa-2">
         Condition Builder
@@ -28,7 +28,6 @@
     <v-card-actions>
       <slot name="actions" />
     </v-card-actions>
-    {{ query }}
   </v-card>
 </template>
 
