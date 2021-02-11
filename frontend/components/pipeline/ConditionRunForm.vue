@@ -141,9 +141,6 @@ export default {
       this.newConditionType = null
       this.newConditionIdentifier = null
       this.newCondtionSubtype = null
-
-      const test = { type, subType, identifier }
-      console.log(test)
     },
     removeCondition(index) {
       this.currentConditions.splice(index, 1)

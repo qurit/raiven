@@ -33,12 +33,20 @@
       <template v-slot:item.is_shared="{ item }">
         <v-simple-checkbox :value="item.is_shared" disabled />
       </template>
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:item.add_conditions="{ item }">
+        <v-icon medium @click.stop="conditionRunForm = true" color="info">
+          mdi-send
+        </v-icon>
+      </template>
+      <template v-slot:item.delete_pipeline="{ item }">
         <v-icon medium @click.stop="deletePipeline(item.id)" color="cancel">
           mdi-delete
         </v-icon>
       </template>
     </v-data-table>
+    <v-dialog v-model="conditionRunForm" max-width="900px" min-height="600px">
+      <ConditionRunForm @closeDialog="conditionRunForm = false" />
+    </v-dialog>
     <v-dialog v-model="addPipelineDialog" max-width="600px">
       <AddPipelineForm @closeDialog="addPipelineForm = false" />
     </v-dialog>
@@ -68,26 +76,33 @@
 </template>
 
 <script>
-import { AddPipelineForm } from '~/components/pipeline'
+import { AddPipelineForm, ConditionRunForm } from '~/components/pipeline'
 import { mapState } from 'vuex'
 
 export default {
   components: {
-    AddPipelineForm
+    AddPipelineForm,
+    ConditionRunForm
   },
   data: function() {
     return {
       addPipelineDialog: false,
       confirmDeleteDialog: false,
       deletePipelineId: null,
-      dialog: false,
+      conditionRunForm: false,
       headers: [
         { text: 'Pipeline Name', value: 'name' },
         { text: 'AE Title', value: 'ae_title' },
         { text: 'Shared', value: 'is_shared', align: 'center' },
         {
+          text: 'Add Conditions',
+          value: 'add_conditions',
+          sortable: false,
+          align: 'center'
+        },
+        {
           text: 'Delete',
-          value: 'actions',
+          value: 'delete_pipeline',
           sortable: false,
           align: 'center'
         }
@@ -98,6 +113,9 @@ export default {
   methods: {
     viewPipeline(pipeline) {
       this.$router.push({ path: `/pipeline/${pipeline.id}` })
+    },
+    openConditionForm() {
+      console.log('clicked')
     },
     async confirmDeletePipeline() {
       try {

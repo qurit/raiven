@@ -6,15 +6,23 @@
     <v-col sm="12" md="5">
       <SharedPipelineList />
     </v-col>
+    <v-col sm="12" md="7">
+      <PipelineConditions />
+    </v-col>
   </v-row>
 </template>
 
 <script>
-import { PipelineList, SharedPipelineList } from '~/components/pipeline'
+import {
+  PipelineList,
+  SharedPipelineList,
+  PipelineConditions
+} from '~/components/pipeline'
 export default {
   components: {
     PipelineList,
-    SharedPipelineList
+    SharedPipelineList,
+    PipelineConditions
   }
 }
 </script>
