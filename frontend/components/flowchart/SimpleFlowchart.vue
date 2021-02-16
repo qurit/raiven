@@ -44,6 +44,7 @@
 <!-- ConditionsDialog -->
     <v-dialog v-model="conditionDialog" width="700px" style="overflow-x: hidden !important">
       <ConditionBuilder
+        v-if="conditionDialog"
         :node="selectedNode"
         @input="setConditions"
       >
@@ -322,7 +323,6 @@ export default {
       var nodeArray = []
       var linkArray = []
       this.savedNodes.forEach(node => {
-        console.log(node)
         const newPipelineNode = {
           node_id: node.id,
           container_id: node.container_id,

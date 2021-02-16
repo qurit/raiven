@@ -1,6 +1,6 @@
 <template>
   <v-hover v-slot:default="{ hover }">
-    <v-card class="pa-2" outlined flat color="primary">
+    <v-card class="pa-2" flat color="primary" elevation="0">
       <v-row no-gutters justify="center" align="center">
         <v-col>
           <v-select v-model="match" :items="value.matchTypes" v-bind="styleAttrs"  @change="update" />
@@ -34,25 +34,18 @@ export default {
   props: {
     value: null,
   },
-  watch: {
-    value(val) {
-      if (!val) {
-        this.cmp = null
-        this.item = null
-      } else {
-        this.match = val.cmp
-        this.match = val.value
-      }
-    }
-  },
   data: () => ({
     match: null,
-    item: null,
     attrs: undefined,
     selected: undefined,
     styleAttrs: {...toPropFormat(['solo', 'hide-details', 'flat', 'return-object'])}
   }),
   created() {
+    if (this.value) {
+      this.selected = this.value.values
+      this.match = this.value.match
+    }
+
     this.attrs = {
       "items": (typeof this.value.items === 'function') ? this.value.items() : this.value.items,
       "class": 'mx-2',

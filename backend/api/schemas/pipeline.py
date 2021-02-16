@@ -31,11 +31,14 @@ class PipelineJobError(BaseORMModel):
     stderr: str
 
 
-class PipelineConditionCreate(BaseModel):
-    condition_name: str
-    conditions: dict
-    is_active: bool
-    pipeline: int
+class PipelineNodeConditionCreate(BaseModel):
+    match: str = 'All'
+    tag: str
+    values: List[str]
+
+
+class PipelineNodeCondition(PipelineNodeConditionCreate, BaseORMModel):
+    pipeline_node_id: int
 
 
 class PipelineNodeCreate(BaseModel):
@@ -46,6 +49,7 @@ class PipelineNodeCreate(BaseModel):
     container_is_input: bool
     container_is_output: bool
     dicom_node_id: Optional[int]
+    conditions: Optional[List[PipelineNodeConditionCreate]] = []
 
 
 class PipelineNode(BaseORMModel):
@@ -59,6 +63,7 @@ class PipelineNode(BaseORMModel):
 
     container: Container
     destination: Optional[DicomNode]
+    conditions: Optional[List[PipelineNodeCondition]] = []
 
 
 class PipelineLinkCreate(BaseModel):
