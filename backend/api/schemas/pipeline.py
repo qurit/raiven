@@ -51,6 +51,13 @@ class PipelineNodeCreate(BaseModel):
     dicom_node_id: Optional[int]
     conditions: Optional[List[PipelineNodeConditionCreate]] = []
 
+    @root_validator
+    def check_has_dicom_node(cls, values):
+        if values.get('container_is_input') or values.get('container_is_input'):
+            assert values.get('dicom_node_id'), "Node missing a destination"
+
+        return values
+
 
 class PipelineNode(BaseORMModel):
     pipeline_id: int
