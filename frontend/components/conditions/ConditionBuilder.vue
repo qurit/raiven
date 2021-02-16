@@ -59,11 +59,11 @@ export default {
     addRule() {
       const rule = Object.assign({}, this.selectedRule)
       this.query.push(rule)
-      this.value.push({ tag: rule.tag, match: undefined, value: null })
+      this.value.push({ tag: rule.tag, match: undefined, values: null })
       this.$emit('input', this.value)
     },
     updateRule(i) {
-      this.value.splice(i, 1, { tag: this.query[i].tag, match: this.query[i].match, value: this.query[i].value })
+      this.value.splice(i, 1, { tag: this.query[i].tag, match: this.query[i].match, values: this.query[i].values })
       this.$emit('input', this.value)
     },
     deleteRule(i) {

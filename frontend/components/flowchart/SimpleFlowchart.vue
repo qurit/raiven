@@ -322,13 +322,15 @@ export default {
       var nodeArray = []
       var linkArray = []
       this.savedNodes.forEach(node => {
+        console.log(node)
         const newPipelineNode = {
           node_id: node.id,
           container_id: node.container_id,
           x: node.x,
           y: node.y,
           container_is_input: node.container_is_input,
-          container_is_output: node.container_is_output
+          container_is_output: node.container_is_output,
+          conditions: node.conditions
         }
         // if there is a node with a destination, then save the destination as well
         this.pipelineNodeDestinations.forEach(dest => {

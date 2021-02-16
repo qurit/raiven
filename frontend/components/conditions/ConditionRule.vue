@@ -10,7 +10,7 @@
           v-if="value.type.toLowerCase() === 'select'"
           v-model="selected"
           v-bind="attrs"
-                    @change="update"
+          @change="update"
         />
         <v-combobox
           v-else-if="value.type.toLowerCase() === 'combobox'"
@@ -66,7 +66,7 @@ export default {
   methods: {
     update() {
       this.value.match = this.match
-      this.value.value = this.selected
+      this.value.values = this.selected
       this.$emit('input', this.value)
     }
   }

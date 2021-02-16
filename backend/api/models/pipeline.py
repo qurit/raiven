@@ -16,11 +16,9 @@ class Pipeline(Base):
     ae_title = Column(String, unique=True)
     is_shared = Column(Boolean, default=False)
 
-    runs = relationship("PipelineRun", backref="pipeline",
-                        passive_deletes=True)
+    runs = relationship("PipelineRun", backref="pipeline", passive_deletes=True)
     nodes = relationship("PipelineNode", backref="pipeline")
     links = relationship("PipelineLink", backref="pipeline")
-    conditions = relationship("PipelineCondition", backref="pipeline")
 
     # TODO: This query can be optimized by joins
     def get_starting_nodes(self):
@@ -34,11 +32,20 @@ class Pipeline(Base):
         return graph
 
 
-class PipelineCondition(Base):
-    condition_name = Column(String)
-    conditions = Column(JSON)
-    is_active = Column(Boolean)
-    pipeline_id = Column(ForeignKey("pipeline.id", **CASCADE))
+
+
+
+class PipelineStorageBucket(PathMixin, Base):
+    pipeline_id = Column(ForeignKey("pipeline.id"))
+    dicom_node_id = Column(ForeignKey("dicom_node.id"))
+
+    items = relationship("PipelineStorageBucketItem")
+
+
+class PipelineStorageBucketItem(Base):
+    pipeline_storage_bucket_id = Column(ForeignKey("pipeline_storage_bucket.id"))
+    key = Column(String)
+    values = Column(ARRAY(String))
 
 
 class PipelineNode(Base):
@@ -55,6 +62,7 @@ class PipelineNode(Base):
     next_links = relationship('PipelineLink', foreign_keys='PipelineLink.from_node_id')
     previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.to_node_id')
     jobs = relationship('PipelineJob', backref='node')
+    conditions = relationship("PipelineNodeCondition", backref="node")
 
     def is_root_node(self):
         return not len(self.previous_links)
@@ -67,6 +75,13 @@ class PipelineNode(Base):
 
     def __repr__(self, **kwargs) -> str:
         return super().__repr__(root=self.is_root_node(), leaf=self.is_leaf_node(), **kwargs)
+
+
+class PipelineNodeCondition(Base):
+    pipeline_node_id = Column(ForeignKey("pipeline_node.id", **CASCADE))
+    tag = Column(String)
+    match = Column(String)
+    values = Column(ARRAY(String))
 
 
 class PipelineLink(Base):
