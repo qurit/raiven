@@ -1,44 +1,45 @@
 
 <template>
-  <v-card flat>
-    <v-sheet flat tile color="primary accent--text" >
-      <v-row no-gutters align="center" class="pa-2">
+  <v-card flat width="700" v-if="node">
+    <v-toolbar flat tile color="primary accent--text" dense>
         Condition Builder
         <v-spacer />
         <v-select :items="rules" v-model="selectedRule" item-text="tag" return-object dense solo single-line hide-details flat style="max-width: 200px" />
         <v-btn @click="addRule" :disabled="!selectedRule" icon dark class="ml-2">
           <v-icon v-text="'mdi-plus'" />
         </v-btn>
-      </v-row>
-    </v-sheet>
+    </v-toolbar>
+    <v-system-bar lights-out>
+      Setting Rules for {{ node.type.toLowerCase() }}{{ node.destination ? ' going to ' + node.destination.title : '' }}</v-system-bar>
     <v-card-text>
-      <transition-group type="transition" :name="!drag ? 'flip-list' : null">
-        <v-list-item :key="i" v-for="(rule, i) in query" no-gutters class="py-1">
-          <ConditionRule
-            v-model="query[i]"
-            :items="rule.items"
-            :comparators="rule.comparators"
-            :key="rule.id"
-            @delete="deleteRule(i)"
-            @input="updateRule(i)"
-          />
-        </v-list-item>
-      </transition-group>
+      <v-list-item :key="i" v-for="(rule, i) in query" no-gutters class="py-1">
+        <ConditionRule
+          v-model="query[i]"
+          :items="rule.items"
+          :comparators="rule.comparators"
+          :key="rule.id"
+          @delete="deleteRule(i)"
+          @input="updateRule(i)"
+        />
+      </v-list-item>
     </v-card-text>
     <v-card-actions>
-      <slot name="actions" />
+      <slot name="actions"/>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
 import ConditionRule from './ConditionRule'
 import { rules } from "./rules"
 export default {
   name: 'ConditionBuilder',
   components: { ConditionRule },
   props: {
+    node: {
+      type: Object,
+      default: () => {}
+    },
     value: {
       type: Array,
       default: () => []
@@ -63,25 +64,12 @@ export default {
     },
     updateRule(i) {
       this.value.splice(i, 1, { tag: this.query[i].tag, match: this.query[i].match, value: this.query[i].value })
-
       this.$emit('input', this.value)
     },
     deleteRule(i) {
       this.query.splice(i, 1)
       this.value.splice(i, 1)
       this.$emit('input', this.value)
-    },
-    moveRule({ moved: { oldIndex, newIndex } }) {
-      this.value.splice(newIndex, 0, this.value.splice(oldIndex, 1)[0])
-      this.$emit('input', this.value)
-    }
-  },
-  computed: {
-    dragOptions() {
-      return {
-        animation: 200,
-        ghost: 'hidden-drag-ghost-list'
-      };
     }
   }
 }
