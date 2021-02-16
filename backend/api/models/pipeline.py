@@ -32,16 +32,16 @@ class Pipeline(Base):
         return graph
 
 
-class PipelineStorageBucket(PathMixin, Base):
-    pipeline_id = Column(ForeignKey("pipeline.id"))
+class PipelineNodeStorageBucket(PathMixin, Base):
+    pipeline_node_id = Column(ForeignKey("pipeline_node.id"))
     dicom_node_id = Column(ForeignKey("dicom_node.id"))
 
-    items = relationship("PipelineStorageBucketItem")
+    items = relationship("PipelineNodeStorageBucketItem")
 
 
-class PipelineStorageBucketItem(Base):
-    pipeline_storage_bucket_id = Column(ForeignKey("pipeline_storage_bucket.id"))
-    key = Column(String)
+class PipelineNodeStorageBucketItem(Base):
+    pipeline_node_storage_bucket_id = Column(ForeignKey("pipeline_node_storage_bucket.id"))
+    tag = Column(String)
     values = Column(ARRAY(String))
 
 
