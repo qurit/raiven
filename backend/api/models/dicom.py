@@ -3,6 +3,7 @@ import os
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
+from api import config
 from . import Base, PathMixin, NestedPathMixin, CASCADE
 
 
@@ -21,6 +22,14 @@ class DicomNode(PathMixin, Base):
     __table_args__ = (
         UniqueConstraint('title', 'host', 'port', 'user_id', name='_node_uc'),
     )
+
+    @property
+    def is_rts(self):
+        return self.host == config._RTS_HOST and self.port == config._RTS_PORT
+
+    @staticmethod
+    def compare(a, b) -> bool:
+        return a.host == b.host and a.port == b.port and a.title == b.title
 
 
 class DicomPatient(NestedPathMixin, Base):

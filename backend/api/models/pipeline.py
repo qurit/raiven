@@ -1,6 +1,7 @@
 import pathlib
 import os
 from datetime import datetime
+from typing import List
 
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
@@ -20,7 +21,6 @@ class Pipeline(Base):
     nodes = relationship("PipelineNode", backref="pipeline")
     links = relationship("PipelineLink", backref="pipeline")
 
-    # TODO: This query can be optimized by joins
     def get_starting_nodes(self):
         return [n for n in self.nodes if n.is_root_node()]
 
@@ -30,9 +30,6 @@ class Pipeline(Base):
         graph.add_edges_from([(e.from_node_id, e.to_node_id) for e in self.links])
 
         return graph
-
-
-
 
 
 class PipelineStorageBucket(PathMixin, Base):

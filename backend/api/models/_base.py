@@ -72,6 +72,8 @@ class NestedPathMixin(object):
         if not os.path.exists(path := self.get_abs_path()):
             os.makedirs(path)
 
+        return self
+
     def delete(self, *args, **kwargs):
         """ Will Delete a new directory upon completion """
 
@@ -121,6 +123,8 @@ class IOPathMixin(PathMixin):
             self.input_path = (rel_path / self._INPUT_DIRNAME).as_posix()
             self.output_path = (rel_path / self._OUTPUT_DIRNAME).as_posix()
             super().save(*args, **kwargs)
+
+        return self
 
     def get_abs_path(self, subdir: str = None) -> str:
         if subdir == 'input':
