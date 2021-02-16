@@ -1,6 +1,6 @@
 <template>
   <v-card elevation="6">
-    <line-chart :chart-data="dataCollection" :options="options"></line-chart>
+    <line-chart :chart-data="dataCollection" :options="options" />
   </v-card>
 </template>
 

@@ -193,7 +193,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .poll-name {
   overflow: hidden;
@@ -207,7 +206,7 @@ export default {
   position: absolute;
   box-sizing: border-box;
   z-index: 10;
-  opacity: 0.9;
+  opacity: 0.95;
   cursor: move;
   transform-origin: top left;
 
