@@ -7,7 +7,9 @@ from api.models import utils
 from api.models.dicom import DicomNode
 from api.models.pipeline import Pipeline, PipelineRun
 from api.models.user import User
+
 from ._tasks import build, run, test, ingest
+from .conditions import PipelineConditionManager
 
 
 def run_test_task():
@@ -143,8 +145,25 @@ class DicomIngestController:
                 initiator.save(db)
 
             if pipeline:
-                print("Running folder through pipeline: '{}'".format(pipeline.ae_title))
-                return PipelineController.run_pipeline_on_folder(db, pipeline.id, self.folder, initiator.id)
+                conditions_manager = PipelineConditionManager(pipeline, initiator, db)
+
+                # If the pipeline has no conditions
+                if not conditions_manager.has_conditions():
+                    print("Running folder through pipeline: '{}'".format(pipeline.ae_title))
+                    return PipelineController.run_pipeline_on_folder(db, pipeline.id, self.folder, initiator.id)
+
+                else:
+                    # Add to a temp folder
+                    conditions_manager.add_series_to_storage_bucket(self.folder)
+
+                    # Run if all the conditions are satisfied
+                    if conditions_manager.check_conditions():
+
+                        folder = conditions_manager.storage_bucket.get_abs_path()
+                        return PipelineController.run_pipeline_on_folder(db, pipeline.id, pathlib.Path(folder), initiator.id)
+                    else:
+                        print("Waiting for more files before running pipeline: '{}'".format(pipeline.ae_title))
+
             else:
                 print(ae_title)
                 print("ERROR: Attempted to ingest to non-existant pipeline")

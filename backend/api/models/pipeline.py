@@ -42,7 +42,9 @@ class PipelineNodeStorageBucket(PathMixin, Base):
 class PipelineNodeStorageBucketItem(Base):
     pipeline_node_storage_bucket_id = Column(ForeignKey("pipeline_node_storage_bucket.id"))
     tag = Column(String)
-    values = Column(ARRAY(String))
+
+    if 'sqlite' not in config.SQLALCHEMY_DATABASE_URI.lower():
+        values = Column(ARRAY(String))
 
 
 class PipelineNode(Base):
@@ -78,7 +80,9 @@ class PipelineNodeCondition(Base):
     pipeline_node_id = Column(ForeignKey("pipeline_node.id", **CASCADE))
     tag = Column(String)
     match = Column(String)
-    values = Column(ARRAY(String))
+
+    if 'sqlite' not in config.SQLALCHEMY_DATABASE_URI.lower():
+        values = Column(ARRAY(String))
 
 
 class PipelineLink(Base):

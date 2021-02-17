@@ -51,7 +51,7 @@ class PipelineConditionManager(DatabaseService):
         if bucket := PipelineNodeStorageBucket.query(self._db).filter_by(**kwargs).first():
             self._bucket = bucket
         else:
-            self._bucket = PipelineNodeStorageBucket(**kwargs).save(db)
+            self._bucket = PipelineNodeStorageBucket(**kwargs).save(self._db)
 
         return self._bucket
 
@@ -70,9 +70,8 @@ class PipelineConditionManager(DatabaseService):
         ))
 
         if value not in bucket_item.values:
-            print(value)
             bucket_item.values.append(value)
-            bucket_item.save(db)
+            bucket_item.save(self._db)
 
     def has_conditions(self) -> bool:
         return bool(self.starting_node and self.starting_node.conditions)
@@ -83,8 +82,7 @@ class PipelineConditionManager(DatabaseService):
 
         file = next(folder.iterdir())
         assert file.is_file()
-        ds = dcmread(file)
-        print(ds.SeriesInstanceUID)
+        ds = dcmread(str(file))
 
         [self._update_bucket_item(c.tag, ds.get(c.tag)) for c in self.starting_node.conditions]
 
@@ -108,12 +106,3 @@ class PipelineConditionManager(DatabaseService):
                 return False
 
         return True
-
-
-if __name__ == '__main__':
-    with worker_session() as db:
-        pipeline = Pipeline.query(db).first()
-        node = DicomNode.query(db).first()
-
-        mgr = PipelineConditionManager(pipeline, node, db)
-        print(mgr.check_conditions())

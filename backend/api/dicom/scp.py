@@ -6,8 +6,9 @@ from pynetdicom import AE, evt, debug_logger
 from pynetdicom.presentation import AllStoragePresentationContexts
 from pynetdicom.sop_class import VerificationSOPClass
 
-from api import config
+from api import config, worker_session
 from api.pipelining import DicomIngestController
+from api.models.dicom import ApplicationEntity
 
 # debug_logger()
 
@@ -36,6 +37,13 @@ def get_ae_titles(event):
 
 def handle_association_request(event):
     requestor_ae_title, called_ae_title = get_ae_titles(event)
+
+    with worker_session() as db:
+        ApplicationEntity(
+            title=requestor_ae_title,
+            host=event.assoc.requestor.address,
+            implementation_version_name=encode_aet(event.assoc.requestor.implementation_version_name)
+        ).save(db)
 
     # TODO: Not in list of allowed connections and allow push to pipe
     if not is_valid_ae_title(called_ae_title):
