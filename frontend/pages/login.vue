@@ -3,7 +3,7 @@
     <v-col cols="12">
        <v-img
         class="mx-auto"
-        :src="require('@/static/raiven-logo.svg')"
+        :src="require('@/static/logo.svg')"
         height="150"
         width="150"
       />
