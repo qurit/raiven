@@ -146,5 +146,5 @@ def post_container_tags(container_id: int, tags: container.ContainerTags, db: Se
 
 
 @router.get("/{container}/tags")
-def get_container_tags(container: int, db: Session = Depends(session)):
-    return db.query(Tag).join(ContainerTags).filter(ContainerTags.container_id == container).all()
+def get_container_tags(container_id: int, db: Session = Depends(session)):
+    return db.query(Tag).join(ContainerTags).filter(ContainerTags.container_id == container_id).all()
