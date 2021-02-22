@@ -23,8 +23,8 @@
           label="Description"
         ></v-textarea>
       </v-col>
-      <v-row>
-        <v-col md="8" class="ml-3">
+      <v-row align="center">
+        <v-col md="7" class="ml-3">
           <v-combobox
             v-model="container.containerTags"
             :items="items"
@@ -38,22 +38,35 @@
           >
           </v-combobox>
         </v-col>
-        <v-col md="2">
+        <v-col md="4">
+          <v-text-field
+            hint="Add a common Tag"
+            persistent-hint
+            class="mr-n16 mb-n2"
+            v-model="newTag"
+            append-outer-icon="mdi-plus"
+            @click:append-outer="addTag"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col md="9">
+          <v-file-input
+            v-model="file"
+            :label="container.filename"
+            @change="updateDockerFile"
+            prepend-icon="mdi-docker"
+          />
+        </v-col>
+        <v-col md="3">
           <v-checkbox
             v-model="container.containerIsShared"
             label="Shared"
             false-value="false"
             true-value="true"
-            class="mx-10"
           />
         </v-col>
       </v-row>
-      <v-file-input
-        v-model="file"
-        :label="container.filename"
-        @change="updateDockerFile"
-        prepend-icon="mdi-docker"
-      />
       <v-row justify="center">
         <v-btn
           :disabled="this.isDisabled"
@@ -83,6 +96,7 @@ export default {
   data() {
     return {
       file: '',
+      newTag: '',
       container: {
         containerId: '',
         filename: '',
@@ -135,6 +149,14 @@ export default {
     },
     updateDockerFile(file) {
       this.file = file
+    },
+    async addTag() {
+      const payload = {
+        tag_name: this.newTag
+      }
+      await this.$store.dispatch('tags/addTag', payload).then(() => {
+        this.newTag = ''
+      })
     },
     async submit() {
       const tags = this.container.containerTags.toString()
