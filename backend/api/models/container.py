@@ -49,3 +49,12 @@ class ContainerBuild(TimestampMixin, Base):
 class ContainerBuildError(Base):
     container_build_id = Column(ForeignKey("container_build.id", ondelete="CASCADE"))
     stderr = Column(String)
+
+
+class Tag(Base):
+    tag_name = Column(String)
+
+
+class ContainerTags(Base):
+    container_id = Column(ForeignKey("container.id", **CASCADE))
+    tag_id = Column(ForeignKey("tag.id", **CASCADE))

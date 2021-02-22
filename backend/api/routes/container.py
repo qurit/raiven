@@ -8,13 +8,23 @@ from fastapi import APIRouter, Depends, File, Form
 from sqlalchemy.orm import Session
 
 from api import session, config
-from api.models.container import Container
+from api.models.container import Container, Tag, ContainerTags
 from api.schemas import container
 from api.pipelining import ContainerController
 from api.models.user import User
 from api.auth import token_auth
 
 router = APIRouter()
+
+
+@router.get("/tags")
+def get_tags(db: Session = Depends(session)):
+    return db.query(Tag).all()
+
+
+@router.get("/containertags")
+def get_container_tags(db: Session = Depends(session)):
+    return db.query(ContainerTags).all()
 
 
 @router.get("/stats", response_model=container.ContainerStats)
@@ -34,11 +44,10 @@ def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(s
 
 
 @router.post("/", response_model=container.Container)
-def create_container(
-        auto_build: bool = True,
-        file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
-        description: str = Form(None), is_input_container: bool = Form(...),
-        is_output_container: bool = Form(...), is_shared: bool = Form(...), user: User = Depends(token_auth), db: Session = Depends(session)):
+def create_container(auto_build: bool = True,
+                     file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
+                     description: str = Form(None), is_input_container: bool = Form(...),
+                     is_output_container: bool = Form(...), is_shared: bool = Form(...), user: User = Depends(token_auth), db: Session = Depends(session)):
 
     db_container = Container(
         user_id=user.id,
@@ -125,3 +134,12 @@ def update_container(
 def delete_container(container_id: int, db: Session = Depends(session)):
     """ Delete a container"""
     return db.query(Container).get(container_id).delete(db)
+
+
+@router.post("/{container_id}/tags")
+def post_container_tags(container_id: int, tags: container.ContainerTags, db: Session = Depends(session)):
+    print(container_id)
+    print(tags)
+    for tag in tags.tag_ids:
+        new_container_tag = ContainerTags(container_id=container_id, tag_id=tag)
+        new_container_tag.save(db)
