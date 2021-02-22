@@ -24,6 +24,17 @@
         ></v-textarea>
       </v-col>
       <v-row>
+        <v-combobox
+          v-model="container.containerTags"
+          :items="items"
+          label="Select a tag"
+          multiple
+          chips
+          item-text="tag_name"
+          item-value="tag_name"
+          :return-object="false"
+        >
+        </v-combobox>
         <v-checkbox
           v-model="container.containerIsInput"
           label="Input"
@@ -68,6 +79,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   props: {
     containerToEdit: {
@@ -87,12 +99,14 @@ export default {
         containerDescription: '',
         containerIsInput: false,
         containerIsOutput: false,
-        containerIsShared: false
+        containerIsShared: false,
+        containerTags: ''
       }
     }
   },
   created() {
     this.populate()
+    this.$store.dispatch('tags/fetchTags')
   },
   computed: {
     // disables button if no name or dockerfile for new container
@@ -100,6 +114,10 @@ export default {
       return !!this.containerToEdit
         ? false
         : !(this.container.containerName && this.file)
+    },
+    ...mapState('tags', ['tags']),
+    items() {
+      return this.$store.state.tags.tags
     }
   },
   methods: {
@@ -116,6 +134,7 @@ export default {
         this.container.containerIsInput = false
         this.container.containerIsOutput = false
         this.container.containerIsShared = false
+        this.container.containerTags = []
       }
     },
     readFile(file) {
@@ -130,12 +149,14 @@ export default {
       this.file = file
     },
     async submit() {
+      const tags = this.container.containerTags.toString()
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const formData = new FormData()
       formData.append('name', this.container?.containerName)
       formData.append('is_input_container', this.container.containerIsInput)
       formData.append('is_output_container', this.container.containerIsOutput)
       formData.append('is_shared', this.container.containerIsShared)
+      formData.append('tags', tags)
       if (this.file) {
         const f = await this.readFile(this.file)
         formData.append('file', new Blob([f]))

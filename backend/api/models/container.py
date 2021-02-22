@@ -17,7 +17,7 @@ class Container(PathMixin, Base):
     is_shared = Column(Boolean, default=False, nullable=False)
     description = Column(String)
     filename = Column(String)
-    tags = Column(ARRAY(String))
+    tags = Column(String)
 
     build = relationship('ContainerBuild', backref='container', uselist=False)
     user = relationship('User', backref='container', uselist=False)

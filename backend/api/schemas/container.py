@@ -16,7 +16,7 @@ class ContainerCreate(BaseModel):
     is_output_container: Optional[bool] = False
     is_shared: Optional[bool] = False
     filename: Optional[str] = None
-    tags: Optional[List[str]] = []
+    tags: Optional[str] = None
 
 
 class Container(ContainerCreate, BaseORMModel):
