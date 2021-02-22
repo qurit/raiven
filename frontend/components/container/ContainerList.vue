@@ -93,7 +93,8 @@ export default {
         containerName: '',
         containerDescription: '',
         containerIsInput: false,
-        containerIsOutput: false
+        containerIsOutput: false,
+        containerTags: ''
       },
       headers: [
         { text: 'Name', value: 'name', width: '1%' },
@@ -148,6 +149,7 @@ export default {
       this.container.containerIsOutput = containerToUpdate.is_output_container?.toString()
       this.container.containerIsShared = containerToUpdate.is_shared?.toString()
       this.container.filename = containerToUpdate.filename
+      this.container.containerTags = containerToUpdate.tags.split(',')
       this.dialog = true
     }
   },

@@ -24,38 +24,29 @@
         ></v-textarea>
       </v-col>
       <v-row>
-        <v-combobox
-          v-model="container.containerTags"
-          :items="items"
-          label="Select a tag"
-          multiple
-          chips
-          item-text="tag_name"
-          item-value="tag_name"
-          :return-object="false"
-        >
-        </v-combobox>
-        <v-checkbox
-          v-model="container.containerIsInput"
-          label="Input"
-          false-value="false"
-          true-value="true"
-          class="mx-10"
-        />
-        <v-checkbox
-          v-model="container.containerIsOutput"
-          label="Output"
-          false-value="false"
-          true-value="true"
-          class="mx-10"
-        />
-        <v-checkbox
-          v-model="container.containerIsShared"
-          label="Shared"
-          false-value="false"
-          true-value="true"
-          class="mx-10"
-        />
+        <v-col md="8" class="ml-3">
+          <v-combobox
+            v-model="container.containerTags"
+            :items="items"
+            label="Select tags"
+            multiple
+            chips
+            item-text="tag_name"
+            item-value="tag_name"
+            :return-object="false"
+            deletable-chips
+          >
+          </v-combobox>
+        </v-col>
+        <v-col md="2">
+          <v-checkbox
+            v-model="container.containerIsShared"
+            label="Shared"
+            false-value="false"
+            true-value="true"
+            class="mx-10"
+          />
+        </v-col>
       </v-row>
       <v-file-input
         v-model="file"
@@ -97,8 +88,6 @@ export default {
         filename: '',
         containerName: '',
         containerDescription: '',
-        containerIsInput: false,
-        containerIsOutput: false,
         containerIsShared: false,
         containerTags: ''
       }
@@ -124,6 +113,7 @@ export default {
     populate() {
       if (!!this.containerToEdit) {
         // getting the values for the existing container
+        console.log(this.containerToEdit)
         this.container = JSON.parse(JSON.stringify(this.containerToEdit))
       } else {
         // default values for adding a new container
@@ -131,8 +121,6 @@ export default {
         this.container.filename = ''
         this.container.containerName = ''
         this.container.containerDescription = ''
-        this.container.containerIsInput = false
-        this.container.containerIsOutput = false
         this.container.containerIsShared = false
         this.container.containerTags = []
       }
@@ -153,8 +141,8 @@ export default {
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const formData = new FormData()
       formData.append('name', this.container?.containerName)
-      formData.append('is_input_container', this.container.containerIsInput)
-      formData.append('is_output_container', this.container.containerIsOutput)
+      formData.append('is_input_container', false)
+      formData.append('is_output_container', false)
       formData.append('is_shared', this.container.containerIsShared)
       formData.append('tags', tags)
       if (this.file) {
