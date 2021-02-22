@@ -40,4 +40,3 @@ class ContainerTag(BaseModel):
 class Container(ContainerCreate, BaseORMModel):
     user_id: int
     user: User
-    tags: List[Tag]

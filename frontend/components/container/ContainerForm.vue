@@ -24,6 +24,18 @@
         ></v-textarea>
       </v-col>
       <v-row>
+        <v-combobox
+          v-model="container.tags"
+          :items="items"
+          label="Select a favorite activity or create a new one"
+          multiple
+          chips
+          item-text="tag_name"
+          item-value="tag_name"
+          :return-object="false"
+          :change="test"
+        >
+        </v-combobox>
         <v-checkbox
           v-model="container.containerIsInput"
           label="Input"
@@ -68,6 +80,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   props: {
     containerToEdit: {
@@ -93,6 +106,7 @@ export default {
   },
   created() {
     this.populate()
+    this.$store.dispatch('tags/fetchTags')
   },
   computed: {
     // disables button if no name or dockerfile for new container
@@ -100,6 +114,11 @@ export default {
       return !!this.containerToEdit
         ? false
         : !(this.container.containerName && this.file)
+    },
+    ...mapState('tags', ['tags']),
+    items() {
+      console.log(this.$store.state.tags)
+      return this.$store.state.tags.tags
     }
   },
   methods: {
@@ -130,6 +149,7 @@ export default {
       this.file = file
     },
     async submit() {
+      console.log(this.container.tags)
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const formData = new FormData()
       formData.append('name', this.container?.containerName)
@@ -159,6 +179,11 @@ export default {
             this.container.containerIsShared = false
           })
       }
+      const recentlyAddedContainer = this.$store.getters[
+        'containers/recentContainer'
+      ]
+      console.log(recentlyAddedContainer)
+
       this.$emit('closeDialog')
       this.$toaster.toastSuccess('Container saved!')
     }
