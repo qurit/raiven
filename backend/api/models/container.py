@@ -17,6 +17,7 @@ class Container(PathMixin, Base):
     is_shared = Column(Boolean, default=False, nullable=False)
     description = Column(String)
     filename = Column(String)
+    tags = Column(ARRAY(String))
 
     build = relationship('ContainerBuild', backref='container', uselist=False)
     user = relationship('User', backref='container', uselist=False)
@@ -49,3 +50,7 @@ class ContainerBuild(TimestampMixin, Base):
 class ContainerBuildError(Base):
     container_build_id = Column(ForeignKey("container_build.id", ondelete="CASCADE"))
     stderr = Column(String)
+
+
+class Tag(Base):
+    tag_name = Column(String)

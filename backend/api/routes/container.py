@@ -8,13 +8,25 @@ from fastapi import APIRouter, Depends, File, Form
 from sqlalchemy.orm import Session
 
 from api import session, config
-from api.models.container import Container
+from api.models.container import Container, Tag
 from api.schemas import container
 from api.pipelining import ContainerController
 from api.models.user import User
 from api.auth import token_auth
 
 router = APIRouter()
+
+
+@router.post("/tags")
+def post_tag(tags: container.Tag, db: Session = Depends(session)):
+    new_tag = Tag(tag_name=tags.tag_name)
+    new_tag.save(db)
+    return new_tag
+
+
+@router.get("/tags")
+def get_tags(db: Session = Depends(session)):
+    return db.query(Tag).all()
 
 
 @router.get("/stats", response_model=container.ContainerStats)
@@ -38,7 +50,7 @@ def create_container(
         auto_build: bool = True,
         file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
         description: str = Form(None), is_input_container: bool = Form(...),
-        is_output_container: bool = Form(...), is_shared: bool = Form(...), user: User = Depends(token_auth), db: Session = Depends(session)):
+        is_output_container: bool = Form(...), is_shared: bool = Form(...), tags: str = Form(...), user: User = Depends(token_auth), db: Session = Depends(session)):
 
     db_container = Container(
         user_id=user.id,
@@ -47,7 +59,8 @@ def create_container(
         is_input_container=is_input_container,
         is_output_container=is_output_container,
         is_shared=is_shared,
-        filename='Dockerfile')
+        filename='Dockerfile',
+        tags=tags)
     db_container.save(db)
 
     # TODO: fix this zip file check, tried zipfile.is_zipfile() but didn't work
