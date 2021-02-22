@@ -103,7 +103,7 @@ def get_container(container_id: int, db: Session = Depends(session)):
 @router.put("/{container_id}", response_model=container.Container)
 def update_container(
         container_id: int, file: bytes = File(None), name: str = Form(...), filename: str = Form(None),
-        description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...), is_shared: bool = Form(...),
+        description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...), is_shared: bool = Form(...), tags: str = Form(...),
         db: session = Depends(session)):
     """ Editing a container"""
     if file is not None:
@@ -120,7 +120,8 @@ def update_container(
             "is_output_container": is_output_container,
             "is_shared": is_shared,
             "dockerfile_path": os.path.join(container.get_path(), filename),
-            "filename": filename
+            "filename": filename,
+            "tags": tags
         })
         return db.query(Container).get(container_id)
     else:
@@ -129,7 +130,8 @@ def update_container(
             "description": description,
             "is_input_container": is_input_container,
             "is_output_container": is_output_container,
-            "is_shared": is_shared
+            "is_shared": is_shared,
+            "tags": tags
         })
         return db.query(Container).get(container_id)
 
