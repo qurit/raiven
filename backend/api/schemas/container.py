@@ -31,6 +31,9 @@ class Tag(BaseModel):
 
 class ContainerTag(BaseModel):
     # To associate the tags with the appropriate container
+    container_id: int
+    tag_id: int
+
     tags: List[Tag]
 
 

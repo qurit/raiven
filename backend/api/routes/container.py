@@ -143,3 +143,8 @@ def post_container_tags(container_id: int, tags: container.ContainerTags, db: Se
     for tag in tags.tag_ids:
         new_container_tag = ContainerTags(container_id=container_id, tag_id=tag)
         new_container_tag.save(db)
+
+
+@router.get("/{container}/tags")
+def get_container_tags(container: int, db: Session = Depends(session)):
+    return db.query(Tag).join(ContainerTags).filter(ContainerTags.container_id == container).all()
