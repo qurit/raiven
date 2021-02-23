@@ -26,6 +26,7 @@ def example_container():
             is_input_container=False,
             is_output_container=False,
             is_shared=False,
+            tags='tags',
             user=utils.get_test_user(db),
             db=db
         )
@@ -47,6 +48,7 @@ def malformed_container():
             is_input_container=False,
             is_output_container=False,
             is_shared=False,
+            tags='tags',
             user=utils.get_test_user(db),
             db=db
         )
