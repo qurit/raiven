@@ -14,7 +14,8 @@ def test_add_container(authorization_header, form_data: dict = None, user_id: in
             "filename": 'Dockerfile',
             "is_input_container": False,
             "is_output_container": False,
-            "is_shared": False
+            "is_shared": False,
+            "tags": 'Tags'
         }
 
     if not user_id:

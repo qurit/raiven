@@ -31,6 +31,7 @@ def create_and_test_container(db, file_path, **kwargs):
         is_input_container=kwargs.get('is_input_container', False),
         is_output_container=kwargs.get('is_output_container', False),
         is_shared=kwargs.get('is_shared', False),
+        tags=kwargs.get('tags', 'tags'),
         user=utils.get_test_user(db),
         db=db
     )
