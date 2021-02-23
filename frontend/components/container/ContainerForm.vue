@@ -127,7 +127,6 @@ export default {
     populate() {
       if (!!this.containerToEdit) {
         // getting the values for the existing container
-        console.log(this.containerToEdit)
         this.container = JSON.parse(JSON.stringify(this.containerToEdit))
       } else {
         // default values for adding a new container
