@@ -93,7 +93,7 @@ def test_create_pipeline_cyclic(authorization_header):
     }
 
     url = f'/pipeline/{pipeline["id"]}'
-    response = client.post(url, json=data, headers=authorization_header)
+    response = client.put(url, json=data, headers=authorization_header)
 
     assert response.status_code == 422
 
@@ -131,7 +131,7 @@ def test_create_pipeline_disconnected(authorization_header):
     }
 
     url = f'/pipeline/{pipeline["id"]}'
-    response = client.post(url, json=data, headers=authorization_header)
+    response = client.put(url, json=data, headers=authorization_header)
 
     assert response.status_code == 422
 
@@ -169,7 +169,7 @@ def test_duplicated_node_ids(authorization_header):
     }
 
     url = f'/pipeline/{pipeline["id"]}'
-    response = client.post(url, json=data, headers=authorization_header)
+    response = client.put(url, json=data, headers=authorization_header)
 
     assert response.status_code == 422
 
@@ -198,7 +198,7 @@ def test_create_pipeline_connected(authorization_header):
     }
 
     url = f'/pipeline/{pipeline["id"]}'
-    response = client.post(url, json=data, headers=authorization_header)
+    response = client.put(url, json=data, headers=authorization_header)
 
     assert response.status_code == 200
 

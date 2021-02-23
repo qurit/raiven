@@ -17,3 +17,5 @@ aio_pika
 alembic
 pytest
 networkx
+ldap3
+numpy

@@ -106,6 +106,7 @@ def update_container(
         description: str = Form(None), is_input_container: bool = Form(...), is_output_container: bool = Form(...), is_shared: bool = Form(...), tags: str = Form(...),
         db: session = Depends(session)):
     """ Editing a container"""
+
     if file is not None:
         container = db.query(Container).get(container_id)
         # remove previous file

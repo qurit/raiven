@@ -10,11 +10,14 @@ from . import HOST_PATH_TYPE, docker, dramatiq
 def _run_next_nodes(job: PipelineJob, run_id: int):
     for node in job.node.get_next_nodes():
 
-        # TODO: Clean this up variable naming
-        if node.container_is_output:
-            dicom_output_task.send_with_options(args=(run_id, node.id, job.id,))
-        else:
-            run_node_task.send_with_options(args=(run_id, node.id, job.id,))
+        try:
+            # TODO: Clean this up variable naming
+            if node.container_is_output:
+                dicom_output_task.send_with_options(args=(run_id, node.id, job.id))
+            else:
+                run_node_task.send_with_options(args=(run_id, node.id, job.id))
+        except Exception as e:
+            print(e)
 
 
 @dramatiq.actor(max_retries=0)
@@ -91,23 +94,38 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
     container.remove()
 
 
-@dramatiq.actor
-def dicom_output_task(run_id: int, node_id: int, previous_job_id: int):
-    with worker_session() as db:
-        job = PipelineJob(pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
-        job.save(db)
+@dramatiq.actor(max_retries=3)
+def dicom_output_task(run_id: int, node_id: int, previous_job_id: int = None):
+    try:
+        with worker_session() as db:
+            job = PipelineJob(pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
+            job.save(db)
 
-        if dest := job.node.destination:
-            prev: PipelineJob = PipelineJob.query(db).get(previous_job_id)
-            print(prev)
+            if dest := job.node.destination:
+                if not previous_job_id:
+                    prev: PipelineRun = db.query(PipelineRun).get(run_id)
+                    folder = prev.get_abs_input_path()
+                else:
+                    prev: PipelineJob = PipelineJob.query(db).get(previous_job_id)
+                    folder = prev.get_abs_output_path()
 
-            # Detach db first
-            send_dicom_folder(dest, prev.get_abs_output_path())
+                # Return to sender
+                if dest.host == config._RTS_HOST and dest.port == config._RTS_PORT:
+                    dest = job.run.initiator
 
-    with worker_session() as db:
-        job.status = 'exited'
-        job.save(db)
+                dest.detach(db)
+            else:
+                job.status = 'except'
+                job.exit_code = -1
+                job.save(db)
+                PipelineJobError(pipeline_job_id=job.id, stderr='No Destination for the pipeline').save(db)
 
+        # Long running task
+        send_dicom_folder(dest, folder)
 
-
-
+        with worker_session() as db:
+            job.status = 'exited'
+            job.exit_code = 0
+            job.save(db)
+    except Exception as e:
+        print(e)

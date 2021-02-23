@@ -1,13 +1,12 @@
 import pathlib
 import shutil
-from typing import Union
 
 from api import config
-from api.models import utils
-from api.models.pipeline import Pipeline, PipelineRun
 from api.database import worker_session
+from api.models import utils
+from api.models.dicom import DicomNode
+from api.models.pipeline import Pipeline, PipelineRun
 from api.models.user import User
-
 from ._tasks import build, run, test, ingest
 
 
@@ -30,13 +29,17 @@ class PipelineController:
         pipeline_run.save(db)
         db.commit()
 
-        [run.run_node_task.send_with_options(args=(pipeline_run.id, n.id,), priority=priority) for n in
-         pipeline_run.pipeline.get_starting_nodes()]
+        for node in pipeline_run.pipeline.get_starting_nodes():
+            task = run.dicom_output_task if node.container_is_output else run.run_node_task
+            args = pipeline_run.id, node.id
+
+            task.send_with_options(args=args, priority=priority)
+
         return True
 
     @staticmethod
-    def run_pipeline_on_folder(db, pipeline_id: str, folder: pathlib.Path) -> bool:
-        pipeline_run = PipelineRun(pipeline_id=pipeline_id)
+    def run_pipeline_on_folder(db, pipeline_id: str, folder: pathlib.Path, initiator_dicom_node_id: int = None) -> bool:
+        pipeline_run = PipelineRun(pipeline_id=pipeline_id, initiator_id=initiator_dicom_node_id)
         pipeline_run.save(db)
 
         # Copy temp files to pipeline input and commit
@@ -64,6 +67,8 @@ class DicomIngestController:
 
     def __init__(self, folder: pathlib.Path, calling_aet: str, calling_host: str, calling_port: int, called_aet: str):
         if not any(folder.iterdir()):
+            shutil.rmtree(folder.resolve())
+
             print("INFO: Empty ingested folder")
             raise self.EmptyFolderException('An Ingest Folder Cannot Be Empty')
 
@@ -100,7 +105,7 @@ class DicomIngestController:
     def ingest_to_user(self):
         with worker_session() as db:
             # Get user id from username
-            username = self.called_aet.strip(config.USER_AE_PREFIX)
+            username = utils.strip_prefix(self.called_aet, config.USER_AE_PREFIX)
             query_user = db.query(User)\
                 .filter_by(username=username)\
                 .first()
@@ -117,15 +122,30 @@ class DicomIngestController:
 
     def ingest_through_pipeline(self) -> bool:
         with worker_session() as db:
-            ae_title = self.called_aet.strip(config.PIPELINE_AE_PREFIX)
+            ae_title = utils.strip_prefix(self.called_aet, config.PIPELINE_AE_PREFIX)
 
             pipeline = db.query(Pipeline)\
                 .filter_by(ae_title=ae_title)\
                 .first()
 
+            if not (initiator := db.query(DicomNode).filter_by(
+                title=self.calling_aet,
+                host=self.calling_host,
+                port=self.calling_port,
+            ).first()):
+
+                initiator = DicomNode(
+                    title=self.calling_aet,
+                    host=self.calling_host,
+                    port=self.calling_port,
+                )
+
+                initiator.save(db)
+
             if pipeline:
                 print("Running folder through pipeline: '{}'".format(pipeline.ae_title))
-                return PipelineController.run_pipeline_on_folder(db, pipeline.id, self.folder)
+                return PipelineController.run_pipeline_on_folder(db, pipeline.id, self.folder, initiator.id)
             else:
+                print(ae_title)
                 print("ERROR: Attempted to ingest to non-existant pipeline")
                 raise NotImplementedError

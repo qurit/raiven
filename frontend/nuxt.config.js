@@ -26,12 +26,13 @@ export default {
       }
     ]
   },
-  loading: { color: '#B15DFF' },
+  loading: { color: '#fdbb16' },
   buildModules: ['@nuxtjs/vuetify'],
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/auth',
     '@nuxtjs/dotenv',
+    '@nuxtjs/pwa',
     'nuxt-socket-io'
   ],
   io: {
@@ -106,6 +107,18 @@ export default {
       }
     }
   },
+
+  // PWA Settings
+  pwa: {
+    manifest: {
+      name: 'RAIVEN',
+      short_name: 'RAIVEN',
+      lang: 'en',
+      display: 'Standalone',
+      background_color: '33333d'
+    },
+  },
+
   watchers: {
     webpack: {
       poll: true
