@@ -1,17 +1,14 @@
 from pathlib import Path
 from shutil import copytree
-from typing import List
 
 from pydicom import dcmread
 
-from api import worker_session
 from api.models.dicom import DicomNode
-from api.models.pipeline import Pipeline, PipelineNodeStorageBucket, PipelineNodeStorageBucketItem, \
-    PipelineNodeCondition, PipelineNode
+from api.models.pipeline import *
 from api.services import DatabaseService
 
 
-class PipelineConditionManager(DatabaseService):
+class PipelineConditionService(DatabaseService):
     _bucket: PipelineNodeStorageBucket = None
     _bucket_items: dict = None
     _starting_node: PipelineNode = None
@@ -88,7 +85,12 @@ class PipelineConditionManager(DatabaseService):
 
         copytree(folder, self._bucket.get_abs_path(), dirs_exist_ok=True)
 
-    def check_conditions(self):
+    def are_conditions_met(self) -> bool:
+        """
+        Checks if the conditions to run a pipeline are satisfied
+        :return: True if conditions are met else False
+        """
+
         q = self._db.query(PipelineNodeStorageBucketItem, PipelineNodeCondition)\
             .join(PipelineNodeStorageBucket)\
             .filter(

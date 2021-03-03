@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
@@ -8,22 +7,16 @@ from api import config
 from . import Base, PathMixin, NestedPathMixin, CASCADE
 
 
-class ApplicationEntity(Base):
-    title = Column(String)
-    host = Column(String)
-    port = Column(Integer)
-    implementation_version_name = Column(String)
-
-    first_connected = Column(DateTime, default=datetime.utcnow)
-    last_connected = Column(DateTime, default=datetime.utcnow)
-
-
 class DicomNode(PathMixin, Base):
     title = Column(String)
     host = Column(String)
     port = Column(Integer)
     input = Column(Boolean, default=False)
     output = Column(Boolean, default=False)
+
+    implementation_version_name = Column(String)
+    first_connected = Column(DateTime)
+    last_connected = Column(DateTime)
 
     # Null user ID means DicomNode is available globally 
     user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
