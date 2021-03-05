@@ -170,9 +170,9 @@ export default {
   methods: {
     setDestinations(destination) {
       const i = this.pipelineNodeDestinations.findIndex(dest => dest.pipelineNodeId === destination.pipelineNodeId)
-      i >= 0
-        ? this.pipelineNodeDestinations.splice(i, 1)
-        : this.pipelineNodeDestinations.push(destination)
+
+      if (i >= 0) this.pipelineNodeDestinations[i] = destination
+      else this.pipelineNodeDestinations.push(destination)
     },
     setConditions(condition) { this.selectedNode.conditions = condition },
     findNodeWithID(id) {
