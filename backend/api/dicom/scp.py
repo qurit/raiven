@@ -8,7 +8,7 @@ from pynetdicom.sop_class import VerificationSOPClass
 
 from api import config
 from api.pipelining import DicomIngestController
-from api.services import DicomNodeService
+from api.services import DicomNodeService, DicomIngestService
 
 # debug_logger()
 
@@ -37,6 +37,7 @@ def get_ae_titles(event):
 
 def handle_association_request(event):
     requestor_ae_title, called_ae_title = get_ae_titles(event)
+    print("HERO")
 
     with DicomNodeService() as node_service:
         node_service.update_or_create_from_connection(
@@ -44,7 +45,7 @@ def handle_association_request(event):
             host=event.assoc.requestor.address,
             implementation_version_name=encode_aet(event.assoc.requestor.implementation_version_name)
         )
-        
+
     # TODO: Not in list of allowed connections and allow push to pipe
     if not is_valid_ae_title(called_ae_title):
         event.assoc.acse.send_reject(REJECTED_PERMANENT, SOURCE_SERVICE_USER, DIAG_CALLED_AET_NOT_RECOGNIZED)
@@ -72,16 +73,15 @@ def handle_association_release(event):
     calling_host, calling_port = event.assoc.requestor.address, event.assoc.requestor.port
 
     if requestor_ae_title in CONNECTIONS:
-
-        # Start task
         try:
-            DicomIngestController(
+            with DicomIngestService(
                 folder=CONNECTIONS[requestor_ae_title],
                 calling_aet=requestor_ae_title,
                 calling_host=calling_host,
-                calling_port=calling_port,
                 called_aet=called_ae_title
-            )
+            ) as ingest:
+                ingest.execute()
+
         except DicomIngestController.EmptyFolderException:
             """ No C Store was performed """
             pass

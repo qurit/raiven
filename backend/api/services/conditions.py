@@ -33,6 +33,8 @@ class PipelineConditionService(DatabaseService):
                     self._starting_node = node
                     break
 
+            # TODO: LOG no valid starting node
+
         return self._starting_node
 
     @property
@@ -71,6 +73,7 @@ class PipelineConditionService(DatabaseService):
             bucket_item.save(self._db)
 
     def has_conditions(self) -> bool:
+        print(self.starting_node)
         return bool(self.starting_node and self.starting_node.conditions)
 
     def add_series_to_storage_bucket(self, folder: Path):

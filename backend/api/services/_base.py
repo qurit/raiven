@@ -2,8 +2,8 @@ from api.database import SessionLocal
 
 
 class DatabaseService:
-    def __init__(self):
-        self._db = None
+    def __init__(self, db: SessionLocal = None):
+        self._db = db
 
     def __enter__(self):
         """ Contextmanager to handle database connection """

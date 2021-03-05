@@ -6,32 +6,40 @@ from api.models import utils
 from api.models.dicom import DicomNode
 from api.models.pipeline import Pipeline
 from api.models.user import User
-from api.pipelining import DicomIngestController
-from api.services import DatabaseService, PipelineConditionService
+from api.pipelining import DicomIngestController, PipelineController
+from api.services import DatabaseService, PipelineConditionService, DicomNodeService
 
 
 class DicomIngestService(DatabaseService):
     class EmptyFolderException(Exception):
         pass
 
-    def __init__(self, folder: pathlib.Path, called_aet: str, dicom_node_id: int):
+    def __init__(
+        self,
+        folder: pathlib.Path,
+        called_aet: str,
+        calling_aet: str,
+        calling_host: str,
+    ):
         super().__init__()
 
         self.folder = folder
         self.called_aet = called_aet
-        self.initiator_node = dicom_node_id
+        self.calling_aet = calling_aet
+        self.calling_host = calling_host
+        self.initiator_node = None
 
     def __enter__(self):
         super().__enter__()
 
-        self.initiator_node = self._db.query(DicomNode).get(dicom_node_id)
-        assert initiator_node
+        self.initiator_node = DicomNodeService(self._db).get_from_connection(self.calling_aet, self.calling_host)
+        assert self.initiator_node
 
         return self
 
     def execute(self):
-        if not any(folder.iterdir()):
-            shutil.rmtree(folder.resolve())
+        if not any(self.folder.iterdir()):
+            shutil.rmtree(self.folder.resolve())
 
             # TODO: Better logging
             print("INFO: Empty ingested folder")
@@ -96,6 +104,7 @@ class DicomIngestService(DatabaseService):
             raise NotImplementedError
 
         conditions_service = PipelineConditionService(pipeline, self.initiator_node, self._db)
+        # print(conditions_service.has_conditions())
         if conditions_service.has_conditions():
             # Add to a temp folder
             conditions_service.add_series_to_storage_bucket(self.folder)
@@ -110,8 +119,8 @@ class DicomIngestService(DatabaseService):
 
         print(f"Running folder through pipeline: '{pipeline.ae_title}'")
         return PipelineController.run_pipeline_on_folder(
-            self._db,
-            pipeline.id,
-            folder,
-            self.initiator_node.initiator.id
+            db=self._db,
+            pipeline_id=pipeline.id,
+            folder=pathlib.Path(folder),
+            initiator_dicom_node_id=self.initiator_node.id
         )
