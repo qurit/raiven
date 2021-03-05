@@ -33,14 +33,14 @@ class Pipeline(Base):
 
 
 class PipelineNodeStorageBucket(PathMixin, Base):
-    pipeline_node_id = Column(ForeignKey("pipeline_node.id"))
-    dicom_node_id = Column(ForeignKey("dicom_node.id"))
+    pipeline_node_id = Column(ForeignKey("pipeline_node.id", **CASCADE))
+    dicom_node_id = Column(ForeignKey("dicom_node.id", **CASCADE))
 
     items = relationship("PipelineNodeStorageBucketItem")
 
 
 class PipelineNodeStorageBucketItem(Base):
-    pipeline_node_storage_bucket_id = Column(ForeignKey("pipeline_node_storage_bucket.id"))
+    pipeline_node_storage_bucket_id = Column(ForeignKey("pipeline_node_storage_bucket.id", **CASCADE))
     tag = Column(String)
 
     if 'sqlite' not in config.SQLALCHEMY_DATABASE_URI.lower():
@@ -62,6 +62,7 @@ class PipelineNode(Base):
     previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.to_node_id')
     jobs = relationship('PipelineJob', backref='node')
     conditions = relationship("PipelineNodeCondition", backref="node")
+    storage_buckets = relationship("PipelineNodeStorageBucket", backref='node')
 
     def is_root_node(self):
         return not len(self.previous_links)

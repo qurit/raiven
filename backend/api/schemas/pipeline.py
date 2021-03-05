@@ -53,8 +53,11 @@ class PipelineNodeCreate(BaseModel):
 
     @root_validator
     def check_has_dicom_node(cls, values):
-        if values.get('container_is_input') or values.get('container_is_input'):
-            assert values.get('dicom_node_id'), "Node missing a destination"
+        if values.get('container_is_input'):
+            assert values.get('dicom_node_id'), "Input Node Missing an Input Source"
+
+        if values.get('container_is_output'):
+            assert values.get('dicom_node_id'), "Output Node Missing an Output Destination"
 
         return values
 
