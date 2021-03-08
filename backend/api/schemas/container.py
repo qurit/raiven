@@ -19,9 +19,9 @@ class ContainerCreate(BaseModel):
     filename: Optional[str] = None
 
 
-class ContainerTags(BaseModel):
-    # To create the list of tags associated with the container
-    tag_ids: List[int]
+# class ContainerTags(BaseModel):
+#     # To create the list of tags associated with the container
+#     tag_ids: List[int]
 
 
 class Tag(BaseModel):
