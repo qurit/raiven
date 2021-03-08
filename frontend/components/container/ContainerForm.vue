@@ -65,13 +65,7 @@
         prepend-icon="mdi-docker"
       />
       <v-row justify="center">
-        <v-btn
-          :disabled="this.isDisabled"
-          @click="submit"
-          color="confirm"
-          class="ma-4"
-          text
-        >
+        <v-btn @click="submit" color="confirm" class="ma-4" text>
           {{ !!containerToEdit ? 'Save Edits' : 'Add Container' }}
         </v-btn>
       </v-row>
@@ -173,7 +167,7 @@ export default {
         await this.$store
           .dispatch('containers/addContainer', formData)
           .then(() => {
-            this.$refs.form.reset()
+            // this.$refs.form.reset()
             this.container.containerIsInput = false
             this.container.containerIsOutput = false
             this.container.containerIsShared = false
@@ -182,7 +176,17 @@ export default {
       const recentlyAddedContainer = this.$store.getters[
         'containers/recentContainer'
       ]
+
       console.log(recentlyAddedContainer)
+
+      await this.$store.dispatch('tags/addTag', this.container.tags)
+
+      console.log(this.container.tags)
+
+      await this.$store.dispatch('tags/addContainerTags', {
+        containerId: recentlyAddedContainer.id,
+        tags: this.container.tags
+      })
 
       this.$emit('closeDialog')
       this.$toaster.toastSuccess('Container saved!')

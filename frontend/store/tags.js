@@ -21,20 +21,20 @@ export const actions = {
       console.log(err)
     }
   },
-  async addTag({ commit }, container_id, data) {
+  async addTag({ commit }, data) {
     try {
-      const URL = `/container/${container_id}/tags`
+      const URL = `/container/tags`
       const res = await generic_post(this, URL, data)
       commit('addTag', res)
     } catch (err) {
       console.log(err)
     }
   },
-  async addContainerTags({ commit }, container_id, data) {
+  async addContainerTags({ commit }, data) {
+    console.log(data)
     try {
-      const URL = `/container/${container_id}/tags`
-      const res = await generic_post(this, URL, data)
-      commit('addTag', res)
+      const URL = `/container/${data.containerId}/tags`
+      await generic_post(this, URL, data.tags)
     } catch (err) {
       console.log(err)
     }

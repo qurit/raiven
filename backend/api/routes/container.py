@@ -136,15 +136,27 @@ def delete_container(container_id: int, db: Session = Depends(session)):
     return db.query(Container).get(container_id).delete(db)
 
 
-@router.post("/{container_id}/tags")
-def post_container_tags(container_id: int, tags: container.ContainerTags, db: Session = Depends(session)):
-    print(container_id)
+@router.post("/tags")
+def post_tags(tags: List[str], db: Session = Depends(session)):
     print(tags)
-    for tag in tags.tag_ids:
-        new_container_tag = ContainerTags(container_id=container_id, tag_id=tag)
+    for tag in tags:
+        exists = db.query(Tag.id).filter_by(tag_name=tag).first() is not None
+        print(exists)
+        if not exists:
+            print(tag)
+            new_tag = Tag(tag_name=tag)
+            new_tag.save(db)
+            return new_tag
+
+
+@router.post("/{container_id}/tags")
+def post_container_tags(container_id: int, tags: List[str], db: Session = Depends(session)):
+    # return db.query(Tag).join(ContainerTags).filter(ContainerTags.container_id == container_id).all()
+    print(tags)
+    print(container_id)
+    for tag in tags:
+        tag = db.query(Tag).filter_by(tag_name=tag).first()
+        tag_id = tag.id
+        new_container_tag = ContainerTags(container_id=container_id, tag_id=tag_id)
         new_container_tag.save(db)
-
-
-@router.get("/{container}/tags")
-def get_container_tags(container_id: int, db: Session = Depends(session)):
-    return db.query(Tag).join(ContainerTags).filter(ContainerTags.container_id == container_id).all()
+    print("testing")
