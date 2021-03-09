@@ -2,7 +2,7 @@ from datetime import datetime
 
 from api import config, worker_session, models
 from api.dicom.scu import send_dicom_folder
-from api.models.pipeline import PipelineRun, PipelineJob, PipelineJobError
+from api.models.pipeline import PipelineRun, PipelineJob, PipelineJobError, PipelineNode
 
 from . import HOST_PATH_TYPE, docker, dramatiq
 
@@ -28,6 +28,13 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
     # TODO: Check if all previous nodes have finished
 
     with worker_session() as db:
+
+        # TODO: TEMP fix for input nodes
+        node: PipelineNode = db.query(PipelineNode).get(node_id)
+        if node.container_is_input:
+            for n in node.get_next_nodes():
+                run_node_task.send_with_options(args=(run_id, n.id))
+
         job = PipelineJob(pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
         job.save(db)
 
