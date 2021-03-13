@@ -1,5 +1,5 @@
 from . import BaseModel, BaseORMModel
-from typing import Optional, List
+from typing import Optional, List, Any
 from .user import User
 from api.models import container
 
@@ -33,10 +33,10 @@ class ContainerTag(BaseModel):
     # To associate the tags with the appropriate container
     container_id: int
     tag_id: int
-
-    tags: List[Tag]
+    tag: str
 
 
 class Container(ContainerCreate, BaseORMModel):
     user_id: int
     user: User
+    tags: Optional[List[Any]]

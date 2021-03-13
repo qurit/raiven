@@ -78,7 +78,6 @@ def create_container(auto_build: bool = True,
         with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
             fp.write(file)
 
-        db_container.dockerfile_path = os.path.join(db_container.get_path(), filename)
         db_container.save(db)
 
     # Build Container In Background
@@ -93,7 +92,14 @@ def create_container(auto_build: bool = True,
 @router.get("/{container_id}", response_model=container.Container)
 def get_container(container_id: int, db: Session = Depends(session)):
     """ Get a specific container"""
-    return db.query(Container).get(container_id)
+    container_schema = container.Container.from_orm(
+        db.query(Container).get(container_id)
+    )
+
+    tags: List[str] = db.query(Tag.tag_name).join(ContainerTags).filter_by(container_id=container_id).all()
+    container_schema.tags = [t[0] for t in tags]
+
+    return container_schema
 
 
 @router.put("/{container_id}", response_model=container.Container)
