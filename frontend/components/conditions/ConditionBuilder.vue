@@ -53,7 +53,6 @@ export default {
     sub: undefined,
   }),
   mounted() {
-    console.log(this.node)
     if (this.rules) this.selectedRule = this.rules[0]
     if (this.node && this.node.conditions) this.node.conditions.forEach(condition => {
       const rule = this.rules.find(r => r.tag === condition.tag)
