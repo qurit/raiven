@@ -95,7 +95,8 @@ export default {
         containerIsInput: false,
         containerIsOutput: false,
         containerIsShared: false
-      }
+      },
+      recentContainer: null
     }
   },
   created() {
@@ -159,34 +160,40 @@ export default {
         formData.append('description', this.container.containerDescription)
       }
       if (!!this.containerToEdit) {
-        await this.$store.dispatch('containers/updateContainer', {
+        const data = await this.$store.dispatch('containers/updateContainer', {
           id: this.container.containerId,
           data: formData
         })
+        console.log('IN EDIT')
+        console.log(data)
       } else {
-        await this.$store
-          .dispatch('containers/addContainer', formData)
-          .then(() => {
-            // this.$refs.form.reset()
-            this.container.containerIsInput = false
-            this.container.containerIsOutput = false
-            this.container.containerIsShared = false
-          })
+        const data = await this.$store.dispatch(
+          'containers/addContainer',
+          formData
+        )
+        // .then(x => {
+        //   // this.$refs.form.reset()
+        //   this.container.containerIsInput = false
+        //   this.container.containerIsOutput = false
+        //   this.container.containerIsShared = false
+        //   this.recentContainer = x
+        // })
+        console.log(data)
       }
       const recentlyAddedContainer = this.$store.getters[
         'containers/recentContainer'
       ]
 
-      console.log(recentlyAddedContainer)
+      console.log('A;SLDFJASL;DFJASDL;JF')
+      console.log(this.recentContainer)
 
       await this.$store.dispatch('tags/addTag', this.container.tags)
 
-      console.log(this.container.tags)
-
-      await this.$store.dispatch('tags/addContainerTags', {
-        containerId: recentlyAddedContainer.id,
-        tags: this.container.tags
-      })
+      // console.log(this.container.tags)
+      // await this.$store.dispatch('tags/addContainerTags', {
+      //   containerId: recentlyAddedContainer.id,
+      //   tags: this.container.tags
+      // })
 
       this.$emit('closeDialog')
       this.$toaster.toastSuccess('Container saved!')

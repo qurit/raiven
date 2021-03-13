@@ -141,6 +141,7 @@ export default {
       const containerToUpdate = containers.find(container => {
         return container.id === containerId
       })
+      console.log(containerToUpdate)
       this.container.containerId = containerToUpdate.id
       this.container.containerName = containerToUpdate.name
       this.container.containerDescription = containerToUpdate.description
@@ -148,6 +149,7 @@ export default {
       this.container.containerIsOutput = containerToUpdate.is_output_container?.toString()
       this.container.containerIsShared = containerToUpdate.is_shared?.toString()
       this.container.filename = containerToUpdate.filename
+      this.container.tags = containerToUpdate.tags
       this.dialog = true
     }
   },

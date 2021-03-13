@@ -64,6 +64,7 @@ export const actions = {
       const URL = '/container'
       const res = await generic_post(this, URL, data)
       commit('addContainer', res)
+      return res
     } catch (err) {
       console.log(err)
     }
@@ -74,6 +75,7 @@ export const actions = {
       const URL = `/container/${id}`
       const res = await generic_put(this, URL, data)
       commit('updateContainer', { id, res })
+      return res
     } catch (err) {
       console.log(err)
     }
