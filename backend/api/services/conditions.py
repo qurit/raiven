@@ -29,7 +29,7 @@ class PipelineConditionService(DatabaseService):
             for node in nodes:
                 if node.destination.is_rts:
                     self._starting_node = node
-                elif DicomNode.compare(self.initiator, node.destination):
+                elif self.initiator == node.destination:
                     self._starting_node = node
                     break
 

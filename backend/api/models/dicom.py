@@ -27,13 +27,12 @@ class DicomNode(PathMixin, Base):
         UniqueConstraint('title', 'host', 'port', 'user_id', name='_node_uc'),
     )
 
+    def __eq__(self, other) -> bool:
+        return self.host == other.host and self.port == other.port and self.title == other.title
+
     @property
     def is_rts(self):
         return self.host == config._RTS_HOST and self.port == config._RTS_PORT
-
-    @staticmethod
-    def compare(a, b) -> bool:
-        return a.host == b.host and a.port == b.port and a.title == b.title
 
 
 class DicomPatient(NestedPathMixin, Base):
