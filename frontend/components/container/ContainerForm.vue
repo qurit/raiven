@@ -23,47 +23,38 @@
           label="Description"
         ></v-textarea>
       </v-col>
-      <v-row>
+      <v-row align="center" class="mx-3">
         <v-combobox
-          v-model="container.tags"
+          v-model="container.containerTags"
           :items="items"
-          label="Select a favorite activity or create a new one"
+          label="Select tags"
           multiple
           chips
           item-text="tag_name"
           item-value="tag_name"
           :return-object="false"
-          :change="test"
+          deletable-chips
         >
         </v-combobox>
-        <v-checkbox
-          v-model="container.containerIsInput"
-          label="Input"
-          false-value="false"
-          true-value="true"
-          class="mx-10"
-        />
-        <v-checkbox
-          v-model="container.containerIsOutput"
-          label="Output"
-          false-value="false"
-          true-value="true"
-          class="mx-10"
-        />
-        <v-checkbox
-          v-model="container.containerIsShared"
-          label="Shared"
-          false-value="false"
-          true-value="true"
-          class="mx-10"
-        />
       </v-row>
-      <v-file-input
-        v-model="file"
-        :label="container.filename"
-        @change="updateDockerFile"
-        prepend-icon="mdi-docker"
-      />
+      <v-row>
+        <v-col md="9">
+          <v-file-input
+            v-model="file"
+            :label="container.filename"
+            @change="updateDockerFile"
+            prepend-icon="mdi-docker"
+          />
+        </v-col>
+        <v-col md="3">
+          <v-checkbox
+            v-model="container.containerIsShared"
+            label="Shared"
+            false-value="false"
+            true-value="true"
+          />
+        </v-col>
+      </v-row>
       <v-row justify="center">
         <v-btn @click="submit" color="confirm" class="ma-4" text>
           {{ !!containerToEdit ? 'Save Edits' : 'Add Container' }}
@@ -94,9 +85,10 @@ export default {
         containerDescription: '',
         containerIsInput: false,
         containerIsOutput: false,
-        containerIsShared: false
+        containerIsShared: false,
+        containerTags: []
       },
-      recentContainer: null
+      containerToTag: null
     }
   },
   created() {
@@ -112,11 +104,14 @@ export default {
     },
     ...mapState('tags', ['tags']),
     items() {
-      console.log(this.$store.state.tags)
       return this.$store.state.tags.tags
     }
   },
   methods: {
+    test() {
+      console.log('HSDLFKJASDLFJKLFAJSKLFJAKSLDFJL;K')
+      console.log(this.container.containerTags)
+    },
     populate() {
       if (!!this.containerToEdit) {
         // getting the values for the existing container
@@ -130,6 +125,7 @@ export default {
         this.container.containerIsInput = false
         this.container.containerIsOutput = false
         this.container.containerIsShared = false
+        this.container.containerTags = []
       }
     },
     readFile(file) {
@@ -144,7 +140,7 @@ export default {
       this.file = file
     },
     async submit() {
-      console.log(this.container.tags)
+      console.log(this.container.containerTags)
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const formData = new FormData()
       formData.append('name', this.container?.containerName)
@@ -160,41 +156,30 @@ export default {
         formData.append('description', this.container.containerDescription)
       }
       if (!!this.containerToEdit) {
-        const data = await this.$store.dispatch('containers/updateContainer', {
-          id: this.container.containerId,
-          data: formData
-        })
-        console.log('IN EDIT')
-        console.log(data)
-      } else {
-        const data = await this.$store.dispatch(
-          'containers/addContainer',
-          formData
+        containerToTag = await this.$store.dispatch(
+          'containers/updateContainer',
+          {
+            id: this.container.containerId,
+            data: formData
+          }
         )
-        // .then(x => {
-        //   // this.$refs.form.reset()
-        //   this.container.containerIsInput = false
-        //   this.container.containerIsOutput = false
-        //   this.container.containerIsShared = false
-        //   this.recentContainer = x
-        // })
-        console.log(data)
+      } else {
+        await this.$store
+          .dispatch('containers/addContainer', formData)
+          .then(container => {
+            this.containerToTag = container
+            this.container.containerIsInput = false
+            this.container.containerIsOutput = false
+            this.container.containerIsShared = false
+          })
       }
-      const recentlyAddedContainer = this.$store.getters[
-        'containers/recentContainer'
-      ]
-
-      console.log('A;SLDFJASL;DFJASDL;JF')
-      console.log(this.recentContainer)
-
-      await this.$store.dispatch('tags/addTag', this.container.tags)
-
-      // console.log(this.container.tags)
-      // await this.$store.dispatch('tags/addContainerTags', {
-      //   containerId: recentlyAddedContainer.id,
-      //   tags: this.container.tags
-      // })
-
+      console.log(this.container.containerTags)
+      await this.$store.dispatch('tags/addTag', this.container.containerTags)
+      await this.$store.dispatch('tags/addContainerTags', {
+        containerId: this.containerToTag.id,
+        tags: this.container.containerTags
+      })
+      this.$refs.form.reset()
       this.$emit('closeDialog')
       this.$toaster.toastSuccess('Container saved!')
     }
