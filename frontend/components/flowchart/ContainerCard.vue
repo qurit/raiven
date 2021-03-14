@@ -50,11 +50,6 @@ export default {
     }
   },
   computed: {
-    containerColor: ctx => {
-      if (ctx.container.is_output_container) return ctx.colors.output
-      else if (ctx.container.is_input_container) return ctx.colors.input
-      else return ctx.colors.default
-    },
     chips: ctx => {
       return ctx.container.tags.map(tag => tag.tag_name)
     }

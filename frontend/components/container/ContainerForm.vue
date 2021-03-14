@@ -118,11 +118,8 @@ export default {
       if (!!this.containerToEdit) {
         // getting the values for the existing container
         this.container = JSON.parse(JSON.stringify(this.containerToEdit))
-        console.log('edit')
-        console.log(this.container)
       } else {
         // default values for adding a new container
-        console.log('new')
         this.container.containerId = ''
         this.container.filename = ''
         this.container.containerName = ''
@@ -145,7 +142,6 @@ export default {
       this.file = file
     },
     async submit() {
-      console.log(this.container.containerTags)
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const formData = new FormData()
       formData.append('name', this.container?.containerName)
@@ -173,18 +169,8 @@ export default {
           'containers/addContainer',
           formData
         )
-        // .then(container => {
-        //   this.containerToTag = container
-        //   this.container.containerIsInput = false
-        //   this.container.containerIsOutput = false
-        //   this.container.containerIsShared = false
-        // })
       }
-      console.log(this.container.containerTags)
       if (!!this.containerToEdit) {
-        console.log('IN EDIT')
-        // console.log(this.containerToEdit)
-        console.log(this.container)
         await this.$store.dispatch('tags/addTag', this.container.containerTags)
         await this.$store.dispatch('tags/addContainerTags', {
           containerId: this.containerToTag.id,

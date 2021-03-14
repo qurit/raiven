@@ -64,7 +64,6 @@ export default {
           'pipelines/addPipeline',
           payload
         )
-        console.log(data)
         this.$toaster.toastSuccess('Pipeline created!')
         this.$router.push({ path: `/pipeline/${data.id}` })
         this.$emit('closeDialog')

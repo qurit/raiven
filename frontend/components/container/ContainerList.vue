@@ -143,11 +143,9 @@ export default {
       // await this.$store.dispatch('containers/fetchContainers')
 
       const containers = this.$store.state.containers.containers
-      console.log(containers)
       const containerToUpdate = containers.find(container => {
         return container.id === containerId
       })
-      console.log(containerToUpdate)
       this.container.containerId = containerToUpdate.id
       this.container.containerName = containerToUpdate.name
       this.container.containerDescription = containerToUpdate.description
@@ -156,7 +154,8 @@ export default {
       this.container.containerIsShared = containerToUpdate.is_shared?.toString()
       this.container.filename = containerToUpdate.filename
       this.container.containerTags = containerToUpdate.tags
-      console.log(this.container)
+
+      // force containerForm re-render
       this.key += 1
 
       // TODO: MAKE A QUERY FOR THE TAGS OF A SPECIFIC CONTAINER IN BACKEND ROUTES MAYBE LIKE <container_id>/<tags> or something?

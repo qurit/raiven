@@ -64,7 +64,7 @@ export default {
     filteredContainerTags: ctx =>
       ctx.containers.filter(c =>
         c.tags
-          .map(tag => tag.tag_name.toLowerCase())
+          .map(tag => tag.tag_name.toLowerCase().trim())
           .includes(ctx.search.toLowerCase())
       ),
     filteredList: ctx => [

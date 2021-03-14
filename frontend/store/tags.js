@@ -15,7 +15,6 @@ export const actions = {
       const URL = '/container/tags'
       const data = await generic_get(this, URL)
       commit('setTags', data)
-      console.log(data)
       return data
     } catch (err) {
       console.log(err)
@@ -31,7 +30,6 @@ export const actions = {
     }
   },
   async addContainerTags({ commit }, data) {
-    console.log(data)
     try {
       const URL = `/container/${data.containerId}/tags`
       await generic_post(this, URL, data.tags)

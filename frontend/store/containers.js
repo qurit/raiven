@@ -44,7 +44,6 @@ export const actions = {
       const URL = '/container'
       const data = await generic_get(this, URL)
       commit('setContainers', data)
-      console.log(data)
       return data
     } catch (err) {
       console.log(err)
