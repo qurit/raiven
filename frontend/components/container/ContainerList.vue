@@ -45,7 +45,7 @@
       <ContainerForm
         :isEditing="true"
         :containerToEdit="this.container"
-        :key="this.container.containerId"
+        :key="this.key"
         @closeDialog="closeDialog"
       />
     </v-dialog>
@@ -84,6 +84,7 @@ export default {
   },
   data: function() {
     return {
+      key: 0,
       deleteContainerId: null,
       dialog: false,
       confirmDeleteDialog: false,
@@ -93,7 +94,8 @@ export default {
         containerName: '',
         containerDescription: '',
         containerIsInput: false,
-        containerIsOutput: false
+        containerIsOutput: false,
+        containerTags: []
       },
       headers: [
         { text: 'Name', value: 'name', width: '1%' },
@@ -154,6 +156,8 @@ export default {
       this.container.containerIsShared = containerToUpdate.is_shared?.toString()
       this.container.filename = containerToUpdate.filename
       this.container.containerTags = containerToUpdate.tags
+      console.log(this.container)
+      this.key += 1
 
       // TODO: MAKE A QUERY FOR THE TAGS OF A SPECIFIC CONTAINER IN BACKEND ROUTES MAYBE LIKE <container_id>/<tags> or something?
       this.dialog = true

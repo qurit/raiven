@@ -91,7 +91,7 @@ export default {
       containerToTag: null
     }
   },
-  created() {
+  mounted() {
     this.populate()
     this.$store.dispatch('tags/fetchTags')
   },
@@ -108,16 +108,15 @@ export default {
     }
   },
   methods: {
-    test() {
-      console.log('HSDLFKJASDLFJKLFAJSKLFJAKSLDFJL;K')
-      console.log(this.container.containerTags)
-    },
     populate() {
       if (!!this.containerToEdit) {
         // getting the values for the existing container
         this.container = JSON.parse(JSON.stringify(this.containerToEdit))
+        console.log('edit')
+        console.log(this.container)
       } else {
         // default values for adding a new container
+        console.log('new')
         this.container.containerId = ''
         this.container.filename = ''
         this.container.containerName = ''
@@ -174,11 +173,10 @@ export default {
           })
       }
       console.log(this.container.containerTags)
-
       if (!!this.containerToEdit) {
-        console.log(this.containerToEdit)
-        const editTags = this.containerToEdit.containerTags.map(x => x.tag_name)
-
+        console.log('IN EDIT')
+        // console.log(this.containerToEdit)
+        console.log(this.container)
         await this.$store.dispatch('tags/addTag', this.container.containerTags)
         await this.$store.dispatch('tags/addContainerTags', {
           containerId: this.containerToTag.id,
@@ -190,10 +188,9 @@ export default {
           containerId: this.containerToTag.id,
           tags: this.container.containerTags
         })
+        await this.$refs.form.reset()
       }
-
       await this.$store.dispatch('containers/fetchContainers')
-      this.$refs.form.reset()
       this.$emit('closeDialog')
       this.$toaster.toastSuccess('Container saved!')
     }

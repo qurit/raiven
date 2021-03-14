@@ -161,6 +161,7 @@ def post_container_tags(container_id: int, tags: List[str], db: Session = Depend
     # return db.query(Tag).join(ContainerTags).filter(ContainerTags.container_id == container_id).all()
     print(tags)
     print(container_id)
+    db.query(ContainerTags).filter(ContainerTags.container_id == container_id).delete()
     for tag in tags:
         tag = db.query(Tag).filter_by(tag_name=tag).first()
         tag_id = tag.id
