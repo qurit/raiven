@@ -156,7 +156,7 @@ export default {
         formData.append('description', this.container.containerDescription)
       }
       if (!!this.containerToEdit) {
-        containerToTag = await this.$store.dispatch(
+        this.containerToTag = await this.$store.dispatch(
           'containers/updateContainer',
           {
             id: this.container.containerId,
@@ -174,11 +174,25 @@ export default {
           })
       }
       console.log(this.container.containerTags)
-      await this.$store.dispatch('tags/addTag', this.container.containerTags)
-      await this.$store.dispatch('tags/addContainerTags', {
-        containerId: this.containerToTag.id,
-        tags: this.container.containerTags
-      })
+
+      if (!!this.containerToEdit) {
+        console.log(this.containerToEdit)
+        const editTags = this.containerToEdit.containerTags.map(x => x.tag_name)
+
+        await this.$store.dispatch('tags/addTag', this.container.containerTags)
+        await this.$store.dispatch('tags/addContainerTags', {
+          containerId: this.containerToTag.id,
+          tags: this.container.containerTags
+        })
+      } else {
+        await this.$store.dispatch('tags/addTag', this.container.containerTags)
+        await this.$store.dispatch('tags/addContainerTags', {
+          containerId: this.containerToTag.id,
+          tags: this.container.containerTags
+        })
+      }
+
+      await this.$store.dispatch('containers/fetchContainers')
       this.$refs.form.reset()
       this.$emit('closeDialog')
       this.$toaster.toastSuccess('Container saved!')
