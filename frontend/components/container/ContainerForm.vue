@@ -56,7 +56,13 @@
         </v-col>
       </v-row>
       <v-row justify="center">
-        <v-btn @click="submit" color="confirm" class="ma-4" text>
+        <v-btn
+          @click="submit"
+          :disabled="isDisabled"
+          color="confirm"
+          class="ma-4"
+          text
+        >
           {{ !!containerToEdit ? 'Save Edits' : 'Add Container' }}
         </v-btn>
       </v-row>
@@ -163,14 +169,16 @@ export default {
           }
         )
       } else {
-        await this.$store
-          .dispatch('containers/addContainer', formData)
-          .then(container => {
-            this.containerToTag = container
-            this.container.containerIsInput = false
-            this.container.containerIsOutput = false
-            this.container.containerIsShared = false
-          })
+        this.containerToTag = await this.$store.dispatch(
+          'containers/addContainer',
+          formData
+        )
+        // .then(container => {
+        //   this.containerToTag = container
+        //   this.container.containerIsInput = false
+        //   this.container.containerIsOutput = false
+        //   this.container.containerIsShared = false
+        // })
       }
       console.log(this.container.containerTags)
       if (!!this.containerToEdit) {
