@@ -57,10 +57,19 @@ export default {
     containerList: false
   }),
   computed: {
-    filteredList: ctx =>
+    filteredContainerName: ctx =>
       ctx.containers.filter(c =>
         c.name.toLowerCase().includes(ctx.search.toLowerCase())
-      )
+      ),
+    filteredContainerTags: ctx =>
+      ctx.containers.filter(c =>
+        c.tags
+          .map(tag => tag.tag_name.toLowerCase())
+          .includes(ctx.search.toLowerCase())
+      ),
+    filteredList: ctx => [
+      ...new Set([...ctx.filteredContainerName, ...ctx.filteredContainerTags])
+    ]
   }
 }
 </script>
