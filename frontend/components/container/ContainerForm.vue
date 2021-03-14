@@ -170,6 +170,7 @@ export default {
           formData
         )
       }
+      console.log(this.containerToTag)
       if (!!this.containerToEdit) {
         await this.$store.dispatch('tags/addTag', this.container.containerTags)
         await this.$store.dispatch('tags/addContainerTags', {

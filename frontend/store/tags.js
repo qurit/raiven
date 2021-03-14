@@ -6,7 +6,7 @@ export const state = () => ({
 
 export const mutations = {
   setTags: (state, tags) => (state.tags = tags),
-  addTag: (state, tag) => state.tags.push(tag)
+  addTag: (state, tag) => state.tags.concat(tag)
 }
 
 export const actions = {
