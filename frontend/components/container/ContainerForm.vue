@@ -168,11 +168,31 @@ export default {
           }
         )
         console.log(this.containerToTag)
-        await this.$store.dispatch('tags/addTag', this.container.containerTags)
-        await this.$store.dispatch('tags/addContainerTags', {
-          containerId: this.containerToTag.id,
-          tags: this.container.containerTags
-        })
+        console.log(this.container)
+
+        if (this.container.containerTags.length !== 0) {
+          if (this.container.containerTags[0].hasOwnProperty('tag_name')) {
+            console.log('HEREHEHERHERHERH')
+            const tagNameArray = this.container.containerTags.map(
+              tag => tag.tag_name
+            )
+            await this.$store.dispatch('tags/addTag', tagNameArray)
+            await this.$store.dispatch('tags/addContainerTags', {
+              containerId: this.containerToTag.id,
+              tags: tagNameArray
+            })
+          } else {
+            await this.$store.dispatch(
+              'tags/addTag',
+              this.container.containerTags
+            )
+            await this.$store.dispatch('tags/addContainerTags', {
+              containerId: this.containerToTag.id,
+              tags: this.container.containerTags
+            })
+          }
+        }
+
         this.$emit('closeDialog')
       } else {
         // console.log('SENDING DATA ADD NEW CONTAINER ')

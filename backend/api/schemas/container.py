@@ -24,7 +24,7 @@ class ContainerCreate(BaseModel):
 #     tag_ids: List[int]
 
 
-class Tag(BaseModel):
+class Tag(BaseORMModel):
     # To create a new Tag in the Tag db
     tag_name: str
 
