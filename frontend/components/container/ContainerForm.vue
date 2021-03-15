@@ -111,6 +111,7 @@ export default {
     },
     ...mapState('tags', ['tags']),
     items() {
+      console.log(this.$store.state.tags.tags)
       return this.$store.state.tags.tags
     }
   },
@@ -174,33 +175,27 @@ export default {
         })
         this.$emit('closeDialog')
       } else {
-        console.log('SENDING DATA ADD NEW CONTAINER ')
-        if (!!formData.entries().next().value) {
-          console.log('form data has stuff')
-          for (var pair of formData.entries()) {
-            console.log(pair[0] + ', ' + pair[1])
-          }
-          this.containerToTag = await this.$store.dispatch(
-            'containers/addContainer',
-            formData
-          )
-          await this.$store.dispatch(
-            'tags/addTag',
-            this.container.containerTags
-          )
-          await this.$store
-            .dispatch('tags/addContainerTags', {
-              containerId: this.containerToTag.id,
-              tags: this.container.containerTags
-            })
-            .then(() => {
-              this.$refs.form.reset()
-              this.container.containerIsInput = false
-              this.container.containerIsOutput = false
-              this.container.containerIsShared = false
-            })
-        }
+        // console.log('SENDING DATA ADD NEW CONTAINER ')
+        // if (!!formData.entries().next().value) {
+        //   console.log('form data has stuff')
+        //   for (var pair of formData.entries()) {
+        //     console.log(pair[0] + ', ' + pair[1])
+        //   }
+        this.containerToTag = await this.$store.dispatch(
+          'containers/addContainer',
+          formData
+        )
+        await this.$store.dispatch('tags/addTag', this.container.containerTags)
+        await this.$store.dispatch('tags/addContainerTags', {
+          containerId: this.containerToTag.id,
+          tags: this.container.containerTags
+        })
+        this.$refs.form.reset()
+        this.container.containerIsInput = false
+        this.container.containerIsOutput = false
+        this.container.containerIsShared = false
       }
+      // }
       await this.$store.dispatch('containers/fetchContainers')
       this.$toaster.toastSuccess('Container saved!')
     }

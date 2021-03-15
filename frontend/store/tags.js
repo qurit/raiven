@@ -6,7 +6,7 @@ export const state = () => ({
 
 export const mutations = {
   setTags: (state, tags) => (state.tags = tags),
-  addTag: (state, tag) => state.tags.concat(tag)
+  addTag: (state, tags) => (state.tags = state.tags.concat(tags))
 }
 
 export const actions = {
@@ -24,6 +24,8 @@ export const actions = {
     try {
       const URL = `/container/tags`
       const res = await generic_post(this, URL, data)
+      console.log(res)
+      console.log(state.tags)
       commit('addTag', res)
     } catch (err) {
       console.log(err)
