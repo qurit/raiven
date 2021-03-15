@@ -33,6 +33,34 @@ def get_all_containers(user: User = Depends(token_auth), db: Session = Depends(s
     return db.query(Container).filter((Container.user_id == user.id) | Container.is_shared).all()
 
 
+@router.get("/tags", response_model=List[container.Tag])
+def get_tags(db: Session = Depends(session)):
+    return db.query(Tag).all()
+
+
+@router.post("/tags", response_model=List[container.Tag])
+def post_tags(tags: List[str], db: Session = Depends(session)):
+    new_tags = []
+    for tag in tags:
+        exists = db.query(Tag.id).filter_by(tag_name=tag).first() is not None
+        if not exists:
+            new_tag = Tag(tag_name=tag)
+            new_tag.save(db)
+            new_tags.append(new_tag)
+    return new_tags
+
+
+@router.post("/{container_id}/tags", response_model=List[str])
+def post_container_tags(container_id: int, tags: List[str], db: Session = Depends(session)):
+    db.query(ContainerTags).filter(ContainerTags.container_id == container_id).delete()
+    for tag in tags:
+        tag = db.query(Tag).filter_by(tag_name=tag).first()
+        tag_id = tag.id
+        new_container_tag = ContainerTags(container_id=container_id, tag_id=tag_id)
+        new_container_tag.save(db)
+    return tags
+
+
 @router.post("/", response_model=container.Container)
 def create_container(auto_build: bool = True,
                      file: bytes = File(...), name: str = Form(...), filename: str = Form(...),
@@ -131,34 +159,3 @@ def update_container(
 def delete_container(container_id: int, db: Session = Depends(session)):
     """ Delete a container"""
     return db.query(Container).get(container_id).delete(db)
-
-
-@router.get("/tags")
-def get_tags(db: Session = Depends(session)):
-    return db.query(Tag).all()
-
-
-@router.post("/tags", response_model=List[container.Tag])
-def post_tags(tags: List[str], db: Session = Depends(session)):
-    new_tags = []
-    for tag in tags:
-        exists = db.query(Tag.id).filter_by(tag_name=tag).first() is not None
-        print(exists)
-        if not exists:
-            print(tag)
-            new_tag = Tag(tag_name=tag)
-            new_tag.save(db)
-            new_tags.append(new_tag)
-    return new_tags
-
-
-@router.post("/{container_id}/tags", response_model=List[str])
-def post_container_tags(container_id: int, tags: List[str], db: Session = Depends(session)):
-    db.query(ContainerTags).filter(ContainerTags.container_id == container_id).delete()
-    for tag in tags:
-        tag = db.query(Tag).filter_by(tag_name=tag).first()
-        tag_id = tag.id
-        new_container_tag = ContainerTags(container_id=container_id, tag_id=tag_id)
-        new_container_tag.save(db)
-    print(tags)
-    return tags

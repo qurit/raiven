@@ -24,8 +24,6 @@ export const actions = {
     try {
       const URL = `/container/tags`
       const res = await generic_post(this, URL, data)
-      console.log(res)
-      console.log(state.tags)
       commit('addTag', res)
     } catch (err) {
       console.log(err)
@@ -33,8 +31,6 @@ export const actions = {
   },
   async addContainerTags({ commit }, data) {
     try {
-      console.log('IN CONTAINER SEND ING SDKLJFHZSDL;FJL')
-      console.log(data)
       const URL = `/container/${data.containerId}/tags`
       await generic_post(this, URL, data.tags)
     } catch (err) {

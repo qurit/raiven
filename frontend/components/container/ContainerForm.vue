@@ -111,7 +111,6 @@ export default {
     },
     ...mapState('tags', ['tags']),
     items() {
-      console.log(this.$store.state.tags.tags)
       return this.$store.state.tags.tags
     }
   },
@@ -144,7 +143,6 @@ export default {
       this.file = file
     },
     async submit() {
-      console.log('SUBMIT!!!!!')
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const formData = new FormData()
       formData.append('name', this.container?.containerName)
@@ -167,12 +165,8 @@ export default {
             data: formData
           }
         )
-        console.log(this.containerToTag)
-        console.log(this.container)
-
         if (this.container.containerTags.length !== 0) {
           if (this.container.containerTags[0].hasOwnProperty('tag_name')) {
-            console.log('HEREHEHERHERHERH')
             const tagNameArray = this.container.containerTags.map(
               tag => tag.tag_name
             )
@@ -192,15 +186,8 @@ export default {
             })
           }
         }
-
         this.$emit('closeDialog')
       } else {
-        // console.log('SENDING DATA ADD NEW CONTAINER ')
-        // if (!!formData.entries().next().value) {
-        //   console.log('form data has stuff')
-        //   for (var pair of formData.entries()) {
-        //     console.log(pair[0] + ', ' + pair[1])
-        //   }
         this.containerToTag = await this.$store.dispatch(
           'containers/addContainer',
           formData
