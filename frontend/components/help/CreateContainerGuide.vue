@@ -14,7 +14,7 @@
         </li>
         <li>
           The <b> Dockerfile </b> should resemble
-          <a @click="dockerExample = true"> this example </a>
+          <a href="https://raiven.qurit.ca/containers/#dockerfile-example" target="_blank"> this example </a>
           <ul>
             <li>
               Install any dependencies you may require and set the environment
@@ -31,7 +31,7 @@
         </li>
         <li>
           The <b> main algorithm </b> should resemble
-          <a @click="mainAlgorithmExample = true"> this example </a>
+          <a href="https://raiven.qurit.ca/containers/#algorithm-example" target="_blank"> this example </a>
           <ul>
             <li>
               Map the <b> INPUT_DIR </b> to the previously defined
@@ -60,24 +60,5 @@
         </li>
       </ol>
     </v-card-text>
-    <v-dialog v-model="dockerExample" max-width="900">
-      <v-img :src="require('@/static/docker-example.png')" />
-    </v-dialog>
-    <v-dialog v-model="mainAlgorithmExample" max-width="900">
-      <v-img :src="require('@/static/main-algorithm-example.png')" />
-    </v-dialog>
   </v-card>
 </template>
-
-<script>
-import VIconBtn from '../global/v-icon-btn.vue'
-
-export default {
-  data() {
-    return {
-      dockerExample: false,
-      mainAlgorithmExample: false
-    }
-  }
-}
-</script>

@@ -6,6 +6,7 @@
   "AuthenticationEnabled": false,
 
   "DicomModalities" : {
-    "Raiven" : ["RAIVEN", "api", 11112]
+    "Raiven" : ["RAIVEN", "api", 11112],
+    "RTS" : ["RVP-RTS", "api", 11112]
   }
 }

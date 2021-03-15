@@ -109,7 +109,7 @@ def get_all_pipelines(user: User = Depends(token_auth), db: Session = Depends(se
     return db.query(Pipeline).filter((Pipeline.user_id == user.id) | Pipeline.is_shared).all()
 
 
-@router.post("/", response_model=schemas.Pipeline)
+@router.post("/", response_model=schemas.PipelineFull)
 def create_pipeline(pipeline: schemas.PipelineCreate, user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Create a new pipeline """
     return(Pipeline(name=pipeline.name, ae_title=pipeline.ae_title, is_shared=pipeline.is_shared, user_id=user.id)).save(db)
@@ -123,7 +123,7 @@ def get_pipeline(pipeline_id: int, db: Session = Depends(session)):
     return pipeline
 
 
-@ router.put("/{pipeline_id}/edit", response_model=schemas.Pipeline)
+@router.put("/{pipeline_id}/edit", response_model=schemas.Pipeline)
 def edit_pipeline(pipeline_id: int, pipeline: schemas.PipelineCreate, db: Session = Depends(session)):
     """ Edit a pipeline """
     pipeline_to_edit = db.query(Pipeline).get(pipeline_id)
@@ -133,7 +133,7 @@ def edit_pipeline(pipeline_id: int, pipeline: schemas.PipelineCreate, db: Sessio
     return pipeline_to_edit
 
 
-@ router.put("/{pipeline_id}", response_model=schemas.PipelineRun)
+@router.put("/{pipeline_id}/run", response_model=schemas.PipelineRun)
 def run_pipeline(pipeline_id: int, run_options: schemas.PipelineRunOptions, db: Session = Depends(session)):
     """ Runs A Pipeline. """
     run = PipelineController.pipeline_run_factory(
@@ -156,7 +156,7 @@ def get_pipeline_links(pipeline_id: int, db: Session = Depends(session)):
     return db.query(PipelineLink).filter(PipelineLink.pipeline_id == pipeline_id).delete()
 
 
-@router.post("/{pipeline_id}", response_model=schemas.Pipeline)
+@router.put("/{pipeline_id}", response_model=schemas.PipelineFull)
 def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, db: Session = Depends(session)):
     """ This Allows you to update / add pipeline containers and links """
 
@@ -168,11 +168,11 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
     nodes = {node.node_id: PipelineNode(
         pipeline_id=pipeline_id,
         container_id=node.container_id,
+        dicom_node_id=node.dicom_node_id,
         x_coord=node.x,
         y_coord=node.y,
         container_is_input=node.container_is_input,
-        container_is_output=node.container_is_output,
-        destination_id=node.destination_id
+        container_is_output=node.container_is_output
     ).save(db) for node in pipeline_update.nodes}
 
     for link in pipeline_update.links:

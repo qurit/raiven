@@ -120,7 +120,7 @@ export default {
       }
     },
     async getNodes() {
-      const URL = `/dicom/nodes/${this.$auth.user.id}`
+      const URL = `/dicom/nodes?input_node=true`
       await generic_get(this, URL)
         .then((data) => this.updateTreeview(data))
         .then(() => {

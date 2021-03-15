@@ -39,6 +39,8 @@ class BaseConfig:
     LDAP_BASE_DN = ''
     LDAP_TEST_USR = ''
     LDAP_TEST_PW = ''
+    LDAP_SEARCH_FILTER = '(&(objectCategory=person)(objectClass=user)(sAMAccountName=%s))'
+    LDAP_AUTH_ENABLED = False
 
     # DB Config
     POSTGRES_HOST = '127.0.0.1'
@@ -70,10 +72,14 @@ class BaseConfig:
     SCP_PORT = 11112
     SCP_DEBUG = True
 
+    # Return to Sender
+    _RTS_HOST: str = '*'
+    _RTS_PORT: int = -1
+
     SHAREABLE_SETTINGS = ['PIPELINE_AE_PREFIX', 'USER_AE_PREFIX']
 
     def __init__(self):
-        env_vars = [v for v in os.environ.keys() if (v in vars(BaseConfig)) and not v.startswith('__')]
+        env_vars = [v for v in os.environ.keys() if (v in vars(BaseConfig)) and not v.startswith('_')]
         [self.apply_env_var(k) for k in env_vars]
 
         if not os.path.exists(self.UPLOAD_DIR):

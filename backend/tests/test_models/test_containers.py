@@ -18,19 +18,19 @@ def test_container_create_zip(db):
     delete_and_test_container(db, container)
 
 
-def create_and_test_container(db, file_path):
+def create_and_test_container(db, file_path, **kwargs):
     with open(file_path, 'rb') as fp:
         data = fp.read()
 
     container = create_container(
-        auto_build=False,
+        auto_build=kwargs.get('auto_build', False),
         file=data,
-        name='test_container_create_zip',
-        filename='simple_container.zip',
-        description='A simple container',
-        is_input_container=False,
-        is_output_container=False,
-        is_shared=False,
+        name=kwargs.get('name', 'test_container_create_zip'),
+        filename=kwargs.get('filename', 'simple_container.zip'),
+        description=kwargs.get('description', 'A simple container'),
+        is_input_container=kwargs.get('is_input_container', False),
+        is_output_container=kwargs.get('is_output_container', False),
+        is_shared=kwargs.get('is_shared', False),
         user=utils.get_test_user(db),
         db=db
     )

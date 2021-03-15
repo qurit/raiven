@@ -36,13 +36,13 @@ class Pipeline(Base):
 class PipelineNode(Base):
     pipeline_id = Column(ForeignKey("pipeline.id", **CASCADE))
     container_id = Column(ForeignKey("container.id"))
-    destination_id = Column(ForeignKey("destination.id"))
+    dicom_node_id = Column(ForeignKey("dicom_node.id"))
     x_coord = Column(Integer)
     y_coord = Column(Integer)
     container_is_input = Column(Boolean)
     container_is_output = Column(Boolean)
 
-    destination = relationship("Destination", uselist=False)
+    destination = relationship("DicomNode", uselist=False)
     container = relationship("Container", uselist=False)
     next_links = relationship('PipelineLink', foreign_keys='PipelineLink.from_node_id')
     previous_links = relationship('PipelineLink', foreign_keys='PipelineLink.to_node_id')
@@ -77,12 +77,14 @@ class PipelineLink(Base):
 
 class PipelineRun(IOPathMixin, Base):
     pipeline_id = Column(ForeignKey('pipeline.id', **CASCADE))
+    initiator_id = Column(ForeignKey("dicom_node.id"), nullable=True)
     status = Column(String, default='Created')
 
     created_datetime = Column(DateTime, default=datetime.now)
     finished_datetime = Column(DateTime)
 
     jobs = relationship('PipelineJob', backref="run")
+    initiator = relationship('DicomNode')
 
 
 class PipelineJob(IOPathMixin, TimestampMixin, Base):
