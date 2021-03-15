@@ -57,8 +57,8 @@
       </v-row>
       <v-row justify="center">
         <v-btn
-          @click="submit"
           :disabled="isDisabled"
+          @click="submit"
           color="confirm"
           class="ma-4"
           text
@@ -83,7 +83,6 @@ export default {
   },
   data() {
     return {
-      submitted: false,
       file: '',
       container: {
         containerId: '',
@@ -98,7 +97,7 @@ export default {
       containerToTag: null
     }
   },
-  mounted() {
+  created() {
     this.populate()
     this.$store.dispatch('tags/fetchTags')
   },
@@ -202,7 +201,6 @@ export default {
         this.container.containerIsOutput = false
         this.container.containerIsShared = false
       }
-      // }
       await this.$store.dispatch('containers/fetchContainers')
       this.$toaster.toastSuccess('Container saved!')
     }

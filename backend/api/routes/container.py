@@ -109,10 +109,9 @@ def create_container(
     # Build Container In Background
     db.commit()
 
-    # if auto_build:
-    #     ContainerController.build_container(db_container.id)
+    if auto_build:
+        ContainerController.build_container(db_container.id)
 
-    print(db_container)
     return db_container
 
 

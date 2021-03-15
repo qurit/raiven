@@ -19,18 +19,11 @@ class ContainerCreate(BaseModel):
     filename: Optional[str] = None
 
 
-# class ContainerTags(BaseModel):
-#     # To create the list of tags associated with the container
-#     tag_ids: List[int]
-
-
 class Tag(BaseORMModel):
-    # To create a new Tag in the Tag db
     tag_name: str
 
 
 class ContainerTag(BaseModel):
-    # To associate the tags with the appropriate container
     container_id: int
     tag_id: int
     tag: str

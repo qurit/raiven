@@ -139,9 +139,6 @@ export default {
       this.confirmDeleteDialog = false
     },
     async editContainer(containerId) {
-      // TODO: MAKE SURE THE CONTAINER STORE IS  UP TO DATE WITH DATABASE
-      // await this.$store.dispatch('containers/fetchContainers')
-
       const containers = this.$store.state.containers.containers
       const containerToUpdate = containers.find(container => {
         return container.id === containerId
@@ -157,8 +154,6 @@ export default {
 
       // force containerForm re-render
       this.key += 1
-
-      // TODO: MAKE A QUERY FOR THE TAGS OF A SPECIFIC CONTAINER IN BACKEND ROUTES MAYBE LIKE <container_id>/<tags> or something?
       this.dialog = true
     }
   },
