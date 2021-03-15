@@ -3,11 +3,11 @@ import shutil
 
 from api import config
 from api.models import utils
-from api.models.dicom import DicomNode
 from api.models.pipeline import Pipeline
 from api.models.user import User
-from api.pipelining import DicomIngestController, PipelineController
-from api.services import DatabaseService, PipelineConditionService, DicomNodeService
+from api.pipelining import PipelineController, DicomIngestController
+
+from . import DatabaseService, PipelineConditionService, DicomNodeService
 
 
 class DicomIngestService(DatabaseService):
@@ -28,6 +28,20 @@ class DicomIngestService(DatabaseService):
         self.calling_aet = calling_aet
         self.calling_host = calling_host
         self.initiator_node = None
+        self._action = None
+
+        # Pushed to pipeline
+        if self.called_aet.startswith(config.PIPELINE_AE_PREFIX):
+            self._action = self._ingest_through_pipeline
+
+        # Pushed to user or Globally
+        elif self.called_aet.startswith(config.USER_AE_PREFIX) or self.called_aet == config.SCP_AE_TITLE:
+            self._action = self._ingest_to_storage
+
+        # Pushed to an undefined location
+        else:
+            print("ERROR: Undefined called AET")
+            raise NotImplementedError
 
     def __enter__(self):
         super().__enter__()
@@ -45,53 +59,25 @@ class DicomIngestService(DatabaseService):
             print("INFO: Empty ingested folder")
             raise self.EmptyFolderException('An Ingest Folder Cannot Be Empty')
 
-        # Pushed to pipeline
-        if self.called_aet.startswith(config.PIPELINE_AE_PREFIX):
-            self._ingest_through_pipeline()
+        self._action()
 
-        # Pushed to user
-        elif self.called_aet.startswith(config.USER_AE_PREFIX):
-            self._ingest_to_user()
+    def _get_rel_folder(self) -> str:
+        return self.folder.relative_to(config.UPLOAD_DIR).as_posix()
 
-        # Pushed globally
-        elif self.called_aet == config.SCP_AE_TITLE:
-            self._ingest_globally()
+    def _get_user_id(self) -> int:
+        if not self.called_aet.startswith(config.USER_AE_PREFIX):
+            return None
 
-
-        # Pushed to an undefined location
-        else:
-            print("ERROR: Undefined called AET")
-            raise NotImplementedError
-
-    def _run_pipeline(self) -> bool:
-        return
-
-    def _ingest_globally(self) -> bool:
-        print("Ingesting folder globally")
-        return DicomIngestController.ingest_globally(
-            folder=self.folder.relative_to(config.UPLOAD_DIR).as_posix(),
-            calling_aet=self.calling_aet,
-            calling_host=self.calling_host,
-            calling_port=self.calling_port
-        )
-
-    def _ingest_to_user(self):
         username = utils.strip_prefix(self.called_aet, config.USER_AE_PREFIX)
-        query_user = self._db.query(User) \
-            .filter_by(username=username) \
-            .first()
+        user = self._db.query(User).filter_by(username=username).first()
 
-        if not query_user:
-            print(f"ERROR: Attempted to ingest to non-existant user {username}")
-            raise NotImplementedError
+        return user.id if user else None
 
-        print(f"Ingesting folder to user: '{query_user.username}'")
-        return DicomIngestController.ingest_to_user(
-            folder=self.folder.relative_to(config.UPLOAD_DIR).as_posix(),
-            calling_aet=self.calling_aet,
-            calling_host=self.calling_host,
-            calling_port=self.calling_port,
-            user_id=query_user.id
+    def _ingest_to_storage(self):
+        return DicomIngestController.ingest_to_storage(
+            folder=self._get_rel_folder(),
+            dicom_node_id=self.initiator_node.id,
+            user_id=self._get_user_id()
         )
 
     def _ingest_through_pipeline(self) -> bool:

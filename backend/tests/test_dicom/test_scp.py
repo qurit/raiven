@@ -125,10 +125,11 @@ def test_store_global(db, stub_broker, stub_worker):
                 uids_added.append(uid)
 
     association.release()
+    sleep(1)
     join(stub_broker, stub_worker)
 
     assert (node := db.query(DicomNode).first())
-    assert node.user_id == None  # Node should not be tied to one user
+    assert node.user_id is None  # Node should not be tied to one user
     for uid in uids_added:
         assert models.dicom.DicomSeries.query(db).filter_by(series_instance_uid=uid).first(), \
             f'Could not find series_instance_uid={uid} in db'

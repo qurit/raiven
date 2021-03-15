@@ -64,17 +64,9 @@ class DicomIngestController:
         pass
 
     @staticmethod
-    def _get_rel_folder(folder: pathlib.Path) -> str:
-        return folder.relative_to(config.UPLOAD_DIR).as_posix()
-
-    @staticmethod
     def _execute_task(*args) -> bool:
         return DicomIngestController.TASK(args=args)
 
     @staticmethod
-    def ingest_globally(folder: pathlib.Path, calling_aet: str, calling_host: str, calling_port: int) -> bool:
-        return DicomIngestController._execute_task(_get_rel_folder(folder), calling_aet, calling_host, calling_port)
-
-    @staticmethod
-    def ingest_to_user(folder: pathlib.Path, calling_aet: str, calling_host: str, calling_port: int, user_id: int) -> bool:
-        return DicomIngestController._execute_task(_get_rel_folder(folder), calling_aet, calling_host, calling_port, user_id)
+    def ingest_to_storage(folder: str, dicom_node_id: int, user_id: int = None) -> bool:
+        return DicomIngestController._execute_task(folder, dicom_node_id, user_id)
