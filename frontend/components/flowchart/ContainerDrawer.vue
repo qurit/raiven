@@ -17,7 +17,7 @@
       <v-row no-gutters class="pt-2 px-2">
         <v-text-field
           v-model="search"
-          placeholder="Search container"
+          placeholder="Search by name or tag"
           append-icon="mdi-magnify"
           solo
           flat
@@ -73,3 +73,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.v-text-field ::placeholder {
+  font-size: 0.9em;
+}
+</style>
