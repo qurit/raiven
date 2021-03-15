@@ -195,12 +195,13 @@ export default {
           containerId: this.containerToTag.id,
           tags: this.container.containerTags
         })
-        this.$emit('closeDialog')
+
         this.$refs.form.reset()
         this.container.containerIsInput = false
         this.container.containerIsOutput = false
         this.container.containerIsShared = false
       }
+      this.$emit('closeDialog')
       await this.$store.dispatch('containers/fetchContainers')
       this.$toaster.toastSuccess('Container saved!')
     }
