@@ -185,7 +185,6 @@ export default {
             })
           }
         }
-        this.$emit('closeDialog')
       } else {
         this.containerToTag = await this.$store.dispatch(
           'containers/addContainer',
@@ -196,6 +195,7 @@ export default {
           containerId: this.containerToTag.id,
           tags: this.container.containerTags
         })
+        this.$emit('closeDialog')
         this.$refs.form.reset()
         this.container.containerIsInput = false
         this.container.containerIsOutput = false
