@@ -1,7 +1,6 @@
 from . import BaseModel, BaseORMModel
 from typing import Optional, List, Any
 from .user import User
-from api.models import container
 
 
 class ContainerStats(BaseModel):

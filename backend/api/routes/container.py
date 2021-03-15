@@ -104,6 +104,7 @@ def create_container(
         with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
             fp.write(file)
 
+        db_container.dockerfile_path = os.path.join(db_container.get_path(), filename)
         db_container.save(db)
 
     # Build Container In Background

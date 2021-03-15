@@ -138,7 +138,7 @@ export default {
       }
       this.confirmDeleteDialog = false
     },
-    async editContainer(containerId) {
+    editContainer(containerId) {
       const containers = this.$store.state.containers.containers
       const containerToUpdate = containers.find(container => {
         return container.id === containerId
