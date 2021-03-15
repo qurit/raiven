@@ -17,16 +17,6 @@ from api.auth import token_auth
 router = APIRouter()
 
 
-@router.get("/tags")
-def get_tags(db: Session = Depends(session)):
-    return db.query(Tag).all()
-
-
-@router.get("/containertags")
-def get_container_tags(db: Session = Depends(session)):
-    return db.query(ContainerTags).all()
-
-
 @router.get("/stats", response_model=container.ContainerStats)
 def get_container_stats(db: Session = Depends(session)):
     """ Get container count. Used in dashboard counter."""
@@ -143,9 +133,13 @@ def delete_container(container_id: int, db: Session = Depends(session)):
     return db.query(Container).get(container_id).delete(db)
 
 
+@router.get("/tags")
+def get_tags(db: Session = Depends(session)):
+    return db.query(Tag).all()
+
+
 @router.post("/tags", response_model=List[container.Tag])
 def post_tags(tags: List[str], db: Session = Depends(session)):
-    print(tags)
     new_tags = []
     for tag in tags:
         exists = db.query(Tag.id).filter_by(tag_name=tag).first() is not None
@@ -155,17 +149,16 @@ def post_tags(tags: List[str], db: Session = Depends(session)):
             new_tag = Tag(tag_name=tag)
             new_tag.save(db)
             new_tags.append(new_tag)
-    print(new_tags)
     return new_tags
 
 
-@router.post("/{container_id}/tags")
+@router.post("/{container_id}/tags", response_model=List[str])
 def post_container_tags(container_id: int, tags: List[str], db: Session = Depends(session)):
     db.query(ContainerTags).filter(ContainerTags.container_id == container_id).delete()
-    print(tags)
     for tag in tags:
         tag = db.query(Tag).filter_by(tag_name=tag).first()
         tag_id = tag.id
         new_container_tag = ContainerTags(container_id=container_id, tag_id=tag_id)
         new_container_tag.save(db)
-    print("testing")
+    print(tags)
+    return tags
