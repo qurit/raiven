@@ -9,12 +9,6 @@ export const getters = {
     return state.containers.filter(
       container => container.user_id === rootState.auth.user.id
     )
-  },
-  recentContainer: (state, getters, rootState) => {
-    const max = state.containers.reduce(function(prev, current) {
-      return prev.id > current.id ? prev : current
-    })
-    return max
   }
 }
 

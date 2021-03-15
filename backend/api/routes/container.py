@@ -146,6 +146,7 @@ def delete_container(container_id: int, db: Session = Depends(session)):
 @router.post("/tags")
 def post_tags(tags: List[str], db: Session = Depends(session)):
     print(tags)
+    new_tags = []
     for tag in tags:
         exists = db.query(Tag.id).filter_by(tag_name=tag).first() is not None
         print(exists)
@@ -153,7 +154,9 @@ def post_tags(tags: List[str], db: Session = Depends(session)):
             print(tag)
             new_tag = Tag(tag_name=tag)
             new_tag.save(db)
-            return new_tag
+            new_tags.append(new_tag)
+    print(new_tags)
+    return new_tags
 
 
 @router.post("/{container_id}/tags")
@@ -162,6 +165,8 @@ def post_container_tags(container_id: int, tags: List[str], db: Session = Depend
     print(tags)
     print(container_id)
     db.query(ContainerTags).filter(ContainerTags.container_id == container_id).delete()
+    all_tags = db.query(Tag).all()
+    print(all_tags)
     for tag in tags:
         tag = db.query(Tag).filter_by(tag_name=tag).first()
         tag_id = tag.id

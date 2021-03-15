@@ -83,6 +83,7 @@ export default {
   },
   data() {
     return {
+      submitted: false,
       file: '',
       container: {
         containerId: '',
@@ -142,6 +143,7 @@ export default {
       this.file = file
     },
     async submit() {
+      console.log('SUBMIT!!!!!')
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
       const formData = new FormData()
       formData.append('name', this.container?.containerName)
@@ -164,29 +166,42 @@ export default {
             data: formData
           }
         )
-      } else {
-        this.containerToTag = await this.$store.dispatch(
-          'containers/addContainer',
-          formData
-        )
-      }
-      console.log(this.containerToTag)
-      if (!!this.containerToEdit) {
+        console.log(this.containerToTag)
         await this.$store.dispatch('tags/addTag', this.container.containerTags)
         await this.$store.dispatch('tags/addContainerTags', {
           containerId: this.containerToTag.id,
           tags: this.container.containerTags
         })
+        this.$emit('closeDialog')
       } else {
-        await this.$store.dispatch('tags/addTag', this.container.containerTags)
-        await this.$store.dispatch('tags/addContainerTags', {
-          containerId: this.containerToTag.id,
-          tags: this.container.containerTags
-        })
-        await this.$refs.form.reset()
+        console.log('SENDING DATA ADD NEW CONTAINER ')
+        if (!!formData.entries().next().value) {
+          console.log('form data has stuff')
+          for (var pair of formData.entries()) {
+            console.log(pair[0] + ', ' + pair[1])
+          }
+          this.containerToTag = await this.$store.dispatch(
+            'containers/addContainer',
+            formData
+          )
+          await this.$store.dispatch(
+            'tags/addTag',
+            this.container.containerTags
+          )
+          await this.$store
+            .dispatch('tags/addContainerTags', {
+              containerId: this.containerToTag.id,
+              tags: this.container.containerTags
+            })
+            .then(() => {
+              this.$refs.form.reset()
+              this.container.containerIsInput = false
+              this.container.containerIsOutput = false
+              this.container.containerIsShared = false
+            })
+        }
       }
       await this.$store.dispatch('containers/fetchContainers')
-      this.$emit('closeDialog')
       this.$toaster.toastSuccess('Container saved!')
     }
   }
