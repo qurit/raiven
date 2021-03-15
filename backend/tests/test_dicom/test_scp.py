@@ -6,7 +6,7 @@ from pynetdicom import AE, StoragePresentationContexts, debug_logger
 from pynetdicom.sop_class import VerificationSOPClass
 
 from api.dicom.scp import SCP
-from api.models.dicom import DicomNode
+from api.models.dicom import DicomNode, DicomSeries
 from api.models.pipeline import Pipeline, PipelineRun
 from api.schemas.dicom import DicomNode as DicomNodeSchema
 from api.queries.internal import get_return_to_sender
@@ -146,13 +146,14 @@ def test_store_valid_user(db, stub_broker, stub_worker):
     sleep(1)  # Ensure detached SCP server has enough time to send job to worker before .join
     join(stub_broker, stub_worker)
 
-    assert (node := db.query(DicomNode).first())
-    assert node.user_id == utils.get_test_user(db).id
+    user = utils.get_test_user(db)
+    assert db.query(DicomNode).filter_by(user_id=user.id).first()
 
 
 def test_store_invalid_user(db, stub_broker, stub_worker):
-    # Ensure no DicomNodes in test data 
-    db.query(DicomNode).delete()
+    # Ensure no DicomNodes in test data
+    db.query(DicomSeries).delete()
+    prev_count = db.query(DicomSeries).count()
     db.commit()
 
     # Send dicom to user
@@ -161,7 +162,8 @@ def test_store_invalid_user(db, stub_broker, stub_worker):
     sleep(1)  # Ensure detached SCP server has enough time to send job to worker before .join
     join(stub_broker, stub_worker)
 
-    assert db.query(DicomNode).count() == 0
+    new_count = db.query(DicomSeries).count()
+    assert prev_count == new_count
 
 
 def test_store_valid_pipeline_no_containers(db, stub_broker, stub_worker):

@@ -40,8 +40,7 @@ class DicomIngestService(DatabaseService):
 
         # Pushed to an undefined location
         else:
-            print("ERROR: Undefined called AET")
-            raise NotImplementedError
+            raise ValueError("ERROR: Undefined called AET")
 
     def __enter__(self):
         super().__enter__()
@@ -71,7 +70,10 @@ class DicomIngestService(DatabaseService):
         username = utils.strip_prefix(self.called_aet, config.USER_AE_PREFIX)
         user = self._db.query(User).filter_by(username=username).first()
 
-        return user.id if user else None
+        if not user:
+            raise ValueError('User %s not found' % username)
+
+        return user.id
 
     def _ingest_to_storage(self):
         return DicomIngestController.ingest_to_storage(
@@ -86,8 +88,7 @@ class DicomIngestService(DatabaseService):
         folder = self.folder
 
         if not pipeline:
-            print(f"ERROR: Attempted to ingest to non-existant pipeline {ae_title}")
-            raise NotImplementedError
+            raise ValueError(f"ERROR: Attempted to ingest to non-existant pipeline {ae_title}")
 
         conditions_service = PipelineConditionService(pipeline, self.initiator_node, self._db)
         # print(conditions_service.has_conditions())

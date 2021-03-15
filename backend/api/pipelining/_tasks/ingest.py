@@ -69,6 +69,7 @@ def update_or_create_user_node(db, global_node: DicomNode, user_id: int) -> Dico
         node = DicomNode(
             title=global_node.title,
             host=global_node.host,
+            user_id=user_id,
             first_connected=datetime.utcnow(),
             last_connected=datetime.utcnow(),
             implementation_version_name=global_node.implementation_version_name,
