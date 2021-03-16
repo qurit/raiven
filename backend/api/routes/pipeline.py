@@ -16,26 +16,6 @@ from api.auth import token_auth
 router = APIRouter()
 
 
-# @router.get("/condition", response_model=List[schemas.PipelineCondition])
-# def get_conditions(db: Session = Depends(session)):
-#     return db.query(PipelineCondition).all()
-#
-#
-# @router.post("/condition", response_model=schemas.PipelineCondition)
-# def create_condition(condition: schemas.PipelineConditionCreate, db: Session = Depends(session)):
-#     new_condition = PipelineCondition(
-#         condition_name=condition.condition_name, conditions=condition.conditions, is_active=condition.is_active, pipeline_id=condition.pipeline)
-#     new_condition.save(db)
-#     return new_condition
-#
-#
-# @router.delete("/condition/{condition_id}", response_model=schemas.PipelineCondition)
-# def delete_condition(condition_id: int, db: Session = Depends(session)):
-#     if condition := db.query(PipelineCondition).get(condition_id):
-#         condition.delete(db)
-#     return condition
-
-
 @router.get("/stats", response_model=schemas.PipelineStats)
 def get_pipeline_stats(db: Session = Depends(session)):
     """

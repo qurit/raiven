@@ -52,7 +52,7 @@ class PipelineNodeCreate(BaseModel):
     conditions: Optional[List[PipelineNodeConditionCreate]] = []
 
     @root_validator
-    def check_has_dicom_node(cls, values):
+    def check_io_node_has_destination(cls, values):
         if values.get('container_is_input'):
             assert values.get('dicom_node_id'), "Input Node Missing an Input Source"
 
