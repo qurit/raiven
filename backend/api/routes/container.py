@@ -55,9 +55,10 @@ def post_container_tags(container_id: int, tags: List[str], db: Session = Depend
     db.query(ContainerTags).filter(ContainerTags.container_id == container_id).delete()
     for tag in tags:
         tag = db.query(Tag).filter_by(tag_name=tag).first()
-        tag_id = tag.id
-        new_container_tag = ContainerTags(container_id=container_id, tag_id=tag_id)
-        new_container_tag.save(db)
+        ContainerTags(
+            container_id=container_id,
+            tag_id=tag.id
+        ).save(db)
     return tags
 
 
