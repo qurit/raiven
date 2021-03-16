@@ -11,6 +11,7 @@ class BaseConfig:
     APT_HOST = '127.0.0.1'
     API_PORT = 5000
     API_HOT_RELOAD = True
+    CORS_ALLOWED_ORIGINS = "http://localhost:3000"
     UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
     UPLOAD_VOLUME_ABSPATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
     INTERNAL_USERNAME = 'RAIVEN_INTERNAL'
