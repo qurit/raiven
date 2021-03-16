@@ -3,7 +3,7 @@
     <n-link to="/" style="text-decoration: none">
       <v-img
         class="mr-5"
-        :src="require('@/static/raiven-logo.svg')"
+        :src="require('@/static/logo.svg')"
         height="40"
         width="40"
       />
