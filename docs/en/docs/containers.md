@@ -25,9 +25,6 @@ WORKDIR /src
 RUN pip install pydicom numpy
 COPY . .
 
-ENV RAIVEN_INPUT_DIR /mnt/raiven/input
-ENV RAIVEN_OUTPUT_DIR /mnt/raiven/output
-
 CMD python main.py
 ```
 
@@ -40,8 +37,8 @@ import os
 
 from pydicom import dcmread
 
-INPUT_DIR = os.environ['PICOM_INPUT_DIR']
-OUTPUT_DIR = os.environ['PICOM_OUTPUT_DIR']
+INPUT_DIR = os.environ['RAIVEN_INPUT_DIR']
+OUTPUT_DIR = os.environ['RAIVEN_OUTPUT_DIR']
 
 
 if __name__ == '__main__':

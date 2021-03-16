@@ -20,6 +20,27 @@ def _run_next_nodes(job: PipelineJob, run_id: int):
             print(e)
 
 
+def get_volumes(job: PipelineJob) -> dict:
+    """ Creates the volumes to be mounted to the running container """
+
+    return {
+        HOST_PATH_TYPE(job.get_volume_abs_input_path()): {'bind': config.RAIVEN_INPUT_DIR, 'mode': 'ro'},
+        HOST_PATH_TYPE(job.get_volume_abs_output_path()): {'bind': config.RAIVEN_OUTPUT_DIR, 'mode': 'rw'}
+    }
+
+
+def get_environment(job: PipelineJob) -> dict:
+    """ Builds a dictionary of environment varibales to be passed to the running container """
+    initiator = job.run.initiator
+
+    return {
+        'RAIVEN_INITIATOR_AET': initiator.title,
+        'RAIVEN_INITIATOR_HOST': initiator.host,
+        'RAIVEN_INPUT_DIR': config.RAIVEN_INPUT_DIR,
+        'RAIVEN_OUTPUT_DIR': config.RAIVEN_OUTPUT_DIR
+    }
+
+
 @dramatiq.actor(max_retries=0)
 def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
     # external_sio.emit('message', f"RUNNING NODE: {node_id}, RUN: {run_id}")
@@ -45,21 +66,25 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
 
         image_tag = build.tag
 
-        if not previous_job_id:
-            src_subdir = 'input'
-            prev = db.query(PipelineRun).get(run_id)
-        else:
+        if previous_job_id:
             src_subdir = 'output'
             prev = db.query(PipelineJob).get(previous_job_id)
+        else:
+            src_subdir = 'input'
+            prev = db.query(PipelineRun).get(run_id)
 
         models.utils.copy_model_fs(prev, job, src_subdir=src_subdir)
-        volumes = {
-            HOST_PATH_TYPE(job.get_volume_abs_input_path()): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
-            HOST_PATH_TYPE(job.get_volume_abs_output_path()): {'bind': config.PICOM_OUTPUT_DIR, 'mode': 'rw'}
-        }
-        print(volumes)
+        volumes = get_volumes(job)
+        environment = get_environment(job)
 
-    container: Container = docker.containers.run(image_tag, detach=True, volumes=volumes, labels=['Raiven'])
+    container: Container = docker.containers.run(
+        image=image_tag,
+        detach=True,
+        volumes=volumes,
+        environment=environment,
+        labels=['Raiven']
+    )
+
     with worker_session() as db:
         job.status = 'running'
         job.save(db)
@@ -70,6 +95,7 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
     # TODO: add spin wait
     exit_code = container.wait()['StatusCode']
     print('Container finished with exit code', exit_code)
+
     with worker_session() as db:
         job.status = 'exited'
         job.exit_code = exit_code
