@@ -184,6 +184,11 @@ export default {
               tags: this.container.containerTags
             })
           }
+        } else {
+          await this.$store.dispatch('tags/addContainerTags', {
+            containerId: this.containerToTag?.id,
+            tags: []
+          })
         }
       } else {
         this.containerToTag = await this.$store.dispatch(
