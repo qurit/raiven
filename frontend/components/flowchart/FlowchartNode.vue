@@ -25,7 +25,7 @@
         />
       </v-card-title>
       <v-select
-        v-if="container_is_output"
+        v-if="container_is_output || container_is_input"
         v-model="selected"
         :items="destinations"
         item-text="title"
@@ -35,6 +35,7 @@
         solo
         flat
         return-object
+        single-line
         @change="changeDestination(selected)"
       >
         <template v-slot:prepend-item>
@@ -51,27 +52,34 @@
           <v-divider light />
         </template>
       </v-select>
-      <v-card-actions style="position: absolute; bottom: 0; width: inherit">
-        <v-chip
-          v-if="container_is_input"
-          small
-          v-text="'Input'"
-          :color="nodeColor"
-        />
-        <v-chip
-          v-if="container_is_output"
-          small
-          v-text="'Output'"
-          :color="nodeColor"
-        />
-        <v-spacer />
-        <v-icon-btn
-          v-if="canEdit"
-          delete
-          color="cancel"
-          @click="$emit('deleteNode')"
-        />
-      </v-card-actions>
+      <v-expand-transition>
+        <v-toolbar
+          v-if="hover"
+          style="position: absolute; bottom: 0; width: inherit"
+          flat
+          color="primary"
+          dense
+          class="pa-0"
+
+        >
+          <v-btn
+            text
+            color="accent"
+            v-if="container_is_input"
+            @click="$emit('showConditionBuilder')"
+          >
+            Rules
+          </v-btn>
+          <v-spacer/>
+          <v-icon-btn
+            v-if="canEdit"
+            delete
+            color="accent"
+            @click="$emit('deleteNode')"
+          />
+        </v-toolbar>
+      </v-expand-transition>
+
 
       <!-- Output Port -->
       <FlowchartNodePort
@@ -185,7 +193,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .poll-name {
   overflow: hidden;
@@ -199,7 +206,7 @@ export default {
   position: absolute;
   box-sizing: border-box;
   z-index: 10;
-  opacity: 0.9;
+  opacity: 0.95;
   cursor: move;
   transform-origin: top left;
 

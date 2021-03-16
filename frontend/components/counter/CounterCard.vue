@@ -1,5 +1,5 @@
 <template>
-  <v-card class="my-1 px-2 text-center" height="150" width="175" elevation="10">
+  <v-card class="my-1 px-2 text-center" height="150" width="175" >
     <v-row align="center">
       <v-col>
         <div :class="`${fontsize} font-weight-light`" v-text="displayNumber" />

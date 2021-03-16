@@ -28,6 +28,7 @@
       @nodeSelected="nodeSelected(node.id, $event)"
       @deleteNode="deleteNode(node.id)"
       @showDestinationForm="destinationDialog = true"
+      @showConditionBuilder="conditionDialog = true"
     />
 
 <!-- DestinationDialog -->
@@ -39,6 +40,20 @@
         @close="destinationDialog = false"
       />
     </v-expand-transition>
+
+<!-- ConditionsDialog -->
+    <v-dialog v-model="conditionDialog" width="700px" style="overflow-x: hidden !important">
+      <ConditionBuilder
+        v-if="conditionDialog"
+        :node="selectedNode"
+        @input="setConditions"
+      >
+        <template slot="actions">
+          <v-spacer/>
+          <v-btn color="primary accent--text" @click="conditionDialog = false" rounded>Close</v-btn>
+        </template>
+      </ConditionBuilder>
+    </v-dialog>
   </div>
 </template>
 
@@ -48,10 +63,11 @@ import FlowchartNode from './FlowchartNode.vue'
 import OutputDestinationForm from './OutputDestinationForm.vue'
 import { getMousePosition } from './position'
 import { generic_put } from '~/api'
+import ConditionBuilder from "@/components/conditions/ConditionBuilder";
 
 export default {
   name: 'VueFlowchart',
-  components: { FlowchartLink, FlowchartNode, OutputDestinationForm },
+  components: {ConditionBuilder, FlowchartLink, FlowchartNode, OutputDestinationForm },
   props: {
     scene: {
       type: Object,
@@ -82,6 +98,7 @@ export default {
   },
   data: () => ({
     destinationDialog: false,
+    conditionDialog: false,
     savedNodes: [],
     savedLinks: [],
     action: {
@@ -101,16 +118,18 @@ export default {
       top: 0,
       left: 0
     },
-    pipelineNodeDestinations: []
+    pipelineNodeDestinations: [],
+    pipelineNodeConditions: []
   }),
   computed: {
+    selectedNode: ctx => ctx.scene.nodes.find(n => n.id === ctx.action.selected),
     nodeOptions: ctx => ({
       centerY: ctx.scene.centerY,
       centerX: ctx.scene.centerX,
       scale: ctx.scene.scale,
       offsetTop: ctx.rootDivOffset.top,
       offsetLeft: ctx.rootDivOffset.left,
-      selected: ctx.action.selected
+      selected: ctx.action.selected,
     }),
     lines() {
       const lines = this.scene.links.map(link => {
@@ -150,15 +169,12 @@ export default {
   },
   methods: {
     setDestinations(destination) {
-      const index = this.pipelineNodeDestinations.findIndex(
-        pipelineDestination =>
-          pipelineDestination.pipelineNodeId === destination.pipelineNodeId
-      )
-      if (index >= 0) {
-        this.pipelineNodeDestinations.splice(index, 1)
-      }
-      this.pipelineNodeDestinations.push(destination)
+      const i = this.pipelineNodeDestinations.findIndex(dest => dest.pipelineNodeId === destination.pipelineNodeId)
+
+      if (i >= 0) this.pipelineNodeDestinations[i] = destination
+      else this.pipelineNodeDestinations.push(destination)
     },
+    setConditions(condition) { this.selectedNode.conditions = condition },
     findNodeWithID(id) {
       return this.scene.nodes.find(item => id === item.id)
     },
@@ -313,12 +329,13 @@ export default {
           x: node.x,
           y: node.y,
           container_is_input: node.container_is_input,
-          container_is_output: node.container_is_output
+          container_is_output: node.container_is_output,
+          conditions: node.conditions
         }
         // if there is a node with a destination, then save the destination as well
-        this.pipelineNodeDestinations.forEach(pipelineNodeDestination => {
-          if (pipelineNodeDestination.pipelineNodeId === node.id) {
-            newPipelineNode['dicom_node_id'] = pipelineNodeDestination.destinationId
+        this.pipelineNodeDestinations.forEach(dest => {
+          if (dest.pipelineNodeId === node.id) {
+            newPipelineNode['dicom_node_id'] = dest.destinationId
           }
         })
         nodeArray.push(newPipelineNode)

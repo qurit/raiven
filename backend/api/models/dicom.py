@@ -3,6 +3,7 @@ import os
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 
+from api import config
 from . import Base, PathMixin, NestedPathMixin, CASCADE
 
 
@@ -13,6 +14,10 @@ class DicomNode(PathMixin, Base):
     input = Column(Boolean, default=False)
     output = Column(Boolean, default=False)
 
+    implementation_version_name = Column(String)
+    first_connected = Column(DateTime)
+    last_connected = Column(DateTime)
+
     # Null user ID means DicomNode is available globally 
     user_id = Column(Integer, ForeignKey("user.id"), nullable=True)
     patients = relationship('DicomPatient', backref='node')
@@ -21,6 +26,13 @@ class DicomNode(PathMixin, Base):
     __table_args__ = (
         UniqueConstraint('title', 'host', 'port', 'user_id', name='_node_uc'),
     )
+
+    def __eq__(self, other) -> bool:
+        return self.host == other.host and self.port == other.port and self.title == other.title
+
+    @property
+    def is_rts(self):
+        return self.host == config._RTS_HOST and self.port == config._RTS_PORT
 
 
 class DicomPatient(NestedPathMixin, Base):

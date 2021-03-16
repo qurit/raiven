@@ -31,6 +31,16 @@ class PipelineJobError(BaseORMModel):
     stderr: str
 
 
+class PipelineNodeConditionCreate(BaseModel):
+    match: str = 'All'
+    tag: str
+    values: List[str]
+
+
+class PipelineNodeCondition(PipelineNodeConditionCreate, BaseORMModel):
+    pipeline_node_id: int
+
+
 class PipelineNodeCreate(BaseModel):
     node_id: int
     container_id: int
@@ -39,6 +49,17 @@ class PipelineNodeCreate(BaseModel):
     container_is_input: bool
     container_is_output: bool
     dicom_node_id: Optional[int]
+    conditions: Optional[List[PipelineNodeConditionCreate]] = []
+
+    @root_validator
+    def check_io_node_has_destination(cls, values):
+        if values.get('container_is_input'):
+            assert values.get('dicom_node_id'), "Input Node Missing an Input Source"
+
+        if values.get('container_is_output'):
+            assert values.get('dicom_node_id'), "Output Node Missing an Output Destination"
+
+        return values
 
 
 class PipelineNode(BaseORMModel):
@@ -52,6 +73,7 @@ class PipelineNode(BaseORMModel):
 
     container: Container
     destination: Optional[DicomNode]
+    conditions: Optional[List[PipelineNodeCondition]] = []
 
 
 class PipelineLinkCreate(BaseModel):
@@ -101,6 +123,14 @@ class PipelineUpdate(BaseModel):
 class Pipeline(PipelineCreate, BaseORMModel):
     user_id: Optional[int]
     name: str
+
+
+class PipelineCondition(BaseORMModel):
+    condition_name: str
+    conditions: dict
+    is_active: bool
+    pipeline_id: int
+    pipeline: Pipeline
 
 
 class PipelineFull(Pipeline):

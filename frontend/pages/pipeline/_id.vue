@@ -169,7 +169,8 @@ export default {
           label: node.container.description,
           container_is_input: node.container_is_input,
           container_is_output: node.container_is_output,
-          destination: node.destination
+          destination: node.destination,
+          conditions: node.conditions
         }
         this.scene.nodes.push(containerNode)
       })

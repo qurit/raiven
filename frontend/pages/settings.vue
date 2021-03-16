@@ -4,14 +4,17 @@
       <v-col sm="12" md="5">
         <UserSettings />
       </v-col>
+      <v-col sm="12" md="7">
+        <Conditions />
+      </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
-import { UserSettings } from '~/components/user'
+import { UserSettings, Conditions } from '~/components/user'
 
 export default {
-  components: { UserSettings }
+  components: { UserSettings, Conditions }
 }
 </script>

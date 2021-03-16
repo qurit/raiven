@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from api import session, queries, middleware
 from api.pipelining import PipelineController
-from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun, PipelineJob, PipelineJobError
+from api.models.pipeline import Pipeline, PipelineLink, PipelineNode, PipelineRun, PipelineJob, PipelineJobError, PipelineNodeCondition
 from api.schemas import pipeline as schemas
 from api.models.user import User
 from api.auth import token_auth
@@ -165,15 +165,21 @@ def update_pipeline(pipeline_id: int, pipeline_update: schemas.PipelineUpdate, d
     db.query(PipelineLink).filter(PipelineLink.pipeline_id == pipeline_id).delete()
 
     # save new nodes and links
-    nodes = {node.node_id: PipelineNode(
-        pipeline_id=pipeline_id,
-        container_id=node.container_id,
-        dicom_node_id=node.dicom_node_id,
-        x_coord=node.x,
-        y_coord=node.y,
-        container_is_input=node.container_is_input,
-        container_is_output=node.container_is_output
-    ).save(db) for node in pipeline_update.nodes}
+    nodes = {}
+    for n in pipeline_update.nodes:
+        node = PipelineNode(
+            pipeline_id=pipeline_id,
+            container_id=n.container_id,
+            dicom_node_id=n.dicom_node_id,
+            x_coord=n.x,
+            y_coord=n.y,
+            container_is_input=n.container_is_input,
+            container_is_output=n.container_is_output
+        ).save(db)
+        nodes[n.node_id] = node
+
+        # Save Conditions
+        [PipelineNodeCondition(**c.dict(), pipeline_node_id=node.id).save(db) for c in n.conditions]
 
     for link in pipeline_update.links:
         PipelineLink(

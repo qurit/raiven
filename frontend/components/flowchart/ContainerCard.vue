@@ -3,7 +3,6 @@
     <v-card
       class="title"
       :elevation="hover ? 12 : 2"
-      style="transition: background-color 0.2s ease-out"
       rounded
     >
       <v-card-title v-text="container.name" />
