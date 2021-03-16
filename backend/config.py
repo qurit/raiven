@@ -57,8 +57,8 @@ class BaseConfig:
     RABBITMQ_HOST = '127.0.0.1'
 
     # Pipeline
-    PICOM_INPUT_DIR = '/mnt/picom/input'
-    PICOM_OUTPUT_DIR = '/mnt/picom/output'
+    RAIVEN_INPUT_DIR = '/mnt/picom/input'
+    RAIVEN_OUTPUT_DIR = '/mnt/picom/output'
     IMAGE_TAG_PREFIX = 'RAIVEN'
 
     # AE Prefixes 

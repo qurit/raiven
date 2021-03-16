@@ -2,8 +2,8 @@ import os
 
 from pydicom import dcmread
 
-INPUT_DIR = os.environ['PICOM_INPUT_DIR']
-OUTPUT_DIR = os.environ['PICOM_OUTPUT_DIR']
+INPUT_DIR = os.environ['RAIVEN_INPUT_DIR']
+OUTPUT_DIR = os.environ['RAIVEN_OUTPUT_DIR']
 
 
 """

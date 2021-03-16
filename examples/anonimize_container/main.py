@@ -2,8 +2,8 @@ import os
 import pydicom
 from pydicom import dcmread
 
-INPUT_DIR = os.environ['PICOM_INPUT_DIR']
-OUTPUT_DIR = os.environ['PICOM_OUTPUT_DIR']
+INPUT_DIR = os.environ['RAIVEN_INPUT_DIR']
+OUTPUT_DIR = os.environ['RAIVEN_OUTPUT_DIR']
 
 
 def person_names_callback(dataset, data_element):

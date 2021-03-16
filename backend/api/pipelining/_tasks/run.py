@@ -24,8 +24,8 @@ def get_volumes(job: PipelineJob) -> dict:
     """ Creates the volumes to be mounted to the running container """
 
     return {
-        HOST_PATH_TYPE(job.get_volume_abs_input_path()): {'bind': config.PICOM_INPUT_DIR, 'mode': 'ro'},
-        HOST_PATH_TYPE(job.get_volume_abs_output_path()): {'bind': config.PICOM_OUTPUT_DIR, 'mode': 'rw'}
+        HOST_PATH_TYPE(job.get_volume_abs_input_path()): {'bind': config.RAIVEN_INPUT_DIR, 'mode': 'ro'},
+        HOST_PATH_TYPE(job.get_volume_abs_output_path()): {'bind': config.RAIVEN_OUTPUT_DIR, 'mode': 'rw'}
     }
 
 
@@ -36,6 +36,8 @@ def get_environment(job: PipelineJob) -> dict:
     return {
         'RAIVEN_INITIATOR_AET': initiator.title,
         'RAIVEN_INITIATOR_HOST': initiator.host,
+        'RAIVEN_INPUT_DIR': config.RAIVEN_INPUT_DIR,
+        'RAIVEN_OUTPUT_DIR': config.RAIVEN_OUTPUT_DIR
     }
 
 
