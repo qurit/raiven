@@ -26,7 +26,7 @@ export const actions = {
       const res = await generic_post(this, URL, data)
       commit('addTag', res)
     } catch (err) {
-      this.$toaster.toastError('Could not add Container tags')
+      this.$toaster.toastError('Could not add tags')
     }
   },
   async addContainerTags({ commit }, data) {
@@ -34,7 +34,7 @@ export const actions = {
       const URL = `/container/${data.containerId}/tags`
       await generic_post(this, URL, data.tags)
     } catch (err) {
-      this.$toaster.toastError('Could not add Container tags')
+      this.$toaster.toastError('Could not associate Container tags')
     }
   }
 }
