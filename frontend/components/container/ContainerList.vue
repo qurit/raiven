@@ -98,21 +98,21 @@ export default {
         containerTags: []
       },
       headers: [
-        { text: 'Name', value: 'name', width: '1%' },
+        { text: 'Name', value: 'name', width: '20%' },
         {
           text: 'Description',
           value: 'description',
           filterable: false,
-          width: '2%'
+          width: '40%'
         },
-        { text: 'Shared', value: 'is_shared', width: '1%' },
-        { text: 'File', value: 'filename', width: '1%' },
+        { text: 'Shared', value: 'is_shared', width: '10%' },
+        { text: 'File', value: 'filename', width: '10%' },
         {
           text: 'Edit or Delete',
           value: 'actions',
           sortable: false,
           align: 'center',
-          width: '1%'
+          width: '20%'
         }
       ],
       search: ''
@@ -126,16 +126,11 @@ export default {
       this.deleteContainerId = containerId
       this.confirmDeleteDialog = true
     },
-    async confirmDeleteContainer(containerId) {
-      try {
-        await this.$store.dispatch(
-          'containers/deleteContainer',
-          this.deleteContainerId
-        )
-        this.$toaster.toastSuccess('Container deleted!')
-      } catch (e) {
-        this.$toaster.toastError('Could not delete container')
-      }
+    async confirmDeleteContainer() {
+      await this.$store.dispatch(
+        'containers/deleteContainer',
+        this.deleteContainerId
+      )
       this.confirmDeleteDialog = false
     },
     editContainer(containerId) {

@@ -27,11 +27,11 @@ class Container(PathMixin, Base):
     user = relationship('User', backref='container', uselist=False)
     tags = relationship("Tag", secondary="container_tags")
 
-    @ property
+    @property
     def dockerfile_abs_path(self):
         return os.path.join(config.UPLOAD_DIR, self.dockerfile_path)
 
-    @ property
+    @property
     def build_abs_path(self):
         return os.path.dirname(self.dockerfile_abs_path)
 
@@ -44,7 +44,7 @@ class ContainerBuild(TimestampMixin, Base):
 
     error = relationship('ContainerBuildError', uselist=False, backref='build')
 
-    @ property
+    @property
     def is_success(self):
         return self.exit_code == 0
 

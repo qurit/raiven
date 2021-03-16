@@ -171,7 +171,7 @@ export default {
             )
             await this.$store.dispatch('tags/addTag', tagNameArray)
             await this.$store.dispatch('tags/addContainerTags', {
-              containerId: this.containerToTag.id,
+              containerId: this.containerToTag?.id,
               tags: tagNameArray
             })
           } else {
@@ -180,7 +180,7 @@ export default {
               this.container.containerTags
             )
             await this.$store.dispatch('tags/addContainerTags', {
-              containerId: this.containerToTag.id,
+              containerId: this.containerToTag?.id,
               tags: this.container.containerTags
             })
           }
@@ -192,7 +192,7 @@ export default {
         )
         await this.$store.dispatch('tags/addTag', this.container.containerTags)
         await this.$store.dispatch('tags/addContainerTags', {
-          containerId: this.containerToTag.id,
+          containerId: this.containerToTag?.id,
           tags: this.container.containerTags
         })
 

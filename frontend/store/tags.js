@@ -17,7 +17,7 @@ export const actions = {
       commit('setTags', data)
       return data
     } catch (err) {
-      console.log(err)
+      this.$toaster.toastError('Could not fetch tags')
     }
   },
   async addTag({ commit }, data) {
@@ -26,7 +26,7 @@ export const actions = {
       const res = await generic_post(this, URL, data)
       commit('addTag', res)
     } catch (err) {
-      console.log(err)
+      this.$toaster.toastError('Could not add Container tags')
     }
   },
   async addContainerTags({ commit }, data) {
@@ -34,7 +34,7 @@ export const actions = {
       const URL = `/container/${data.containerId}/tags`
       await generic_post(this, URL, data.tags)
     } catch (err) {
-      console.log(err)
+      this.$toaster.toastError('Could not add Container tags')
     }
   }
 }
