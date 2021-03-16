@@ -11,19 +11,25 @@
         {{ container.description }}
       </v-card-subtitle>
       <v-row justify="center" v-if="container.user_id !== $auth.user.id">
-        <v-chip class="mb-1" v-text="'From: ' + container.user.name" color="info" />
+        <v-chip
+          class="mb-1"
+          v-text="'From: ' + container.user.name"
+          color="info"
+        />
       </v-row>
-      <v-card-actions class="mt-n2">
+      <v-row class="ma-1">
         <v-chip
           v-for="chip in chips"
           v-text="chip"
-          class="mr-1"
-          :color="containerColor"
+          class="mr-1 mb-1"
+          color="primary"
+          small
+          outlined
         />
         <v-spacer />
         <!-- Slot to enable adding of custom actions -->
         <slot></slot>
-      </v-card-actions>
+      </v-row>
     </v-card>
   </v-hover>
 </template>
@@ -38,23 +44,14 @@ export default {
     colors: {
       type: Object,
       default: () => ({
-        input: 'orange',
-        output: 'purple',
-        default: 'blue'
+        default: 'blue',
+        tag: 'green'
       })
     }
   },
   computed: {
-    containerColor: ctx => {
-      if (ctx.container.is_output_container) return ctx.colors.output
-      else if (ctx.container.is_input_container) return ctx.colors.input
-      else return ctx.colors.default
-    },
     chips: ctx => {
-      const chips = []
-      if (ctx.container.is_output_container) chips.push('Output')
-      if (ctx.container.is_input_container) chips.push('Input')
-      return chips
+      return ctx.container.tags.map(tag => tag.tag_name)
     }
   }
 }

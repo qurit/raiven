@@ -1,10 +1,11 @@
 from . import BaseModel, BaseORMModel
-from typing import Optional
+from typing import Optional, List, Any
 from .user import User
 
 
 class ContainerStats(BaseModel):
     container_counts: int
+
 
 class ContainerCreate(BaseModel):
     user_id: int
@@ -17,6 +18,17 @@ class ContainerCreate(BaseModel):
     filename: Optional[str] = None
 
 
+class Tag(BaseORMModel):
+    tag_name: str
+
+
+class ContainerTag(BaseModel):
+    container_id: int
+    tag_id: int
+    tag: str
+
+
 class Container(ContainerCreate, BaseORMModel):
     user_id: int
     user: User
+    tags: Optional[List[Any]]

@@ -45,7 +45,7 @@
       <ContainerForm
         :isEditing="true"
         :containerToEdit="this.container"
-        :key="this.container.containerId"
+        :key="this.key"
         @closeDialog="closeDialog"
       />
     </v-dialog>
@@ -84,6 +84,7 @@ export default {
   },
   data: function() {
     return {
+      key: 0,
       deleteContainerId: null,
       dialog: false,
       confirmDeleteDialog: false,
@@ -93,24 +94,25 @@ export default {
         containerName: '',
         containerDescription: '',
         containerIsInput: false,
-        containerIsOutput: false
+        containerIsOutput: false,
+        containerTags: []
       },
       headers: [
-        { text: 'Name', value: 'name', width: '1%' },
+        { text: 'Name', value: 'name', width: '20%' },
         {
           text: 'Description',
           value: 'description',
           filterable: false,
-          width: '2%'
+          width: '40%'
         },
-        { text: 'Shared', value: 'is_shared', width: '1%' },
-        { text: 'File', value: 'filename', width: '1%' },
+        { text: 'Shared', value: 'is_shared', width: '10%' },
+        { text: 'File', value: 'filename', width: '10%' },
         {
           text: 'Edit or Delete',
           value: 'actions',
           sortable: false,
           align: 'center',
-          width: '1%'
+          width: '20%'
         }
       ],
       search: ''
@@ -124,16 +126,11 @@ export default {
       this.deleteContainerId = containerId
       this.confirmDeleteDialog = true
     },
-    async confirmDeleteContainer(containerId) {
-      try {
-        await this.$store.dispatch(
-          'containers/deleteContainer',
-          this.deleteContainerId
-        )
-        this.$toaster.toastSuccess('Container deleted!')
-      } catch (e) {
-        this.$toaster.toastError('Could not delete container')
-      }
+    async confirmDeleteContainer() {
+      await this.$store.dispatch(
+        'containers/deleteContainer',
+        this.deleteContainerId
+      )
       this.confirmDeleteDialog = false
     },
     editContainer(containerId) {
@@ -148,6 +145,10 @@ export default {
       this.container.containerIsOutput = containerToUpdate.is_output_container?.toString()
       this.container.containerIsShared = containerToUpdate.is_shared?.toString()
       this.container.filename = containerToUpdate.filename
+      this.container.containerTags = containerToUpdate.tags
+
+      // force containerForm re-render
+      this.key += 1
       this.dialog = true
     }
   },

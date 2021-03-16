@@ -8,6 +8,11 @@ from . import Base, PathMixin, TimestampMixin, CASCADE
 from api.models.pipeline import PipelineNode
 
 
+class ContainerTags(Base):
+    container_id = Column(ForeignKey("container.id", **CASCADE))
+    tag_id = Column(ForeignKey("tag.id", **CASCADE))
+
+
 class Container(PathMixin, Base):
     user_id = Column(ForeignKey("user.id", **CASCADE))
     name = Column(String)
@@ -20,6 +25,7 @@ class Container(PathMixin, Base):
 
     build = relationship('ContainerBuild', backref='container', uselist=False)
     user = relationship('User', backref='container', uselist=False)
+    tags = relationship("Tag", secondary="container_tags")
 
     @property
     def dockerfile_abs_path(self):
@@ -49,3 +55,9 @@ class ContainerBuild(TimestampMixin, Base):
 class ContainerBuildError(Base):
     container_build_id = Column(ForeignKey("container_build.id", ondelete="CASCADE"))
     stderr = Column(String)
+
+
+class Tag(Base):
+    tag_name = Column(String)
+
+    containers = relationship("Container", secondary="container_tags")

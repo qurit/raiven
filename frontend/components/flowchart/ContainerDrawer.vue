@@ -17,7 +17,7 @@
       <v-row no-gutters class="pt-2 px-2">
         <v-text-field
           v-model="search"
-          placeholder="Search container"
+          placeholder="Search by name or tag"
           append-icon="mdi-magnify"
           solo
           flat
@@ -37,7 +37,8 @@
       :colors="colors.container"
       class="ma-2"
     >
-      <v-icon-btn add @click="$emit('add-node', c)" color="white" />
+      <v-spacer />
+      <v-icon-btn @click="$emit('add-node', c)" color="white" />
     </ContainerCard>
   </v-navigation-drawer>
 </template>
@@ -46,7 +47,7 @@
 import ContainerCard from './ContainerCard'
 
 export default {
-  components: {ContainerCard},
+  components: { ContainerCard },
   props: {
     containers: Array,
     colors: Object
@@ -56,7 +57,25 @@ export default {
     containerList: false
   }),
   computed: {
-    filteredList: ctx => ctx.containers.filter(c => c.name.toLowerCase().includes(ctx.search.toLowerCase()))
+    filteredContainerName: ctx =>
+      ctx.containers.filter(c =>
+        c.name.toLowerCase().includes(ctx.search.toLowerCase())
+      ),
+    filteredContainerTags: ctx =>
+      ctx.containers.filter(c =>
+        c.tags
+          .map(tag => tag.tag_name.toLowerCase().trim())
+          .includes(ctx.search.toLowerCase())
+      ),
+    filteredList: ctx => [
+      ...new Set([...ctx.filteredContainerName, ...ctx.filteredContainerTags])
+    ]
   }
 }
 </script>
+
+<style>
+.v-text-field ::placeholder {
+  font-size: 0.9em;
+}
+</style>

@@ -85,7 +85,6 @@ export default {
     openContainerInfo(node) {
       this.node = node
       this.containerDialog = true
-      console.log(this.container)
     },
     async getInfo() {
       const URL = `/pipeline/${this.pipelineId}/results`

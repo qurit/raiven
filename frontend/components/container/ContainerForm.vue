@@ -23,38 +23,41 @@
           label="Description"
         ></v-textarea>
       </v-col>
-      <v-row>
-        <v-checkbox
-          v-model="container.containerIsInput"
-          label="Input"
-          false-value="false"
-          true-value="true"
-          class="mx-10"
-        />
-        <v-checkbox
-          v-model="container.containerIsOutput"
-          label="Output"
-          false-value="false"
-          true-value="true"
-          class="mx-10"
-        />
-        <v-checkbox
-          v-model="container.containerIsShared"
-          label="Shared"
-          false-value="false"
-          true-value="true"
-          class="mx-10"
-        />
+      <v-row align="center" class="mx-3">
+        <v-combobox
+          v-model="container.containerTags"
+          :items="items"
+          label="Select tags"
+          multiple
+          chips
+          item-text="tag_name"
+          item-value="tag_name"
+          :return-object="false"
+          deletable-chips
+        >
+        </v-combobox>
       </v-row>
-      <v-file-input
-        v-model="file"
-        :label="container.filename"
-        @change="updateDockerFile"
-        prepend-icon="mdi-docker"
-      />
+      <v-row>
+        <v-col md="9">
+          <v-file-input
+            v-model="file"
+            :label="container.filename"
+            @change="updateDockerFile"
+            prepend-icon="mdi-docker"
+          />
+        </v-col>
+        <v-col md="3">
+          <v-checkbox
+            v-model="container.containerIsShared"
+            label="Shared"
+            false-value="false"
+            true-value="true"
+          />
+        </v-col>
+      </v-row>
       <v-row justify="center">
         <v-btn
-          :disabled="this.isDisabled"
+          :disabled="isDisabled"
           @click="submit"
           color="confirm"
           class="ma-4"
@@ -68,6 +71,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   props: {
     containerToEdit: {
@@ -87,12 +91,15 @@ export default {
         containerDescription: '',
         containerIsInput: false,
         containerIsOutput: false,
-        containerIsShared: false
-      }
+        containerIsShared: false,
+        containerTags: []
+      },
+      containerToTag: null
     }
   },
   created() {
     this.populate()
+    this.$store.dispatch('tags/fetchTags')
   },
   computed: {
     // disables button if no name or dockerfile for new container
@@ -100,6 +107,10 @@ export default {
       return !!this.containerToEdit
         ? false
         : !(this.container.containerName && this.file)
+    },
+    ...mapState('tags', ['tags']),
+    items() {
+      return this.$store.state.tags.tags
     }
   },
   methods: {
@@ -116,6 +127,7 @@ export default {
         this.container.containerIsInput = false
         this.container.containerIsOutput = false
         this.container.containerIsShared = false
+        this.container.containerTags = []
       }
     },
     readFile(file) {
@@ -145,21 +157,57 @@ export default {
         formData.append('description', this.container.containerDescription)
       }
       if (!!this.containerToEdit) {
-        await this.$store.dispatch('containers/updateContainer', {
-          id: this.container.containerId,
-          data: formData
-        })
-      } else {
-        await this.$store
-          .dispatch('containers/addContainer', formData)
-          .then(() => {
-            this.$refs.form.reset()
-            this.container.containerIsInput = false
-            this.container.containerIsOutput = false
-            this.container.containerIsShared = false
+        this.containerToTag = await this.$store.dispatch(
+          'containers/updateContainer',
+          {
+            id: this.container.containerId,
+            data: formData
+          }
+        )
+        if (this.container.containerTags.length !== 0) {
+          if (this.container.containerTags[0].hasOwnProperty('tag_name')) {
+            const tagNameArray = this.container.containerTags.map(
+              tag => tag.tag_name
+            )
+            await this.$store.dispatch('tags/addTag', tagNameArray)
+            await this.$store.dispatch('tags/addContainerTags', {
+              containerId: this.containerToTag?.id,
+              tags: tagNameArray
+            })
+          } else {
+            await this.$store.dispatch(
+              'tags/addTag',
+              this.container.containerTags
+            )
+            await this.$store.dispatch('tags/addContainerTags', {
+              containerId: this.containerToTag?.id,
+              tags: this.container.containerTags
+            })
+          }
+        } else {
+          await this.$store.dispatch('tags/addContainerTags', {
+            containerId: this.containerToTag?.id,
+            tags: []
           })
+        }
+      } else {
+        this.containerToTag = await this.$store.dispatch(
+          'containers/addContainer',
+          formData
+        )
+        await this.$store.dispatch('tags/addTag', this.container.containerTags)
+        await this.$store.dispatch('tags/addContainerTags', {
+          containerId: this.containerToTag?.id,
+          tags: this.container.containerTags
+        })
+
+        this.$refs.form.reset()
+        this.container.containerIsInput = false
+        this.container.containerIsOutput = false
+        this.container.containerIsShared = false
       }
       this.$emit('closeDialog')
+      await this.$store.dispatch('containers/fetchContainers')
       this.$toaster.toastSuccess('Container saved!')
     }
   }
