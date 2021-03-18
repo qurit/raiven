@@ -19,13 +19,15 @@ def run_ingest_task(folder: str, dicom_node_id: int, user_id: int = None):
     print("BACKEND INGEST")
     folder = pathlib.Path(config.UPLOAD_DIR) / folder
 
-    # TODO: should we put this in the loop instead and make more, shorter connections?
     with worker_session() as db:
         node: DicomNode = db.query(DicomNode).get(dicom_node_id)
 
         # Getting the user specific node
         if user_id:
             node = update_or_create_user_node(db, node, user_id)
+
+        # Update the node to be an input node
+        node.input = True
 
         for file_path in folder.glob('**/*.dcm'):
             ds = dcmread(str(file_path))

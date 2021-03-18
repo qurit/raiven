@@ -90,11 +90,13 @@ class DicomIngestService(DatabaseService):
         if not pipeline:
             raise ValueError(f"ERROR: Attempted to ingest to non-existant pipeline {ae_title}")
 
+        # Evaluate Conditions to see if we should run the pipeline
         conditions_service = PipelineConditionService(pipeline, self.initiator_node, self._db)
-        # print(conditions_service.has_conditions())
         if conditions_service.has_conditions():
-            # Add to a temp folder
             conditions_service.add_series_to_storage_bucket(self.folder)
+
+            # Delete the tmp_folder now that we have copied to the bucket
+            shutil.rmtree(self.folder)
 
             # Run if all the conditions are satisfied
             if not conditions_service.are_conditions_met():

@@ -16,21 +16,6 @@ class PipelineStats(BaseModel):
     pipeline_run_counts: int
 
 
-class PipelineJob(BaseORMModel):
-    pipeline_node_id: int
-    timestamp: datetime
-    input_path: str
-    status: str
-    pipeline_run_id: str
-    output_path: str
-    exit_code: Optional[str]
-
-
-class PipelineJobError(BaseORMModel):
-    pipeline_job_id: int
-    stderr: str
-
-
 class PipelineNodeConditionCreate(BaseModel):
     match: str = 'All'
     tag: str
@@ -169,6 +154,22 @@ class PipelineRunOptions(BaseModel):
         return self._DICOM_TYPES[self.dicom_obj_type.lower()]
 
 
+class PipelineJobError(BaseORMModel):
+    stderr: str
+
+
+class PipelineJob(BaseORMModel):
+    pipeline_run_id: str
+    pipeline_node_id: int
+
+    timestamp: datetime
+    input_path: str
+    status: str
+    output_path: str
+    exit_code: Optional[str]
+    error: Optional[PipelineJobError]
+
+
 class PipelineRun(BaseORMModel):
     id: int
     status: str
@@ -179,3 +180,5 @@ class PipelineRun(BaseORMModel):
     # but should save pipeline name with the pipeline run, because if pipeline gets
     # deleted, then the PipelineRun will error since it has no associated Pipeline anymore
     pipeline: Optional[Pipeline]
+
+    jobs: Optional[List[PipelineJob]]

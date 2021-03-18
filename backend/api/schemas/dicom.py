@@ -32,10 +32,11 @@ class DicomPatient(BaseORMModel):
 class DicomNode(BaseORMModel):
     title: str
     host: str
-    port: int
+    port: Optional[int] = None
     output: bool = False
     input: bool = False
     user_id: Optional[int] = None
+    implementation_version_name: Optional[str] = None
 
 
 class DicomNodeCreate(BaseModel):

@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card elevation="6">
-      <v-toolbar color="primary accent--text" flat v-if="!this.pipelineId">
+      <v-toolbar :color="toolbarColor" flat v-if="!this.pipelineId">
         <v-toolbar-title>
           <b>Pipeline Run Results </b>
         </v-toolbar-title>
@@ -13,7 +13,10 @@
           hide-details
           solo
         />
-        <v-icon-btn @click="getPipelineRuns" color="#373740" refresh />
+        <v-icon-btn v-if="!deleteMode" @click="getPipelineRuns" :color="toolbarIconColor" refresh />
+        <v-icon-btn v-if="!deleteMode" @click="deleteMode = true" :color="toolbarIconColor"  delete />
+        <v-icon-btn v-if="deleteMode" @click="clearDelete" :color="toolbarIconColor" close />
+        <v-icon-btn  v-if="deleteMode" @click="saveDelete" :color="toolbarIconColor" save />
       </v-toolbar>
       <v-text-field
         v-model="search"
@@ -30,6 +33,8 @@
 
       <v-data-table
         id="ResultsTable"
+        v-model="selected"
+        :show-select="deleteMode"
         :headers="headers"
         :items="items"
         :search="search"
@@ -58,7 +63,7 @@
 <script>
 const FileDownload = require('js-file-download')
 
-import { generic_get } from '~/api'
+import { generic_get, generic_delete } from '~/api'
 import vIconBtn from '../global/v-icon-btn.vue'
 
 export default {
@@ -68,21 +73,25 @@ export default {
       type: Number
     }
   },
-  data() {
-    return {
-      headers: [
-        { text: 'Run ID', align: 'start', value: 'id' },
-        { text: 'Status', value: 'status' },
-        { text: 'Started on:', filterable: false, value: 'created_datetime' },
-        { text: 'Finished on:', filterable: false, value: 'finished_datetime' },
-        { text: 'Results', value: 'actions', sortable: false, align: 'center' }
-      ],
-      items: [],
-      sortBy: 'finished_datetime',
-      sortDesc: true,
-      search: '',
-      fetching: true
-    }
+  data: () => ({
+    headers: [
+      { text: 'Run ID', align: 'start', value: 'id' },
+      { text: 'Status', value: 'status' },
+      { text: 'Started on:', filterable: false, value: 'created_datetime' },
+      { text: 'Finished on:', filterable: false, value: 'finished_datetime' },
+      { text: 'Results', value: 'actions', sortable: false, align: 'center' }
+    ],
+    items: [],
+    sortBy: 'finished_datetime',
+    sortDesc: true,
+    search: '',
+    fetching: true,
+    selected: [],
+    deleteMode: false
+  }),
+  computed: {
+    toolbarColor: ctx => ctx.deleteMode ? 'error' : 'primary accent--text',
+    toolbarIconColor: ctx => ctx.deleteMode ? 'white' : 'accent'
   },
   created() {
     this.getPipelineRuns()
@@ -91,8 +100,7 @@ export default {
   },
   methods: {
     formatDateTime: x => (x ? new Date(x).toLocaleString() : 'Invalid Date'),
-    formatFileName: x =>
-      `${x.pipeline.name}_results_${x.finished_datetime}.zip`,
+    formatFileName: x => `${x.pipeline.name}_results_${x.finished_datetime}.zip`,
     async getPipelineRuns() {
       const URL = this.pipelineId
         ? `/pipeline/${this.pipelineId}/results`
@@ -110,6 +118,26 @@ export default {
         FileDownload(results, this.formatFileName(pipelineRun))
       } catch (e) {
         this.$toaster.toastError('Could not download file')
+      }
+    },
+    clearDelete() {
+      this.deleteMode = false;
+      this.selected = []
+    },
+    async saveDelete() {
+      if (window.confirm("Are you sure you want to delete the selected items")) {
+        this.deleteMode = false;
+
+        for (const run of this.selected) {
+          try {
+            await generic_delete(this, `/pipeline/run/${run.id}`)
+          } catch (e) {
+            this.$toaster.toastError('Could not delete run: ' + run.id)
+          }
+        }
+
+        this.selected = []
+        await this.getPipelineRuns()
       }
     }
   }

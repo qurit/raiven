@@ -30,6 +30,14 @@ class _Base:
         self._flush(session)
         return self
 
+    def update(self, session: Session, **kwargs):
+        for key, value in kwargs.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+
+        self._flush(session)
+        return self
+
     def delete(self, session: Session):
         session.delete(self)
         self._flush(session)
