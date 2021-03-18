@@ -1,10 +1,11 @@
-from datetime import datetime
+from docker.models.containers import Container as DockerContainer
 
 from api import config, worker_session, models
 from api.dicom.scu import send_dicom_folder
 from api.models.pipeline import PipelineRun, PipelineJob, PipelineJobError, PipelineNode
 
-from . import HOST_PATH_TYPE, docker, dramatiq
+from . import docker, dramatiq
+from .utils import get_volumes, get_environment, create_job, mark_job_complete, mark_run_complete
 
 
 def _run_next_nodes(job: PipelineJob, run_id: int):
@@ -20,51 +21,23 @@ def _run_next_nodes(job: PipelineJob, run_id: int):
             print(e)
 
 
-def get_volumes(job: PipelineJob) -> dict:
-    """ Creates the volumes to be mounted to the running container """
-
-    return {
-        HOST_PATH_TYPE(job.get_volume_abs_input_path()): {'bind': config.RAIVEN_INPUT_DIR, 'mode': 'ro'},
-        HOST_PATH_TYPE(job.get_volume_abs_output_path()): {'bind': config.RAIVEN_OUTPUT_DIR, 'mode': 'rw'}
-    }
-
-
-def get_environment(job: PipelineJob) -> dict:
-    """ Builds a dictionary of environment varibales to be passed to the running container """
-    initiator = job.run.initiator
-
-    return {
-        'RAIVEN_INITIATOR_AET': initiator.title,
-        'RAIVEN_INITIATOR_HOST': initiator.host,
-        'RAIVEN_INPUT_DIR': config.RAIVEN_INPUT_DIR,
-        'RAIVEN_OUTPUT_DIR': config.RAIVEN_OUTPUT_DIR
-    }
-
-
 @dramatiq.actor(max_retries=0)
 def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
-    # external_sio.emit('message', f"RUNNING NODE: {node_id}, RUN: {run_id}")
-    print('Got past the emit')
-
-    # TODO: Check if all previous nodes have finished
-
     with worker_session() as db:
-
+        # TODO: Check if all previous nodes have finished
         # TODO: TEMP fix for input nodes
+
         node: PipelineNode = db.query(PipelineNode).get(node_id)
         if node.container_is_input:
             for n in node.get_next_nodes():
                 run_node_task.send_with_options(args=(run_id, n.id))
 
-        job = PipelineJob(pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
-        job.save(db)
+        job = create_job(db, run_id, node_id)
 
         if not (build := job.node.container.build):
             # TODO: ABORT AND BUILD
             print('Cant run node because container is not built')
             return
-
-        image_tag = build.tag
 
         if previous_job_id:
             src_subdir = 'output'
@@ -77,88 +50,58 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
         volumes = get_volumes(job)
         environment = get_environment(job)
 
-    container: Container = docker.containers.run(
-        image=image_tag,
-        detach=True,
-        volumes=volumes,
-        environment=environment,
-        labels=['Raiven']
-    )
+        container: DockerContainer = docker.containers.run(
+            image=build.tag,
+            detach=True,
+            volumes=volumes,
+            environment=environment,
+            labels=['Raiven']
+        )
 
-    with worker_session() as db:
-        job.status = 'running'
-        job.save(db)
+        job.update(db, status='running')
         db.commit()
 
-    # Long running task
-    print('Waiting for container')
-    # TODO: add spin wait
-    exit_code = container.wait()['StatusCode']
-    print('Container finished with exit code', exit_code)
+        # Long running task
+        print('Waiting for container')
+        exit_code = container.wait()['StatusCode']
+        print('Container finished with exit code', exit_code)
 
-    with worker_session() as db:
-        job.status = 'exited'
-        job.exit_code = exit_code
-        job.save(db)
+        mark_job_complete(db, job, exit_code=exit_code, stderr=container)
 
-        if exit_code != 0:
-            container.reload()
-            stderr = container.logs(stdout=False, stderr=True).decode("utf-8")
-            job_error = PipelineJobError(pipeline_job_id=job.id, stderr=stderr)
-            job_error.save(db)
-        elif job.node.is_leaf_node():
-            # TODO: Handle multiple lead nodes
-
-            # Run Complete
-            run = db.query(PipelineRun).get(run_id)
-            models.utils.copy_model_fs(job, run, dst_subdir='output')
-            run.status = 'complete'
-            run.finished_datetime = datetime.now()
-            run.save(db)
-
-            print('emit pipeline finished')
-            # external_sio.emit('message', f"PIPELINE FINISHED NODE")
-
-            # TODO: Clean up old jobs
+        # TODO: Clean up old jobs
+        if job.node.is_leaf_node():
+            print('Pipeline finished')
+            mark_run_complete(db, job)
         else:
             _run_next_nodes(job, run_id)
 
-    # Cleaning Up Container
-    container.remove()
+        # Cleaning Up Container
+        container.remove()
 
 
 @dramatiq.actor(max_retries=3)
 def dicom_output_task(run_id: int, node_id: int, previous_job_id: int = None):
-    try:
-        with worker_session() as db:
-            job = PipelineJob(pipeline_run_id=run_id, pipeline_node_id=node_id, status='Created')
-            job.save(db)
+    with worker_session() as db:
+        job = create_job(db, run_id, node_id)
 
-            if dest := job.node.destination:
-                if not previous_job_id:
-                    prev: PipelineRun = db.query(PipelineRun).get(run_id)
-                    folder = prev.get_abs_input_path()
-                else:
-                    prev: PipelineJob = PipelineJob.query(db).get(previous_job_id)
-                    folder = prev.get_abs_output_path()
+        if not (dest := job.node.destination):
+            job.update(db, status='failed', exit_code=-1)
+            PipelineJobError(pipeline_job_id=job.id, stderr='No Destination for the pipeline').save(db)
+            return
 
-                # Return to sender
-                if dest.host == config._RTS_HOST and dest.port == config._RTS_PORT:
-                    dest = job.run.initiator
+        if previous_job_id:
+            prev: PipelineJob = PipelineJob.query(db).get(previous_job_id)
+            folder = prev.get_abs_output_path()
+        else:
+            prev: PipelineRun = db.query(PipelineRun).get(run_id)
+            folder = prev.get_abs_input_path()
 
-                dest.detach(db)
-            else:
-                job.status = 'except'
-                job.exit_code = -1
-                job.save(db)
-                PipelineJobError(pipeline_job_id=job.id, stderr='No Destination for the pipeline').save(db)
+        # Return to sender
+        if dest.host == config._RTS_HOST and dest.port == config._RTS_PORT:
+            dest = job.run.initiator
 
         # Long running task
         send_dicom_folder(dest, folder)
 
-        with worker_session() as db:
-            job.status = 'exited'
-            job.exit_code = 0
-            job.save(db)
-    except Exception as e:
-        print(e)
+        mark_job_complete(db, job, exit_code=0)
+        mark_run_complete(db, job)
