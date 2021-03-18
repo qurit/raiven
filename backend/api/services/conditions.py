@@ -55,25 +55,33 @@ class PipelineConditionService(DatabaseService):
         return self._bucket
 
     @property
-    def bucket_items(self):
+    def bucket_items(self) -> dict:
         if not self._bucket_items:
             self._bucket_items = {item.tag: item for item in self.storage_bucket.items}
 
         return self._bucket_items
 
-    def _update_bucket_item(self, tag, value):
-        bucket_item = self.bucket_items.get(tag, PipelineNodeStorageBucketItem(
+    def _create_bucket_item(self, tag: str) -> PipelineNodeStorageBucketItem:
+        print("CREATE Bucket Item")
+
+        assert tag not in self.bucket_items
+
+        item = PipelineNodeStorageBucketItem(
             pipeline_node_storage_bucket_id=self.storage_bucket.id,
             tag=tag,
-            values=[]
-        ))
+        ).save(self._db)
+
+        self._bucket_items[tag] = item
+        return item
+
+    def _update_bucket_item(self, tag, value):
+        bucket_item = self.bucket_items.get(tag) or self._create_bucket_item(tag)
 
         if value not in bucket_item.values:
-            bucket_item.values.append(value)
-            bucket_item.save(self._db)
+            # TODO: ADD DEBUG LOG?
+            bucket_item.values = bucket_item.values + [str(value)]
 
     def has_conditions(self) -> bool:
-        print(self.starting_node)
         return bool(self.starting_node and self.starting_node.conditions)
 
     def add_series_to_storage_bucket(self, folder: Path):
@@ -84,7 +92,9 @@ class PipelineConditionService(DatabaseService):
             assert file.is_file()
 
             ds = dcmread(str(file), stop_before_pixels=True)
+            [print(c.tag, ds.get(c.tag)) for c in self.starting_node.conditions]
             [self._update_bucket_item(c.tag, ds.get(c.tag)) for c in self.starting_node.conditions]
+            print(self.bucket_items)
 
         copytree(folder, self._bucket.get_abs_path(), dirs_exist_ok=True)
 

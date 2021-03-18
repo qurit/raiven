@@ -44,7 +44,10 @@ class PipelineNodeStorageBucketItem(Base):
     tag = Column(String)
 
     if 'sqlite' not in config.SQLALCHEMY_DATABASE_URI.lower():
-        values = Column(ARRAY(String))
+        values = Column(ARRAY(String), default=[])
+
+    def __repr__(self, **kwargs) -> str:
+        return super().__repr__(tag=self.tag, values=self.values, **kwargs)
 
 
 class PipelineNode(Base):

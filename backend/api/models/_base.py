@@ -35,7 +35,8 @@ class _Base:
             if hasattr(self, key):
                 setattr(self, key, value)
 
-        return self.save(session)
+        self._flush(session)
+        return self
 
     def delete(self, session: Session):
         session.delete(self)

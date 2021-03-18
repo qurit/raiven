@@ -66,7 +66,7 @@ def mark_job_complete(
     )
 
     if job.exit_code != 0:
-        if type(stderr) is Container:
+        if type(stderr) is DockerContainer:
             container.reload()
             stderr = container.logs(stdout=False, stderr=True).decode("utf-8")
 
