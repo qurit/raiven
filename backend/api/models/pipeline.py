@@ -111,7 +111,7 @@ class PipelineRun(IOPathMixin, Base):
     created_datetime = Column(DateTime, default=datetime.now)
     finished_datetime = Column(DateTime)
 
-    jobs = relationship('PipelineJob', backref="run")
+    jobs = relationship('PipelineJob', backref="run", cascade='all, delete-orphan')
     initiator = relationship('DicomNode')
 
 

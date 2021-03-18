@@ -57,6 +57,23 @@ def get_pipeline_results(pipeline_id: int, db: Session = Depends(session)):
     return db.query(PipelineRun).filter(pipeline_id == PipelineRun.pipeline_id).all()
 
 
+@router.delete("/run/{pipeline_run_id}")
+@middleware.exists_or_404
+def get_pipeline_jobs(pipeline_run_id: int, user: User = Depends(token_auth), db: Session = Depends(session)):
+    """ Deletes a pipeline and all its stored data """
+    if not (run := PipelineRun.query(db).get(pipeline_run_id)):
+        return None
+
+    pipeline = run.pipeline
+    if not pipeline.is_shared and pipeline.user_id != user.id:
+        raise HTTPException(403, "Don't Have Permissions to Delete These Files")
+
+    [job.delete(db) for job in run.jobs]
+
+    run.delete(db)
+    return "Ok"
+
+
 @router.get("/run/{pipeline_run_id}/jobs", response_model=List[schemas.PipelineJob])
 def get_pipeline_jobs(pipeline_run_id: int, db: Session = Depends(session)):
     """
