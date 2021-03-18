@@ -62,8 +62,6 @@ class PipelineConditionService(DatabaseService):
         return self._bucket_items
 
     def _create_bucket_item(self, tag: str) -> PipelineNodeStorageBucketItem:
-        print("CREATE Bucket Item")
-
         assert tag not in self.bucket_items
 
         item = PipelineNodeStorageBucketItem(
@@ -92,9 +90,7 @@ class PipelineConditionService(DatabaseService):
             assert file.is_file()
 
             ds = dcmread(str(file), stop_before_pixels=True)
-            [print(c.tag, ds.get(c.tag)) for c in self.starting_node.conditions]
             [self._update_bucket_item(c.tag, ds.get(c.tag)) for c in self.starting_node.conditions]
-            print(self.bucket_items)
 
         copytree(folder, self._bucket.get_abs_path(), dirs_exist_ok=True)
 
