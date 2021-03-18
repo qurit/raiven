@@ -67,8 +67,8 @@ def mark_job_complete(
 
     if job.exit_code != 0:
         if type(stderr) is DockerContainer:
-            container.reload()
-            stderr = container.logs(stdout=False, stderr=True).decode("utf-8")
+            stderr.reload()
+            stderr = stderr.logs(stdout=False, stderr=True).decode("utf-8")
 
         job_error = PipelineJobError(pipeline_job_id=job.id, stderr=stderr)
         job_error.save(db)

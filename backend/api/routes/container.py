@@ -4,7 +4,7 @@ import os
 import zipfile
 from typing import List
 
-from fastapi import APIRouter, Depends, File, Form
+from fastapi import APIRouter, Depends, File, Form, HTTPException
 from sqlalchemy.orm import Session
 
 from api import session, config
@@ -83,32 +83,32 @@ def create_container(
         is_input_container=is_input_container,
         is_output_container=is_output_container,
         is_shared=is_shared,
-        filename='Dockerfile')
-    db_container.save(db)
+        filename='Dockerfile'
+    ).save(db)
 
-    # TODO: fix this zip file check, tried zipfile.is_zipfile() but didn't work
-    if ".zip" in filename:
+    if filename.lower().endswith('.zip'):
         z = zipfile.ZipFile(io.BytesIO(file))
         folder = db_container.get_abs_path()
         z.extractall(folder)
 
-        # Finding the Dockerfile in the zip file
-        for root, _, files in os.walk(folder):
-            if 'Dockerfile' in files:
-                dockerfile_path = os.path.relpath(root, config.UPLOAD_DIR)
-                db_container.dockerfile_path = (pathlib.Path(dockerfile_path) / 'Dockerfile').as_posix()
-                break
+        try:
+            dockerfiles = pathlib.Path(folder).glob('**/[dD]ockerfile')
+            dockerfile_path = next(dockerfiles)
 
-        db_container.save(db)
+            upload_dir = pathlib.Path(config.UPLOAD_DIR)
+            db_container.dockerfile_path = dockerfile_path.relative_to(upload_dir).as_posix()
+        except StopIteration:
+            db_container.delete(db)
+            raise HTTPException(422, 'Container has no Dockerfile')
 
     else:
         with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
             fp.write(file)
 
         db_container.dockerfile_path = os.path.join(db_container.get_path(), filename)
-        db_container.save(db)
 
     # Build Container In Background
+    db_container.save(db)
     db.commit()
 
     if auto_build:
