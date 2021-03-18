@@ -36,8 +36,8 @@ def get_environment(job: PipelineJob) -> dict:
     initiator = job.run.initiator
 
     return {
-        'RAIVEN_INITIATOR_AET': initiator.title,
-        'RAIVEN_INITIATOR_HOST': initiator.host,
+        'RAIVEN_INITIATOR_AET': initiator.title if initiator else None,
+        'RAIVEN_INITIATOR_HOST': initiator.host if initiator else None,
         'RAIVEN_INPUT_DIR': config.RAIVEN_INPUT_DIR,
         'RAIVEN_OUTPUT_DIR': config.RAIVEN_OUTPUT_DIR
     }
