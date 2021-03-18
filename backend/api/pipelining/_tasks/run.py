@@ -66,12 +66,14 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
         exit_code = container.wait()['StatusCode']
         print('Container finished with exit code', exit_code)
 
-        mark_job_complete(db, job, exit_code=exit_code, stderr=container)
+        job = mark_job_complete(db, job, exit_code=exit_code, stderr=container)
+        if job.exit_code != 0:
+            mark_run_complete(db, job, status='error')
 
-        # TODO: Clean up old jobs
-        if job.node.is_leaf_node():
+        elif job.node.is_leaf_node():
             print('Pipeline finished')
             mark_run_complete(db, job)
+
         else:
             _run_next_nodes(job, run_id)
 

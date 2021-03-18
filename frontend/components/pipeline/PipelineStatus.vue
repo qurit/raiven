@@ -17,7 +17,7 @@
         <v-row class="mt-n3 ma-2">
           <v-progress-linear
             rounded
-            :color="run.status === 'complete' ? 'success' : 'info'"
+            :color="color[run.status]"
             buffer-value="0"
             :value="status[run.status]"
             stream
@@ -36,18 +36,21 @@ export default {
   components: { vIconBtn },
   name: 'PipelineStatus',
   props: ['pipelines'],
-  data() {
-    return {
-      pipelineRuns: [],
-      // TODO: change these statuses
-      status: {
-        created: 0,
-        exited: 20,
-        running: 40,
-        complete: 100
-      }
+  data: () => ({
+    pipelineRuns: [],
+    status: {
+      created: 0,
+      running: 40,
+      error: 100,
+      complete: 100
+    },
+    color: {
+      created: 'info',
+      running: 'info',
+      error: 'error',
+      complete: 'success'
     }
-  },
+  }),
   methods: {
     async getPipelineProgress() {
       const URL = '/pipeline/results'
