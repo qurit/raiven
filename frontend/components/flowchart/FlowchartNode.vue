@@ -180,7 +180,7 @@ export default {
     }
   },
   async created() {
-    if (this.container_is_output) await this.$store.dispatch('destination/fetchDestinations')
+    if (this.container_is_output || this.container_is_input) await this.$store.dispatch('destination/fetchDestinations')
     if (this.destination) this.selected = this.destination
 
     if (this.selected) {

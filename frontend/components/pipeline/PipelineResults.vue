@@ -61,9 +61,8 @@
 </template>
 
 <script>
-const FileDownload = require('js-file-download')
-
 import { generic_get, generic_delete } from '~/api'
+import { downloadFile } from "@/utilities/files";
 import vIconBtn from '../global/v-icon-btn.vue'
 
 export default {
@@ -109,16 +108,14 @@ export default {
       this.items = pipelineRuns
       this.fetching = false
     },
-    async download(pipelineRun) {
-      const URL = `/pipeline/download/${pipelineRun.id}`
-      try {
-        const results = await generic_get(this, URL, {
-          responseType: 'arraybuffer'
-        })
-        FileDownload(results, this.formatFileName(pipelineRun))
-      } catch (e) {
-        this.$toaster.toastError('Could not download file')
-      }
+    download(pipelineRun) {
+      /**
+       * I am so sorry for my sins but axios does not support streaming responses so I had to write this jank thing
+       */
+
+      const URL = `${this.$axios.defaults.baseURL}/pipeline/download/${pipelineRun.id}`
+      const FILENAME = this.formatFileName(pipelineRun)
+      downloadFile(this, URL, FILENAME)
     },
     clearDelete() {
       this.deleteMode = false;
