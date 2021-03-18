@@ -80,11 +80,11 @@ class PipelineConditionService(DatabaseService):
         assert self.has_conditions()
         assert self.storage_bucket
 
-        file = next(folder.iterdir())
-        assert file.is_file()
-        ds = dcmread(str(file))
+        for file in folder.iterdir():
+            assert file.is_file()
 
-        [self._update_bucket_item(c.tag, ds.get(c.tag)) for c in self.starting_node.conditions]
+            ds = dcmread(str(file), stop_before_pixels=True)
+            [self._update_bucket_item(c.tag, ds.get(c.tag)) for c in self.starting_node.conditions]
 
         copytree(folder, self._bucket.get_abs_path(), dirs_exist_ok=True)
 
