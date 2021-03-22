@@ -63,6 +63,11 @@
         </v-tooltip>
       </v-col>
       <v-col cols="12" class="text-center pt-0">{{ $auth.user.name }}</v-col>
+      <v-col>
+        <a href="https://qurit.ca/">
+          <v-img src="qurit-logo.png" max-width="100px" contain id="qurit" />
+        </a>
+      </v-col>
     </template>
   </v-navigation-drawer>
 </template>
