@@ -65,10 +65,19 @@ export default {
       ctx.containers.filter(c =>
         c.tags
           .map(tag => tag.tag_name.toLowerCase().trim())
+          .join()
           .includes(ctx.search.toLowerCase())
       ),
+    filteredContainerAuthor: ctx =>
+      ctx.containers.filter(c =>
+        c.user.name.toLowerCase().includes(ctx.search.toLowerCase())
+      ),
     filteredList: ctx => [
-      ...new Set([...ctx.filteredContainerName, ...ctx.filteredContainerTags])
+      ...new Set([
+        ...ctx.filteredContainerName,
+        ...ctx.filteredContainerTags,
+        ...ctx.filteredContainerAuthor
+      ])
     ]
   }
 }

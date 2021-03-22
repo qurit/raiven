@@ -1,10 +1,6 @@
 <template>
   <v-hover v-slot:default="{ hover }">
-    <v-card
-      class="title"
-      :elevation="hover ? 12 : 2"
-      rounded
-    >
+    <v-card class="title" :elevation="hover ? 12 : 2" rounded>
       <v-card-title v-text="container.name" />
       <v-card-subtitle>
         {{ container.description }}
