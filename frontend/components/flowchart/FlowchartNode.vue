@@ -60,7 +60,6 @@
           color="primary"
           dense
           class="pa-0"
-
         >
           <v-btn
             text
@@ -70,7 +69,7 @@
           >
             Rules
           </v-btn>
-          <v-spacer/>
+          <v-spacer />
           <v-icon-btn
             v-if="canEdit"
             delete
@@ -79,7 +78,6 @@
           />
         </v-toolbar>
       </v-expand-transition>
-
 
       <!-- Output Port -->
       <FlowchartNodePort
@@ -92,7 +90,7 @@
 </template>
 
 <script>
-import echoMixin from "@/utilities/echoMixin";
+import echoMixin from '@/utilities/echoMixin'
 import FlowchartNodePort from './FlowchartNodePort.vue'
 import OutputDestinationForm from './OutputDestinationForm'
 import { mapState } from 'vuex'
@@ -165,7 +163,7 @@ export default {
     changeDestination() {
       this.$emit('setDestination', {
         pipelineNodeId: this.id,
-        destinationId: this.selected.id,
+        destinationId: this.selected.id
       })
     },
     handleMousedown(e) {
@@ -180,7 +178,8 @@ export default {
     }
   },
   async created() {
-    if (this.container_is_output || this.container_is_input) await this.$store.dispatch('destination/fetchDestinations')
+    if (this.container_is_output || this.container_is_input)
+      await this.$store.dispatch('destination/fetchDestinations')
     if (this.destination) this.selected = this.destination
 
     if (this.selected) {
@@ -218,11 +217,13 @@ export default {
 
   /* TODO: Make this dynamic sized */
   .node-input {
-    top: -8px;
+    left: 0%;
+    top: 45%;
   }
 
   .node-output {
-    bottom: -8px;
+    left: 100%;
+    top: 45%;
   }
 }
 </style>
