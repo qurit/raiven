@@ -18,9 +18,16 @@
       <!-- Node Data -->
       <v-card-title style="word-break: break-word">
         {{ type }}
-        <v-card-subtitle>
-          {{ containerTags }}
-        </v-card-subtitle>
+        <v-chip-group column class="mt-3">
+          <v-chip
+            v-for="tag in tags"
+            v-text="tag.tag_name"
+            class="mr-1 mb-1"
+            color="primary"
+            x-small
+            outlined
+          />
+        </v-chip-group>
         <v-icon-btn
           v-if="selected && selected.host !== '*'"
           :icon="echoIcon"
@@ -150,9 +157,6 @@ export default {
   }),
   computed: {
     ...mapState('destination', ['destinations']),
-    containerTags() {
-      return this.$props.tags.map(tag => tag.tag_name)
-    },
     nodeStyle() {
       return {
         top: this.options.centerY + this.y * this.options.scale + 'px',
