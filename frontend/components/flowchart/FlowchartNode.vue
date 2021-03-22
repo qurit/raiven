@@ -18,6 +18,9 @@
       <!-- Node Data -->
       <v-card-title style="word-break: break-word">
         {{ type }}
+        <v-card-subtitle>
+          {{ containerTags }}
+        </v-card-subtitle>
         <v-icon-btn
           v-if="selected && selected.host !== '*'"
           :icon="echoIcon"
@@ -105,6 +108,7 @@ export default {
     y: { type: Number },
     x: { type: Number },
     type: { type: String },
+    tags: { type: Array },
     container_is_input: { type: Boolean },
     container_is_output: { type: Boolean },
     destination: { type: Object },
@@ -146,6 +150,9 @@ export default {
   }),
   computed: {
     ...mapState('destination', ['destinations']),
+    containerTags() {
+      return this.$props.tags.map(tag => tag.tag_name)
+    },
     nodeStyle() {
       return {
         top: this.options.centerY + this.y * this.options.scale + 'px',

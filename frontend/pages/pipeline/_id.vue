@@ -31,8 +31,6 @@
         </div>
       </v-row>
 
-
-
       <!-- Pipeline Builder -->
       <SimpleFlowchart
         :scene.sync="scene"
@@ -146,6 +144,7 @@ export default {
         x: -400,
         y: 50,
         type: container.name,
+        tags: container.tags,
         container_id: container.id,
         container_is_input: container.is_input_container,
         container_is_output: container.is_output_container
@@ -159,6 +158,7 @@ export default {
       this.$store.dispatch('containers/fetchContainers')
     },
     getPipelineNodes(nodes) {
+      console.log(nodes)
       nodes.forEach(node => {
         const containerNode = {
           id: node.id,
@@ -170,7 +170,8 @@ export default {
           container_is_input: node.container_is_input,
           container_is_output: node.container_is_output,
           destination: node.destination,
-          conditions: node.conditions
+          conditions: node.conditions,
+          tags: node.container.tags
         }
         this.scene.nodes.push(containerNode)
       })

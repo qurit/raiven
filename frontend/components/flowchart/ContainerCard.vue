@@ -5,7 +5,7 @@
       <v-card-subtitle>
         {{ container.description }}
       </v-card-subtitle>
-      <v-row justify="center" v-if="container.user_id !== $auth.user.id">
+      <v-row justify="center">
         <v-chip
           class="mb-1"
           v-text="'From: ' + container.user.name"
@@ -46,6 +46,8 @@ export default {
   },
   computed: {
     chips: ctx => {
+      if (ctx.container.is_input_container) return ['Input']
+      if (ctx.container.is_output_container) return ['Output']
       return ctx.container.tags.map(tag => tag.tag_name)
     }
   }
