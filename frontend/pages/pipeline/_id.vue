@@ -149,6 +149,7 @@ export default {
         container_is_input: container.is_input_container,
         container_is_output: container.is_output_container
       })
+      this.$refs.simpleFlowchart.addNode()
     },
     savePipeline() {
       this.$refs.simpleFlowchart.savePipeline()
@@ -158,7 +159,6 @@ export default {
       this.$store.dispatch('containers/fetchContainers')
     },
     getPipelineNodes(nodes) {
-      console.log(nodes)
       nodes.forEach(node => {
         const containerNode = {
           id: node.id,

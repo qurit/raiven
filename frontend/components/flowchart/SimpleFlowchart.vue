@@ -111,6 +111,7 @@ export default {
     }
   },
   data: () => ({
+    unsavedChanges: false,
     destinationDialog: false,
     conditionDialog: false,
     savedNodes: [],
@@ -187,12 +188,13 @@ export default {
       const i = this.pipelineNodeDestinations.findIndex(
         dest => dest.pipelineNodeId === destination.pipelineNodeId
       )
-
       if (i >= 0) this.pipelineNodeDestinations[i] = destination
       else this.pipelineNodeDestinations.push(destination)
+      if (i >= 0) this.unsavedChanges = true
     },
     setConditions(condition) {
       this.selectedNode.conditions = condition
+      this.unsavedChanges = true
     },
     findNodeWithID(id) {
       return this.scene.nodes.find(item => id === item.id)
@@ -236,6 +238,7 @@ export default {
         }
       }
       this.draggingLink = null
+      this.unsavedChanges = true
     },
     linkDelete(id) {
       const deletedLink = this.scene.links.find(item => {
@@ -247,6 +250,7 @@ export default {
         })
         this.$emit('linkBreak', deletedLink)
       }
+      this.unsavedChanges = true
     },
     nodeSelected(id, e) {
       this.action.dragging = id
@@ -277,6 +281,7 @@ export default {
       }
 
       if (this.action.scrolling) {
+        console.log('got here')
         ;[this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e)
 
         let diffX = this.mouse.x - this.mouse.lastX
@@ -329,12 +334,17 @@ export default {
           y: top
         })
       )
+      this.unsavedChanges = true
     },
     deleteNode(id) {
       this.scene.nodes = this.scene.nodes.filter(node => node.id !== id)
       this.scene.links = this.scene.links.filter(
         link => link.from !== id && link.to !== id
       )
+      this.unsavedChanges = true
+    },
+    addNode() {
+      this.unsavedChanges = true
     },
     async savePipeline() {
       this.savedNodes = this.scene.nodes
@@ -382,12 +392,10 @@ export default {
           this.$toaster.toastError(msg)
         }
       }
+      this.unsavedChanges = false
     },
     checkSaved() {
-      return (
-        this.savedNodes === this.scene.nodes &&
-        this.savedLinks === this.scene.links
-      )
+      return !this.unsavedChanges
     }
   }
 }
