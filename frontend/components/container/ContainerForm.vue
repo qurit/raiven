@@ -3,7 +3,7 @@
     <v-toolbar color="primary accent--text" flat>
       <v-toolbar-title>
         <b
-          >{{ !!containerToEdit ? 'Edit your Container' : 'Add a Container' }}
+          >{{ !!isEditing ? 'Edit your Container' : 'Add a Container' }}
         </b></v-toolbar-title
       >
     </v-toolbar>
@@ -63,7 +63,7 @@
           class="ma-4"
           text
         >
-          {{ !!containerToEdit ? 'Save Edits' : 'Add Container' }}
+          {{ !!isEditing ? 'Save Edits' : 'Add Container' }}
         </v-btn>
       </v-row>
     </v-form>
@@ -74,6 +74,9 @@
 import { mapState } from 'vuex'
 export default {
   props: {
+    isEditing: {
+      type: Boolean
+    },
     containerToEdit: {
       type: Object,
       default: () => {
@@ -104,7 +107,7 @@ export default {
   computed: {
     // disables button if no name or dockerfile for new container
     isDisabled: function() {
-      return !!this.containerToEdit
+      return !!this.isEditing
         ? false
         : !(this.container.containerName && this.file)
     },
@@ -115,7 +118,7 @@ export default {
   },
   methods: {
     populate() {
-      if (!!this.containerToEdit) {
+      if (!!this.isEditing && !!this.containerToEdit) {
         // getting the values for the existing container
         this.container = JSON.parse(JSON.stringify(this.containerToEdit))
       } else {
@@ -156,7 +159,7 @@ export default {
       if (!!this.container.containerDescription) {
         formData.append('description', this.container.containerDescription)
       }
-      if (!!this.containerToEdit) {
+      if (!!this.isEditing && !!this.containerToEdit) {
         this.containerToTag = await this.$store.dispatch(
           'containers/updateContainer',
           {
