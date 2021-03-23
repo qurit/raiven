@@ -281,7 +281,6 @@ export default {
       }
 
       if (this.action.scrolling) {
-        console.log('got here')
         ;[this.mouse.x, this.mouse.y] = getMousePosition(this.$el, e)
 
         let diffX = this.mouse.x - this.mouse.lastX
