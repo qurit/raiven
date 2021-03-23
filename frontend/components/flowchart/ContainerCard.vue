@@ -5,7 +5,7 @@
       <v-card-subtitle>
         {{ container.description }}
       </v-card-subtitle>
-      <v-row justify="center">
+      <v-row justify="center" v-if="container.user_id !== $auth.user.id">
         <v-chip
           class="mb-1"
           v-text="'From: ' + container.user.name"
