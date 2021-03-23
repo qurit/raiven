@@ -1,10 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col sm="12" md="5">
-        <ContainerForm />
-      </v-col>
-      <v-col sm="12" md="7">
+      <v-col sm="12" md="9">
         <ContainerList />
       </v-col>
     </v-row>
@@ -12,9 +9,9 @@
 </template>
 
 <script>
-import { ContainerForm, ContainerList } from '~/components/container'
+import { ContainerList } from '~/components/container'
 
 export default {
-  components: { ContainerList, ContainerForm }
+  components: { ContainerList }
 }
 </script>
