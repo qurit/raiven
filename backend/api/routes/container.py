@@ -2,6 +2,7 @@ import pathlib
 import io
 import os
 import zipfile
+import shutil
 from typing import List
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException
@@ -62,6 +63,29 @@ def post_container_tags(container_id: int, tags: List[str], db: Session = Depend
     return tags
 
 
+def save_file(db_container: Container, filename: str, file: bytes):
+    if filename.lower().endswith('.zip'):
+        z = zipfile.ZipFile(io.BytesIO(file))
+        folder = db_container.get_abs_path()
+        z.extractall(folder)
+
+        try:
+            dockerfiles = pathlib.Path(folder).glob('**/[dD]ockerfile')
+            dockerfile_path = next(dockerfiles)
+
+            upload_dir = pathlib.Path(config.UPLOAD_DIR)
+            db_container.dockerfile_path = dockerfile_path.relative_to(upload_dir).as_posix()
+
+        except StopIteration:
+            raise HTTPException(422, 'Container has no Dockerfile')
+
+    else:
+        with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
+            fp.write(file)
+
+        db_container.dockerfile_path = os.path.join(db_container.get_path(), filename)
+
+
 @router.post("/", response_model=container.Container)
 def create_container(
         auto_build: bool = True,
@@ -86,26 +110,11 @@ def create_container(
         filename='Dockerfile'
     ).save(db)
 
-    if filename.lower().endswith('.zip'):
-        z = zipfile.ZipFile(io.BytesIO(file))
-        folder = db_container.get_abs_path()
-        z.extractall(folder)
-
-        try:
-            dockerfiles = pathlib.Path(folder).glob('**/[dD]ockerfile')
-            dockerfile_path = next(dockerfiles)
-
-            upload_dir = pathlib.Path(config.UPLOAD_DIR)
-            db_container.dockerfile_path = dockerfile_path.relative_to(upload_dir).as_posix()
-        except StopIteration:
-            db_container.delete(db)
-            raise HTTPException(422, 'Container has no Dockerfile')
-
-    else:
-        with open(os.path.join(db_container.get_abs_path(), filename), 'wb') as fp:
-            fp.write(file)
-
-        db_container.dockerfile_path = os.path.join(db_container.get_path(), filename)
+    try:
+        save_file(db_container, filename, file)
+    except HTTPException as e:
+        db_container.delete(db)
+        raise e
 
     # Build Container In Background
     db_container.save(db)
@@ -133,6 +142,7 @@ def get_container(container_id: int, db: Session = Depends(session)):
 @router.put("/{container_id}", response_model=container.Container)
 def update_container(
         container_id: int,
+        auto_build: bool = True,
         file: bytes = File(None),
         name: str = Form(...),
         filename: str = Form(None),
@@ -140,36 +150,34 @@ def update_container(
         is_input_container: bool = Form(...),
         is_output_container: bool = Form(...),
         is_shared: bool = Form(...),
+        user: User = Depends(token_auth),
         db: session = Depends(session)
 ):
     """ Editing a container"""
+    db_container = db.query(Container).get(container_id)
 
-    if file is not None:
-        container = db.query(Container).get(container_id)
-        # remove previous file
-        os.remove(os.path.join(container.get_abs_path(), container.filename))
-        # write new file
-        with open(os.path.join(container.get_abs_path(), filename), 'wb') as fp:
-            fp.write(file)
-        db.query(Container).filter(Container.id == container_id).update({
-            "name": name,
-            "description": description,
-            "is_input_container": is_input_container,
-            "is_output_container": is_output_container,
-            "is_shared": is_shared,
-            "dockerfile_path": os.path.join(container.get_path(), filename),
-            "filename": filename
-        })
-        return db.query(Container).get(container_id)
-    else:
-        db.query(Container).filter(Container.id == container_id).update({
-            "name": name,
-            "description": description,
-            "is_input_container": is_input_container,
-            "is_output_container": is_output_container,
-            "is_shared": is_shared
-        })
-        return db.query(Container).get(container_id)
+    if db_container.user_id != user.id:
+        raise HTTPException(403, "User does not own this container")
+
+    db_container.update(
+        db,
+        name=name,
+        description=description,
+        is_input_container=is_input_container,
+        is_output_container=is_output_container,
+        is_shared=is_shared
+    )
+
+    if file:
+        folder = db_container.get_abs_path()
+        shutil.rmtree(folder)
+        save_file(db_container, filename, file)
+
+        if auto_build:
+            db.commit()
+            ContainerController.build_container(db_container.id)
+
+    return db_container
 
 
 @router.delete("/{container_id}", response_model=container.Container)
