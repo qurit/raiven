@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-row>
-      <v-col sm="12" md="9">
+    <v-row align="center" justify="center">
+      <v-col sm="12" md="12">
         <ContainerList />
       </v-col>
     </v-row>
