@@ -8,8 +8,10 @@
       <v-row justify="center" v-if="container.user_id !== $auth.user.id">
         <v-chip
           class="mb-1"
-          v-text="'From: ' + container.user.name"
-          color="info"
+          v-text="container.user.name"
+          small
+          color="secondary"
+          text-color="primary"
         />
       </v-row>
       <v-row class="ma-1">

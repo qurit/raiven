@@ -3,7 +3,7 @@
     <v-toolbar color="primary accent--text" flat>
       <v-toolbar-title>
         <b
-          >{{ !!isEditing ? 'Edit your Container' : 'Add a Container' }}
+          >{{ isEditing ? 'Edit your Container' : 'Add a Container' }}
         </b></v-toolbar-title
       >
     </v-toolbar>
@@ -63,7 +63,7 @@
           class="ma-4"
           text
         >
-          {{ !!isEditing ? 'Save Edits' : 'Add Container' }}
+          {{ isEditing ? 'Save Edits' : 'Add Container' }}
         </v-btn>
       </v-row>
     </v-form>
@@ -107,7 +107,7 @@ export default {
   computed: {
     // disables button if no name or dockerfile for new container
     isDisabled: function() {
-      return !!this.isEditing
+      return this.isEditing
         ? false
         : !(this.container.containerName && this.file)
     },
@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     populate() {
-      if (!!this.isEditing && !!this.containerToEdit) {
+      if (this.isEditing && this.containerToEdit) {
         // getting the values for the existing container
         this.container = JSON.parse(JSON.stringify(this.containerToEdit))
       } else {
