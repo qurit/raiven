@@ -1,5 +1,5 @@
 <template>
-  <v-btn :color="color" icon @click="$emit('click')" :to="to">
+  <v-btn :disabled="disabled" :color="color" icon @click="$emit('click')" :to="to">
     <v-icon v-text="iconToShow" :large="large" />
   </v-btn>
 </template>
@@ -8,6 +8,10 @@
 export default {
   name: 'v-icon-btn',
   props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     color: {
       type: String,
       default: 'primary'

@@ -15,11 +15,12 @@
         hide-details
         solo
       />
-      <v-btn icon>
-        <v-icon @click="addPipelineDialog = true" large color="#373740"
-          >mdi-plus</v-icon
-        >
-      </v-btn>
+      <v-icon-btn
+        plus
+        large
+        @click="addPipelineDialog = true"
+        color="#373740"
+      />
     </v-toolbar>
     <v-data-table
       id="Pipelines"

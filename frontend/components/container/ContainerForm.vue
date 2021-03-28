@@ -56,15 +56,13 @@
         </v-col>
       </v-row>
       <v-row justify="center">
-        <v-btn
+        <v-icon-btn
+          save
           :disabled="isDisabled"
           @click="submit"
           color="confirm"
           class="ma-4"
-          text
-        >
-          {{ isEditing ? 'Save Edits' : 'Add Container' }}
-        </v-btn>
+        />
       </v-row>
     </v-form>
   </v-card>

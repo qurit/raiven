@@ -29,15 +29,13 @@
       />
     </v-form>
     <v-row justify="center" align="center">
-      <v-btn
-        @click="savePipeline"
+      <v-icon-btn
+        save
         :disabled="!isFormValid"
-        class="ma-4"
+        @click="savePipeline"
         color="confirm"
-        text
-      >
-        Save
-      </v-btn>
+        class="ma-4"
+      />
     </v-row>
   </v-card>
 </template>

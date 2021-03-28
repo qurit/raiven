@@ -15,11 +15,7 @@
         hide-details
         solo
       />
-      <v-btn icon>
-        <v-icon @click="addContainerDialog" large color="#373740"
-          >mdi-plus</v-icon
-        >
-      </v-btn>
+      <v-icon-btn plus large @click="addContainerDialog" color="#373740" />
     </v-toolbar>
     <v-divider light />
 
