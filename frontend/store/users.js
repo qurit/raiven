@@ -25,11 +25,9 @@ export const actions = {
     }
   },
   async addUser({ commit }, data) {
-    console.log(data)
     try {
       const URL = `/user`
       const res = await generic_post(this, URL, data)
-      console.log(res)
       commit('addUser', res)
       this.$toaster.toastSuccess('User added!')
     } catch (err) {
