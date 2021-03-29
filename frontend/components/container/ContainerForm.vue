@@ -149,7 +149,7 @@ export default {
       formData.append('is_input_container', this.container.containerIsInput)
       formData.append('is_output_container', this.container.containerIsOutput)
       formData.append('is_shared', this.container.containerIsShared)
-      if (typeof this.file === 'string') {
+      if (this.file instanceof Object && !(this.file instanceof Array)) {
         const f = await this.readFile(this.file)
         formData.append('file', new Blob([f]))
         formData.append('filename', this.file.name)
@@ -209,7 +209,6 @@ export default {
       }
       this.$emit('closeDialog')
       await this.$store.dispatch('containers/fetchContainers')
-      this.$toaster.toastSuccess('Container saved!')
     }
   }
 }
