@@ -19,22 +19,21 @@
       :sort-desc="false"
     >
       <template v-slot:item.ae_title="{ item }">
-        <v-edit-dialog
-          :return-value.sync="item.ae_title"
-          @save="saveAETitle(item)"
-        >
+        <v-edit-dialog :return-value="item.ae_title">
           {{ item.ae_title ? aePrefix + item.ae_title : '' }}
-          <template v-slot:input>
-            <v-text-field
-              class="my-2"
-              v-model="item.ae_title"
-              label="Edit"
-              single-line
-              hint="Press Enter to save"
-              :prefix="aePrefix"
-              :rules="[validateAETitle]"
-            ></v-text-field>
-          </template>
+          <v-text-field
+            slot="input"
+            class="my-2"
+            :value="item.ae_title"
+            label="Edit"
+            single-line
+            hint="Press Enter to save"
+            :prefix="aePrefix"
+            :rules="[validateAETitle]"
+            @keyup.enter="
+              saveAETitle({ id: item.id, ae_title: $event.target.value })
+            "
+          />
         </v-edit-dialog>
       </template>
       <template v-slot:item.is_admin="{ item }">
@@ -51,14 +50,13 @@
 </template>
 
 <script>
-import { generic_get, generic_put } from '~/api'
+import { mapState } from 'vuex'
 import { validateAETitle } from '~/utilities/validationRules'
 
 export default {
   data() {
     return {
       search: '',
-      users: [],
       headers: [
         { text: 'Name', value: 'name' },
         { text: 'Username', value: 'username' },
@@ -70,10 +68,19 @@ export default {
     }
   },
   computed: {
+    ...mapState('users', ['users']),
+    aeTitle: {
+      get() {
+        return this.$store.state.user.ae_title
+      },
+      set(value) {
+        this.$store.commit('editUserAETitle', value)
+      }
+    },
     aePrefix: ctx => ctx.$store.state.config.USER_AE_PREFIX
   },
   created() {
-    this.getUsers()
+    this.$store.dispatch('users/fetchUsers')
   },
   methods: {
     validateAETitle,
@@ -81,23 +88,14 @@ export default {
       return datetime ? new Date(datetime).toLocaleString() : 'Invalid Date'
     },
     async saveAETitle(user) {
-      const { ae_title } = user
-      try {
-        if (typeof this.validateAETitle(ae_title) === 'string')
-          throw 'Validation Error'
-        const URL = `/user/${user.id}`
-        const payload = { ae_title: ae_title }
-        await generic_put(this, URL, payload)
-        this.$toaster.toastSuccess('AE Title updated!')
-      } catch (e) {
-        this.$toaster.toastError(
-          'Could not save, make sure you have properly formed the AE title'
-        )
-      }
-    },
-    async getUsers() {
-      const URL = '/user'
-      this.users = await generic_get(this, URL)
+      console.log(user)
+      const { id, ae_title } = user
+      if (typeof this.validateAETitle(ae_title) === 'string')
+        throw 'Validation Error'
+      this.$store.dispatch('users/editUserAETitle', {
+        id: id,
+        ae_title: ae_title
+      })
     }
   }
 }
