@@ -33,9 +33,8 @@ export const actions = {
       this.$toaster.toastError('Could not add user')
     }
   },
-  async editUserAETitle({ commit }, data) {
+  async editUserAETitle({ commit }, { id, ae_title }) {
     try {
-      const { id, ae_title } = data
       const URL = `/user/${id}`
       const res = await generic_put(this, URL, { ae_title: ae_title })
       commit('editUserAETitle', { id, res })

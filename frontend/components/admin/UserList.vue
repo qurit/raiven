@@ -87,15 +87,10 @@ export default {
     formatDateTime(datetime) {
       return datetime ? new Date(datetime).toLocaleString() : 'Invalid Date'
     },
-    async saveAETitle(user) {
-      console.log(user)
-      const { id, ae_title } = user
+    async saveAETitle({ id, ae_title }) {
       if (typeof this.validateAETitle(ae_title) === 'string')
         throw 'Validation Error'
-      this.$store.dispatch('users/editUserAETitle', {
-        id: id,
-        ae_title: ae_title
-      })
+      this.$store.dispatch('users/editUserAETitle', { id, ae_title })
     }
   }
 }
