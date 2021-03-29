@@ -1,0 +1,67 @@
+<template>
+  <v-card class="overflow-x-hidden">
+    <v-toolbar color="primary accent--text" flat>
+      <v-toolbar-title><b>Add a User</b></v-toolbar-title>
+      <v-spacer />
+    </v-toolbar>
+    <v-form v-model="isFormValid">
+      <v-text-field
+        v-model="name"
+        label="Name"
+        required
+        :rules="[validateNotEmpty]"
+        class="px-15 pt-5"
+      />
+      <v-text-field
+        v-model="username"
+        label="Username"
+        required
+        :rules="[validateNotEmpty]"
+        class="px-15 pt-5"
+      />
+      <v-text-field
+        v-model="password"
+        label="Password"
+        :rules="[validateNotEmpty]"
+        required
+        class="px-15 pt-5"
+      />
+    </v-form>
+    <v-row justify="center" align="center">
+      <v-icon-btn
+        save
+        :disabled="!isFormValid"
+        @click="saveUser"
+        color="confirm"
+        class="ma-4"
+      />
+    </v-row>
+  </v-card>
+</template>
+
+<script>
+import { validateNotEmpty } from '~/utilities/validationRules'
+
+export default {
+  data() {
+    return {
+      isFormValid: false,
+      name: '',
+      username: '',
+      password: ''
+    }
+  },
+  methods: {
+    validateNotEmpty,
+    async saveUser() {
+      const payload = {
+        name: this.name,
+        username: this.username,
+        password: this.password
+      }
+      await his.$store.dispatch('users/addUser', payload)
+      this.$emit('closeAddUserForm')
+    }
+  }
+}
+</script>

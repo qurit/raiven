@@ -6,7 +6,7 @@ export const state = () => ({
 
 export const mutations = {
   setUsers: (state, users) => (state.users = users),
-  addUser: (state, user) => state.tags.push(user),
+  addUser: (state, user) => state.users.push(user),
   editUserAETitle: (state, { id, res }) => {
     const index = state.users.findIndex(container => container.id === id)
     state.users[index].ae_title = res.ae_title
@@ -25,10 +25,13 @@ export const actions = {
     }
   },
   async addUser({ commit }, data) {
+    console.log(data)
     try {
-      const URL = `/user/`
+      const URL = `/user`
       const res = await generic_post(this, URL, data)
+      console.log(res)
       commit('addUser', res)
+      this.$toaster.toastSuccess('User added!')
     } catch (err) {
       this.$toaster.toastError('Could not add user')
     }

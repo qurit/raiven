@@ -10,6 +10,7 @@
         hide-details
         solo
       />
+      <v-icon-btn plus large @click="addUserForm = true" color="#373740" />
     </v-toolbar>
     <v-data-table
       :items="users"
@@ -46,16 +47,24 @@
         {{ formatDateTime(item.last_seen) }}
       </template>
     </v-data-table>
+    <v-dialog v-model="addUserForm" max-width="900px" min-height="600px">
+      <UserForm @closeAddUserForm="addUserForm = false" />
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { validateAETitle } from '~/utilities/validationRules'
+import UserForm from './UserForm'
 
 export default {
+  components: {
+    UserForm
+  },
   data() {
     return {
+      addUserForm: false,
       search: '',
       headers: [
         { text: 'Name', value: 'name' },
@@ -69,18 +78,10 @@ export default {
   },
   computed: {
     ...mapState('users', ['users']),
-    aeTitle: {
-      get() {
-        return this.$store.state.user.ae_title
-      },
-      set(value) {
-        this.$store.commit('editUserAETitle', value)
-      }
-    },
     aePrefix: ctx => ctx.$store.state.config.USER_AE_PREFIX
   },
-  created() {
-    this.$store.dispatch('users/fetchUsers')
+  async created() {
+    await this.$store.dispatch('users/fetchUsers')
   },
   methods: {
     validateAETitle,
