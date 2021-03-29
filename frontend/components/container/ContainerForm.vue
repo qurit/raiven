@@ -149,7 +149,7 @@ export default {
       formData.append('is_input_container', this.container.containerIsInput)
       formData.append('is_output_container', this.container.containerIsOutput)
       formData.append('is_shared', this.container.containerIsShared)
-      if (this.file) {
+      if (typeof this.file === 'string') {
         const f = await this.readFile(this.file)
         formData.append('file', new Blob([f]))
         formData.append('filename', this.file.name)
