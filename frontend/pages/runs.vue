@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col sm="12" md="3">
-        <PipelineStatus :pipelines="pipelines" />
+        <PipelineStatus />
       </v-col>
       <v-col sm="12" md="3">
         <DicomInstances />

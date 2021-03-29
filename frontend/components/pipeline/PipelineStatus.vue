@@ -35,7 +35,6 @@ import vIconBtn from '../global/v-icon-btn.vue'
 export default {
   components: { vIconBtn },
   name: 'PipelineStatus',
-  props: ['pipelines'],
   data: () => ({
     pipelineRuns: [],
     status: {
