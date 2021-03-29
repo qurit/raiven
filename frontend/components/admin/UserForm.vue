@@ -22,6 +22,9 @@
       <v-text-field
         v-model="password"
         label="Password"
+        :append-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+        @click:append="() => (visible = !visible)"
+        :type="visible ? 'text' : 'password'"
         :rules="[validateNotEmpty]"
         required
         class="px-15 pt-5"
@@ -45,6 +48,7 @@ import { validateNotEmpty } from '~/utilities/validationRules'
 export default {
   data() {
     return {
+      visible: false,
       isFormValid: false,
       name: '',
       username: '',
@@ -59,7 +63,7 @@ export default {
         username: this.username,
         password: this.password
       }
-      await his.$store.dispatch('users/addUser', payload)
+      await this.$store.dispatch('users/addUser', payload)
       this.$emit('closeAddUserForm')
     }
   }
