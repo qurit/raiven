@@ -8,7 +8,7 @@
     <v-divider light />
     <v-flex v-for="run in this.pipelineRuns" :key="run.id">
       <v-card>
-        <v-row justify="left" align="center" class="px-4">
+        <v-row align="center" class="px-4">
           <v-card-subtitle> Run ID: {{ run.id }} </v-card-subtitle>
           <v-card-subtitle>
             From Pipeline: {{ run.pipeline.name }}

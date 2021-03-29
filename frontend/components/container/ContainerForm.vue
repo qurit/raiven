@@ -84,7 +84,7 @@ export default {
   },
   data() {
     return {
-      file: '',
+      file: [],
       container: {
         containerId: '',
         filename: '',
@@ -107,7 +107,7 @@ export default {
     isDisabled: function() {
       return this.isEditing
         ? false
-        : !(this.container.containerName && this.file)
+        : !(this.container.containerName && this.container.filename)
     },
     ...mapState('tags', ['tags']),
     items() {
@@ -140,7 +140,7 @@ export default {
       })
     },
     updateDockerFile(file) {
-      this.file = file
+      this.container.filename = file?.name
     },
     async submit() {
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
