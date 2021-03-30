@@ -4,7 +4,7 @@
       <v-toolbar-title><b>Add a User</b></v-toolbar-title>
       <v-spacer />
     </v-toolbar>
-    <v-form v-model="isFormValid">
+    <v-form v-model="isFormValid" ref="form">
       <v-text-field
         v-model="name"
         label="Name"
@@ -64,6 +64,7 @@ export default {
         password: this.password
       }
       await this.$store.dispatch('users/addUser', payload)
+      this.$refs.form.reset()
       this.$emit('closeAddUserForm')
     }
   }
