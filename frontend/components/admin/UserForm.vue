@@ -1,7 +1,7 @@
 <template>
   <v-card class="overflow-x-hidden">
     <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Add a User</b></v-toolbar-title>
+      <v-toolbar-title v-text="title" class="font-weight-bold" color="accent" />
       <v-spacer />
     </v-toolbar>
     <v-form v-model="isFormValid">
@@ -46,15 +46,14 @@
 import { validateNotEmpty } from '~/utilities/validationRules'
 
 export default {
-  data() {
-    return {
-      visible: false,
-      isFormValid: false,
-      name: '',
-      username: '',
-      password: ''
-    }
-  },
+  data: () => ({
+    title: 'Add A User',
+    visible: false,
+    isFormValid: false,
+    name: '',
+    username: '',
+    password: ''
+  }),
   methods: {
     validateNotEmpty,
     async saveUser() {

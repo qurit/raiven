@@ -10,7 +10,7 @@
         hide-details
         solo
       />
-      <v-icon-btn plus large @click="addUserForm = true" color="#373740" />
+      <v-icon-btn plus large @click="addUserForm = true" color="accent" />
     </v-toolbar>
     <v-data-table
       :items="users"
@@ -62,20 +62,18 @@ export default {
   components: {
     UserForm
   },
-  data() {
-    return {
-      addUserForm: false,
-      search: '',
-      headers: [
-        { text: 'Name', value: 'name' },
-        { text: 'Username', value: 'username' },
-        { text: 'Admin', value: 'is_admin' },
-        { text: 'AE Title', value: 'ae_title' },
-        { text: 'First Seen', value: 'first_seen' },
-        { text: 'Last Seen', value: 'last_seen' }
-      ]
-    }
-  },
+  data: () => ({
+    addUserForm: false,
+    search: '',
+    headers: [
+      {text: 'Name', value: 'name'},
+      {text: 'Username', value: 'username'},
+      {text: 'Admin', value: 'is_admin'},
+      {text: 'AE Title', value: 'ae_title'},
+      {text: 'First Seen', value: 'first_seen'},
+      {text: 'Last Seen', value: 'last_seen'}
+    ]
+  }),
   computed: {
     ...mapState('users', ['users']),
     aePrefix: ctx => ctx.$store.state.config.USER_AE_PREFIX

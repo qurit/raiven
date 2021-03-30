@@ -16,7 +16,7 @@ export const mutations = {
 export const actions = {
   async fetchUsers({ commit }) {
     try {
-      const URL = '/user/'
+      const URL = '/user'
       const data = await generic_get(this, URL)
       commit('setUsers', data)
       return data
