@@ -160,11 +160,11 @@ class PipelineJobError(BaseORMModel):
 
 class PipelineJob(BaseORMModel):
     pipeline_run_id: str
-    pipeline_node_id: int
+    pipeline_node_id: Optional[int]
 
     timestamp: datetime
     input_path: str
-    status: str
+    status: Optional[str]
     output_path: str
     exit_code: Optional[str]
     error: Optional[PipelineJobError]

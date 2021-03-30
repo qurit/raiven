@@ -10,6 +10,7 @@
         hide-details
         solo
       />
+      <v-icon-btn plus large @click="addUserForm = true" color="accent" />
     </v-toolbar>
     <v-data-table
       :items="users"
@@ -19,22 +20,21 @@
       :sort-desc="false"
     >
       <template v-slot:item.ae_title="{ item }">
-        <v-edit-dialog
-          :return-value.sync="item.ae_title"
-          @save="saveAETitle(item)"
-        >
+        <v-edit-dialog :return-value="item.ae_title">
           {{ item.ae_title ? aePrefix + item.ae_title : '' }}
-          <template v-slot:input>
-            <v-text-field
-              class="my-2"
-              v-model="item.ae_title"
-              label="Edit"
-              single-line
-              hint="Press Enter to save"
-              :prefix="aePrefix"
-              :rules="[validateAETitle]"
-            ></v-text-field>
-          </template>
+          <v-text-field
+            slot="input"
+            class="my-2"
+            :value="item.ae_title"
+            label="Edit"
+            single-line
+            hint="Press Enter to save"
+            :prefix="aePrefix"
+            :rules="[validateAETitle]"
+            @keyup.enter="
+              saveAETitle({ id: item.id, ae_title: $event.target.value })
+            "
+          />
         </v-edit-dialog>
       </template>
       <template v-slot:item.is_admin="{ item }">
@@ -47,57 +47,49 @@
         {{ formatDateTime(item.last_seen) }}
       </template>
     </v-data-table>
+    <v-dialog v-model="addUserForm" max-width="900px" min-height="600px">
+      <UserForm @closeAddUserForm="addUserForm = false" />
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
-import { generic_get, generic_put } from '~/api'
+import { mapState } from 'vuex'
 import { validateAETitle } from '~/utilities/validationRules'
+import UserForm from './UserForm'
 
 export default {
-  data() {
-    return {
-      search: '',
-      users: [],
-      headers: [
-        { text: 'Name', value: 'name' },
-        { text: 'Username', value: 'username' },
-        { text: 'Admin', value: 'is_admin' },
-        { text: 'AE Title', value: 'ae_title' },
-        { text: 'First Seen', value: 'first_seen' },
-        { text: 'Last Seen', value: 'last_seen' }
-      ]
-    }
+  components: {
+    UserForm
   },
+  data: () => ({
+    addUserForm: false,
+    search: '',
+    headers: [
+      {text: 'Name', value: 'name'},
+      {text: 'Username', value: 'username'},
+      {text: 'Admin', value: 'is_admin'},
+      {text: 'AE Title', value: 'ae_title'},
+      {text: 'First Seen', value: 'first_seen'},
+      {text: 'Last Seen', value: 'last_seen'}
+    ]
+  }),
   computed: {
+    ...mapState('users', ['users']),
     aePrefix: ctx => ctx.$store.state.config.USER_AE_PREFIX
   },
-  created() {
-    this.getUsers()
+  async created() {
+    await this.$store.dispatch('users/fetchUsers')
   },
   methods: {
     validateAETitle,
     formatDateTime(datetime) {
       return datetime ? new Date(datetime).toLocaleString() : 'Invalid Date'
     },
-    async saveAETitle(user) {
-      const { ae_title } = user
-      try {
-        if (typeof this.validateAETitle(ae_title) === 'string')
-          throw 'Validation Error'
-        const URL = `/user/${user.id}`
-        const payload = { ae_title: ae_title }
-        await generic_put(this, URL, payload)
-        this.$toaster.toastSuccess('AE Title updated!')
-      } catch (e) {
-        this.$toaster.toastError(
-          'Could not save, make sure you have properly formed the AE title'
-        )
-      }
-    },
-    async getUsers() {
-      const URL = '/user'
-      this.users = await generic_get(this, URL)
+    async saveAETitle({ id, ae_title }) {
+      if (typeof this.validateAETitle(ae_title) === 'string')
+        throw 'Validation Error'
+      this.$store.dispatch('users/editUserAETitle', { id, ae_title })
     }
   }
 }

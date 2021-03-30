@@ -16,8 +16,8 @@ class User(Base):
     name = Column(String)
     ae_title = Column(String)
     is_admin = Column(Boolean, default=False)
-    first_seen = Column(DateTime, default=datetime.utcnow)
-    last_seen = Column(DateTime, default=datetime.utcnow)
+    first_seen = Column(DateTime, default=datetime.now)
+    last_seen = Column(DateTime, default=datetime.now)
 
     ldap_user = relationship("UserLDAP", backref='user', uselist=False)
     local_user = relationship("UserLocal", backref='user', uselist=False)

@@ -1,19 +1,17 @@
 <template>
   <v-hover v-slot:default="{ hover }">
-    <v-card
-      class="title"
-      :elevation="hover ? 12 : 2"
-      rounded
-    >
+    <v-card class="title" :elevation="hover ? 12 : 2" rounded>
       <v-card-title v-text="container.name" />
       <v-card-subtitle>
         {{ container.description }}
       </v-card-subtitle>
-      <v-row justify="center" v-if="container.user_id !== $auth.user.id">
+      <v-row justify="start" v-if="container.user_id !== $auth.user.id" class="ma-1">
         <v-chip
           class="mb-1"
-          v-text="'From: ' + container.user.name"
-          color="info"
+          v-text="container.user.name"
+          small
+          color="secondary"
+          text-color="primary"
         />
       </v-row>
       <v-row class="ma-1">
@@ -50,6 +48,8 @@ export default {
   },
   computed: {
     chips: ctx => {
+      if (ctx.container.is_input_container) return ['Input']
+      if (ctx.container.is_output_container) return ['Output']
       return ctx.container.tags.map(tag => tag.tag_name)
     }
   }

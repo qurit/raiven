@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center" align="center" style="height: inherit" no-gutters>
     <v-col cols="12">
-       <v-img
+      <v-img
         class="mx-auto"
         :src="require('@/static/logo.svg')"
         height="150"
@@ -42,7 +42,9 @@
             :error="error"
             label="Password"
             prepend-inner-icon="mdi-lock"
-            type="password"
+            :append-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+            @click:append="() => (visible = !visible)"
+            :type="visible ? 'text' : 'password'"
             flat
             solo
             rounded
@@ -82,6 +84,7 @@ export default {
   layout: 'fullHeight',
   components: { VueTypedJs },
   data: () => ({
+    visible: false,
     username: '',
     password: '',
     complete: true,

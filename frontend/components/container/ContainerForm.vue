@@ -3,7 +3,7 @@
     <v-toolbar color="primary accent--text" flat>
       <v-toolbar-title>
         <b
-          >{{ !!containerToEdit ? 'Edit your Container' : 'Add a Container' }}
+          >{{ isEditing ? 'Edit your Container' : 'Add a Container' }}
         </b></v-toolbar-title
       >
     </v-toolbar>
@@ -56,15 +56,13 @@
         </v-col>
       </v-row>
       <v-row justify="center">
-        <v-btn
+        <v-icon-btn
+          save
           :disabled="isDisabled"
           @click="submit"
           color="confirm"
           class="ma-4"
-          text
-        >
-          {{ !!containerToEdit ? 'Save Edits' : 'Add Container' }}
-        </v-btn>
+        />
       </v-row>
     </v-form>
   </v-card>
@@ -74,6 +72,9 @@
 import { mapState } from 'vuex'
 export default {
   props: {
+    isEditing: {
+      type: Boolean
+    },
     containerToEdit: {
       type: Object,
       default: () => {
@@ -83,7 +84,7 @@ export default {
   },
   data() {
     return {
-      file: '',
+      file: [],
       container: {
         containerId: '',
         filename: '',
@@ -104,9 +105,9 @@ export default {
   computed: {
     // disables button if no name or dockerfile for new container
     isDisabled: function() {
-      return !!this.containerToEdit
+      return this.isEditing
         ? false
-        : !(this.container.containerName && this.file)
+        : !(this.container.containerName && this.container.filename)
     },
     ...mapState('tags', ['tags']),
     items() {
@@ -115,7 +116,7 @@ export default {
   },
   methods: {
     populate() {
-      if (!!this.containerToEdit) {
+      if (this.isEditing && this.containerToEdit) {
         // getting the values for the existing container
         this.container = JSON.parse(JSON.stringify(this.containerToEdit))
       } else {
@@ -139,7 +140,7 @@ export default {
       })
     },
     updateDockerFile(file) {
-      this.file = file
+      this.container.filename = file?.name
     },
     async submit() {
       const config = { headers: { 'Content-Type': 'multipart/form-data' } }
@@ -148,7 +149,7 @@ export default {
       formData.append('is_input_container', this.container.containerIsInput)
       formData.append('is_output_container', this.container.containerIsOutput)
       formData.append('is_shared', this.container.containerIsShared)
-      if (this.file) {
+      if (this.file instanceof Object && !(this.file instanceof Array)) {
         const f = await this.readFile(this.file)
         formData.append('file', new Blob([f]))
         formData.append('filename', this.file.name)
@@ -156,7 +157,7 @@ export default {
       if (!!this.container.containerDescription) {
         formData.append('description', this.container.containerDescription)
       }
-      if (!!this.containerToEdit) {
+      if (!!this.isEditing && !!this.containerToEdit) {
         this.containerToTag = await this.$store.dispatch(
           'containers/updateContainer',
           {
@@ -208,7 +209,6 @@ export default {
       }
       this.$emit('closeDialog')
       await this.$store.dispatch('containers/fetchContainers')
-      this.$toaster.toastSuccess('Container saved!')
     }
   }
 }

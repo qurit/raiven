@@ -13,7 +13,7 @@
         @deleteLink="linkDelete(link.id)"
       />
     </svg>
-    <slot/>
+    <slot />
     <FlowchartNode
       v-bind.sync="node"
       :scene.sync="scene"
@@ -31,7 +31,7 @@
       @showConditionBuilder="conditionDialog = true"
     />
 
-<!-- DestinationDialog -->
+    <!-- DestinationDialog -->
     <v-expand-transition>
       <OutputDestinationForm
         v-if="destinationDialog"
@@ -41,16 +41,25 @@
       />
     </v-expand-transition>
 
-<!-- ConditionsDialog -->
-    <v-dialog v-model="conditionDialog" width="700px" style="overflow-x: hidden !important">
+    <!-- ConditionsDialog -->
+    <v-dialog
+      v-model="conditionDialog"
+      width="700px"
+      style="overflow-x: hidden !important"
+    >
       <ConditionBuilder
         v-if="conditionDialog"
         :node="selectedNode"
         @input="setConditions"
       >
         <template slot="actions">
-          <v-spacer/>
-          <v-btn color="primary accent--text" @click="conditionDialog = false" rounded>Close</v-btn>
+          <v-spacer />
+          <v-btn
+            color="primary accent--text"
+            @click="conditionDialog = false"
+            rounded
+            >Close</v-btn
+          >
         </template>
       </ConditionBuilder>
     </v-dialog>
@@ -63,11 +72,16 @@ import FlowchartNode from './FlowchartNode.vue'
 import OutputDestinationForm from './OutputDestinationForm.vue'
 import { getMousePosition } from './position'
 import { generic_put } from '~/api'
-import ConditionBuilder from "@/components/conditions/ConditionBuilder";
+import ConditionBuilder from '@/components/conditions/ConditionBuilder'
 
 export default {
   name: 'VueFlowchart',
-  components: {ConditionBuilder, FlowchartLink, FlowchartNode, OutputDestinationForm },
+  components: {
+    ConditionBuilder,
+    FlowchartLink,
+    FlowchartNode,
+    OutputDestinationForm
+  },
   props: {
     scene: {
       type: Object,
@@ -97,6 +111,7 @@ export default {
     }
   },
   data: () => ({
+    unsavedChanges: false,
     destinationDialog: false,
     conditionDialog: false,
     savedNodes: [],
@@ -122,14 +137,15 @@ export default {
     pipelineNodeConditions: []
   }),
   computed: {
-    selectedNode: ctx => ctx.scene.nodes.find(n => n.id === ctx.action.selected),
+    selectedNode: ctx =>
+      ctx.scene.nodes.find(n => n.id === ctx.action.selected),
     nodeOptions: ctx => ({
       centerY: ctx.scene.centerY,
       centerX: ctx.scene.centerX,
       scale: ctx.scene.scale,
       offsetTop: ctx.rootDivOffset.top,
       offsetLeft: ctx.rootDivOffset.left,
-      selected: ctx.action.selected,
+      selected: ctx.action.selected
     }),
     lines() {
       const lines = this.scene.links.map(link => {
@@ -169,20 +185,25 @@ export default {
   },
   methods: {
     setDestinations(destination) {
-      const i = this.pipelineNodeDestinations.findIndex(dest => dest.pipelineNodeId === destination.pipelineNodeId)
-
+      const i = this.pipelineNodeDestinations.findIndex(
+        dest => dest.pipelineNodeId === destination.pipelineNodeId
+      )
       if (i >= 0) this.pipelineNodeDestinations[i] = destination
       else this.pipelineNodeDestinations.push(destination)
+      if (i >= 0) this.unsavedChanges = true
     },
-    setConditions(condition) { this.selectedNode.conditions = condition },
+    setConditions(condition) {
+      this.selectedNode.conditions = condition
+      this.unsavedChanges = true
+    },
     findNodeWithID(id) {
       return this.scene.nodes.find(item => id === item.id)
     },
     getPortPosition(type, x, y) {
       if (type === 'top') {
-        return [x + 100, y]
+        return [x, y + 85]
       } else if (type === 'bottom') {
-        return [x + 100, y + 170] // TODO: Make dynamic
+        return [x + 200, y + 85]
       }
     },
     linkingStart(index) {
@@ -217,6 +238,7 @@ export default {
         }
       }
       this.draggingLink = null
+      this.unsavedChanges = true
     },
     linkDelete(id) {
       const deletedLink = this.scene.links.find(item => {
@@ -228,6 +250,7 @@ export default {
         })
         this.$emit('linkBreak', deletedLink)
       }
+      this.unsavedChanges = true
     },
     nodeSelected(id, e) {
       this.action.dragging = id
@@ -310,12 +333,17 @@ export default {
           y: top
         })
       )
+      this.unsavedChanges = true
     },
     deleteNode(id) {
       this.scene.nodes = this.scene.nodes.filter(node => node.id !== id)
       this.scene.links = this.scene.links.filter(
         link => link.from !== id && link.to !== id
       )
+      this.unsavedChanges = true
+    },
+    addNode() {
+      this.unsavedChanges = true
     },
     async savePipeline() {
       this.savedNodes = this.scene.nodes
@@ -348,28 +376,25 @@ export default {
         linkArray.push(newPipelineLink)
       })
 
-      const PAYLOAD = {nodes: nodeArray, links: linkArray}
+      const PAYLOAD = { nodes: nodeArray, links: linkArray }
       const URL = `/pipeline/${this.id}`
       try {
         await generic_put(this, URL, PAYLOAD)
         this.$toaster.toastSuccess('Pipeline saved!')
       } catch (e) {
-        let msg = 'Something went wrong, please make sure your pipeline is properly formed'
+        let msg =
+          'Something went wrong, please make sure your pipeline is properly formed'
 
         try {
           msg = e.response.data.detail[0].msg
         } finally {
           this.$toaster.toastError(msg)
         }
-
-
       }
+      this.unsavedChanges = false
     },
     checkSaved() {
-      return (
-        this.savedNodes === this.scene.nodes &&
-        this.savedLinks === this.scene.links
-      )
+      return !this.unsavedChanges
     }
   }
 }

@@ -15,6 +15,7 @@
         hide-details
         solo
       />
+      <v-icon-btn plus large @click="addContainerDialog" color="#373740" />
     </v-toolbar>
     <v-divider light />
 
@@ -43,7 +44,7 @@
     </v-data-table>
     <v-dialog v-model="dialog" max-width="900px" min-height="600px">
       <ContainerForm
-        :isEditing="true"
+        :isEditing="this.editing"
         :containerToEdit="this.container"
         :key="this.key"
         @closeDialog="closeDialog"
@@ -84,6 +85,7 @@ export default {
   },
   data: function() {
     return {
+      editing: false,
       key: 0,
       deleteContainerId: null,
       dialog: false,
@@ -122,6 +124,11 @@ export default {
     closeDialog() {
       this.dialog = false
     },
+    addContainerDialog() {
+      this.editing = false
+      this.dialog = true
+      this.key += 1
+    },
     deleteContainer(containerId) {
       this.deleteContainerId = containerId
       this.confirmDeleteDialog = true
@@ -134,6 +141,7 @@ export default {
       this.confirmDeleteDialog = false
     },
     editContainer(containerId) {
+      this.editing = true
       const containers = this.$store.state.containers.containers
       const containerToUpdate = containers.find(container => {
         return container.id === containerId

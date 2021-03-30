@@ -31,8 +31,6 @@
         </div>
       </v-row>
 
-
-
       <!-- Pipeline Builder -->
       <SimpleFlowchart
         :scene.sync="scene"
@@ -146,10 +144,12 @@ export default {
         x: -400,
         y: 50,
         type: container.name,
+        tags: container.tags,
         container_id: container.id,
         container_is_input: container.is_input_container,
         container_is_output: container.is_output_container
       })
+      this.$refs.simpleFlowchart.addNode()
     },
     savePipeline() {
       this.$refs.simpleFlowchart.savePipeline()
@@ -170,7 +170,8 @@ export default {
           container_is_input: node.container_is_input,
           container_is_output: node.container_is_output,
           destination: node.destination,
-          conditions: node.conditions
+          conditions: node.conditions,
+          tags: node.container.tags
         }
         this.scene.nodes.push(containerNode)
       })

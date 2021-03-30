@@ -1,6 +1,7 @@
 <template>
   <v-hover v-slot:default="{ hover }">
     <v-icon
+      style="z-index:999;"
       small
       :color="hover ? 'purple' : 'green'"
       v-text="'mdi-circle'"

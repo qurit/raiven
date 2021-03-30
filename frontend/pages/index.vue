@@ -5,7 +5,7 @@
         <CounterList />
       </v-col>
       <v-col sm="12" md="4">
-        <PipelineStatus :pipelines="pipelines" />
+        <PipelineStatus />
       </v-col>
       <v-col sm="12" md="4">
         <PipelineHistogram />
