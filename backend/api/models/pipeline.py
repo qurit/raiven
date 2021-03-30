@@ -1,14 +1,13 @@
 import pathlib
-import os
 from datetime import datetime
 from typing import List
 
+from networkx import DiGraph
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
-from networkx import DiGraph
 
 from api import config
-from . import Base, PathMixin, NestedPathMixin, TimestampMixin, IOPathMixin, utils, CASCADE
+from . import Base, PathMixin, TimestampMixin, IOPathMixin, CASCADE
 
 
 class Pipeline(Base):
@@ -17,9 +16,9 @@ class Pipeline(Base):
     ae_title = Column(String, unique=True)
     is_shared = Column(Boolean, default=False)
 
-    runs = relationship("PipelineRun", backref="pipeline", passive_deletes=True)
-    nodes = relationship("PipelineNode", backref="pipeline")
-    links = relationship("PipelineLink", backref="pipeline")
+    runs: List["PipelineRun"] = relationship("PipelineRun", backref="pipeline", passive_deletes=True)
+    nodes: List["PipelineNode"] = relationship("PipelineNode", backref="pipeline")
+    links: List["PipelineLink"] = relationship("PipelineLink", backref="pipeline")
 
     def get_starting_nodes(self):
         return [n for n in self.nodes if n.is_root_node()]
@@ -133,3 +132,10 @@ class PipelineJob(IOPathMixin, TimestampMixin, Base):
 class PipelineJobError(Base):
     pipeline_job_id = Column(ForeignKey("pipeline_job.id", ondelete="CASCADE"))
     stderr = Column(String)
+
+
+class PipelineRunResultFile(Base):
+    pipeline_run_id = Column(ForeignKey("pipeline_run.id", **CASCADE))
+    filename = Column(String)
+    type = Column(String)
+    path = Column(String)
