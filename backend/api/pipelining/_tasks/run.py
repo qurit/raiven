@@ -116,9 +116,10 @@ def post_run_cleanup(db, job: PipelineJob):
     run: PipelineRun = job.run
     output_path = pathlib.Path(run.get_abs_output_path())
     for file in output_path.iterdir():
+        print(str(file))
         PipelineRunResultFile(
             pipeline_run_id=run.id,
             filename=file.name,
-            type=file.stem if file.is_file() else "folder"
+            type=file.stem if file.is_file() else "folder",
+            path=str(file.relative_to(config.UPLOAD_DIR))
         ).save(db)
-

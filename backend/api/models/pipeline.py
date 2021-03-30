@@ -112,6 +112,7 @@ class PipelineRun(IOPathMixin, Base):
 
     jobs = relationship('PipelineJob', backref="run", cascade='all, delete-orphan')
     initiator = relationship('DicomNode')
+    files = relationship('PipelineRunResultFile', backref="run", cascade='all, delete-orphan')
 
 
 class PipelineJob(IOPathMixin, TimestampMixin, Base):
