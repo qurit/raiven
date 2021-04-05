@@ -20,7 +20,8 @@
         {{ type }}
         <v-chip-group column class="mt-3">
           <v-chip
-            v-for="tag in tags"
+            v-for="(tag, index) in tags"
+            :key="`tag${index}`"
             v-text="tag.tag_name"
             class="mr-1 mb-1"
             color="primary"
