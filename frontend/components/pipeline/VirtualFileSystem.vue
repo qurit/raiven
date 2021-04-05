@@ -3,29 +3,23 @@
     <v-card elevation="6">
       <v-toolbar color="primary accent--text" flat>
         <v-toolbar-title>
-          <b>Files Created from Pipelines </b>
+          <b>Files from Pipeline Runs </b>
         </v-toolbar-title>
         <v-spacer />
-        <!-- <v-text-field
+        <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
-          label="Search by Run ID or Pipeline"
+          label="Search"
           hide-details
           solo
-        /> -->
+        />
+        <v-icon-btn
+          v-if="!deleteMode"
+          @click="getPipelineRunFiles"
+          color="#373740"
+          refresh
+        />
       </v-toolbar>
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        :label="
-          !!this.pipelineId
-            ? 'Search by Run ID'
-            : 'Search by Run ID or Pipeline'
-        "
-        hide-details
-        class="mx-4"
-      />
-
       <v-data-table
         id="VFS"
         :items="items"
@@ -48,26 +42,19 @@
 
 <script>
 import { generic_get } from '~/api'
-import { downloadFile } from '@/utilities/files'
 import vIconBtn from '../global/v-icon-btn.vue'
 
 export default {
   components: { vIconBtn },
-  props: {
-    pipelineId: {
-      type: Number
-    }
-  },
   data: () => ({
     headers: [
-      { text: 'Run ID', align: 'start', value: 'pipeline_run_id' },
+      { text: 'Run ID', value: 'pipeline_run_id' },
       { text: 'Type', value: 'type' },
       { text: 'Filename', value: 'filename' },
       { text: 'Download', value: 'actions', sortable: false, align: 'center' }
     ],
     items: [],
     sortBy: 'pipeline_run_id',
-    sortDesc: true,
     search: ''
   }),
   created() {
@@ -79,23 +66,17 @@ export default {
       const virtualFileSystem = await generic_get(this, URL)
       this.items = virtualFileSystem
     },
-    download(file) {
-      console.log(file)
-      /**
-       * I am so sorry for my sins but axios does not support streaming responses so I had to write this jank thing
-       */
-      const URL = `${this.$axios.defaults.baseURL}/vfs/${file.id}`
-      downloadFile(this, URL, file.type)
-    },
-    clearDelete() {
-      this.deleteMode = false
-      this.selected = []
+    async download(file) {
+      const URL = `/vfs/${file.id}`
+      const resultFile = await generic_get(this, URL, { responseType: 'blob' })
+      console.log(resultFile)
+      var fileURL = window.URL.createObjectURL(new Blob([resultFile]))
+      var fileLink = document.createElement('a')
+      fileLink.href = fileURL
+      fileLink.setAttribute('download', `${file.filename}`)
+      document.body.appendChild(fileLink)
+      fileLink.click()
     }
   }
 }
 </script>
-<style>
-#ResultsTable > div > table > tbody > tr > td {
-  text-transform: capitalize;
-}
-</style>
