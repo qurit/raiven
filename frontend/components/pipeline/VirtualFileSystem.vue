@@ -21,7 +21,6 @@
         :headers="headers"
         :search="search"
         :sort-by.sync="sortBy"
-        :loading="fetching"
         :items-per-page="10"
       >
         <template v-slot:item.actions="{ item }">
@@ -63,7 +62,6 @@ export default {
     async download(file) {
       const URL = `/vfs/${file.id}`
       const resultFile = await generic_get(this, URL, { responseType: 'blob' })
-      console.log(resultFile)
       var fileURL = window.URL.createObjectURL(new Blob([resultFile]))
       var fileLink = document.createElement('a')
       fileLink.href = fileURL
