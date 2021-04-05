@@ -71,6 +71,7 @@
 <script>
 import { mapState } from 'vuex'
 export default {
+  name: 'ContainerForm',
   props: {
     isEditing: {
       type: Boolean

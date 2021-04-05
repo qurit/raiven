@@ -14,6 +14,7 @@ import {
   RunPipelineGuide
 } from '~/components/help/'
 export default {
+  name: 'UserGuide',
   data: () => ({
     components: [
       CreateContainerGuide,

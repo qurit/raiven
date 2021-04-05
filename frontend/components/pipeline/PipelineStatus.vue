@@ -33,6 +33,7 @@ import { generic_get } from '~/api'
 import vIconBtn from '../global/v-icon-btn.vue'
 
 export default {
+  name: 'PipelineStatus',
   components: { vIconBtn },
   name: 'PipelineStatus',
   data: () => ({

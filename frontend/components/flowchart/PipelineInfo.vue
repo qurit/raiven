@@ -68,6 +68,7 @@ import PipelineResults from '~/components/pipeline/PipelineResults'
 import { validateAETitle, validateNotEmpty } from '~/utilities/validationRules'
 
 export default {
+  name: 'PipelineInfo',
   components: { PipelineResults, PipelineTreeviewInfo },
   props: {
     pipelineId: Number

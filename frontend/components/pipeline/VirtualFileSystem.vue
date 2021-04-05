@@ -21,7 +21,6 @@
         :headers="headers"
         :search="search"
         :sort-by.sync="sortBy"
-        :loading="fetching"
         :items-per-page="10"
       >
         <template v-slot:item.actions="{ item }">
@@ -39,6 +38,7 @@ import { generic_get } from '~/api'
 import vIconBtn from '../global/v-icon-btn.vue'
 
 export default {
+  name: 'VirtualFileSystem',
   components: { vIconBtn },
   data: () => ({
     headers: [
@@ -63,7 +63,6 @@ export default {
     async download(file) {
       const URL = `/vfs/${file.id}`
       const resultFile = await generic_get(this, URL, { responseType: 'blob' })
-      console.log(resultFile)
       var fileURL = window.URL.createObjectURL(new Blob([resultFile]))
       var fileLink = document.createElement('a')
       fileLink.href = fileURL

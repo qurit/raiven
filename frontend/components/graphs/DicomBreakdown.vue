@@ -20,6 +20,7 @@ import colours from './colours.js'
 import { generic_get } from '~/api'
 
 export default {
+  name: 'DicomBreakdown',
   props: { dicom_obj_type: String, dicom_obj_id: Number },
   components: {
     HorizontalBar

@@ -38,6 +38,7 @@ import { generic_put, generic_delete } from '~/api'
 import { DicomBreakdown } from '~/components/graphs'
 
 export default {
+  name: 'DicomForm',
   components: { DicomBreakdown },
   props: {
     dicom_obj_type: String,
@@ -48,7 +49,7 @@ export default {
     series: Array
   },
   data: () => ({
-    pipeline_id:  undefined
+    pipeline_id: undefined
   }),
   created() {
     this.$store.dispatch('pipelines/fetchPipelines')

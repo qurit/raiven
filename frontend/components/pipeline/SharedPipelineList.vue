@@ -30,6 +30,7 @@
 
 <script>
 export default {
+  name: 'SharedPipelineList',
   data() {
     return {
       search: '',

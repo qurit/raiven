@@ -72,6 +72,7 @@ import { AddPipelineForm } from '~/components/pipeline'
 import { mapState } from 'vuex'
 
 export default {
+  name: 'PipelineList',
   components: {
     AddPipelineForm
   },

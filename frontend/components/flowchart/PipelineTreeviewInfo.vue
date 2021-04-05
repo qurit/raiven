@@ -61,6 +61,7 @@ import { generic_get } from '~/api'
 import ErrorInfo from './ErrorInfo'
 import ContainerInfo from './ContainerInfo'
 export default {
+  name: 'PipelineTreeviewInfo',
   components: { ErrorInfo, ContainerInfo },
   props: {
     pipelineId: {

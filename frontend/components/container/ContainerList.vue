@@ -80,6 +80,7 @@ import { mapState } from 'vuex'
 import { ContainerForm } from '~/components/container'
 
 export default {
+  name: 'ContainerList',
   components: {
     ContainerForm
   },

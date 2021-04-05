@@ -13,10 +13,30 @@
           hide-details
           solo
         />
-        <v-icon-btn v-if="!deleteMode" @click="getPipelineRuns" :color="toolbarIconColor" refresh />
-        <v-icon-btn v-if="!deleteMode" @click="deleteMode = true" :color="toolbarIconColor"  delete />
-        <v-icon-btn v-if="deleteMode" @click="clearDelete" :color="toolbarIconColor" close />
-        <v-icon-btn  v-if="deleteMode" @click="saveDelete" :color="toolbarIconColor" save />
+        <v-icon-btn
+          v-if="!deleteMode"
+          @click="getPipelineRuns"
+          :color="toolbarIconColor"
+          refresh
+        />
+        <v-icon-btn
+          v-if="!deleteMode"
+          @click="deleteMode = true"
+          :color="toolbarIconColor"
+          delete
+        />
+        <v-icon-btn
+          v-if="deleteMode"
+          @click="clearDelete"
+          :color="toolbarIconColor"
+          close
+        />
+        <v-icon-btn
+          v-if="deleteMode"
+          @click="saveDelete"
+          :color="toolbarIconColor"
+          save
+        />
       </v-toolbar>
       <v-text-field
         v-model="search"
@@ -62,10 +82,11 @@
 
 <script>
 import { generic_get, generic_delete } from '~/api'
-import { downloadFile } from "@/utilities/files";
+import { downloadFile } from '@/utilities/files'
 import vIconBtn from '../global/v-icon-btn.vue'
 
 export default {
+  name: 'PipelineRunResults',
   components: { vIconBtn },
   props: {
     pipelineId: {
@@ -89,8 +110,8 @@ export default {
     deleteMode: false
   }),
   computed: {
-    toolbarColor: ctx => ctx.deleteMode ? 'error' : 'primary accent--text',
-    toolbarIconColor: ctx => ctx.deleteMode ? 'white' : 'accent'
+    toolbarColor: ctx => (ctx.deleteMode ? 'error' : 'primary accent--text'),
+    toolbarIconColor: ctx => (ctx.deleteMode ? 'white' : 'accent')
   },
   created() {
     this.getPipelineRuns()
@@ -99,7 +120,8 @@ export default {
   },
   methods: {
     formatDateTime: x => (x ? new Date(x).toLocaleString() : 'Invalid Date'),
-    formatFileName: x => `${x.pipeline.name}_results_${x.finished_datetime}.zip`,
+    formatFileName: x =>
+      `${x.pipeline.name}_results_${x.finished_datetime}.zip`,
     async getPipelineRuns() {
       const URL = this.pipelineId
         ? `/pipeline/${this.pipelineId}/results`
@@ -118,12 +140,14 @@ export default {
       downloadFile(this, URL, FILENAME)
     },
     clearDelete() {
-      this.deleteMode = false;
+      this.deleteMode = false
       this.selected = []
     },
     async saveDelete() {
-      if (window.confirm("Are you sure you want to delete the selected items")) {
-        this.deleteMode = false;
+      if (
+        window.confirm('Are you sure you want to delete the selected items')
+      ) {
+        this.deleteMode = false
 
         for (const run of this.selected) {
           try {

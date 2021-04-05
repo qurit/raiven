@@ -75,7 +75,7 @@ import { generic_put } from '~/api'
 import ConditionBuilder from '@/components/conditions/ConditionBuilder'
 
 export default {
-  name: 'VueFlowchart',
+  name: 'SimpleFlowchart',
   components: {
     ConditionBuilder,
     FlowchartLink,

@@ -16,7 +16,7 @@ import { CounterCard } from '~/components/counter'
 import { generic_get } from '~/api'
 
 export default {
-  name: 'App',
+  name: 'CounterList',
   components: {
     CounterCard
   },

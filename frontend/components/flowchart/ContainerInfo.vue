@@ -10,6 +10,7 @@
 
 <script>
 export default {
+  name: 'ContainerInfo',
   props: {
     node: {
       type: Object
