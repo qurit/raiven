@@ -121,6 +121,15 @@ export default {
       search: ''
     }
   },
+  computed: {
+    ...mapState('containers', ['containers']),
+    items() {
+      return this.$store.getters['containers/userContainers']
+    }
+  },
+  created() {
+    this.$store.dispatch('containers/fetchContainers')
+  },
   methods: {
     closeDialog() {
       this.dialog = false
@@ -160,15 +169,6 @@ export default {
       this.key += 1
       this.dialog = true
     }
-  },
-  computed: {
-    ...mapState('containers', ['containers']),
-    items() {
-      return this.$store.getters['containers/userContainers']
-    }
-  },
-  created() {
-    this.$store.dispatch('containers/fetchContainers')
   }
 }
 </script>

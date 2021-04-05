@@ -42,47 +42,64 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-spacer/>
-      <v-btn rounded dense small text v-text="'Cancel'" @click="$emit('close')"/>
-      <v-btn rounded :color="color" v-text="'Save'" small @click="submit"/>
+      <v-spacer />
+      <v-btn
+        rounded
+        dense
+        small
+        text
+        v-text="'Cancel'"
+        @click="$emit('close')"
+      />
+      <v-btn rounded :color="color" v-text="'Save'" small @click="submit" />
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import echoMixin from "@/utilities/echoMixin";
-import { toPropFormat } from "@/utilities/propHelpers";
-import { validateHostAddress, validatePort, validateNotEmpty } from '@/utilities/validationRules'
+import echoMixin from '@/utilities/echoMixin'
+import { toPropFormat } from '@/utilities/propHelpers'
+import {
+  validateHostAddress,
+  validatePort,
+  validateNotEmpty
+} from '@/utilities/validationRules'
 
 export default {
-  name: "OutputDestinationForm",
+  name: 'OutputDestinationForm',
   mixins: [echoMixin],
   data: () => ({
     title: 'Add Dicom Node as Destination',
     echoIcon: 'mdi-wifi',
     loading: false,
     isFormValid: true,
-    textFieldAttrs: toPropFormat(['solo', 'single-line', 'hide-details', 'dense', 'flat']),
+    textFieldAttrs: toPropFormat([
+      'solo',
+      'single-line',
+      'hide-details',
+      'dense',
+      'flat'
+    ]),
     node: {
       title: 'orthanc',
       host: '127.0.0.1',
       port: '4242'
     }
   }),
+  computed: {
+    color: ({ isFormValid }) => (isFormValid ? 'primary accent--text' : 'error')
+  },
   methods: {
     validateHostAddress,
     validatePort,
     validateNotEmpty,
 
     async submit() {
-      if(this.$refs.form.validate()) {
+      if (this.$refs.form.validate()) {
         await this.$store.dispatch('destination/addDestination', this.node)
         this.$emit('close')
       }
-    },
-  },
-  computed: {
-    color: ({isFormValid}) => isFormValid ? 'primary accent--text' : 'error'
+    }
   }
 }
 </script>

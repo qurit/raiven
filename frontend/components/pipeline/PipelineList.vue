@@ -96,6 +96,15 @@ export default {
       search: ''
     }
   },
+  computed: {
+    ...mapState('pipelines', ['pipelines']),
+    items() {
+      return this.$store.getters['pipelines/userPipelines']
+    }
+  },
+  created() {
+    this.$store.dispatch('pipelines/fetchPipelines')
+  },
   methods: {
     viewPipeline(pipeline) {
       this.$router.push({ path: `/pipeline/${pipeline.id}` })
@@ -116,15 +125,6 @@ export default {
       this.deletePipelineId = pipelineId
       this.confirmDeleteDialog = true
     }
-  },
-  computed: {
-    ...mapState('pipelines', ['pipelines']),
-    items() {
-      return this.$store.getters['pipelines/userPipelines']
-    }
-  },
-  created() {
-    this.$store.dispatch('pipelines/fetchPipelines')
   }
 }
 </script>

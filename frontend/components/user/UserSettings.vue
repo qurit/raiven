@@ -77,6 +77,11 @@ export default {
       return this.currentAETitle !== this.aeTitle || this.didChangeAE
     }
   },
+  created() {
+    this.$store.dispatch('destination/fetchDestinations')
+    this.getUserInfo()
+    this.getUserPermittedAEs()
+  },
   methods: {
     validateAETitle,
     async getUserInfo() {
@@ -116,11 +121,6 @@ export default {
         this.$toaster.toastError('Could not save changes')
       }
     }
-  },
-  created() {
-    this.$store.dispatch('destination/fetchDestinations')
-    this.getUserInfo()
-    this.getUserPermittedAEs()
   }
 }
 </script>

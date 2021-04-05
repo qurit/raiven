@@ -1,7 +1,10 @@
 <template>
   <v-card class="overflow-x-hidden">
     <v-card-title>Add a Condition</v-card-title>
-    <v-card-subtitle>Start a pipeline when only a specific series has been received</v-card-subtitle>
+    <v-card-subtitle
+      >Start a pipeline when only a specific series has been
+      received</v-card-subtitle
+    >
     <v-card-text>
       <v-row>
         <v-col>
@@ -37,7 +40,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import {toPropFormat} from "@/utilities/propHelpers";
+import { toPropFormat } from '@/utilities/propHelpers'
 
 export default {
   data() {
@@ -45,12 +48,24 @@ export default {
       pipelineId: '',
       isActive: false,
       conditionName: '',
-      textFieldAttrs: toPropFormat(['solo', 'single-line', 'hide-details', 'dense', 'flat']),
+      textFieldAttrs: toPropFormat([
+        'solo',
+        'single-line',
+        'hide-details',
+        'dense',
+        'flat'
+      ]),
       types: ['Node', 'Patient', 'Study', 'Series'],
       newConditionIdentifier: '',
       newConditionType: '',
       currentConditions: []
     }
+  },
+  computed: {
+    ...mapState('pipelines', ['pipelines'])
+  },
+  created() {
+    this.$store.dispatch('pipelines/fetchPipelines')
   },
   methods: {
     addCondition() {
@@ -83,12 +98,6 @@ export default {
       this.conditionName = null
       this.pipelineId = null
     }
-  },
-  created() {
-    this.$store.dispatch('pipelines/fetchPipelines')
-  },
-  computed: {
-    ...mapState('pipelines', ['pipelines'])
   }
 }
 </script>

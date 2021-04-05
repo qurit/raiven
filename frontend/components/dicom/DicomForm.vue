@@ -51,14 +51,13 @@ export default {
   data: () => ({
     pipeline_id: undefined
   }),
-  created() {
-    this.$store.dispatch('pipelines/fetchPipelines')
-  },
   computed: {
     ...mapState('pipelines', ['pipelines']),
     isDisabled: ctx => !ctx.pipeline_id
   },
-
+  created() {
+    this.$store.dispatch('pipelines/fetchPipelines')
+  },
   methods: {
     async submit() {
       if (this.pipeline_id && this.dicom_obj_type && this.dicom_obj_id) {

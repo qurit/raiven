@@ -78,6 +78,9 @@ export default {
       tooltipInfo: 'Click for more info'
     }
   },
+  created() {
+    this.getInfo()
+  },
   methods: {
     openErrorMessage(error) {
       this.error = error
@@ -145,9 +148,6 @@ export default {
         })
         .catch(err => console.log(err))
     }
-  },
-  created() {
-    this.getInfo()
   }
 }
 </script>

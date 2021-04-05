@@ -78,6 +78,10 @@ export default {
     isFormValid: false,
     editState: false
   }),
+  async created() {
+    const URL = `/pipeline/${this.pipelineId}`
+    this.pipeline = await generic_get(this, URL)
+  },
   methods: {
     validateAETitle,
     validateNotEmpty,
@@ -96,10 +100,6 @@ export default {
         }
       }
     }
-  },
-  async created() {
-    const URL = `/pipeline/${this.pipelineId}`
-    this.pipeline = await generic_get(this, URL)
   }
 }
 </script>

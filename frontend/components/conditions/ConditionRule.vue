@@ -3,9 +3,16 @@
     <v-card class="pa-2" flat color="primary" elevation="0">
       <v-row no-gutters justify="center" align="center">
         <v-col>
-          <v-select v-model="match" :items="value.matchTypes" v-bind="styleAttrs"  @change="update" />
+          <v-select
+            v-model="match"
+            :items="value.matchTypes"
+            v-bind="styleAttrs"
+            @change="update"
+          />
         </v-col>
-        <div class="title mx-2 white--text" style="text-transform: capitalize">{{ value.table }}</div>
+        <div class="title mx-2 white--text" style="text-transform: capitalize">
+          {{ value.table }}
+        </div>
         <v-select
           v-if="value.type.toLowerCase() === 'select'"
           v-model="selected"
@@ -19,7 +26,12 @@
           @change="update"
         />
         <v-expand-x-transition>
-          <v-icon-btn v-if="hover" delete color="accent" @click="$emit('delete')"/>
+          <v-icon-btn
+            v-if="hover"
+            delete
+            color="accent"
+            @click="$emit('delete')"
+          />
         </v-expand-x-transition>
       </v-row>
     </v-card>
@@ -27,34 +39,37 @@
 </template>
 
 <script>
-import {toPropFormat} from "@/utilities/propHelpers";
+import { toPropFormat } from '@/utilities/propHelpers'
 
 export default {
   name: 'ConditionRule',
   props: {
-    value: null,
+    value: null
   },
   data: () => ({
     match: null,
     attrs: undefined,
     selected: undefined,
-    styleAttrs: {...toPropFormat(['solo', 'hide-details', 'flat', 'return-object'])}
+    styleAttrs: {
+      ...toPropFormat(['solo', 'hide-details', 'flat', 'return-object'])
+    }
   }),
   created() {
     if (this.value) {
       this.selected = this.value.values
       this.match = this.value.match
     }
-
     this.attrs = {
-      "items": (typeof this.value.items === 'function') ? this.value.items() : this.value.items,
-      "class": 'mx-2',
-      "label": this.value.tag,
-      "multiple": this.value.multiple,
-      "chips": this.value.chips !== false,
+      items:
+        typeof this.value.items === 'function'
+          ? this.value.items()
+          : this.value.items,
+      class: 'mx-2',
+      label: this.value.tag,
+      multiple: this.value.multiple,
+      chips: this.value.chips !== false,
       ...this.styleAttrs
     }
-
   },
   methods: {
     update() {

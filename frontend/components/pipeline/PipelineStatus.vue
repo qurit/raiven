@@ -51,6 +51,9 @@ export default {
       complete: 'success'
     }
   }),
+  created() {
+    this.getPipelineProgress()
+  },
   methods: {
     async getPipelineProgress() {
       const URL = '/pipeline/results'
@@ -60,9 +63,6 @@ export default {
         console.log(e)
       }
     }
-  },
-  created() {
-    this.getPipelineProgress()
   }
 }
 </script>

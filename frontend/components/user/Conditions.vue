@@ -33,18 +33,6 @@ export default {
   components: {
     ConditionRunForm
   },
-  computed: {
-    ...mapState('conditions', ['conditions']),
-    items() {
-      const formattedConditions = JSON.parse(
-        JSON.stringify(this.$store.state.conditions.conditions)
-      )
-      formattedConditions.forEach(condition => {
-        condition.conditions = JSON.stringify(condition.conditions)
-      })
-      return formattedConditions
-    }
-  },
   data() {
     return {
       conditionRunForm: false,
@@ -62,13 +50,25 @@ export default {
       ]
     }
   },
-  methods: {
-    deleteCondition(conditionId) {
-      this.$store.dispatch('conditions/deleteCondition', conditionId)
+  computed: {
+    ...mapState('conditions', ['conditions']),
+    items() {
+      const formattedConditions = JSON.parse(
+        JSON.stringify(this.$store.state.conditions.conditions)
+      )
+      formattedConditions.forEach(condition => {
+        condition.conditions = JSON.stringify(condition.conditions)
+      })
+      return formattedConditions
     }
   },
   created() {
     this.$store.dispatch('conditions/fetchConditions')
+  },
+  methods: {
+    deleteCondition(conditionId) {
+      this.$store.dispatch('conditions/deleteCondition', conditionId)
+    }
   }
 }
 </script>

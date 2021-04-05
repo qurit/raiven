@@ -97,7 +97,6 @@ export default {
       const form = new FormData()
       form.append('username', this.username)
       form.append('password', this.password)
-
       try {
         await this.$auth.loginWith('local', { data: form })
       } catch (e) {
