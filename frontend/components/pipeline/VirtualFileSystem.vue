@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card elevation="6">
+    <v-card elevation="6" class="mt-4">
       <v-toolbar color="primary accent--text" flat>
         <v-toolbar-title>
           <b>Files from Pipeline Runs </b>
@@ -13,12 +13,7 @@
           hide-details
           solo
         />
-        <v-icon-btn
-          v-if="!deleteMode"
-          @click="getPipelineRunFiles"
-          color="#373740"
-          refresh
-        />
+        <v-icon-btn @click="getPipelineRunFiles" color="#373740" refresh />
       </v-toolbar>
       <v-data-table
         id="VFS"
@@ -26,7 +21,6 @@
         :headers="headers"
         :search="search"
         :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc"
         :loading="fetching"
         :items-per-page="10"
       >

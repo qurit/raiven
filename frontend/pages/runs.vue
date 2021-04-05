@@ -9,8 +9,6 @@
       </v-col>
       <v-col sm="12" md="6">
         <PipelineResults />
-      </v-col>
-      <v-col sm="12" md="6">
         <VirtualFileSystem />
       </v-col>
     </v-row>
