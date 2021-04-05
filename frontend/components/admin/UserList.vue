@@ -19,7 +19,7 @@
       sort-by="name"
       :sort-desc="false"
     >
-      <template v-slot:item.ae_title="{ item }">
+      <template v-slot:[`item.ae_title`]="{ item }">
         <v-edit-dialog :return-value="item.ae_title">
           {{ item.ae_title ? aePrefix + item.ae_title : '' }}
           <v-text-field
@@ -37,13 +37,13 @@
           />
         </v-edit-dialog>
       </template>
-      <template v-slot:item.is_admin="{ item }">
+      <template v-slot:[`item.is_admin`]="{ item }">
         <v-simple-checkbox :value="item.is_admin" disabled />
       </template>
-      <template v-slot:item.first_seen="{ item }">
+      <template v-slot:[`item.first_seen`]="{ item }">
         {{ formatDateTime(item.first_seen) }}
       </template>
-      <template v-slot:item.last_seen="{ item }">
+      <template v-slot:[`item.last_seen`]="{ item }">
         {{ formatDateTime(item.last_seen) }}
       </template>
     </v-data-table>
@@ -66,12 +66,12 @@ export default {
     addUserForm: false,
     search: '',
     headers: [
-      {text: 'Name', value: 'name'},
-      {text: 'Username', value: 'username'},
-      {text: 'Admin', value: 'is_admin'},
-      {text: 'AE Title', value: 'ae_title'},
-      {text: 'First Seen', value: 'first_seen'},
-      {text: 'Last Seen', value: 'last_seen'}
+      { text: 'Name', value: 'name' },
+      { text: 'Username', value: 'username' },
+      { text: 'Admin', value: 'is_admin' },
+      { text: 'AE Title', value: 'ae_title' },
+      { text: 'First Seen', value: 'first_seen' },
+      { text: 'Last Seen', value: 'last_seen' }
     ]
   }),
   computed: {

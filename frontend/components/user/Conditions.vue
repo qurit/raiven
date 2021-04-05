@@ -13,7 +13,7 @@
       <v-icon @click="conditionRunForm = true" color="#373740">mdi-plus</v-icon>
     </v-toolbar>
     <v-data-table id="Conditions" :headers="headers" :items="items">
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon medium @click.stop="deleteCondition(item.id)" color="cancel">
           mdi-delete
         </v-icon>

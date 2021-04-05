@@ -64,13 +64,13 @@
         :items-per-page="5"
         loading-text="Getting Results..."
       >
-        <template v-slot:item.created_datetime="{ item }">{{
+        <template v-slot:[`item.created_datetime`]="{ item }">{{
           formatDateTime(item.created_datetime)
         }}</template>
-        <template v-slot:item.finished_datetime="{ item }">{{
+        <template v-slot:[`item.finished_datetime`]="{ item }">{{
           formatDateTime(item.finished_datetime)
         }}</template>
-        <template v-slot:item.actions="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <v-icon small class="mr-2" @click="download(item)">
             mdi-download
           </v-icon>

@@ -25,10 +25,10 @@
       :items="items"
       :search="search"
     >
-      <template v-slot:item.is_shared="{ item }">
+      <template v-slot:[`item.is_shared`]="{ item }">
         <v-simple-checkbox :value="item.is_shared" disabled />
       </template>
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon
           medium
           class="mr-2"

@@ -30,10 +30,10 @@
       class="row-pointer"
       @click:row="viewPipeline"
     >
-      <template v-slot:item.is_shared="{ item }">
+      <template v-slot:[`item.is_shared`]="{ item }">
         <v-simple-checkbox :value="item.is_shared" disabled />
       </template>
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon medium @click.stop="deletePipeline(item.id)" color="cancel">
           mdi-delete
         </v-icon>
