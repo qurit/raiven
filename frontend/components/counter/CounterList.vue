@@ -28,7 +28,7 @@ export default {
     studyCount: 0,
     seriesCount: 0
   }),
-  async created() {
+  created() {
     this.getDicomStats()
     this.getPipelineStats()
     this.getContainerStats()

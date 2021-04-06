@@ -93,7 +93,7 @@ export default {
       this.getData()
     }
   },
-  async created() {
+  created() {
     if (this.dicom_obj_type && this.dicom_obj_id) {
       this.getData()
     }

@@ -171,9 +171,9 @@ export default {
       else return ctx.colors.default
     }
   },
-  async created() {
+  created() {
     if (this.container_is_output || this.container_is_input)
-      await this.$store.dispatch('destination/fetchDestinations')
+      this.$store.dispatch('destination/fetchDestinations')
     if (this.destination) this.selected = this.destination
 
     if (this.selected) {

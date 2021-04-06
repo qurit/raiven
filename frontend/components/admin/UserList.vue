@@ -78,8 +78,8 @@ export default {
     ...mapState('users', ['users']),
     aePrefix: ctx => ctx.$store.state.config.USER_AE_PREFIX
   },
-  async created() {
-    await this.$store.dispatch('users/fetchUsers')
+  created() {
+    this.$store.dispatch('users/fetchUsers')
   },
   methods: {
     validateAETitle,
