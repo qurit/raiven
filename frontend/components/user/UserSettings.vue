@@ -36,13 +36,12 @@
     </v-row>
     <v-divider class="my-3" light />
     <v-card-actions class="justify-center">
-      <v-btn
-        @click="submit"
-        text
-        color="confirm"
+      <v-icon-btn
+        save
         :disabled="!(didEdit && isFormValid)"
-        >Save Changes</v-btn
-      >
+        @click="submit"
+        color="confirm"
+      />
     </v-card-actions>
     <v-dialog v-model="destinationDialog" max-width="900px" min-height="600px">
       <OutputDestinationForm @closeDialog="destinationDialog = false" />
