@@ -1,5 +1,11 @@
 <template>
-  <v-btn :disabled="disabled" :color="color" icon @click="$emit('click')" :to="to">
+  <v-btn
+    :disabled="disabled"
+    :color="color"
+    icon
+    @click="$emit('click')"
+    :to="to"
+  >
     <v-icon v-text="iconToShow" :large="large" />
   </v-btn>
 </template>
@@ -34,6 +40,7 @@ export default {
     back: Boolean,
     save: Boolean,
     delete: Boolean,
+    deleteEmpty: Boolean,
     edit: Boolean,
     refresh: Boolean,
     close: Boolean
@@ -43,6 +50,7 @@ export default {
       if (ctx.plus) return 'mdi-plus'
       if (ctx.minus) return 'mdi-minus'
       if (ctx.delete) return 'mdi-delete'
+      if (ctx.deleteEmpty) return 'mdi-delete-empty'
       if (ctx.edit) return 'mdi-edit'
       if (ctx.save) return 'mdi-content-save'
       if (ctx.refresh) return 'mdi-refresh'
