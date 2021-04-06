@@ -45,3 +45,9 @@ def download_file(file_id: int, user: User = Depends(token_auth), db: Session = 
     response.headers["Content-Disposition"] = f"attachment; filename={file.filename}"
 
     return response
+
+
+@router.delete("/{file_id}")
+def delete_file(file_id: int, db: Session = Depends(session)):
+    if file := db.query(ResultFile).get(file_id):
+        file.delete(db)

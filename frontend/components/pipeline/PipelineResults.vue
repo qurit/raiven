@@ -31,12 +31,9 @@
           :color="toolbarIconColor"
           close
         />
-        <v-icon-btn
-          v-if="deleteMode"
-          @click="saveDelete"
-          :color="toolbarIconColor"
-          save
-        />
+        <v-icon-btn v-if="deleteMode" @click="saveDelete"
+        :color="toolbarIconColor" <<<<<<< HEAD save ======= deleteEmpty >>>>>>>
+        vfs />
       </v-toolbar>
       <v-text-field
         v-model="search"
@@ -148,7 +145,6 @@ export default {
         window.confirm('Are you sure you want to delete the selected items')
       ) {
         this.deleteMode = false
-
         for (const run of this.selected) {
           try {
             await generic_delete(this, `/pipeline/run/${run.id}`)
@@ -156,7 +152,6 @@ export default {
             this.$toaster.toastError('Could not delete run: ' + run.id)
           }
         }
-
         this.selected = []
         await this.getPipelineRuns()
       }
