@@ -35,10 +35,7 @@
         :append-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         @click:append="() => (visible = !visible)"
         :type="visible ? 'text' : 'password'"
-        :rules="
-          [validateNotEmpty] &&
-            (this.password === this.passwordConfirm || ['Passwords must match'])
-        "
+        :rules="samePassword || ['Passwords must match']"
         required
         class="px-15 pt-5"
       />
@@ -70,7 +67,7 @@ export default {
   }),
   computed: {
     samePassword() {
-      return password === passwordConfirm
+      return this.password === this.passwordConfirm
     }
   },
   methods: {

@@ -31,9 +31,12 @@
           :color="toolbarIconColor"
           close
         />
-        <v-icon-btn v-if="deleteMode" @click="saveDelete"
-        :color="toolbarIconColor" <<<<<<< HEAD save ======= deleteEmpty >>>>>>>
-        vfs />
+        <v-icon-btn
+          v-if="deleteMode"
+          @click="saveDelete"
+          :color="toolbarIconColor"
+          deleteEmpty
+        />
       </v-toolbar>
       <v-text-field
         v-model="search"
