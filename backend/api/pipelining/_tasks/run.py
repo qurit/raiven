@@ -1,8 +1,9 @@
 from docker.models.containers import Container as DockerContainer
+import pathlib
 
 from api import config, worker_session, models
 from api.dicom.scu import send_dicom_folder
-from api.models.pipeline import PipelineRun, PipelineJob, PipelineJobError, PipelineNode
+from api.models.pipeline import PipelineRun, PipelineJob, PipelineJobError, PipelineNode, PipelineRunResultFile
 
 from . import docker, dramatiq
 from .utils import get_volumes, get_environment, create_job, mark_job_complete, mark_run_complete
@@ -71,8 +72,7 @@ def run_node_task(run_id: int, node_id: int, previous_job_id: int = None):
             mark_run_complete(db, job, status='error')
 
         elif job.node.is_leaf_node():
-            print('Pipeline finished')
-            mark_run_complete(db, job)
+            post_run_cleanup(db, job)
 
         else:
             _run_next_nodes(job, run_id)
@@ -107,3 +107,18 @@ def dicom_output_task(run_id: int, node_id: int, previous_job_id: int = None):
 
         mark_job_complete(db, job, exit_code=0)
         mark_run_complete(db, job)
+
+
+def post_run_cleanup(db, job: PipelineJob):
+    print('Pipeline finished')
+    mark_run_complete(db, job)
+
+    run: PipelineRun = job.run
+    output_path = pathlib.Path(run.get_abs_output_path())
+    for file in output_path.iterdir():
+        PipelineRunResultFile(
+            pipeline_run_id=run.id,
+            filename=file.name,
+            type=file.stem if file.is_file() else "folder",
+            path=str(file.relative_to(config.UPLOAD_DIR))
+        ).save(db)

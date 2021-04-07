@@ -46,6 +46,7 @@ class UserLDAP(Base):
     title = Column(String)
     department = Column(String)
     company = Column(String)
+    # has_approval = Column(Boolean, default=False)
 
     def verify_password(self, password):
         raise NotImplementedError
