@@ -1,6 +1,10 @@
 <template>
   <v-card elevation="6" height="515" class="overflow-y-auto overflow-x-hidden">
-    <v-card-header title="Pipeline in Progress" :func="getPipelineProgress" />
+    <v-card-header
+      title="Pipeline in Progress"
+      :func="getPipelineProgress"
+      icon="refresh"
+    />
     <v-divider light />
     <v-flex v-for="run in this.pipelineRuns" :key="run.id">
       <v-card>

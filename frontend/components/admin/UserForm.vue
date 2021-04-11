@@ -1,9 +1,6 @@
 <template>
   <v-card class="overflow-x-hidden overflow-y-hidden">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title v-text="title" class="font-weight-bold" color="accent" />
-      <v-spacer />
-    </v-toolbar>
+    <v-card-header title="Add a User" />
     <v-form v-model="isFormValid" ref="form">
       <v-text-field
         v-model="name"

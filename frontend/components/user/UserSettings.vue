@@ -1,8 +1,6 @@
 <template>
   <v-card elevation="6">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Settings</b></v-toolbar-title>
-    </v-toolbar>
+    <v-card-header title="Settings" />
     <v-form v-model="isFormValid">
       <v-text-field
         class="mx-2"
