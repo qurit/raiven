@@ -1,12 +1,11 @@
 <template>
-  <!-- <v-btn
+  <v-btn
     :disabled="disabled"
     :color="color"
     icon
     @click="$emit('click')"
     :to="to"
-  > -->
-  <v-btn :disabled="disabled" :color="color" icon @click="hello" :to="to">
+  >
     <v-icon v-text="iconToShow" :large="large" />
   </v-btn>
 </template>
@@ -31,10 +30,10 @@ export default {
       type: String,
       default: 'mdi-plus'
     },
-    // onClick: {
-    //   type: Function,
-    //   default: () => undefined
-    // },
+    onClick: {
+      type: Function,
+      default: () => undefined
+    },
     large: Boolean,
     plus: Boolean,
     minus: Boolean,
@@ -44,12 +43,8 @@ export default {
     deleteEmpty: Boolean,
     edit: Boolean,
     refresh: Boolean,
-    close: Boolean
-  },
-  methods: {
-    hello() {
-      console.log(this.icon)
-    }
+    close: Boolean,
+    pencil: Boolean
   },
   computed: {
     iconToShow: ctx => {
@@ -63,6 +58,7 @@ export default {
       if (ctx.refresh || ctx.icon === 'refresh') return 'mdi-refresh'
       if (ctx.back || ctx.icon === 'back') return 'mdi-arrow-left'
       if (ctx.close || ctx.icon === 'close') return 'mdi-close'
+      if (ctx.pencil || ctx.icon === 'pencil') return 'mdi-pencil'
       return ctx.icon
     }
   }

@@ -1,12 +1,8 @@
 <template>
   <v-card elevation="6">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title>
-        <b
-          >{{ isEditing ? 'Edit your Container' : 'Add a Container' }}
-        </b></v-toolbar-title
-      >
-    </v-toolbar>
+    <v-card-header
+      :title="isEditing ? 'Edit your Container' : 'Add a Container'"
+    />
     <v-divider light />
     <v-form class="ma-5" ref="form">
       <v-col cols="12" md="12">

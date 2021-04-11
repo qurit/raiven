@@ -8,13 +8,12 @@
       v-model="search"
       v-if="searchable"
       append-icon="mdi-magnify"
-      label="Search by
-    Name or File"
+      :label="searchLabel"
       hide-details
       @input="$emit('input', $event)"
       solo
     />
-    <v-icon-btn @click="func" color="#373740" :icon="icon" />
+    <v-icon-btn v-if="icon" @click="func" color="#373740" :icon="icon" />
   </v-toolbar>
 </template>
 
@@ -30,11 +29,16 @@ export default {
       type: String
     },
     icon: {
-      type: String
+      type: String,
+      default: null
     },
     searchable: {
       type: Boolean,
       default: false
+    },
+    searchLabel: {
+      type: String,
+      default: 'Search'
     },
     func: {
       type: Function,
