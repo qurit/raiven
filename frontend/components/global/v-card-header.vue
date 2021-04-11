@@ -13,7 +13,7 @@
       @input="$emit('input', $event)"
       solo
     />
-    <v-icon-btn v-if="icon" @click="func" color="#373740" :icon="icon" />
+    <v-icon-btn v-if="icon" @click="func" color="accent" :icon="icon" />
   </v-toolbar>
 </template>
 

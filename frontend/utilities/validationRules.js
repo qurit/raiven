@@ -15,15 +15,15 @@ export const validatePort = v =>
   ) || 'Field is not a valid port'
 
 export function validateAETitle(v) {
-  if (!!v) {
+  if (v) {
     if (!validateASCII(v)) return 'Field must only contain ASCII characters'
     if (!validateLength(v, 12)) return 'Field must be less than 12 characters'
-    return true
-  } else return false
+  }
+  return true
 }
 
 export function validateHostAddress(v) {
-  if (!!v) {
+  if (v) {
     if (!validateDomain(v) && !validateIP(v))
       return 'Field is not a valid host address'
     return true

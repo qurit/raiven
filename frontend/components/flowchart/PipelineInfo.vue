@@ -1,17 +1,11 @@
 <template>
   <v-card elevation="6">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title class="font-weight-bold"
-        >About this Pipeline</v-toolbar-title
-      >
-      <v-spacer />
-      <v-icon-btn
-        @click="editState ? submit() : (editState = true)"
-        :icon="editState ? 'mdi-content-save' : 'mdi-pencil'"
-        color="accent"
-      />
-      <v-icon-btn color="accent" close @click="$emit('close')" />
-    </v-toolbar>
+    <v-card-header
+      title="About this Pipeline"
+      isForm
+      :icon="editState ? 'save' : 'pencil'"
+      :func="editState ? submit : edit"
+    />
 
     <!-- Text   -->
     <v-expand-transition>
@@ -85,6 +79,9 @@ export default {
   methods: {
     validateAETitle,
     validateNotEmpty,
+    edit() {
+      this.editState = true
+    },
     async submit() {
       if (!this.$refs.form.validate()) {
         this.$toaster.toastError('Invalid Form!')
