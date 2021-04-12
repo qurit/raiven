@@ -1,17 +1,12 @@
 <template>
   <v-card elevation="6" v-if="this.$auth.user.is_admin" flat>
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Users</b></v-toolbar-title>
-      <v-spacer />
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        hide-details
-        solo
-      />
-      <v-icon-btn plus large @click="addUserForm = true" color="accent" />
-    </v-toolbar>
+    <v-card-header
+      title="Users"
+      v-model="search"
+      searchable
+      icon="plus"
+      :func="openUserForm"
+    />
     <v-data-table
       :items="users"
       :headers="headers"
@@ -19,7 +14,7 @@
       sort-by="name"
       :sort-desc="false"
     >
-      <template v-slot:item.ae_title="{ item }">
+      <template v-slot:[`item.ae_title`]="{ item }">
         <v-edit-dialog :return-value="item.ae_title">
           {{ item.ae_title ? aePrefix + item.ae_title : '' }}
           <v-text-field
@@ -37,13 +32,13 @@
           />
         </v-edit-dialog>
       </template>
-      <template v-slot:item.is_admin="{ item }">
+      <template v-slot:[`item.is_admin`]="{ item }">
         <v-simple-checkbox :value="item.is_admin" disabled />
       </template>
-      <template v-slot:item.first_seen="{ item }">
+      <template v-slot:[`item.first_seen`]="{ item }">
         {{ formatDateTime(item.first_seen) }}
       </template>
-      <template v-slot:item.last_seen="{ item }">
+      <template v-slot:[`item.last_seen`]="{ item }">
         {{ formatDateTime(item.last_seen) }}
       </template>
     </v-data-table>
@@ -66,25 +61,28 @@ export default {
     addUserForm: false,
     search: '',
     headers: [
-      {text: 'Name', value: 'name'},
-      {text: 'Username', value: 'username'},
-      {text: 'Admin', value: 'is_admin'},
-      {text: 'AE Title', value: 'ae_title'},
-      {text: 'First Seen', value: 'first_seen'},
-      {text: 'Last Seen', value: 'last_seen'}
+      { text: 'Name', value: 'name' },
+      { text: 'Username', value: 'username' },
+      { text: 'Admin', value: 'is_admin' },
+      { text: 'AE Title', value: 'ae_title' },
+      { text: 'First Seen', value: 'first_seen' },
+      { text: 'Last Seen', value: 'last_seen' }
     ]
   }),
   computed: {
     ...mapState('users', ['users']),
     aePrefix: ctx => ctx.$store.state.config.USER_AE_PREFIX
   },
-  async created() {
-    await this.$store.dispatch('users/fetchUsers')
+  created() {
+    this.$store.dispatch('users/fetchUsers')
   },
   methods: {
     validateAETitle,
     formatDateTime(datetime) {
       return datetime ? new Date(datetime).toLocaleString() : 'Invalid Date'
+    },
+    openUserForm() {
+      this.addUserForm = true
     },
     async saveAETitle({ id, ae_title }) {
       if (typeof this.validateAETitle(ae_title) === 'string')

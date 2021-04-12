@@ -1,8 +1,6 @@
 <template>
   <v-card elevation="10">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Step 2: Add a Container</b></v-toolbar-title>
-    </v-toolbar>
+    <v-card-header title="Step 2: Add a Container" />
     <v-card-subtitle>
       <b>Uploading a Container</b>
     </v-card-subtitle>
@@ -51,3 +49,9 @@
     </v-card-text>
   </v-card>
 </template>
+
+<script>
+export default {
+  name: 'AddContainerGuide'
+}
+</script>

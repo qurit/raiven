@@ -1,12 +1,8 @@
 <template>
   <v-card elevation="6">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title>
-        <b
-          >{{ isEditing ? 'Edit your Container' : 'Add a Container' }}
-        </b></v-toolbar-title
-      >
-    </v-toolbar>
+    <v-card-header
+      :title="isEditing ? 'Edit your Container' : 'Add a Container'"
+    />
     <v-divider light />
     <v-form class="ma-5" ref="form">
       <v-col cols="12" md="12">
@@ -71,6 +67,7 @@
 <script>
 import { mapState } from 'vuex'
 export default {
+  name: 'ContainerForm',
   props: {
     isEditing: {
       type: Boolean
@@ -98,10 +95,6 @@ export default {
       containerToTag: null
     }
   },
-  created() {
-    this.populate()
-    this.$store.dispatch('tags/fetchTags')
-  },
   computed: {
     // disables button if no name or dockerfile for new container
     isDisabled: function() {
@@ -113,6 +106,10 @@ export default {
     items() {
       return this.$store.state.tags.tags
     }
+  },
+  created() {
+    this.populate()
+    this.$store.dispatch('tags/fetchTags')
   },
   methods: {
     populate() {

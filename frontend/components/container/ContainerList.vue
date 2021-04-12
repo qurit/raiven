@@ -5,30 +5,24 @@
     class="overflow-y-auto"
     :class="'dark'"
   >
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Your Containers</b></v-toolbar-title>
-      <v-spacer />
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search by Name or File"
-        hide-details
-        solo
-      />
-      <v-icon-btn plus large @click="addContainerDialog" color="#373740" />
-    </v-toolbar>
-    <v-divider light />
-
+    <v-card-header
+      title="Your Containers"
+      v-model="search"
+      searchable
+      searchLabel="Search by Name"
+      icon="plus"
+      :func="addContainerDialog"
+    />
     <v-data-table
       id="Containers"
       :headers="headers"
       :items="items"
       :search="search"
     >
-      <template v-slot:item.is_shared="{ item }">
+      <template v-slot:[`item.is_shared`]="{ item }">
         <v-simple-checkbox :value="item.is_shared" disabled />
       </template>
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon
           medium
           class="mr-2"
@@ -78,12 +72,15 @@
 <script>
 import { mapState } from 'vuex'
 import { ContainerForm } from '~/components/container'
+import VCardHeader from '../global/v-card-header.vue'
 
 export default {
+  name: 'ContainerList',
   components: {
-    ContainerForm
+    ContainerForm,
+    VCardHeader
   },
-  data: function() {
+  data: () => {
     return {
       editing: false,
       key: 0,
@@ -119,6 +116,15 @@ export default {
       ],
       search: ''
     }
+  },
+  computed: {
+    ...mapState('containers', ['containers']),
+    items() {
+      return this.$store.getters['containers/userContainers']
+    }
+  },
+  created() {
+    this.$store.dispatch('containers/fetchContainers')
   },
   methods: {
     closeDialog() {
@@ -159,15 +165,6 @@ export default {
       this.key += 1
       this.dialog = true
     }
-  },
-  computed: {
-    ...mapState('containers', ['containers']),
-    items() {
-      return this.$store.getters['containers/userContainers']
-    }
-  },
-  created() {
-    this.$store.dispatch('containers/fetchContainers')
   }
 }
 </script>

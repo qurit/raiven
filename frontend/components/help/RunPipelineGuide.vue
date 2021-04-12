@@ -1,8 +1,6 @@
 <template>
   <v-card elevation="10">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Step 4: Run a Pipeline</b></v-toolbar-title>
-    </v-toolbar>
+    <v-card-header title="Step 4: Run a Pipeline" />
     <v-card-subtitle>
       <b>Running a Pipeline</b>
     </v-card-subtitle>
@@ -75,3 +73,9 @@
     </v-card-text>
   </v-card>
 </template>
+
+<script>
+export default {
+  name: 'RunPipelineGuide'
+}
+</script>

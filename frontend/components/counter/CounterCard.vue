@@ -1,5 +1,5 @@
 <template>
-  <v-card class="my-1 px-2 text-center" height="150" width="175" >
+  <v-card class="my-1 px-2 text-center" height="150" width="175">
     <v-row align="center">
       <v-col>
         <div :class="`${fontsize} font-weight-light`" v-text="displayNumber" />
@@ -40,11 +40,9 @@ export default {
   watch: {
     number: function() {
       clearInterval(this.interval)
-
       if (this.number === this.displayNumber) {
         return
       }
-
       this.interval = window.setInterval(
         function() {
           if (this.displayNumber !== this.number) {

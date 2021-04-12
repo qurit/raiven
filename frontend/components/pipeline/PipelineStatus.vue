@@ -1,10 +1,10 @@
 <template>
   <v-card elevation="6" height="515" class="overflow-y-auto overflow-x-hidden">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title> <b>Pipelines in Progress</b></v-toolbar-title>
-      <v-spacer />
-      <v-icon-btn @click="getPipelineProgress" color="#373740" refresh />
-    </v-toolbar>
+    <v-card-header
+      title="Pipeline in Progress"
+      :func="getPipelineProgress"
+      icon="refresh"
+    />
     <v-divider light />
     <v-flex v-for="run in this.pipelineRuns" :key="run.id">
       <v-card>
@@ -31,9 +31,11 @@
 <script>
 import { generic_get } from '~/api'
 import vIconBtn from '../global/v-icon-btn.vue'
+import vCardHeader from '../global/v-card-header.vue'
 
 export default {
-  components: { vIconBtn },
+  name: 'PipelineStatus',
+  components: { vIconBtn, vCardHeader },
   name: 'PipelineStatus',
   data: () => ({
     pipelineRuns: [],
@@ -50,6 +52,9 @@ export default {
       complete: 'success'
     }
   }),
+  created() {
+    this.getPipelineProgress()
+  },
   methods: {
     async getPipelineProgress() {
       const URL = '/pipeline/results'
@@ -59,9 +64,6 @@ export default {
         console.log(e)
       }
     }
-  },
-  created() {
-    this.getPipelineProgress()
   }
 }
 </script>

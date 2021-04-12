@@ -1,8 +1,6 @@
 <template>
   <v-card elevation="10">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Step 1: Create a Container</b></v-toolbar-title>
-    </v-toolbar>
+    <v-card-header title="Step 1: Create a Container" />
     <v-card-subtitle>
       <b>Creating a Container</b>
     </v-card-subtitle>
@@ -14,7 +12,12 @@
         </li>
         <li>
           The <b> Dockerfile </b> should resemble
-          <a href="https://raiven.qurit.ca/containers/#dockerfile-example" target="_blank"> this example </a>
+          <a
+            href="https://raiven.qurit.ca/containers/#dockerfile-example"
+            target="_blank"
+          >
+            this example
+          </a>
           <ul>
             <li>
               Install any dependencies you may require and set the environment
@@ -31,7 +34,12 @@
         </li>
         <li>
           The <b> main algorithm </b> should resemble
-          <a href="https://raiven.qurit.ca/containers/#algorithm-example" target="_blank"> this example </a>
+          <a
+            href="https://raiven.qurit.ca/containers/#algorithm-example"
+            target="_blank"
+          >
+            this example
+          </a>
           <ul>
             <li>
               Map the <b> INPUT_DIR </b> to the previously defined
@@ -62,3 +70,9 @@
     </v-card-text>
   </v-card>
 </template>
+
+<script>
+export default {
+  name: 'CreateContainerGuide'
+}
+</script>

@@ -18,7 +18,8 @@
       <!-- Links -->
       <!-- Links can be changed in the default layout -->
       <v-list-item
-        v-for="link in items"
+        v-for="(link, index) in items"
+        :key="`link${index}`"
         :to="link.to"
         nuxt
         class="py-2"
@@ -62,7 +63,9 @@
           <span>Logout</span>
         </v-tooltip>
       </v-col>
-      <v-col cols="12" class="text-center pt-0 pb-5">{{ $auth.user.name }}</v-col>
+      <v-col cols="12" class="text-center pt-0 pb-5">{{
+        $auth.user.name
+      }}</v-col>
       <v-col>
         <a href="https://qurit.ca/">
           <v-img

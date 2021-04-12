@@ -5,18 +5,7 @@
     class="overflow-y-auto overflow-x-hidden"
     :class="'dark'"
   >
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Shared Pipelines</b></v-toolbar-title>
-      <v-spacer />
-      <v-spacer />
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        hide-details
-        solo
-      />
-    </v-toolbar>
+    <v-card-header title="Shared Pipelines" v-model="search" searchable />
     <v-data-table
       id="Pipelines"
       :headers="headers"
@@ -30,6 +19,7 @@
 
 <script>
 export default {
+  name: 'SharedPipelineList',
   data() {
     return {
       search: '',
@@ -44,13 +34,13 @@ export default {
       return this.$store.getters['pipelines/sharedPipelines']
     }
   },
+  created() {
+    this.$store.dispatch('pipelines/fetchPipelines')
+  },
   methods: {
     viewPipeline(pipeline) {
       this.$router.push({ path: `/pipeline/${pipeline.id}` })
     }
-  },
-  created() {
-    this.$store.dispatch('pipelines/fetchPipelines')
   }
 }
 </script>

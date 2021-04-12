@@ -5,23 +5,13 @@
     class="overflow-y-auto overflow-x-hidden"
     :class="'dark'"
   >
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Your Pipelines</b></v-toolbar-title>
-      <v-spacer />
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        hide-details
-        solo
-      />
-      <v-icon-btn
-        plus
-        large
-        @click="addPipelineDialog = true"
-        color="#373740"
-      />
-    </v-toolbar>
+    <v-card-header
+      title="Your Pipelines"
+      v-model="search"
+      searchable
+      icon="plus"
+      :func="openAddPipelineForm"
+    />
     <v-data-table
       id="Pipelines"
       :headers="headers"
@@ -30,10 +20,10 @@
       class="row-pointer"
       @click:row="viewPipeline"
     >
-      <template v-slot:item.is_shared="{ item }">
+      <template v-slot:[`item.is_shared`]="{ item }">
         <v-simple-checkbox :value="item.is_shared" disabled />
       </template>
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon medium @click.stop="deletePipeline(item.id)" color="cancel">
           mdi-delete
         </v-icon>
@@ -72,6 +62,7 @@ import { AddPipelineForm } from '~/components/pipeline'
 import { mapState } from 'vuex'
 
 export default {
+  name: 'PipelineList',
   components: {
     AddPipelineForm
   },
@@ -95,7 +86,19 @@ export default {
       search: ''
     }
   },
+  computed: {
+    ...mapState('pipelines', ['pipelines']),
+    items() {
+      return this.$store.getters['pipelines/userPipelines']
+    }
+  },
+  created() {
+    this.$store.dispatch('pipelines/fetchPipelines')
+  },
   methods: {
+    openAddPipelineForm() {
+      this.addPipelineDialog = true
+    },
     viewPipeline(pipeline) {
       this.$router.push({ path: `/pipeline/${pipeline.id}` })
     },
@@ -115,15 +118,6 @@ export default {
       this.deletePipelineId = pipelineId
       this.confirmDeleteDialog = true
     }
-  },
-  computed: {
-    ...mapState('pipelines', ['pipelines']),
-    items() {
-      return this.$store.getters['pipelines/userPipelines']
-    }
-  },
-  created() {
-    this.$store.dispatch('pipelines/fetchPipelines')
   }
 }
 </script>

@@ -47,6 +47,7 @@
 import ContainerCard from './ContainerCard'
 
 export default {
+  name: 'ContainerDrawer',
   components: { ContainerCard },
   props: {
     containers: Array,

@@ -1,9 +1,6 @@
 <template>
-  <v-card class="overflow-x-hidden">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title v-text="title" class="font-weight-bold" color="accent" />
-      <v-spacer />
-    </v-toolbar>
+  <v-card class="overflow-x-hidden overflow-y-hidden">
+    <v-card-header title="Add a User" />
     <v-form v-model="isFormValid" ref="form">
       <v-text-field
         v-model="name"
@@ -26,6 +23,16 @@
         @click:append="() => (visible = !visible)"
         :type="visible ? 'text' : 'password'"
         :rules="[validateNotEmpty]"
+        required
+        class="px-15 pt-5"
+      />
+      <v-text-field
+        v-model="passwordConfirm"
+        label="Confirm Password"
+        :append-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+        @click:append="() => (visible = !visible)"
+        :type="visible ? 'text' : 'password'"
+        :rules="samePassword || ['Passwords must match']"
         required
         class="px-15 pt-5"
       />
@@ -52,8 +59,14 @@ export default {
     isFormValid: false,
     name: '',
     username: '',
-    password: ''
+    password: '',
+    passwordConfirm: ''
   }),
+  computed: {
+    samePassword() {
+      return this.password === this.passwordConfirm
+    }
+  },
   methods: {
     validateNotEmpty,
     async saveUser() {
@@ -64,6 +77,7 @@ export default {
       }
       await this.$store.dispatch('users/addUser', payload)
       this.$refs.form.reset()
+      this.visible = false
       this.$emit('closeAddUserForm')
     }
   }

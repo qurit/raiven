@@ -1,10 +1,6 @@
 <template>
   <v-card class="mx-auto" elevation="6">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>DICOM Instances</b></v-toolbar-title>
-      <v-spacer />
-      <v-icon-btn @click="getNodes" color="#373740" refresh />
-    </v-toolbar>
+    <v-card-header title="DICOM Instances" icon="refresh" :func="getNodes" />
     <DicomBreakdown />
     <div v-if="global_nodes.length">
       <p class="pl-3 pt-3 ma-0">Global:</p>
@@ -38,17 +34,17 @@
 </template>
 
 <script>
-import {DicomForm} from '~/components/dicom'
-import {DicomBreakdown} from '~/components/graphs'
-import {generic_get} from '~/api'
+import { DicomForm } from '~/components/dicom'
+import { DicomBreakdown } from '~/components/graphs'
+import { generic_get } from '~/api'
 import DicomInstanceTree from './DicomInstanceTree'
 
-
 export default {
+  name: 'DicomInstances',
   components: {
     DicomBreakdown,
     DicomForm,
-    DicomInstanceTree,
+    DicomInstanceTree
   },
   data: () => ({
     dialog: false,
@@ -59,7 +55,7 @@ export default {
     private_nodes: [],
     patients: [],
     studies: [],
-    series: [],
+    series: []
   }),
   created() {
     this.getNodes()
@@ -72,19 +68,19 @@ export default {
         return (
           generic_get(this, URL)
             // append "children" to the patients so that they are openable
-            .then((data) => {
-              data.forEach((patient) => {
+            .then(data => {
+              data.forEach(patient => {
                 patient['children'] = []
                 patient.icon = 'mdi-account'
               })
               return data
             })
             // adding the patients as the node's children
-            .then((patients) => {
+            .then(patients => {
               item.children = patients
               this.patients = patients
             })
-            .catch((err) => console.log(err))
+            .catch(err => console.log(err))
         )
       }
       // open patient accordion / get studies
@@ -93,38 +89,38 @@ export default {
         return (
           generic_get(this, URL)
             // append "children" to the studies so that they are openable
-            .then((data) => {
-              data.forEach((study) => {
+            .then(data => {
+              data.forEach(study => {
                 study['children'] = []
                 study.icon = 'mdi-clipboard-list'
               })
               return data
             })
             // adding the studies as the patient's children
-            .then((studies) => {
+            .then(studies => {
               item.children = studies
               this.studies = studies
             })
-            .catch((err) => console.log(err))
+            .catch(err => console.log(err))
         )
       }
       // open study accordion / get series
       if (item.hasOwnProperty('study_date')) {
         const URL = `/dicom/patient/${item.dicom_patient_id}/study/${item.id}/series`
         return generic_get(this, URL)
-          .then((data) => {
+          .then(data => {
             item.children = data
             this.series = data
           })
-          .catch((err) => console.log(err))
+          .catch(err => console.log(err))
       }
     },
     async getNodes() {
       const URL = `/dicom/nodes?input_node=true`
       await generic_get(this, URL)
-        .then((data) => this.updateTreeview(data))
+        .then(data => this.updateTreeview(data))
         .then(() => {
-          this.nodes.forEach((node) => {
+          this.nodes.forEach(node => {
             this.$set(node, 'children', [])
             this.$set(node, 'icon', 'mdi-folder-network')
           })
@@ -137,11 +133,11 @@ export default {
     },
     updateTreeview(data) {
       this.nodes = data
-      this.global_nodes = data.filter((node) => !node.user_id)
+      this.global_nodes = data.filter(node => !node.user_id)
       this.private_nodes = data.filter(
-        (node) => node.user_id == this.$auth.user.id
+        node => node.user_id == this.$auth.user.id
       )
-    },
-  },
+    }
+  }
 }
 </script>

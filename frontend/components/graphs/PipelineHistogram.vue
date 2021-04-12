@@ -12,6 +12,7 @@ import colours from './colours.js'
 import { generic_get } from '~/api'
 
 export default {
+  name: 'PipelineHistogram',
   components: {
     BarChart
   },
