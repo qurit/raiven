@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="6" v-if="this.$auth.user.is_admin" flat>
     <v-card-header
-      title="Users"
+      title="Local Users"
       v-model="search"
       searchable
       icon="plus"
@@ -12,7 +12,6 @@
       :headers="headers"
       :search="search"
       sort-by="name"
-      :sort-desc="false"
     >
       <template v-slot:[`item.ae_title`]="{ item }">
         <v-edit-dialog :return-value="item.ae_title">

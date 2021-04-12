@@ -1,12 +1,11 @@
 <template>
   <v-card elevation="6" v-if="this.$auth.user.is_admin" flat>
-    <v-card-header title="Users" v-model="search" searchable />
+    <v-card-header title="LDAP Users" v-model="search" searchable />
     <v-data-table
       :items="users"
       :headers="headers"
       :search="search"
       sort-by="title"
-      :sort-desc="true"
     />
   </v-card>
 </template>
