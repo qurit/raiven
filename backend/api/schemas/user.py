@@ -20,6 +20,12 @@ class UserLocalCreate(BaseModel):
         }
 
 
+class UserLDAPSchema(BaseORMModel):
+    title: str
+    department: str
+    company: str
+
+
 class User(BaseORMModel):
     username: str
     name: str

@@ -7,11 +7,18 @@ from sqlalchemy.orm import Session
 from api import session
 from api.auth import admin_auth
 from api.auth import token_auth
-from api.models.user import User, UserLocal
-from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit, PermittedApplicationEntities, \
+from api.models.user import User, UserLocal, UserLDAP
+from api.schemas.user import User as UserSchema, UserLDAPSchema, UserLocalCreate, UserEdit, PermittedApplicationEntities, \
     ApplicationEntity
 
 router = APIRouter()
+
+
+@router.get("/ldap", response_model=List[UserLDAPSchema], dependencies=[Depends(admin_auth)])
+def get_ldap_users(db: Session = Depends(session)):
+    """ Gets all the users in the database. Only Admins are allowed to access this endpoint."""
+
+    return db.query(UserLDAP).all()
 
 
 @router.get("/", response_model=List[UserSchema], dependencies=[Depends(admin_auth)])
