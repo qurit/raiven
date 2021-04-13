@@ -15,7 +15,7 @@ def token_auth(token: str = Depends(oauth2_scheme), db: type(session) = Depends(
     if not (user_id := User.verify_token(token)) or not (user := User.query(db).get(user_id)):
         raise HTTPException(401, "Invalid token")
 
-    if not user.access_allowed():
+    if not user.access_allowed:
         raise HTTPException(403, "User has not been approved to access Raiven")
 
     user.last_seen = datetime.utcnow()
