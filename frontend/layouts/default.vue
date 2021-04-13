@@ -24,25 +24,44 @@ export default {
         {
           to: '/containers',
           label: 'Containers',
-          icon:
-            this.$route.path === '/containers'
-              ? 'mdi-package-variant'
-              : 'mdi-package-variant-closed'
+          icon: this.$route.path === '/containers'
+            ? 'mdi-package-variant'
+            : 'mdi-package-variant-closed'
         },
         {
           to: '/pipeline',
           label: 'Pipelines',
-          icon:
-            this.$route.path === '/pipeline'
-              ? 'mdi-transit-connection-variant'
-              : 'mdi-transit-connection-horizontal'
+          icon: this.$route.path === '/pipeline'
+            ? 'mdi-transit-connection-variant'
+            : 'mdi-transit-connection-horizontal'
         },
-        { to: '/runs', label: 'Runs', icon: 'mdi-air-filter' },
-        { to: '/settings', label: 'Settings', icon: 'mdi-account-cog-outline' },
-        { to: '/help', label: 'Help', icon: 'mdi-help' },
-        ...(this.$auth.user.is_admin
-          ? [{ to: '/admin', label: 'Admin', icon: 'mdi-head-cog-outline' }]
-          : [])
+        {
+          to: '/runs', label: 'Runs',
+          icon: this.$route.path === '/runs'
+            ? 'mdi-play'
+            : 'mdi-play-outline'
+        },
+        {
+          to: '/settings',
+          label: 'Settings',
+          icon: this.$route.path === '/settings'
+              ? 'mdi-account-cog'
+              : 'mdi-account-cog-outline'
+        },
+        {
+          to: '/help',
+          label: 'Help',
+          icon: 'mdi-help'
+        },
+        ...(
+          this.$auth.user.is_admin ? [
+          {
+            to: '/admin',
+            label: 'Admin',
+            icon: this.$route.path === '/admin'
+              ? 'mdi-head-cog'
+              : 'mdi-head-cog-outline'
+          }] : [])
       ]
     }
   },
