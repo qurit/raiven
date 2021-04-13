@@ -75,3 +75,9 @@
     </v-card-text>
   </v-card>
 </template>
+
+<script>
+export default {
+  name: 'RunPipelineGuide'
+}
+</script>

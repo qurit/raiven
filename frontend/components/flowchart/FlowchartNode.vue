@@ -20,7 +20,8 @@
         {{ type }}
         <v-chip-group column class="mt-3">
           <v-chip
-            v-for="tag in tags"
+            v-for="(tag, index) in tags"
+            :key="`tag${index}`"
             v-text="tag.tag_name"
             class="mr-1 mb-1"
             color="primary"
@@ -170,6 +171,18 @@ export default {
       else return ctx.colors.default
     }
   },
+  created() {
+    if (this.container_is_output || this.container_is_input)
+      this.$store.dispatch('destination/fetchDestinations')
+    if (this.destination) this.selected = this.destination
+
+    if (this.selected) {
+      this.$emit('setDestination', {
+        pipelineNodeId: this.id,
+        destinationId: this.selected?.id
+      })
+    }
+  },
   methods: {
     changeDestination() {
       this.$emit('setDestination', {
@@ -186,18 +199,6 @@ export default {
         this.$emit('nodeSelected', e)
       }
       e.preventDefault()
-    }
-  },
-  async created() {
-    if (this.container_is_output || this.container_is_input)
-      await this.$store.dispatch('destination/fetchDestinations')
-    if (this.destination) this.selected = this.destination
-
-    if (this.selected) {
-      this.$emit('setDestination', {
-        pipelineNodeId: this.id,
-        destinationId: this.selected?.id
-      })
     }
   }
 }

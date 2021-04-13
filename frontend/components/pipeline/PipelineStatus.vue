@@ -33,6 +33,7 @@ import { generic_get } from '~/api'
 import vIconBtn from '../global/v-icon-btn.vue'
 
 export default {
+  name: 'PipelineStatus',
   components: { vIconBtn },
   name: 'PipelineStatus',
   data: () => ({
@@ -50,6 +51,9 @@ export default {
       complete: 'success'
     }
   }),
+  created() {
+    this.getPipelineProgress()
+  },
   methods: {
     async getPipelineProgress() {
       const URL = '/pipeline/results'
@@ -59,9 +63,6 @@ export default {
         console.log(e)
       }
     }
-  },
-  created() {
-    this.getPipelineProgress()
   }
 }
 </script>

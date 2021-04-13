@@ -30,6 +30,7 @@
 
 <script>
 export default {
+  name: 'SharedPipelineList',
   data() {
     return {
       search: '',
@@ -44,13 +45,13 @@ export default {
       return this.$store.getters['pipelines/sharedPipelines']
     }
   },
+  created() {
+    this.$store.dispatch('pipelines/fetchPipelines')
+  },
   methods: {
     viewPipeline(pipeline) {
       this.$router.push({ path: `/pipeline/${pipeline.id}` })
     }
-  },
-  created() {
-    this.$store.dispatch('pipelines/fetchPipelines')
   }
 }
 </script>

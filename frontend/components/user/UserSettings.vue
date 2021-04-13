@@ -36,13 +36,12 @@
     </v-row>
     <v-divider class="my-3" light />
     <v-card-actions class="justify-center">
-      <v-btn
-        @click="submit"
-        text
-        color="confirm"
+      <v-icon-btn
+        save
         :disabled="!(didEdit && isFormValid)"
-        >Save Changes</v-btn
-      >
+        @click="submit"
+        color="confirm"
+      />
     </v-card-actions>
     <v-dialog v-model="destinationDialog" max-width="900px" min-height="600px">
       <OutputDestinationForm @closeDialog="destinationDialog = false" />
@@ -76,6 +75,11 @@ export default {
     didEdit() {
       return this.currentAETitle !== this.aeTitle || this.didChangeAE
     }
+  },
+  created() {
+    this.$store.dispatch('destination/fetchDestinations')
+    this.getUserInfo()
+    this.getUserPermittedAEs()
   },
   methods: {
     validateAETitle,
@@ -116,11 +120,6 @@ export default {
         this.$toaster.toastError('Could not save changes')
       }
     }
-  },
-  created() {
-    this.$store.dispatch('destination/fetchDestinations')
-    this.getUserInfo()
-    this.getUserPermittedAEs()
   }
 }
 </script>

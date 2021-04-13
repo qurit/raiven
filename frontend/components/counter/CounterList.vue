@@ -16,7 +16,7 @@ import { CounterCard } from '~/components/counter'
 import { generic_get } from '~/api'
 
 export default {
-  name: 'App',
+  name: 'CounterList',
   components: {
     CounterCard
   },
@@ -28,7 +28,7 @@ export default {
     studyCount: 0,
     seriesCount: 0
   }),
-  async created() {
+  created() {
     this.getDicomStats()
     this.getPipelineStats()
     this.getContainerStats()

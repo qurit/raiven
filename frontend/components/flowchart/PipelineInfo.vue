@@ -68,6 +68,7 @@ import PipelineResults from '~/components/pipeline/PipelineResults'
 import { validateAETitle, validateNotEmpty } from '~/utilities/validationRules'
 
 export default {
+  name: 'PipelineInfo',
   components: { PipelineResults, PipelineTreeviewInfo },
   props: {
     pipelineId: Number
@@ -77,6 +78,10 @@ export default {
     isFormValid: false,
     editState: false
   }),
+  async created() {
+    const URL = `/pipeline/${this.pipelineId}`
+    this.pipeline = await generic_get(this, URL)
+  },
   methods: {
     validateAETitle,
     validateNotEmpty,
@@ -95,10 +100,6 @@ export default {
         }
       }
     }
-  },
-  async created() {
-    const URL = `/pipeline/${this.pipelineId}`
-    this.pipeline = await generic_get(this, URL)
   }
 }
 </script>

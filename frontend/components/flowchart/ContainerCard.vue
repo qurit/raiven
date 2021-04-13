@@ -5,7 +5,11 @@
       <v-card-subtitle>
         {{ container.description }}
       </v-card-subtitle>
-      <v-row justify="start" v-if="container.user_id !== $auth.user.id" class="ma-1">
+      <v-row
+        justify="start"
+        v-if="container.user_id !== $auth.user.id"
+        class="ma-1"
+      >
         <v-chip
           class="mb-1"
           v-text="container.user.name"
@@ -16,7 +20,8 @@
       </v-row>
       <v-row class="ma-1">
         <v-chip
-          v-for="chip in chips"
+          v-for="(chip, index) in chips"
+          :key="`chip${index}`"
           v-text="chip"
           class="mr-1 mb-1"
           color="primary"
