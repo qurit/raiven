@@ -18,6 +18,7 @@ class User(Base):
     is_admin = Column(Boolean, default=False)
     first_seen = Column(DateTime, default=datetime.now)
     last_seen = Column(DateTime, default=datetime.now)
+    access_allowed = Column(Boolean, default=False)
 
     ldap_user = relationship("UserLDAP", backref='user', uselist=False)
     local_user = relationship("UserLocal", backref='user', uselist=False)
@@ -46,7 +47,6 @@ class UserLDAP(Base):
     title = Column(String)
     department = Column(String)
     company = Column(String)
-    # has_approval = Column(Boolean, default=False)
 
     def verify_password(self, password):
         raise NotImplementedError
