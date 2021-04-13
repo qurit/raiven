@@ -30,10 +30,10 @@
       class="row-pointer"
       @click:row="viewPipeline"
     >
-      <template v-slot:item.is_shared="{ item }">
+      <template v-slot:[`item.is_shared`]="{ item }">
         <v-simple-checkbox :value="item.is_shared" disabled />
       </template>
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon medium @click.stop="deletePipeline(item.id)" color="cancel">
           mdi-delete
         </v-icon>
@@ -72,6 +72,7 @@ import { AddPipelineForm } from '~/components/pipeline'
 import { mapState } from 'vuex'
 
 export default {
+  name: 'PipelineList',
   components: {
     AddPipelineForm
   },
@@ -95,6 +96,15 @@ export default {
       search: ''
     }
   },
+  computed: {
+    ...mapState('pipelines', ['pipelines']),
+    items() {
+      return this.$store.getters['pipelines/userPipelines']
+    }
+  },
+  created() {
+    this.$store.dispatch('pipelines/fetchPipelines')
+  },
   methods: {
     viewPipeline(pipeline) {
       this.$router.push({ path: `/pipeline/${pipeline.id}` })
@@ -115,15 +125,6 @@ export default {
       this.deletePipelineId = pipelineId
       this.confirmDeleteDialog = true
     }
-  },
-  computed: {
-    ...mapState('pipelines', ['pipelines']),
-    items() {
-      return this.$store.getters['pipelines/userPipelines']
-    }
-  },
-  created() {
-    this.$store.dispatch('pipelines/fetchPipelines')
   }
 }
 </script>

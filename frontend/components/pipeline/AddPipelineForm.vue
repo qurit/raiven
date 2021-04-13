@@ -44,6 +44,7 @@
 import { validateAETitle, validateNotEmpty } from '~/utilities/validationRules'
 
 export default {
+  name: 'AddPipelineForm',
   data() {
     return {
       isFormValid: false,

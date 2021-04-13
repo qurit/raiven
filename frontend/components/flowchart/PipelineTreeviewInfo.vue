@@ -61,6 +61,7 @@ import { generic_get } from '~/api'
 import ErrorInfo from './ErrorInfo'
 import ContainerInfo from './ContainerInfo'
 export default {
+  name: 'PipelineTreeviewInfo',
   components: { ErrorInfo, ContainerInfo },
   props: {
     pipelineId: {
@@ -76,6 +77,9 @@ export default {
       node: '',
       tooltipInfo: 'Click for more info'
     }
+  },
+  created() {
+    this.getInfo()
   },
   methods: {
     openErrorMessage(error) {
@@ -144,9 +148,6 @@ export default {
         })
         .catch(err => console.log(err))
     }
-  },
-  created() {
-    this.getInfo()
   }
 }
 </script>

@@ -25,10 +25,10 @@
       :items="items"
       :search="search"
     >
-      <template v-slot:item.is_shared="{ item }">
+      <template v-slot:[`item.is_shared`]="{ item }">
         <v-simple-checkbox :value="item.is_shared" disabled />
       </template>
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon
           medium
           class="mr-2"
@@ -80,6 +80,7 @@ import { mapState } from 'vuex'
 import { ContainerForm } from '~/components/container'
 
 export default {
+  name: 'ContainerList',
   components: {
     ContainerForm
   },
@@ -120,6 +121,15 @@ export default {
       search: ''
     }
   },
+  computed: {
+    ...mapState('containers', ['containers']),
+    items() {
+      return this.$store.getters['containers/userContainers']
+    }
+  },
+  created() {
+    this.$store.dispatch('containers/fetchContainers')
+  },
   methods: {
     closeDialog() {
       this.dialog = false
@@ -159,15 +169,6 @@ export default {
       this.key += 1
       this.dialog = true
     }
-  },
-  computed: {
-    ...mapState('containers', ['containers']),
-    items() {
-      return this.$store.getters['containers/userContainers']
-    }
-  },
-  created() {
-    this.$store.dispatch('containers/fetchContainers')
   }
 }
 </script>

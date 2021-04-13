@@ -14,7 +14,12 @@
         </li>
         <li>
           The <b> Dockerfile </b> should resemble
-          <a href="https://raiven.qurit.ca/containers/#dockerfile-example" target="_blank"> this example </a>
+          <a
+            href="https://raiven.qurit.ca/containers/#dockerfile-example"
+            target="_blank"
+          >
+            this example
+          </a>
           <ul>
             <li>
               Install any dependencies you may require and set the environment
@@ -31,7 +36,12 @@
         </li>
         <li>
           The <b> main algorithm </b> should resemble
-          <a href="https://raiven.qurit.ca/containers/#algorithm-example" target="_blank"> this example </a>
+          <a
+            href="https://raiven.qurit.ca/containers/#algorithm-example"
+            target="_blank"
+          >
+            this example
+          </a>
           <ul>
             <li>
               Map the <b> INPUT_DIR </b> to the previously defined
@@ -62,3 +72,9 @@
     </v-card-text>
   </v-card>
 </template>
+
+<script>
+export default {
+  name: 'CreateContainerGuide'
+}
+</script>

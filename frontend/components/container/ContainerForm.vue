@@ -71,6 +71,7 @@
 <script>
 import { mapState } from 'vuex'
 export default {
+  name: 'ContainerForm',
   props: {
     isEditing: {
       type: Boolean
@@ -98,10 +99,6 @@ export default {
       containerToTag: null
     }
   },
-  created() {
-    this.populate()
-    this.$store.dispatch('tags/fetchTags')
-  },
   computed: {
     // disables button if no name or dockerfile for new container
     isDisabled: function() {
@@ -113,6 +110,10 @@ export default {
     items() {
       return this.$store.state.tags.tags
     }
+  },
+  created() {
+    this.populate()
+    this.$store.dispatch('tags/fetchTags')
   },
   methods: {
     populate() {

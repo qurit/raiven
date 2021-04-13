@@ -48,7 +48,7 @@
         :sort-by.sync="sortBy"
         :items-per-page="10"
       >
-        <template v-slot:item.actions="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <v-icon small class="mr-2" @click="download(item)">
             mdi-download
           </v-icon>
@@ -63,6 +63,7 @@ import { generic_get, generic_delete } from '~/api'
 import vIconBtn from '../global/v-icon-btn.vue'
 
 export default {
+  name: 'VirtualFileSystem',
   components: { vIconBtn },
   data: () => ({
     headers: [
