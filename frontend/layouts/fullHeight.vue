@@ -1,6 +1,6 @@
 <template>
   <v-app>
-
+    <Toast />
     <v-main id="splash">
       <v-container fill-height>
         <nuxt />
@@ -25,3 +25,9 @@
     -o-background-size: cover;
   }
 </style>
+<script>
+import Toast from "../components/generic/Toast";
+export default {
+  components: {Toast}
+}
+</script>
