@@ -43,19 +43,22 @@ export default {
     deleteEmpty: Boolean,
     edit: Boolean,
     refresh: Boolean,
-    close: Boolean
+    close: Boolean,
+    pencil: Boolean
   },
   computed: {
     iconToShow: ctx => {
-      if (ctx.plus) return 'mdi-plus'
-      if (ctx.minus) return 'mdi-minus'
-      if (ctx.delete) return 'mdi-delete'
-      if (ctx.deleteEmpty) return 'mdi-delete-empty'
-      if (ctx.edit) return 'mdi-edit'
-      if (ctx.save) return 'mdi-content-save'
-      if (ctx.refresh) return 'mdi-refresh'
-      if (ctx.back) return 'mdi-arrow-left'
-      if (ctx.close) return 'mdi-close'
+      if (ctx.plus || ctx.icon === 'plus') return 'mdi-plus'
+      if (ctx.minus || ctx.icon === 'minus') return 'mdi-minus'
+      if (ctx.delete || ctx.icon === 'delete') return 'mdi-delete'
+      if (ctx.deleteEmpty || ctx.icon === 'deleteEmpty')
+        return 'mdi-delete-empty'
+      if (ctx.edit || ctx.icon === 'edit') return 'mdi-edit'
+      if (ctx.save || ctx.icon === 'save') return 'mdi-content-save'
+      if (ctx.refresh || ctx.icon === 'refresh') return 'mdi-refresh'
+      if (ctx.back || ctx.icon === 'back') return 'mdi-arrow-left'
+      if (ctx.close || ctx.icon === 'close') return 'mdi-close'
+      if (ctx.pencil || ctx.icon === 'pencil') return 'mdi-pencil'
       return ctx.icon
     }
   }

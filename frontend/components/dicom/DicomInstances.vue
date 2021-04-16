@@ -1,10 +1,6 @@
 <template>
   <v-card class="mx-auto" elevation="6">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>DICOM Instances</b></v-toolbar-title>
-      <v-spacer />
-      <v-icon-btn @click="getNodes" color="#373740" refresh />
-    </v-toolbar>
+    <v-card-header title="DICOM Instances" icon="refresh" :func="getNodes" />
     <DicomBreakdown />
     <div v-if="global_nodes.length">
       <p class="pl-3 pt-3 ma-0">Global:</p>

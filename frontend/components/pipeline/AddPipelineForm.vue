@@ -1,9 +1,6 @@
 <template>
   <v-card class="overflow-x-hidden">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Add a Pipeline</b></v-toolbar-title>
-      <v-spacer />
-    </v-toolbar>
+    <v-card-header title="Add a Pipeline" />
     <v-form v-model="isFormValid">
       <v-text-field
         v-model="pipelineName"

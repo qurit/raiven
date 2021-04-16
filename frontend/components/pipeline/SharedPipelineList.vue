@@ -5,18 +5,7 @@
     class="overflow-y-auto overflow-x-hidden"
     :class="'dark'"
   >
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Shared Pipelines</b></v-toolbar-title>
-      <v-spacer />
-      <v-spacer />
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        hide-details
-        solo
-      />
-    </v-toolbar>
+    <v-card-header title="Shared Pipelines" v-model="search" searchable />
     <v-data-table
       id="Pipelines"
       :headers="headers"

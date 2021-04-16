@@ -1,17 +1,12 @@
 <template>
   <v-card elevation="6" v-if="this.$auth.user.is_admin" flat>
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Users</b></v-toolbar-title>
-      <v-spacer />
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        hide-details
-        solo
-      />
-      <v-icon-btn plus large @click="addUserForm = true" color="accent" />
-    </v-toolbar>
+    <v-card-header
+      title="Users"
+      v-model="search"
+      searchable
+      icon="plus"
+      :func="openUserForm"
+    />
     <v-data-table
       :items="users"
       :headers="headers"
@@ -85,6 +80,9 @@ export default {
     validateAETitle,
     formatDateTime(datetime) {
       return datetime ? new Date(datetime).toLocaleString() : 'Invalid Date'
+    },
+    openUserForm() {
+      this.addUserForm = true
     },
     async saveAETitle({ id, ae_title }) {
       if (typeof this.validateAETitle(ae_title) === 'string')

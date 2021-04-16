@@ -5,23 +5,13 @@
     class="overflow-y-auto overflow-x-hidden"
     :class="'dark'"
   >
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Your Pipelines</b></v-toolbar-title>
-      <v-spacer />
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        hide-details
-        solo
-      />
-      <v-icon-btn
-        plus
-        large
-        @click="addPipelineDialog = true"
-        color="#373740"
-      />
-    </v-toolbar>
+    <v-card-header
+      title="Your Pipelines"
+      v-model="search"
+      searchable
+      icon="plus"
+      :func="openAddPipelineForm"
+    />
     <v-data-table
       id="Pipelines"
       :headers="headers"
@@ -106,6 +96,9 @@ export default {
     this.$store.dispatch('pipelines/fetchPipelines')
   },
   methods: {
+    openAddPipelineForm() {
+      this.addPipelineDialog = true
+    },
     viewPipeline(pipeline) {
       this.$router.push({ path: `/pipeline/${pipeline.id}` })
     },

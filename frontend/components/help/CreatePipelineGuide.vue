@@ -1,8 +1,6 @@
 <template>
   <v-card elevation="10">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Step 3: Build a Pipeline</b></v-toolbar-title>
-    </v-toolbar>
+    <v-card-header title="Step 3: Build a Pipeline" />
     <v-card-subtitle>
       <b>Creating a Pipeline</b>
     </v-card-subtitle>
