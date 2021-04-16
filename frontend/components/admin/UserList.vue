@@ -32,7 +32,7 @@
         </v-edit-dialog>
       </template>
       <template v-slot:[`item.is_admin`]="{ item }">
-        <v-simple-checkbox :value="item.is_admin" disabled />
+        <v-simple-checkbox :value="item.is_admin" @click="testing" />
       </template>
       <template v-slot:[`item.first_seen`]="{ item }">
         {{ formatDateTime(item.first_seen) }}
@@ -64,6 +64,10 @@ export default {
       { text: 'Username', value: 'username' },
       { text: 'Admin', value: 'is_admin' },
       { text: 'AE Title', value: 'ae_title' },
+      { text: 'Title', value: 'ldap_user.title' },
+      { text: 'Department', value: 'ldap_user.department' },
+      { text: 'Company', value: 'ldap_user.company' },
+      { text: 'Access', value: 'access_allowed' },
       { text: 'First Seen', value: 'first_seen' },
       { text: 'Last Seen', value: 'last_seen' }
     ]
@@ -87,6 +91,9 @@ export default {
       if (typeof this.validateAETitle(ae_title) === 'string')
         throw 'Validation Error'
       this.$store.dispatch('users/editUserAETitle', { id, ae_title })
+    },
+    testing() {
+      console.log('ha')
     }
   }
 }

@@ -33,6 +33,8 @@ class User(BaseORMModel):
     ae_title: Optional[str]
     first_seen: datetime
     last_seen: datetime
+    access_allowed: bool
+    ldap_user: Optional[UserLDAPSchema]
 
 
 class UserEdit(BaseModel):
