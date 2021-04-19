@@ -8,8 +8,12 @@ export const mutations = {
   setUsers: (state, users) => (state.users = users),
   addUser: (state, user) => state.users.push(user),
   editUserAETitle: (state, { id, res }) => {
-    const index = state.users.findIndex(container => container.id === id)
+    const index = state.users.findIndex(user => user.id === id)
     state.users[index].ae_title = res.ae_title
+  },
+  editAccess: (state, { id, res }) => {
+    const index = state.users.findIndex(user => user.id === id)
+    state.users[index].access_allowed = res.access_allowed
   }
 }
 
@@ -45,6 +49,16 @@ export const actions = {
       this.$toaster.toastError(
         'Could not save, make sure you have properly formed the AE title'
       )
+    }
+  },
+  async changeAccess({ commit }, id) {
+    try {
+      const URL = `/user/modify-access/${id}`
+      const res = await generic_put(this, URL)
+      commit('editAccess', { id, res })
+      this.$toaster.toastSuccess('User access changed!')
+    } catch (err) {
+      this.$toaster.toastError('Could not modify access')
     }
   }
 }

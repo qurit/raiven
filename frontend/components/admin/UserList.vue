@@ -32,13 +32,26 @@
         </v-edit-dialog>
       </template>
       <template v-slot:[`item.is_admin`]="{ item }">
-        <v-simple-checkbox :value="item.is_admin" @click="testing" />
+        <v-simple-checkbox :value="item.is_admin" disabled />
       </template>
       <template v-slot:[`item.first_seen`]="{ item }">
         {{ formatDateTime(item.first_seen) }}
       </template>
       <template v-slot:[`item.last_seen`]="{ item }">
         {{ formatDateTime(item.last_seen) }}
+      </template>
+      <template v-slot:[`item.access_allowed`]="{ item }">
+        <!-- <v-simple-checkbox
+          :value="item.access_allowed"
+          @click="changeAccess(item)"
+          :disabled="$auth.user.id === item.id"
+        /> -->
+
+        <v-checkbox
+          :input-value="item.access_allowed"
+          @change="changeAccess(item)"
+          :disabled="$auth.user.id === item.id"
+        />
       </template>
     </v-data-table>
     <v-dialog v-model="addUserForm" max-width="900px" min-height="600px">
@@ -92,8 +105,10 @@ export default {
         throw 'Validation Error'
       this.$store.dispatch('users/editUserAETitle', { id, ae_title })
     },
-    testing() {
-      console.log('ha')
+    changeAccess(user) {
+      console.log(user)
+      console.log(this.$auth.user)
+      this.$store.dispatch('users/changeAccess', user.id)
     }
   }
 }

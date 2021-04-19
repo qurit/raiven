@@ -14,9 +14,18 @@ from api.schemas.user import User as UserSchema, UserLDAPSchema, UserLocalCreate
 router = APIRouter()
 
 
+@router.put("/modify-access/{user_id}", dependencies=[Depends(admin_auth)])
+def modify_user_access(user_id: int, db: Session = Depends(session)):
+    """ Change the user's access permissions """
+    user = db.query(User).get(user_id)
+    user.access_allowed = not user.access_allowed
+    user.save(db)
+    return user
+
+
 @router.get("/ldap", response_model=List[UserLDAPSchema], dependencies=[Depends(admin_auth)])
 def get_ldap_users(db: Session = Depends(session)):
-    """ Gets all the users in the database. Only Admins are allowed to access this endpoint."""
+    """ Gets LDAP users in the database. Only Admins are allowed to access this endpoint."""
 
     return db.query(UserLDAP).all()
 
