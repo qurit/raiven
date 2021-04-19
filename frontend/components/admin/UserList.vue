@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="6" v-if="this.$auth.user.is_admin" flat>
     <v-card-header
-      title="Local Users"
+      title="Users"
       v-model="search"
       searchable
       icon="plus"
@@ -34,7 +34,7 @@
       <template v-slot:[`item.is_admin`]="{ item }">
         <v-checkbox
           :input-value="item.is_admin"
-          @change="changeAdmin(item)"
+          @change="changeRole(item)"
           :disabled="$auth.user.id === item.id"
         />
       </template>
@@ -106,7 +106,7 @@ export default {
     changeAccess(user) {
       this.$store.dispatch('users/changeAccess', user.id)
     },
-    changeAdmin(user) {
+    changeRole(user) {
       this.$store.dispatch('users/changeRole', user.id)
     }
   }

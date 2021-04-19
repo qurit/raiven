@@ -7,14 +7,14 @@ from sqlalchemy.orm import Session
 from api import session
 from api.auth import admin_auth
 from api.auth import token_auth
-from api.models.user import User, UserLocal, UserLDAP
-from api.schemas.user import User as UserSchema, UserLDAPSchema, UserLocalCreate, UserEdit, PermittedApplicationEntities, \
+from api.models.user import User, UserLocal
+from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit, PermittedApplicationEntities, \
     ApplicationEntity
 
 router = APIRouter()
 
 
-@router.put("/modify-access/{user_id}", dependencies=[Depends(admin_auth)])
+@router.put("/modify-access/{user_id}", response_model=UserSchema, dependencies=[Depends(admin_auth)])
 def modify_user_access(user_id: int, db: Session = Depends(session)):
     """ Change the user's access permissions """
     user = db.query(User).get(user_id)
@@ -23,7 +23,7 @@ def modify_user_access(user_id: int, db: Session = Depends(session)):
     return user
 
 
-@router.put("/modify-role/{user_id}", dependencies=[Depends(admin_auth)])
+@router.put("/modify-role/{user_id}",  response_model=UserSchema, dependencies=[Depends(admin_auth)])
 def modify_user_role(user_id: int, db: Session = Depends(session)):
     """ Change the user's role """
     user = db.query(User).get(user_id)

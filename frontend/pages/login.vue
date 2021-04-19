@@ -101,12 +101,13 @@ export default {
         await this.$auth.loginWith('local', { data: form })
       } catch (e) {
         const code = e.response?.status
-        console.log(code)
 
         if (code === 401) {
-          this.$toaster.toastError("Invalid Username or Password")
+          this.$toaster.toastError('Invalid Username or Password')
         } else if (code === 403) {
-          this.$toaster.toastError("Your Account Needs Admin Approval Prior to Raiven Access")
+          this.$toaster.toastError(
+            'Your Account Needs Admin Approval Prior to Raiven Access'
+          )
         }
 
         this.error = true
