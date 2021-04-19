@@ -23,11 +23,13 @@ def modify_user_access(user_id: int, db: Session = Depends(session)):
     return user
 
 
-@router.get("/ldap", response_model=List[UserLDAPSchema], dependencies=[Depends(admin_auth)])
-def get_ldap_users(db: Session = Depends(session)):
-    """ Gets LDAP users in the database. Only Admins are allowed to access this endpoint."""
-
-    return db.query(UserLDAP).all()
+@router.put("/modify-admin/{user_id}", dependencies=[Depends(admin_auth)])
+def modify_user_role(user_id: int, db: Session = Depends(session)):
+    """ Change the user's access permissions """
+    user = db.query(User).get(user_id)
+    user.is_admin = not user.is_admin
+    user.save(db)
+    return user
 
 
 @router.get("/", response_model=List[UserSchema], dependencies=[Depends(admin_auth)])

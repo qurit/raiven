@@ -14,6 +14,10 @@ export const mutations = {
   editAccess: (state, { id, res }) => {
     const index = state.users.findIndex(user => user.id === id)
     state.users[index].access_allowed = res.access_allowed
+  },
+  editRole: (state, { id, res }) => {
+    const index = state.users.findIndex(user => user.id === id)
+    state.users[index].is_admin = res.is_admin
   }
 }
 
@@ -57,6 +61,16 @@ export const actions = {
       const res = await generic_put(this, URL)
       commit('editAccess', { id, res })
       this.$toaster.toastSuccess('User access changed!')
+    } catch (err) {
+      this.$toaster.toastError('Could not modify access')
+    }
+  },
+  async changeRole({ commit }, id) {
+    try {
+      const URL = `/user/modify-admin/${id}`
+      const res = await generic_put(this, URL)
+      commit('editRole', { id, res })
+      this.$toaster.toastSuccess('User role changed!')
     } catch (err) {
       this.$toaster.toastError('Could not modify access')
     }

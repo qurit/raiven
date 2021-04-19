@@ -32,7 +32,11 @@
         </v-edit-dialog>
       </template>
       <template v-slot:[`item.is_admin`]="{ item }">
-        <v-simple-checkbox :value="item.is_admin" disabled />
+        <v-checkbox
+          :input-value="item.is_admin"
+          @change="changeAdmin(item)"
+          :disabled="$auth.user.id === item.id"
+        />
       </template>
       <template v-slot:[`item.first_seen`]="{ item }">
         {{ formatDateTime(item.first_seen) }}
@@ -41,12 +45,6 @@
         {{ formatDateTime(item.last_seen) }}
       </template>
       <template v-slot:[`item.access_allowed`]="{ item }">
-        <!-- <v-simple-checkbox
-          :value="item.access_allowed"
-          @click="changeAccess(item)"
-          :disabled="$auth.user.id === item.id"
-        /> -->
-
         <v-checkbox
           :input-value="item.access_allowed"
           @change="changeAccess(item)"
@@ -106,9 +104,10 @@ export default {
       this.$store.dispatch('users/editUserAETitle', { id, ae_title })
     },
     changeAccess(user) {
-      console.log(user)
-      console.log(this.$auth.user)
       this.$store.dispatch('users/changeAccess', user.id)
+    },
+    changeAdmin(user) {
+      this.$store.dispatch('users/changeRole', user.id)
     }
   }
 }
