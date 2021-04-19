@@ -23,9 +23,9 @@ def modify_user_access(user_id: int, db: Session = Depends(session)):
     return user
 
 
-@router.put("/modify-admin/{user_id}", dependencies=[Depends(admin_auth)])
+@router.put("/modify-role/{user_id}", dependencies=[Depends(admin_auth)])
 def modify_user_role(user_id: int, db: Session = Depends(session)):
-    """ Change the user's access permissions """
+    """ Change the user's role """
     user = db.query(User).get(user_id)
     user.is_admin = not user.is_admin
     user.save(db)

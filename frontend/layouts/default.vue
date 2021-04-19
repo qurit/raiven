@@ -24,44 +24,60 @@ export default {
         {
           to: '/containers',
           label: 'Containers',
-          icon: this.$route.path === '/containers'
-            ? 'mdi-package-variant'
-            : 'mdi-package-variant-closed'
+          icon:
+            this.$route.path === '/containers'
+              ? 'mdi-package-variant'
+              : 'mdi-package-variant-closed'
         },
         {
           to: '/pipeline',
           label: 'Pipelines',
-          icon: this.$route.path === '/pipeline'
-            ? 'mdi-transit-connection-variant'
-            : 'mdi-transit-connection-horizontal'
+          icon:
+            this.$route.path === '/pipeline'
+              ? 'mdi-transit-connection-variant'
+              : 'mdi-transit-connection-horizontal'
         },
         {
-          to: '/runs', label: 'Runs',
-          icon: this.$route.path === '/runs'
-            ? 'mdi-play'
-            : 'mdi-play-outline'
+          to: '/runs',
+          label: 'Runs',
+          icon: this.$route.path === '/runs' ? 'mdi-play' : 'mdi-play-outline'
+        },
+        {
+          to: '/files',
+          label: 'Files',
+          icon:
+            this.$route.path === '/files'
+              ? 'mdi-file-download'
+              : 'mdi-file-download-outline'
         },
         {
           to: '/settings',
           label: 'Settings',
-          icon: this.$route.path === '/settings'
+          icon:
+            this.$route.path === '/settings'
               ? 'mdi-account-cog'
               : 'mdi-account-cog-outline'
         },
         {
           to: '/help',
           label: 'Help',
-          icon: 'mdi-help'
+          icon:
+            this.$route.path === '/help'
+              ? 'mdi-help-circle'
+              : 'mdi-help-circle-outline'
         },
-        ...(
-          this.$auth.user.is_admin ? [
-          {
-            to: '/admin',
-            label: 'Admin',
-            icon: this.$route.path === '/admin'
-              ? 'mdi-head-cog'
-              : 'mdi-head-cog-outline'
-          }] : [])
+        ...(this.$auth.user.is_admin
+          ? [
+              {
+                to: '/admin',
+                label: 'Admin',
+                icon:
+                  this.$route.path === '/admin'
+                    ? 'mdi-head-cog'
+                    : 'mdi-head-cog-outline'
+              }
+            ]
+          : [])
       ]
     }
   },

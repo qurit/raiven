@@ -67,7 +67,7 @@ export const actions = {
   },
   async changeRole({ commit }, id) {
     try {
-      const URL = `/user/modify-admin/${id}`
+      const URL = `/user/modify-role/${id}`
       const res = await generic_put(this, URL)
       commit('editRole', { id, res })
       this.$toaster.toastSuccess('User role changed!')
