@@ -15,21 +15,29 @@ router = APIRouter()
 
 
 @router.put("/modify-access/{user_id}", response_model=UserSchema, dependencies=[Depends(admin_auth)])
-def modify_user_access(user_id: int, db: Session = Depends(session)):
+def modify_user_access(user_id: int, user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Change the user's access permissions """
-    user = db.query(User).get(user_id)
-    user.access_allowed = not user.access_allowed
-    user.save(db)
-    return user
+
+    if not user.is_admin:
+        return HTTPException(403, 'Unauthorized')
+
+    user_to_change = db.query(User).get(user_id)
+    user_to_change.access_allowed = not user_to_change.access_allowed
+    user_to_change.save(db)
+    return user_to_change
 
 
 @router.put("/modify-role/{user_id}",  response_model=UserSchema, dependencies=[Depends(admin_auth)])
-def modify_user_role(user_id: int, db: Session = Depends(session)):
+def modify_user_role(user_id: int, user: User = Depends(token_auth), db: Session = Depends(session)):
     """ Change the user's role """
-    user = db.query(User).get(user_id)
-    user.is_admin = not user.is_admin
-    user.save(db)
-    return user
+
+    if not user.is_admin:
+        return HTTPException(403, 'Unauthorized')
+
+    user_to_change = db.query(User).get(user_id)
+    user_to_change.is_admin = not user_to_change.is_admin
+    user_to_change.save(db)
+    return user_to_change
 
 
 @router.get("/", response_model=List[UserSchema], dependencies=[Depends(admin_auth)])
@@ -45,6 +53,7 @@ def create_local_user(user_schema: UserLocalCreate, db: Session = Depends(sessio
 
     try:
         user = User(username=user_schema.username, name=user_schema.name)
+        user.access_allowed = True
         user.save(db)
 
         UserLocal(id=user.id, password=user_schema.password).save(db)
