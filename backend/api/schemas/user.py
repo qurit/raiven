@@ -38,7 +38,9 @@ class User(BaseORMModel):
 
 
 class UserEdit(BaseModel):
-    ae_title: str
+    ae_title: Optional[str]
+    access_allowed: bool
+    is_admin: bool
 
 
 class PermittedApplicationEntities(BaseModel):

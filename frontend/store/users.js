@@ -7,16 +7,10 @@ export const state = () => ({
 export const mutations = {
   setUsers: (state, users) => (state.users = users),
   addUser: (state, user) => state.users.push(user),
-  editUserAETitle: (state, { id, res }) => {
+  editUserSettings: (state, { id, res }) => {
     const index = state.users.findIndex(user => user.id === id)
     state.users[index].ae_title = res.ae_title
-  },
-  editAccess: (state, { id, res }) => {
-    const index = state.users.findIndex(user => user.id === id)
     state.users[index].access_allowed = res.access_allowed
-  },
-  editRole: (state, { id, res }) => {
-    const index = state.users.findIndex(user => user.id === id)
     state.users[index].is_admin = res.is_admin
   }
 }
@@ -26,6 +20,9 @@ export const actions = {
     try {
       const URL = '/user'
       const data = await generic_get(this, URL)
+      data.forEach(user => {
+        user.ldap_user ? (user['type'] = 'LDAP') : (user['type'] = 'LOCAL')
+      })
       commit('setUsers', data)
       return data
     } catch (err) {
@@ -42,37 +39,22 @@ export const actions = {
       this.$toaster.toastError('Could not add user')
     }
   },
-  async editUserAETitle({ commit }, { id, ae_title }) {
+  async editUserSettings(
+    { commit },
+    { id, ae_title, access_allowed, is_admin }
+  ) {
     try {
       const URL = `/user/${id}`
-      const res = await generic_put(this, URL, { ae_title: ae_title })
-      commit('editUserAETitle', { id, res })
-      this.$toaster.toastSuccess('AE Title updated!')
+      const res = await generic_put(this, URL, {
+        ae_title: ae_title,
+        access_allowed: access_allowed,
+        is_admin: is_admin
+      })
+      commit('editUserSettings', { id, res })
+      this.$toaster.toastSuccess('Settings updated!')
       return res
     } catch (err) {
-      this.$toaster.toastError(
-        'Could not save, make sure you have properly formed the AE title'
-      )
-    }
-  },
-  async changeAccess({ commit }, id) {
-    try {
-      const URL = `/user/modify-access/${id}`
-      const res = await generic_put(this, URL)
-      commit('editAccess', { id, res })
-      this.$toaster.toastSuccess('User access changed!')
-    } catch (err) {
-      this.$toaster.toastError('Could not modify access')
-    }
-  },
-  async changeRole({ commit }, id) {
-    try {
-      const URL = `/user/modify-role/${id}`
-      const res = await generic_put(this, URL)
-      commit('editRole', { id, res })
-      this.$toaster.toastSuccess('User role changed!')
-    } catch (err) {
-      this.$toaster.toastError('Could not modify access')
+      this.$toaster.toastError('Could not save changes.')
     }
   }
 }

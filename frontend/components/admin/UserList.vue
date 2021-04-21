@@ -26,7 +26,12 @@
             :prefix="aePrefix"
             :rules="[validateAETitle]"
             @keyup.enter="
-              saveAETitle({ id: item.id, ae_title: $event.target.value })
+              editUser({
+                id: item.id,
+                ae_title: $event.target.value,
+                access_allowed: item.access_allowed,
+                is_admin: item.is_admin
+              })
             "
           />
         </v-edit-dialog>
@@ -34,7 +39,14 @@
       <template v-slot:[`item.is_admin`]="{ item }">
         <v-checkbox
           :input-value="item.is_admin"
-          @change="changeRole(item)"
+          @change="
+            editUser({
+              id: item.id,
+              ae_title: item.ae_title,
+              access_allowed: item.access_allowed,
+              is_admin: !item.is_admin
+            })
+          "
           :disabled="$auth.user.id === item.id"
         />
       </template>
@@ -47,7 +59,14 @@
       <template v-slot:[`item.access_allowed`]="{ item }">
         <v-checkbox
           :input-value="item.access_allowed"
-          @change="changeAccess(item)"
+          @change="
+            editUser({
+              id: item.id,
+              ae_title: item.ae_title,
+              access_allowed: !item.access_allowed,
+              is_admin: item.is_admin
+            })
+          "
           :disabled="$auth.user.id === item.id"
         />
       </template>
@@ -80,7 +99,8 @@ export default {
       { text: 'Company', value: 'ldap_user.company' },
       { text: 'Access', value: 'access_allowed' },
       { text: 'First Seen', value: 'first_seen' },
-      { text: 'Last Seen', value: 'last_seen' }
+      { text: 'Last Seen', value: 'last_seen' },
+      { text: 'Type', value: 'type' }
     ]
   }),
   computed: {
@@ -98,16 +118,19 @@ export default {
     openUserForm() {
       this.addUserForm = true
     },
-    async saveAETitle({ id, ae_title }) {
-      if (typeof this.validateAETitle(ae_title) === 'string')
-        throw 'Validation Error'
-      this.$store.dispatch('users/editUserAETitle', { id, ae_title })
-    },
-    changeAccess(user) {
-      this.$store.dispatch('users/changeAccess', user.id)
-    },
-    changeRole(user) {
-      this.$store.dispatch('users/changeRole', user.id)
+    async editUser({ id, ae_title, access_allowed, is_admin }) {
+      try {
+        if (ae_title && typeof this.validateAETitle(ae_title) === 'string')
+          throw 'Validation Error'
+        this.$store.dispatch('users/editUserSettings', {
+          id,
+          ae_title,
+          access_allowed,
+          is_admin
+        })
+      } catch (e) {
+        this.$toaster.toastError('AE Title malformed')
+      }
     }
   }
 }

@@ -14,32 +14,6 @@ from api.schemas.user import User as UserSchema, UserLocalCreate, UserEdit, Perm
 router = APIRouter()
 
 
-@router.put("/modify-access/{user_id}", response_model=UserSchema, dependencies=[Depends(admin_auth)])
-def modify_user_access(user_id: int, user: User = Depends(token_auth), db: Session = Depends(session)):
-    """ Change the user's access permissions """
-
-    if not user.is_admin:
-        return HTTPException(403, 'Unauthorized')
-
-    user_to_change = db.query(User).get(user_id)
-    user_to_change.access_allowed = not user_to_change.access_allowed
-    user_to_change.save(db)
-    return user_to_change
-
-
-@router.put("/modify-role/{user_id}",  response_model=UserSchema, dependencies=[Depends(admin_auth)])
-def modify_user_role(user_id: int, user: User = Depends(token_auth), db: Session = Depends(session)):
-    """ Change the user's role """
-
-    if not user.is_admin:
-        return HTTPException(403, 'Unauthorized')
-
-    user_to_change = db.query(User).get(user_id)
-    user_to_change.is_admin = not user_to_change.is_admin
-    user_to_change.save(db)
-    return user_to_change
-
-
 @router.get("/", response_model=List[UserSchema], dependencies=[Depends(admin_auth)])
 def get_all_users(db: Session = Depends(session)):
     """ Gets all the users in the database. Only Admins are allowed to access this endpoint."""
@@ -80,6 +54,8 @@ def edit_user_settings(user_id: int, new_info: UserEdit, user: User = Depends(to
         return HTTPException(401, 'User does not exist')
 
     user_to_edit.ae_title = new_info.ae_title
+    user_to_edit.access_allowed = new_info.access_allowed
+    user_to_edit.is_admin = new_info.is_admin
     user_to_edit.save(db)
     return user_to_edit
 
