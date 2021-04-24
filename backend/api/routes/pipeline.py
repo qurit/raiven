@@ -16,6 +16,37 @@ from api.auth import token_auth
 router = APIRouter()
 
 
+@router.get("/errors", response_model=List[schemas.PipelineJobErrorFull])
+def get_pipeline_errors(db: Session = Depends(session)):
+
+    #    tags: List[str] = db.query(Tag.tag_name).join(ContainerTags).filter_by(container_id=container_id).all()
+
+    # files = db.query(ResultFile).join(PipelineRun).join(Pipeline).filter(
+    #     Pipeline.user_id == user.id
+    # ).all()
+
+    # return db.query(PipelineJobError).join(PipelineJob).all()
+
+    # return db.query(PipelineJobError, PipelineJob, PipelineRun, Pipeline)\
+    #     .filter(PipelineJobError.pipeline_job_id == PipelineJob.id)\
+    #     .filter(PipelineJob.pipeline_run_id == PipelineRun.id)\
+    #     .filter(PipelineRun.pipeline_id == Pipeline.id)\
+    #     .all()
+
+    # # return db.query(PipelineJobError.(PipelineJob.pipeline_run_id == PipelineRun.id)\
+    # #     .filter(PipelineRun.pipeline_id == Pipeline.id)\
+    # #     .all()
+    # return db.query(PipelineJobError, PipelineJob, PipelineRun, Pipeline)\
+    #     .join(PipelineJobError, PipelineJob.id == PipelineJobError.pipeline_job_id)\
+    #     .join(PipelineJob, PipelineRun.id == PipelineJob.pipeline_run_id)\
+    #     .join(PipelineRun, Pipeline.id == PipelineRun.pipeline_id)\
+    #     .all()
+
+    # join(PipelineRun).join(Pipeline).all()
+
+    return db.query(PipelineJobError).all()
+
+
 @router.get("/stats", response_model=schemas.PipelineStats)
 def get_pipeline_stats(db: Session = Depends(session)):
     """

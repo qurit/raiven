@@ -182,3 +182,13 @@ class PipelineRun(BaseORMModel):
     pipeline: Optional[Pipeline]
 
     jobs: Optional[List[PipelineJob]]
+
+
+class PipelineJobErrorAdditionalInfo(BaseORMModel):
+    run: PipelineRun
+    node: PipelineNode
+
+
+class PipelineJobErrorFull(BaseORMModel):
+    stderr: str
+    job: PipelineJobErrorAdditionalInfo
