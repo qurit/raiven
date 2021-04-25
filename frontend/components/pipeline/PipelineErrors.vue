@@ -1,8 +1,8 @@
 <template>
   <v-card elevation="6" flat>
-    <v-toolbar :color="toolbarColor" flat v-if="!this.pipelineId">
+    <v-toolbar :color="toolbarColor" flat>
       <v-toolbar-title>
-        <b>Pipeline Run Results </b>
+        <b>Pipeline Errors </b>
       </v-toolbar-title>
       <v-spacer />
       <v-text-field
@@ -40,22 +40,37 @@
       :search="search"
       :items-per-page="5"
       loading-text="Getting Errors..."
-    />
+    >
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-icon small class="mr-2" @click="openErrorMessage(item)">
+          mdi-alert-circle-outline
+        </v-icon>
+      </template>
+    </v-data-table>
+    <v-dialog v-model="errorDialog" max-width="1000px" min-height="700px">
+      <ErrorInfo :error="this.error" />
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import { ErrorInfo } from '~/components/flowchart'
 
 export default {
+  name: 'PipelineErrors',
+  components: { ErrorInfo },
   data: () => ({
+    errorDialog: false,
+    error: '',
     search: '',
     selected: [],
     deleteMode: false,
     headers: [
       { text: 'Job', value: 'id' },
       { text: 'Pipeline', value: 'job.run.pipeline.name' },
-      { text: 'Container Name', value: 'job.node.container.name' }
+      { text: 'Container Name', value: 'job.node.container.name' },
+      { text: 'View', value: 'actions', sortable: false, align: 'center' }
     ]
   }),
   computed: {
@@ -70,9 +85,28 @@ export default {
     this.$store.dispatch('pipelines/fetchPipelineErrors')
   },
   methods: {
+    openErrorMessage(error) {
+      this.errorDialog = true
+      this.error = error
+    },
     clearDelete() {
       this.deleteMode = false
       this.selected = []
+    },
+    async saveDelete() {
+      if (
+        window.confirm('Are you sure you want to delete the selected items?')
+      ) {
+        this.deleteMode = false
+        for (const error of this.selected) {
+          try {
+            await generic_delete(this, `/pipeline/error/${error.id}`)
+          } catch (e) {
+            this.$toaster.toastError('Could not delete: ' + error.id)
+          }
+        }
+        this.selected = []
+      }
     }
   }
 }
