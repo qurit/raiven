@@ -47,6 +47,14 @@ def get_pipeline_errors(db: Session = Depends(session)):
     return db.query(PipelineJobError).all()
 
 
+@router.delete("/error/{error_id}", response_model=schemas.PipelineJobErrorFull)
+@middleware.exists_or_404
+def delete_pipeline(error_id: int, db: Session = Depends(session)):
+    if pipeline_error := db.query(PipelineJobError).get(error_id):
+        pipeline_error.delete(db)
+    return pipeline_error
+
+
 @router.get("/stats", response_model=schemas.PipelineStats)
 def get_pipeline_stats(db: Session = Depends(session)):
     """

@@ -7,7 +7,7 @@ export const state = () => ({
 
 export const getters = {
   userPipelineErrors: (state, getters, rootState) => {
-    return state.pipelinesErrors.filter(
+    return state.pipelineErrors.filter(
       error => error.job.run.pipeline.id === rootState.auth.user.id
     )
   },
@@ -26,8 +26,12 @@ export const getters = {
 }
 
 export const mutations = {
-  setPipelinesErrors: (state, pipelinesErrors) =>
-    (state.pipelinesErrors = pipelinesErrors),
+  setPipelinesErrors: (state, pipelineErrors) =>
+    (state.pipelineErrors = pipelineErrors),
+  deletePipelineError: (state, id) => {
+    const index = state.pipelineErrors.findIndex(error => error.id === id)
+    state.pipelineErrors.splice(index, 1)
+  },
   setPipelines: (state, pipelines) => (state.pipelines = pipelines),
   addPipeline: (state, pipeline) => state.pipelines.push(pipeline),
   deletePipeline: (state, id) => {
@@ -41,7 +45,16 @@ export const actions = {
       const URL = '/pipeline/errors'
       const res = await generic_get(this, URL)
       commit('setPipelinesErrors', res)
-      console.log(res)
+      return res
+    } catch (err) {
+      console.log(err)
+    }
+  },
+  async deletePipelineError({ commit }, id) {
+    try {
+      const URL = `/pipeline/error/${id}`
+      const res = await generic_delete(this, URL)
+      commit('deletePipelineError', res.id)
       return res
     } catch (err) {
       console.log(err)

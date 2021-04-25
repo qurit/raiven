@@ -8,7 +8,7 @@
       <v-text-field
         v-model="search"
         append-icon="mdi-magnify"
-        label="Search by Run ID or Pipeline"
+        label="Search"
         hide-details
         solo
       />
@@ -100,7 +100,11 @@ export default {
         this.deleteMode = false
         for (const error of this.selected) {
           try {
-            await generic_delete(this, `/pipeline/error/${error.id}`)
+            await this.$store.dispatch(
+              'pipelines/deletePipelineError',
+              error.id
+            )
+            this.$toaster.toastSuccess('Error logs deleted')
           } catch (e) {
             this.$toaster.toastError('Could not delete: ' + error.id)
           }
