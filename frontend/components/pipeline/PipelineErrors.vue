@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="6" flat>
+  <v-card elevation="6" class="my-4" flat>
     <v-toolbar :color="toolbarColor" flat>
       <v-toolbar-title>
         <b>Pipeline Errors </b>
