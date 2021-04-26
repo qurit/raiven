@@ -26,7 +26,7 @@ export const getters = {
 }
 
 export const mutations = {
-  setPipelinesErrors: (state, pipelineErrors) =>
+  setPipelineErrors: (state, pipelineErrors) =>
     (state.pipelineErrors = pipelineErrors),
   deletePipelineError: (state, id) => {
     const index = state.pipelineErrors.findIndex(error => error.id === id)
@@ -44,7 +44,7 @@ export const actions = {
     try {
       const URL = '/pipeline/errors'
       const res = await generic_get(this, URL)
-      commit('setPipelinesErrors', res)
+      commit('setPipelineErrors', res)
       return res
     } catch (err) {
       console.log(err)

@@ -145,7 +145,7 @@ export default {
           job.children.push(node)
         })
       } catch (e) {
-        this.$toaster.toastError('Could not fetch errors')
+        this.$toaster.toastError('Could not fetch job Containers')
       }
     }
   }
