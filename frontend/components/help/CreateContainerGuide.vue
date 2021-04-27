@@ -7,7 +7,7 @@
     <v-card-text>
       <ol type="1">
         <li>
-          When creating a container, you should have a <b> Dockerfile </b> and
+          When creating a Container, you should have a <b> Dockerfile </b> and
           your <b> main algorithm </b>
         </li>
         <li>
@@ -21,8 +21,8 @@
           <ul>
             <li>
               Install any dependencies you may require and set the environment
-              variables to be <b> PICOM_INPUT_DIR /mnt/picom/input </b> and
-              <b> PICOM_OUTPUT_DIR /mnt/picom/output</b>
+              variables to be <b> RAIVEN_INPUT_DIR=/mnt/raiven/input </b> and
+              <b> RAIVEN_OUTPUT_DIR=/mnt/raiven/output </b>
             </li>
           </ul>
           <ul>
@@ -50,8 +50,9 @@
                   Alternatively, if you did not set up the
                   <b> ENV </b> variables in the <b> Dockerfile </b>, then you
                   can set the <b> INPUT_DIR </b> to be
-                  <b> /mnt/picom/input </b> and the <b> OUTPUT_DIR </b> to be
-                  <b> /mnt/picom/output </b>
+                  <b> os.environ['RAIVEN_INPUT_DIR']</b> and the
+                  <b> OUTPUT_DIR </b> to be
+                  <b> os.environ['RAIVEN_OUTPUT_DIR'] </b>
                 </li>
               </ul>
             </li>
@@ -64,7 +65,7 @@
         </li>
         <li>
           Place both the <b> Dockerfile </b> and <b> main algorithm </b> in a
-          zippped folder
+          zipped folder
         </li>
       </ol>
     </v-card-text>
