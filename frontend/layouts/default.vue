@@ -37,11 +37,46 @@ export default {
               ? 'mdi-transit-connection-variant'
               : 'mdi-transit-connection-horizontal'
         },
-        { to: '/runs', label: 'Runs', icon: 'mdi-air-filter' },
-        { to: '/settings', label: 'Settings', icon: 'mdi-account-cog-outline' },
-        { to: '/help', label: 'Help', icon: 'mdi-help' },
+        {
+          to: '/runs',
+          label: 'Runs',
+          icon: this.$route.path === '/runs' ? 'mdi-play' : 'mdi-play-outline'
+        },
+        {
+          to: '/files',
+          label: 'Files',
+          icon:
+            this.$route.path === '/files'
+              ? 'mdi-file-download'
+              : 'mdi-file-download-outline'
+        },
+        {
+          to: '/settings',
+          label: 'Settings',
+          icon:
+            this.$route.path === '/settings'
+              ? 'mdi-account-cog'
+              : 'mdi-account-cog-outline'
+        },
+        {
+          to: '/help',
+          label: 'Help',
+          icon:
+            this.$route.path === '/help'
+              ? 'mdi-help-circle'
+              : 'mdi-help-circle-outline'
+        },
         ...(this.$auth.user.is_admin
-          ? [{ to: '/admin', label: 'Admin', icon: 'mdi-head-cog-outline' }]
+          ? [
+              {
+                to: '/admin',
+                label: 'Admin',
+                icon:
+                  this.$route.path === '/admin'
+                    ? 'mdi-head-cog'
+                    : 'mdi-head-cog-outline'
+              }
+            ]
           : [])
       ]
     }

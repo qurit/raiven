@@ -32,7 +32,7 @@
         :append-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         @click:append="() => (visible = !visible)"
         :type="visible ? 'text' : 'password'"
-        :rules="samePassword || ['Passwords must match']"
+        :rules="[samePassword || 'Passwords must match']"
         required
         class="px-15 pt-5"
       />
