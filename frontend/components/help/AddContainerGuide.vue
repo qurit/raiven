@@ -13,13 +13,20 @@
           </v-icon>
           page
         </li>
-        <li>Fill out the "Add a Container" form</li>
+        <li>
+          Click <v-icon small color="icon">mdi-plus</v-icon> and fill out the
+          form
+        </li>
         <ul>
           <li>
-            You must provide a container name and an attached file
+            You must provide a Container name and an attached file (your zipped
+            Dockerfile and main algorithm from Step 1)
           </li>
         </ul>
-        <li>Click <v-btn x-small color="green" text>Add Container </v-btn></li>
+        <li>
+          Click <v-icon small color="icon">mdi-content-save </v-icon> to save
+          your Container
+        </li>
       </ol>
     </v-card-text>
     <v-card-subtitle>
@@ -39,12 +46,14 @@
             <li>
               Alternatively, click
               <v-icon small color="icon"> mdi-delete </v-icon> to completely
-              delete the container
+              delete the Container
             </li>
           </ul>
         </li>
         <li>Edit the form</li>
-        <li>Click <v-btn x-small color="green" text>Save Edits</v-btn></li>
+        <li>
+          Click <v-icon small color="icon">mdi-content-save </v-icon> to save
+        </li>
       </ol>
     </v-card-text>
   </v-card>

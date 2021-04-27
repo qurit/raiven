@@ -18,7 +18,7 @@
           form
           <ul>
             <li>
-              You must provide a pipeline name
+              You must provide a Pipeline name
             </li>
             <li>
               You may provide an AE title if you would like this pipeline to
@@ -27,7 +27,7 @@
           </ul>
         </li>
         <li>
-          You will be brought to the pipeline-making canvas board
+          You will be brought to the Pipeline creation canvas board
         </li>
 
         <li>
@@ -41,30 +41,53 @@
         </li>
         <li>Drag your Containers around to build your pipeline flow</li>
         <li>
-          Connect your Containers with the small nodes at the bottom and top of
-          the cards
+          Connect your Containers with the small nodes at the left (input) and
+          right (output) of the cards
           <ul>
             <li>
-              The link between containers should start from a Container's bottom
-              node to another Container's top node
+              The link between Containers should start from a Container's right
+              side node to another Container's left side
+            </li>
+            <li>
+              While dragging the link, hover over the input node, and when it
+              has changed colours, you can release the link to complete the
+              connection.
             </li>
           </ul>
         </li>
         <li>
           If you would like your Pipeline results to be sent to another DICOM
-          node, you can add the default <b>Dicom Output Container</b> to the end
-          of your flow.
+          node, you can add the default <b>Dicom Output </b> Container to the
+          end of your flow.
           <ul>
             <li>
               To designate the DICOM node to send to, add the node's host and
-              port and select it in the <b> Dicom Output Container</b>'s
+              port and select it in the <b> Dicom Output </b> Container's
               dropdown menu.
             </li>
           </ul>
         </li>
         <li>
+          If you would like your Pipeline to receive from a DICOM node, you can
+          add the default <b>Dicom Input </b> Container to the beginning of your
+          flow.
+          <ul>
+            <li>
+              To designate the DICOM node to receive from, add the node's host
+              and port and select it in the <b> Dicom Input </b> Container's
+              dropdown menu.
+            </li>
+          </ul>
+          <ul>
+            <li>
+              You can set rules to decide when to run the Pipeline under
+              specific conditions.
+            </li>
+          </ul>
+        </li>
+        <li>
           Click <v-icon small color="icon">mdi-content-save </v-icon> to save
-          your pipeline
+          your Pipeline
         </li>
       </ol>
     </v-card-text>
@@ -81,7 +104,7 @@
           page
         </li>
         <li>
-          Click the pipeline row that you want to view or edit
+          Click the Pipeline row that you want to view or edit
         </li>
         <li>
           You can edit the Pipeline flow
