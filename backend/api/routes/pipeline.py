@@ -16,6 +16,21 @@ from api.auth import token_auth
 router = APIRouter()
 
 
+@router.get("/errors", response_model=List[schemas.PipelineJobErrorFull])
+def get_pipeline_errors(db: Session = Depends(session)):
+    """ Get all pipeline job errors """
+    return db.query(PipelineJobError).all()
+
+
+@router.delete("/error/{error_id}", response_model=schemas.PipelineJobErrorFull)
+@middleware.exists_or_404
+def delete_pipeline_error(error_id: int, db: Session = Depends(session)):
+    """ Delete a pipeline job error """
+    if pipeline_error := db.query(PipelineJobError).get(error_id):
+        pipeline_error.delete(db)
+    return pipeline_error
+
+
 @router.get("/stats", response_model=schemas.PipelineStats)
 def get_pipeline_stats(db: Session = Depends(session)):
     """
