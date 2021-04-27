@@ -19,7 +19,10 @@ nav:
   - User Guide:
     - Containers: containers.md
     - Pipelines: pipelines.md
-  - Uploading data: uploading-data.md
+    - Uploading data: uploading-data.md
+  - Developer Guide:
+    - Frontend: frontend.md
+    - Backend: backend.md
 
 markdown_extensions:
   - meta

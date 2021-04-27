@@ -1,12 +1,12 @@
 # Containers
-[Docker](https://docker.com/) Containers are the building blocks of Raiven's pipelines. Detailed below is the process of creating and uploading a container
-so you can use it in a pipeline.
+[Docker](https://docker.com/) Containers are the building blocks of Raiven's Pipelines. Detailed below is the process of creating and uploading a Container
+so you can use it in a Pipeline.
 
 !!! tip "Language Support"
     RAIVEN supports any language so long as you can containerize your algorithm.
 
 ## Creating a Container
-When creating a container, you should have a **Dockerfile** all the source code required to run your **algorithm**. In general,
+When creating a Container, you should have a **Dockerfile** all the source code required to run your **algorithm**. In general,
 all dockerfiles will need:
 
 1. Install any dependencies you may require
@@ -17,7 +17,7 @@ all dockerfiles will need:
 
 
 ### Dockerfile Example
-Below is a sample dockerfile used when creating a container in python.
+Below is a sample dockerfile used when creating a Container in python.
 ```dockerfile
 FROM python:3.8-slim
 WORKDIR /src
@@ -30,7 +30,7 @@ CMD python main.py
 
 ### Algorithm Example
 
-An example algorithm that runs inside the container is shown below. In the code below, the algorithm reads all the dicom 
+An example algorithm that runs inside the Container is shown below. In the code below, the algorithm reads all the dicom 
 files from the input directory, doubles the value of their pixels, and then saves the new image to the output directory.
 ```python
 import os
@@ -61,9 +61,9 @@ if __name__ == '__main__':
 ## Uploading a Container
 
 1. Go to the _Containers_ :material-package-variant-closed: page
-2. Fill out the "Add a Container" form
-    * You must provide a container name and an attached file
-3. Click **Add Container**
+2. Click :material-plus: and fill out the form
+    * You must provide a Container name and an attached file (your zipped Dockerfile and main algorithm from Step 1)
+3. Click :material-content-save: to save your Container
 
 !!! warning
     Make sure to place both your dockerfile and source files in a zip file before uploading
@@ -72,6 +72,6 @@ if __name__ == '__main__':
 
 1. Go to the _Containers_ :material-package-variant-closed: page
 2. Click :material-pencil: next to the Container to be edited
-    * Alternatively, click :material-delete: to completely delete the container
+    * Alternatively, click :material-delete: to completely delete the Container
 3. Edit the form
-4. Click **Save Edits**
+4. Click :material-content-save: to save 
