@@ -87,7 +87,7 @@
         </li>
         <li>
           Click <v-icon small color="icon">mdi-content-save </v-icon> to save
-          your pipeline
+          your Pipeline
         </li>
       </ol>
     </v-card-text>
@@ -126,7 +126,7 @@
           </ul>
         </li>
         <li>
-          You can view/edit the Pipeline's info
+          You can edit the Pipeline's info
           <ul>
             <li>
               Click <v-icon small color="icon">mdi-information</v-icon> on the
