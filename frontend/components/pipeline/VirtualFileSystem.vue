@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card elevation="6" class="mt-4">
+    <v-card elevation="6">
       <v-toolbar :color="toolbarColor" flat>
         <v-toolbar-title>
           <b>Files from Pipeline Runs </b>

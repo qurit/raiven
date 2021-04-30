@@ -145,7 +145,7 @@ export default {
     },
     async saveDelete() {
       if (
-        window.confirm('Are you sure you want to delete the selected items')
+        window.confirm('Are you sure you want to delete the selected items?')
       ) {
         this.deleteMode = false
         for (const run of this.selected) {

@@ -12,12 +12,15 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 # noinspection PyUnboundLocalVariable
 def token_auth(token: str = Depends(oauth2_scheme), db: type(session) = Depends(session)):
-    if (user_id := User.verify_token(token)) and (user := User.query(db).get(user_id)):
-        user.last_seen = datetime.utcnow()
-        user.save(db)
-        return user
-    else:
+    if not (user_id := User.verify_token(token)) or not (user := User.query(db).get(user_id)):
         raise HTTPException(401, "Invalid token")
+
+    if not user.access_allowed:
+        raise HTTPException(403, "User has not been approved to access Raiven")
+
+    user.last_seen = datetime.utcnow()
+    user.save(db)
+    return user
 
 
 def admin_auth(token: str = Depends(oauth2_scheme), db: type(session) = Depends(session)):

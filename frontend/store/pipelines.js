@@ -1,10 +1,16 @@
 import { generic_get, generic_delete, full_data_post } from '~/api'
 
 export const state = () => ({
-  pipelines: []
+  pipelines: [],
+  pipelineErrors: []
 })
 
 export const getters = {
+  userPipelineErrors: (state, getters, rootState) => {
+    return state.pipelineErrors.filter(
+      error => error.job.run.pipeline.id === rootState.auth.user.id
+    )
+  },
   userPipelines: (state, getters, rootState) => {
     return state.pipelines.filter(
       pipeline => pipeline.user_id === rootState.auth.user.id
@@ -20,6 +26,12 @@ export const getters = {
 }
 
 export const mutations = {
+  setPipelineErrors: (state, pipelineErrors) =>
+    (state.pipelineErrors = pipelineErrors),
+  deletePipelineError: (state, id) => {
+    const index = state.pipelineErrors.findIndex(error => error.id === id)
+    state.pipelineErrors.splice(index, 1)
+  },
   setPipelines: (state, pipelines) => (state.pipelines = pipelines),
   addPipeline: (state, pipeline) => state.pipelines.push(pipeline),
   deletePipeline: (state, id) => {
@@ -28,6 +40,26 @@ export const mutations = {
   }
 }
 export const actions = {
+  async fetchPipelineErrors({ commit }) {
+    try {
+      const URL = '/pipeline/errors'
+      const res = await generic_get(this, URL)
+      commit('setPipelineErrors', res)
+      return res
+    } catch (err) {
+      console.log(err)
+    }
+  },
+  async deletePipelineError({ commit }, id) {
+    try {
+      const URL = `/pipeline/error/${id}`
+      const res = await generic_delete(this, URL)
+      commit('deletePipelineError', res.id)
+      return res
+    } catch (err) {
+      console.log(err)
+    }
+  },
   async fetchPipelines({ commit }) {
     try {
       const URL = '/pipeline'

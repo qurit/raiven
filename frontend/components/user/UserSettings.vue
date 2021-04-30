@@ -1,8 +1,6 @@
 <template>
   <v-card elevation="6">
-    <v-toolbar color="primary accent--text" flat>
-      <v-toolbar-title><b>Settings</b></v-toolbar-title>
-    </v-toolbar>
+    <v-card-header title="Settings" />
     <v-form v-model="isFormValid">
       <v-text-field
         class="mx-2"
@@ -72,6 +70,7 @@ export default {
   computed: {
     ...mapState('destination', ['destinations']),
     ...mapState('auth', ['user']),
+    ...mapState('users', ['users']),
     didEdit() {
       return this.currentAETitle !== this.aeTitle || this.didChangeAE
     }
@@ -97,9 +96,13 @@ export default {
       })
     },
     async saveUserAETitle() {
-      const URL = `/user/${this.user.id}`
-      const payload = { ae_title: this.aeTitle }
-      this.ae_title = await generic_put(this, URL, payload)
+      const res = await this.$store.dispatch('users/editUserSettings', {
+        id: this.user.id,
+        ae_title: this.aeTitle,
+        access_allowed: this.user.access_allowed,
+        is_admin: this.user.is_admin
+      })
+      this.currentAETitle = res.ae_title
     },
     async savePermittedAETitles() {
       const URL = '/user/permitted-ae'

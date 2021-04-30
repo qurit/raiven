@@ -27,6 +27,7 @@ def create_local_user(user_schema: UserLocalCreate, db: Session = Depends(sessio
 
     try:
         user = User(username=user_schema.username, name=user_schema.name)
+        user.access_allowed = True
         user.save(db)
 
         UserLocal(id=user.id, password=user_schema.password).save(db)
@@ -53,6 +54,11 @@ def edit_user_settings(user_id: int, new_info: UserEdit, user: User = Depends(to
         return HTTPException(401, 'User does not exist')
 
     user_to_edit.ae_title = new_info.ae_title
+
+    if (user.is_admin):
+        user_to_edit.access_allowed = new_info.access_allowed
+        user_to_edit.is_admin = new_info.is_admin
+
     user_to_edit.save(db)
     return user_to_edit
 

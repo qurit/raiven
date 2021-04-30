@@ -20,6 +20,12 @@ class UserLocalCreate(BaseModel):
         }
 
 
+class UserLDAPSchema(BaseORMModel):
+    title: str
+    department: str
+    company: str
+
+
 class User(BaseORMModel):
     username: str
     name: str
@@ -27,10 +33,14 @@ class User(BaseORMModel):
     ae_title: Optional[str]
     first_seen: datetime
     last_seen: datetime
+    access_allowed: bool
+    ldap_user: Optional[UserLDAPSchema]
 
 
 class UserEdit(BaseModel):
-    ae_title: str
+    ae_title: Optional[str]
+    access_allowed: bool
+    is_admin: bool
 
 
 class PermittedApplicationEntities(BaseModel):

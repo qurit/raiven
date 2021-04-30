@@ -9,7 +9,7 @@
       </v-col>
       <v-col sm="12" md="6">
         <PipelineResults />
-        <VirtualFileSystem />
+        <PipelineErrors />
       </v-col>
     </v-row>
   </div>
@@ -19,7 +19,7 @@
 import {
   PipelineResults,
   PipelineStatus,
-  VirtualFileSystem
+  PipelineErrors
 } from '~/components/pipeline'
 import { DicomInstances } from '~/components/dicom'
 import { mapState } from 'vuex'
@@ -28,7 +28,7 @@ export default {
     PipelineStatus,
     DicomInstances,
     PipelineResults,
-    VirtualFileSystem
+    PipelineErrors
   },
   computed: {
     ...mapState('pipelines', ['pipelines'])

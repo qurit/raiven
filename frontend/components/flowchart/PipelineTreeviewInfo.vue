@@ -18,10 +18,7 @@
         </div>
         <!-- Pipeline Job Error -->
 
-        <a
-          v-if="item.hasOwnProperty('pipeline_job_id')"
-          @click="openErrorMessage(item)"
-        >
+        <a v-if="item.hasOwnProperty('stderr')" @click="openErrorMessage(item)">
           <v-tooltip right>
             <template v-slot:activator="{ on, attrs }">
               <span v-bind="attrs" v-on="on">Error </span>
@@ -29,6 +26,7 @@
             <span>{{ tooltipInfo }}</span>
           </v-tooltip>
         </a>
+
         <!-- Pipeline Node that was run for that job -->
         <a
           v-if="item.hasOwnProperty('container_id')"
@@ -99,7 +97,7 @@ export default {
         .then(() => {
           this.pipelineRuns.forEach(pipelineRun => {
             this.$set(pipelineRun, 'children', [])
-            this.$set(pipelineRun, 'icon', 'mdi-air-filter')
+            this.$set(pipelineRun, 'icon', 'mdi-play-outline')
           })
         })
     },
@@ -122,31 +120,33 @@ export default {
           .catch(err => console.log(err))
       }
       if (item.hasOwnProperty('pipeline_node_id')) {
-        this.getJobErrors(item)
         this.getJobNode(item)
+        this.getJobErrors(item)
       }
     },
-    getJobErrors(job) {
+    async getJobErrors(job) {
       const URL = `pipeline/job/${job.id}/errors`
-      return generic_get(this, URL)
-        .then(data => {
-          data.forEach(errors => {
-            errors.icon = 'mdi-alert-circle-outline'
-            job.children.push(errors)
-          })
+      try {
+        const errors = await generic_get(this, URL)
+        errors.forEach(error => {
+          error.icon = 'mdi-alert-circle-outline'
+          job.children.push(error)
         })
-        .catch(err => console.log(err))
+      } catch (e) {
+        this.$toaster.toastError('Could not fetch errors')
+      }
     },
-    getJobNode(job) {
+    async getJobNode(job) {
       const URL = `pipeline/job/node/${job.pipeline_node_id}`
-      return generic_get(this, URL)
-        .then(data => {
-          data.forEach(node => {
-            node.icon = 'mdi-package-variant-closed'
-            job.children.push(node)
-          })
+      try {
+        const data = await generic_get(this, URL)
+        data.forEach(node => {
+          node.icon = 'mdi-package-variant-closed'
+          job.children.push(node)
         })
-        .catch(err => console.log(err))
+      } catch (e) {
+        this.$toaster.toastError('Could not fetch job Containers')
+      }
     }
   }
 }

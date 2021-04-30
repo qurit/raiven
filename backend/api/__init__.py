@@ -28,4 +28,7 @@ app.mount('/ws', sockets.sio_app)
 
 from . import middleware, routes, pipelining, scripts
 
-scripts.run_startup_scripts()
+
+@app.on_event("startup")
+def startup_event():
+    scripts.run_startup_scripts()
